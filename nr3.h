@@ -1,3 +1,6 @@
+// nr3.h from Numerical Recipes
+// modified by Hongyu Shi
+
 #ifndef _NR3_H_
 #define _NR3_H_
 
@@ -20,8 +23,6 @@
 #include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
-
-using namespace std;
 
 // macro-like inline functions
 
@@ -484,14 +485,14 @@ typedef unsigned char Uchar;
 typedef double Doub; // default floating type
 typedef long double Ldoub;
 
-typedef complex<double> Complex; // default complex type
+typedef std::complex<double> Complex; // default complex type
 
 typedef bool Bool;
 
 // NaN: uncomment one of the following 3 methods of defining a global NaN
 // you can test by verifying that (NaN != NaN) is true
 
-static const Doub NaN = numeric_limits<Doub>::quiet_NaN();
+static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
 
 //Uint proto_nan[2]={0xffffffff, 0x7fffffff};
 //double NaN = *( double* )proto_nan;
@@ -556,6 +557,9 @@ typedef NRmatrix<Uchar> MatUchar, MatUchar_O, MatUchar_IO;
 typedef const NRmatrix<Doub> MatDoub_I;
 typedef NRmatrix<Doub> MatDoub, MatDoub_O, MatDoub_IO;
 
+typedef const NRmatrix<Complex> MatComplex_I;
+typedef NRmatrix<Complex> MatComplex, MatComplex_O, MatComplex_IO;
+
 typedef const NRmatrix<Bool> MatBool_I;
 typedef NRmatrix<Bool> MatBool, MatBool_O, MatBool_IO;
 
@@ -580,4 +584,3 @@ turn_on_floating_exceptions yes_turn_on_floating_exceptions;
 #endif /* _TURNONFPES */
 
 #endif /* _NR3_H_ */
-

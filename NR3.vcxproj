@@ -140,9 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="nr3.h" />
+    <ClInclude Include="nr3plus.h" />
+    <ClInclude Include="test.h" />
+    <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sub.cpp" />
+    <ClCompile Include="tridag.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

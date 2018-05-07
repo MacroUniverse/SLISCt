@@ -18,9 +18,24 @@
     <ClInclude Include="nr3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nr3plus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tridag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tridag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
