@@ -6,7 +6,6 @@
 
 //#define _CHECKBOUNDS_ 1
 //#define _USESTDVECTOR_ 1
-//#define _USENRERRORCLASS_ 1
 //#define _TURNONFPES_ 1
 
 // all the system #include's we'll ever need
@@ -62,35 +61,6 @@ inline float SIGN(const double &a, const float &b)
 template<class T>
 inline void SWAP(T &a, T &b)
 	{T dum=a; a=b; b=dum;}
-
-// exception handling
-
-#ifndef _USENRERRORCLASS_
-#define throw(message) \
-{printf("ERROR: %s\n     in file %s at line %d\n", message,__FILE__,__LINE__); throw(1);}
-#else
-struct NRerror {
-	char *message;
-	char *file;
-	int line;
-	NRerror(char *m, char *f, int l) : message(m), file(f), line(l) {}
-};
-#define throw(message) throw(NRerror(message,__FILE__,__LINE__));
-void NRcatch(NRerror err) {
-	printf("ERROR: %s\n     in file %s at line %d\n",
-		err.message, err.file, err.line);
-	exit(1);
-}
-#endif
-
-// usage example:
-//
-//	try {
-//		somebadroutine();
-//	}
-//	catch(NRerror s) {NRcatch(s);}
-//
-// (You can of course substitute any other catch body for NRcatch(s).)
 
 
 // Vector and Matrix Classes
