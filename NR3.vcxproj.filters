@@ -32,9 +32,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tridag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

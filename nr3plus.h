@@ -19,7 +19,7 @@ void disp(const NRvector<T> &v)
 	for (i = 0; i < n; ++i) {
 		std::cout << v[i] << "   ";
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
@@ -32,7 +32,7 @@ void disp(const NRvector<T> &v, const int precision)
 	for (i = 0; i < n; ++i) {
 		std::cout << v[i] << "   ";
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
@@ -45,7 +45,7 @@ void disp(const NRvector<T> &v, const int start, const int n)
 	for (i = start; i < start + n; ++i) {
 		std::cout << v[i] << "   ";
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
@@ -58,7 +58,7 @@ void disp(const NRvector<T> &v, const int start, const int n, const int precisio
 	for (i = start; i < start + n; ++i) {
 		std::cout << v[i] << "   ";
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
@@ -74,6 +74,7 @@ void disp(const NRmatrix<T> &a)
 		}
 		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
@@ -89,6 +90,7 @@ void disp(const NRmatrix<T> &a, const int precision)
 		}
 		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
@@ -162,52 +164,92 @@ inline void operator<<(NRvector<T> &v, const S s)
 }
 
 template <class T>
-inline void operator+=(T &v1, const T & v2)
+inline void operator+=(NRvector<T> &v1, const NRvector<T> & v2)
 {
-	int i, N{ numel(v1) };
-	auto pv1 = pointer(v1);
-	auto pv2 = pointer(v2);
+	int i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v1[i] += v2[i];
+}
+
+template <class T>
+inline void operator+=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
+{
+	int i, N{ v1.nrows()*v1.ncols() };
+	auto pv1 = &v1[0][0];
+	auto pv2 = &v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] += pv2[i];
 }
 
 template <class T>
-inline void operator-=(T &v1, const T & v2)
+inline void operator-=(NRvector<T> &v1, const NRvector<T> & v2)
 {
-	int i, N{ numel(v1) };
-	auto pv1 = pointer(v1);
-	auto pv2 = pointer(v2);
+	int i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v1[i] -= v2[i];
+}
+
+template <class T>
+inline void operator-=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
+{
+	int i, N{ v1.nrows()*v1.ncols() };
+	auto pv1 = &v1[0][0];
+	auto pv2 = &v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] -= pv2[i];
 }
 
 template <class T>
-inline void operator*=(T &v1, const T & v2)
+inline void operator*=(NRvector<T> &v1, const NRvector<T> & v2)
 {
-	int i, N{ numel(v1) };
-	auto pv1 = pointer(v1);
-	auto pv2 = pointer(v2);
+	int i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v1[i] *= v2[i];
+}
+
+template <class T>
+inline void operator*=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
+{
+	int i, N{ v1.nrows()*v1.ncols() };
+	auto pv1 = &v1[0][0];
+	auto pv2 = &v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] *= pv2[i];
 }
 
 template <class T>
-inline void operator/=(T &v1, const T & v2)
+inline void operator/=(NRvector<T> &v1, const NRvector<T> & v2)
 {
-	int i, N{ numel(v1) };
-	auto pv1 = pointer(v1);
-	auto pv2 = pointer(v2);
+	int i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v1[i] /= v2[i];
+}
+
+template <class T>
+inline void operator/=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
+{
+	int i, N{ v1.nrows()*v1.ncols() };
+	auto pv1 = &v1[0][0];
+	auto pv2 = &v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] /= pv2[i];
 }
 
 template <class T>
-inline void plus(T &v, const T &v1, const T &v2)
+inline void plus(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
 {
-	Int i, N{ numel(v1) };
-	auto pv = pointer(v);
-	auto pv1 = pointer(v1);
-	auto pv2 = pointer(v2);
+	Int i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v[i] = v1[i] + v2[i];
+}
+
+template <class T>
+inline void plus(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
+{
+	Int i, N{ v1.nrows()*v1.ncols() };
+	auto pv = &v[0][0];
+	auto pv1 = &v1[0][0];
+	auto pv2 = &v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv[i] = pv1[i] + pv2[i];
 }
@@ -225,9 +267,18 @@ inline void emul(T &v, const T &v1, const T &v2)
 
 // vector/matrix scalar operator
 template <class T>
-inline void operator+=(T &v, const Doub s)
+inline void operator+=(NRvector<T> &v, const Doub s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] += s;
+	}
+}
+
+template <class T>
+inline void operator+=(NRmatrix<T> &v, const Doub s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] += s;
@@ -235,9 +286,18 @@ inline void operator+=(T &v, const Doub s)
 }
 
 template <class T>
-inline void operator-=(T &v, const Doub s)
+inline void operator-=(NRvector<T> &v, const Doub s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] -= s;
+	}
+}
+
+template <class T>
+inline void operator-=(NRmatrix<T> &v, const Doub s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] -= s;
@@ -245,9 +305,18 @@ inline void operator-=(T &v, const Doub s)
 }
 
 template <class T>
-inline void operator*=(T &v, const Doub s)
+inline void operator*=(NRvector<T> &v, const Doub s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] *= s;
+	}
+}
+
+template <class T>
+inline void operator*=(NRmatrix<T> &v, const Doub s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] *= s;
@@ -255,9 +324,18 @@ inline void operator*=(T &v, const Doub s)
 }
 
 template <class T>
-inline void operator/=(T &v, const Doub s)
+inline void operator/=(NRvector<T> &v, const Doub s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] /= s;
+	}
+}
+
+template <class T>
+inline void operator/=(NRmatrix<T> &v, const Doub s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] /= s;
@@ -265,9 +343,18 @@ inline void operator/=(T &v, const Doub s)
 }
 
 template <class T>
-inline void operator+=(T &v, const Complex s)
+inline void operator+=(NRvector<T> &v, const Complex s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] += s;
+	}
+}
+
+template <class T>
+inline void operator+=(NRmatrix<T> &v, const Complex s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] += s;
@@ -275,9 +362,18 @@ inline void operator+=(T &v, const Complex s)
 }
 
 template <class T>
-inline void operator-=(T &v, const Complex s)
+inline void operator-=(NRvector<T> &v, const Complex s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] -= s;
+	}
+}
+
+template <class T>
+inline void operator-=(NRmatrix<T> &v, const Complex s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] -= s;
@@ -285,9 +381,18 @@ inline void operator-=(T &v, const Complex s)
 }
 
 template <class T>
-inline void operator*=(T &v, const Complex s)
+inline void operator*=(NRvector<T> &v, const Complex s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] *= s;
+	}
+}
+
+template <class T>
+inline void operator*=(NRmatrix<T> &v, const Complex s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] *= s;
@@ -295,9 +400,18 @@ inline void operator*=(T &v, const Complex s)
 }
 
 template <class T>
-inline void operator/=(T &v, const Complex s)
+inline void operator/=(NRvector<T> &v, const Complex s)
 {
-	Int i, N{ numel(v) };
+	Int i, N{ v.size() };
+	for (i = 0; i < N; ++i) {
+		v[i] /= s;
+	}
+}
+
+template <class T>
+inline void operator/=(NRmatrix<T> &v, const Complex s)
+{
+	Int i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] /= s;
@@ -434,42 +548,79 @@ inline void linspace(VecDoub_O &v, const Doub first, const Doub last)
 }
 
 template <class T>
-void exp(T &y, const T &x)
+void exp(NRvector<T> &y, const NRvector<T> &x)
+{
+	Int i, N{ x.size() };
+	for (i = 0; i < N; ++i) {
+		y[i] = exp(x[i]);
+	}
+}
+
+template <class T>
+void exp(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Int i, N{ numel(x) };
-	T *px, *py;
+	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = exp(px[i]);
 	}
 }
 
 template <class T>
-void sin(T &y, const T &x)
+void sin(NRvector<T> &y, const NRvector<T> &x)
+{
+	Int i, N{ x.size() };
+	for (i = 0; i < N; ++i) {
+		y[i] = sin(x[i]);
+	}
+}
+
+template <class T>
+void sin(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Int i, N{ numel(x) };
-	T *px, *py;
+	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = sin(px[i]);
 	}
 }
 
 template <class T>
-void cos(T &y, const T &x)
+void cos(NRvector<T> &y, const NRvector<T> &x)
+{
+	Int i, N{ x.size() };
+	for (i = 0; i < N; ++i) {
+		y[i] = cos(x[i]);
+	}
+}
+
+template <class T>
+void cos(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Int i, N{ numel(x) };
-	T *px, *py;
+	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = cos(px[i]);
 	}
 }
 
 template <class T>
-void tan(T &y, const T &x)
+void tan(NRvector<T> &y, const NRvector<T> &x)
+{
+	Int i, N{ x.size() };
+	for (i = 0; i < N; ++i) {
+		y[i] = tan(x[i]);
+	}
+}
+
+template <class T>
+void tan(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Int i, N{ numel(x) };
-	T *px, *py;
+	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = tan(px[i]);
 	}
 }
+
 #endif /*_NR3PLUS_H_*/
