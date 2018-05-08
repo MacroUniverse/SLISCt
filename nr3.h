@@ -4,7 +4,7 @@
 #ifndef _NR3_H_
 #define _NR3_H_
 
-#define _CHECKBOUNDS_ 1
+//#define _CHECKBOUNDS_ 1
 //#define _USESTDVECTOR_ 1
 //#define _USENRERRORCLASS_ 1
 //#define _TURNONFPES_ 1
