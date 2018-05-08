@@ -144,6 +144,25 @@ inline Complex* pointer(VecComplex &v) { return &v[0]; }
 inline const Complex* pointer(MatComplex_I &v) { return &v[0][0]; }
 inline Complex* pointer(MatComplex &v) { return &v[0][0]; }
 
+// operators between Complex and Int
+
+inline Complex operator+(const Complex c, const Int i) { return c + (Doub)i; }
+
+inline Complex operator+(const Int i, const Complex c) { return c + (Doub)i; }
+
+
+inline Complex operator-(const Int i, const Complex c) { return (Doub)i - c; }
+
+inline Complex operator-(const Complex c, const Int i) { return c - (Doub)i; }
+
+inline Complex operator*(const Complex c, const Int i) { return c*(Doub)i; }
+
+inline Complex operator*(const Int i, const Complex c) { return c*(Doub)i; }
+
+inline Complex operator/(const Complex c, const Int i) { return c/(Doub)i; }
+
+inline Complex operator/(const Int i, const Complex c) { return (Doub)i/c; }
+
 // element-wise operators for vectors and matrices
 template <class T, class S>
 inline void operator<<(NRmatrix<T> &v, const S s)
@@ -236,7 +255,7 @@ inline void operator/=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
 }
 
 template <class T>
-inline void plus(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
+inline void add(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
 {
 	Int i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -244,7 +263,7 @@ inline void plus(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
 }
 
 template <class T>
-inline void plus(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
+inline void add(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
 {
 	Int i, N{ v1.nrows()*v1.ncols() };
 	auto pv = &v[0][0];
@@ -544,6 +563,25 @@ inline void linspace(VecDoub_O &v, const Doub first, const Doub last)
 	Doub delta{ (last - first) / (N - 1) };
 	for (i = 0; i < N; ++i) {
 		v[i] = first + delta * i;
+	}
+}
+
+inline void linspace(VecComplex_O &v, const Complex first, const Complex last)
+{
+	int i, N{ v.size() };
+	Complex delta{ (last - first) / (Doub)(N - 1) };
+	for (i = 0; i < N; ++i) {
+		v[i] = first + delta * (Doub)i;
+	}
+}
+
+inline void linspace(MatDoub_O &a, const Doub first, const Doub last)
+{
+	int i, N{ a.nrows()*a.ncols() };
+	Doub delta{ (last - first) / (N - 1) };
+	Doub *pa{ &a[0][0] };
+	for (i = 0; i < N; ++i) {
+		pa[i] = first + delta *i;
 	}
 }
 

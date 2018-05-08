@@ -6,3 +6,6 @@ x64/
 NR3/Debug/
 NR3/Release/
 NR3/x64/
+*.x
+*.gch
+*.o
