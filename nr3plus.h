@@ -66,7 +66,7 @@ inline void flip(NRvector<T> &v)
 template <class T>
 inline void flip(NRvector<T> &v, const NRvector<T> &v0)
 {
-	Int i, n{ v0.size() }, ind;
+	Int i, n{ v0.size() };
 	T temp;
 	if (v.size() != n) v.resize(n);
 	for (i = 0; i < n; ++i)
