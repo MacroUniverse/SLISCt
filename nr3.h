@@ -399,7 +399,7 @@ NRMat3d<T>::NRMat3d(int n, int m, int k) : nn(n), mm(m), kk(k), v(new T**[n])
 }
 
 template <class T>
-NRMat3d<T>::resize(int n, int m, int k)
+void NRMat3d<T>::resize(int n, int m, int k)
 {
 	if (n != nn || m != mm || k != kk) {
 		if (v != NULL) {

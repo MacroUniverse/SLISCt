@@ -1,27 +1,38 @@
-#
 # Makefile
-#
-# Author: Uwe Thumm
-# Date:   6/5/99
-#
+
+exe = nr3.x
 
 
+# this project requires "MatFile_linux" github repository
+
+source = \
+main.cpp \
+nr3plus.cpp \
+interp_1d.cpp \
+interp_2d.cpp \
+tridag.cpp
+
+objects = $(source:.cpp=.o)
+
+compiler = g++
+
+flags =  \
+-std=c++11
+# -g
+# -O3
 
 
-FOBJS =   \
-main.o
+$(exe):$(objects)
+	$(compiler) -o $(exe) $(flags) $(objects) $(xobjects) $(libs)
 
-COMPILER = g++
+$(objects):$(source)
+	$(compiler) -c $(flags) $(source) $(sourcepath)$(xsource)
 
-FFLAGS = -g
-#FFLAGS = -O3
+# must specify shared library directory
+#run:
+#	LD_LIBRARY_PATH=$(libpath) ./$(exe)
 
-.cpp.o:
-	$(COMPILER) -c $(FFLAGS) *.cpp *.h
-
-
-nr3: $(FOBJS) $(LIB)
-	$(COMPILER) $(FFLAGS) -o nr3.x $(FOBJS)
-
+# clean all except source
 clean:
 	rm -f *.o *.x *.gch
+
