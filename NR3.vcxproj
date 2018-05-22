@@ -139,13 +139,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="interp_1d.h" />
+    <ClInclude Include="interp_2d.h" />
     <ClInclude Include="nr3.h" />
     <ClInclude Include="nr3plus.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="interp_1d.cpp" />
+    <ClCompile Include="interp_2d.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="nr3plus.cpp" />
     <ClCompile Include="tridag.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

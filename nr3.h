@@ -4,7 +4,9 @@
 #ifndef _NR3_H_
 #define _NR3_H_
 
-//#define _CHECKBOUNDS_ 1
+#ifdef _DEBUG
+#define _CHECKBOUNDS_ 1
+#endif
 //#define _USESTDVECTOR_ 1
 //#define _TURNONFPES_ 1
 
@@ -370,6 +372,7 @@ private:
 public:
 	NRMat3d();
 	NRMat3d(int n, int m, int k);
+	void resize(int n, int m, int k);
 	inline T** operator[](const int i);	//subscripting: pointer to row i
 	inline const T* const * operator[](const int i) const;
 	inline int dim1() const;
@@ -392,6 +395,29 @@ NRMat3d<T>::NRMat3d(int n, int m, int k) : nn(n), mm(m), kk(k), v(new T**[n])
 		v[i] = v[i-1] + m;
 		v[i][0] = v[i-1][0] + m*k;
 		for(j=1; j<m; j++) v[i][j] = v[i][j-1] + k;
+	}
+}
+
+template <class T>
+NRMat3d<T>::resize(int n, int m, int k)
+{
+	if (n != nn || m != mm || k != kk) {
+		if (v != NULL) {
+			delete[] v[0][0];
+			delete[] v[0];
+			delete[] v;
+		}
+
+		int i, j;
+		nn = n; mm = m; kk = k; v = new T**[n];
+		v[0] = new T*[n*m];
+		v[0][0] = new T[n*m*k];
+		for (j = 1; j<m; j++) v[0][j] = v[0][j - 1] + k;
+		for (i = 1; i<n; i++) {
+			v[i] = v[i - 1] + m;
+			v[i][0] = v[i - 1][0] + m * k;
+			for (j = 1; j<m; j++) v[i][j] = v[i][j - 1] + k;
+		}
 	}
 }
 
@@ -537,6 +563,9 @@ typedef NRmatrix<Bool> MatBool, MatBool_O, MatBool_IO;
 
 typedef const NRMat3d<Doub> Mat3DDoub_I;
 typedef NRMat3d<Doub> Mat3DDoub, Mat3DDoub_O, Mat3DDoub_IO;
+
+typedef const NRMat3d<Complex> Mat3DComplex_I;
+typedef NRMat3d<Complex> Mat3DComplex, Mat3DComplex_O, Mat3DComplex_IO;
 
 // Floating Point Exceptions for Microsoft compilers
 
