@@ -37,6 +37,7 @@ inline Int numel(VecDoub_I &v) { return v.size(); }
 inline Int numel(MatDoub_I &v) { return v.nrows()*v.ncols(); }
 inline Int numel(VecComplex_I &v) { return v.size(); }
 inline Int numel(MatComplex_I &v) { return v.nrows()*v.ncols(); }
+inline size_t numel(Mat3DComplex_I &v) { return v.dim1()*v.dim2()*v.dim3(); }
 inline Int numel(VecBool_I &v) { return v.size(); }
 inline Int numel(MatBool_I &v) { return v.nrows()*v.ncols(); }
 
@@ -49,6 +50,8 @@ inline const Complex* pointer(VecComplex_I &v) { return &v[0]; }
 inline Complex* pointer(VecComplex &v) { return &v[0]; }
 inline const Complex* pointer(MatComplex_I &v) { return &v[0][0]; }
 inline Complex* pointer(MatComplex &v) { return &v[0][0]; }
+inline const Complex* pointer(Mat3DComplex_I &v) { return &v[0][0][0]; }
+inline Complex* pointer(Mat3DComplex &v) { return &v[0][0][0]; }
 
 // Matrix/Vector manipulation
 
@@ -551,7 +554,19 @@ inline Doub norm2(MatComplex_I &v)
 	Int i, N{ numel(v) };
 	Doub s{}, temp;
 	auto pv = pointer(v);
-	for (i = 1; i < N; ++i) {
+	for (i = 0; i < N; ++i) {
+		temp = abs(pv[i]);
+		s += temp * temp;
+	}
+	return s;
+}
+
+inline Doub norm2(Mat3DComplex_I &v)
+{
+	size_t i, N{ numel(v) };
+	Doub s{}, temp;
+	auto pv = pointer(v);
+	for (i = 0; i < N; ++i) {
 		temp = abs(pv[i]);
 		s += temp * temp;
 	}
