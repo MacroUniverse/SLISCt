@@ -408,9 +408,12 @@ void NRMat3d<T>::resize(int n, int m, int k)
 			delete[] v[0];
 			delete[] v;
 		}
-
+		nn = n; mm = m; kk = k;
+		if (n==0 || m==0 || k==0) {
+			v = NULL; return;
+		}
 		int i, j;
-		nn = n; mm = m; kk = k; v = new T**[n];
+		v = new T**[n];
 		v[0] = new T*[n*m];
 		v[0][0] = new T[n*(size_t)m*k];
 		for (j = 1; j<m; j++) v[0][j] = v[0][j - 1] + k;
@@ -431,12 +434,12 @@ void NRMat3d<T>::assign(int n, int m, int k, const T& a)
 			delete[] v[0];
 			delete[] v;
 		}
+		nn = n; mm = m; kk = k;
 		if (n==0 || m==0 || k==0) {
 			v = NULL; return;
 		}
-
 		int i, j;
-		nn = n; mm = m; kk = k; v = new T**[n];
+		v = new T**[n];
 		v[0] = new T*[n*m];
 		size_t nele = n*(size_t)m*k;
 		v[0][0] = new T[nele];
