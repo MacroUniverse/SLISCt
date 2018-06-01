@@ -1,8 +1,6 @@
 // nr3.h extension
 // written by Hongyu Shi
-
-#ifndef _NR3PLUS_H_
-#define _NR3PLUS_H_
+#pragma once
 #include "nr3.h"
 
 const Doub PI{ 3.14159265358979323 };
@@ -368,6 +366,16 @@ inline void operator/=(NRmatrix<T> &v, const Doub s)
 }
 
 template <class T>
+inline void operator/=(NRMat3d<T> &v, const Doub s)
+{
+	size_t i, N{ v.dim1()*(size_t)v.dim2()*v.dim3() };
+	auto pv = pointer(v);
+	for (i = 0; i < N; ++i) {
+		pv[i] /= s;
+	}
+}
+
+template <class T>
 inline void operator+=(NRvector<T> &v, const Complex s)
 {
 	Int i, N{ v.size() };
@@ -682,5 +690,3 @@ void tan(NRmatrix<T> &y, const NRmatrix<T> &x)
 		py[i] = tan(px[i]);
 	}
 }
-
-#endif /*_NR3PLUS_H_*/
