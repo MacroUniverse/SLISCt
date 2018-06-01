@@ -373,6 +373,7 @@ public:
 	NRMat3d();
 	NRMat3d(int n, int m, int k);
 	void resize(int n, int m, int k);
+	void assign(int n, int m, int k, const T &a);
 	inline T** operator[](const int i);	//subscripting: pointer to row i
 	inline const T* const * operator[](const int i) const;
 	inline int dim1() const;
@@ -411,13 +412,43 @@ void NRMat3d<T>::resize(int n, int m, int k)
 		int i, j;
 		nn = n; mm = m; kk = k; v = new T**[n];
 		v[0] = new T*[n*m];
-		v[0][0] = new T[n*m*k];
+		v[0][0] = new T[n*(size_t)m*k];
 		for (j = 1; j<m; j++) v[0][j] = v[0][j - 1] + k;
 		for (i = 1; i<n; i++) {
 			v[i] = v[i - 1] + m;
 			v[i][0] = v[i - 1][0] + m * k;
 			for (j = 1; j<m; j++) v[i][j] = v[i][j - 1] + k;
 		}
+	}
+}
+
+template <class T>
+void NRMat3d<T>::assign(int n, int m, int k, const T& a)
+{
+	if (n != nn || m != mm || k != kk) {
+		if (v != NULL) {
+			delete[] v[0][0];
+			delete[] v[0];
+			delete[] v;
+		}
+		if (n==0 || m==0 || k==0) {
+			v = NULL; return;
+		}
+
+		int i, j;
+		nn = n; mm = m; kk = k; v = new T**[n];
+		v[0] = new T*[n*m];
+		size_t nele = n*(size_t)m*k;
+		v[0][0] = new T[nele];
+		for (j = 1; j<m; j++) v[0][j] = v[0][j - 1] + k;
+		for (i = 1; i<n; i++) {
+			v[i] = v[i - 1] + m;
+			v[i][0] = v[i - 1][0] + m * k;
+			for (j = 1; j<m; j++) v[i][j] = v[i][j-1] + k;
+		}
+		T *v00 = v[0][0];
+
+		for (size_t q = 0; q < nele; ++q) v00[q] = a;
 	}
 }
 
