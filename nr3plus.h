@@ -33,9 +33,10 @@ void disp(MatComplex_I &v, const int start1, const int start2, const int n1, con
 // numel function returns total number of elements
 inline Int numel(VecDoub_I &v) { return v.size(); }
 inline Int numel(MatDoub_I &v) { return v.nrows()*v.ncols(); }
+inline size_t numel(Mat3DDoub_I &v) { return v.dim1()*(size_t)v.dim2()*v.dim3(); }
 inline Int numel(VecComplex_I &v) { return v.size(); }
 inline Int numel(MatComplex_I &v) { return v.nrows()*v.ncols(); }
-inline size_t numel(Mat3DComplex_I &v) { return v.dim1()*v.dim2()*v.dim3(); }
+inline size_t numel(Mat3DComplex_I &v) { return v.dim1()*(size_t)v.dim2()*v.dim3(); }
 inline Int numel(VecBool_I &v) { return v.size(); }
 inline Int numel(MatBool_I &v) { return v.nrows()*v.ncols(); }
 
@@ -50,6 +51,8 @@ inline const Complex* pointer(MatComplex_I &v) { return &v[0][0]; }
 inline Complex* pointer(MatComplex &v) { return &v[0][0]; }
 inline const Complex* pointer(Mat3DComplex_I &v) { return &v[0][0][0]; }
 inline Complex* pointer(Mat3DComplex &v) { return &v[0][0][0]; }
+inline const Doub* pointer(Mat3DDoub_I &v) { return &v[0][0][0]; }
+inline Doub* pointer(Mat3DDoub &v) { return &v[0][0][0]; }
 
 // Matrix/Vector manipulation
 
@@ -198,8 +201,18 @@ template <class T>
 inline void operator+=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
 {
 	int i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = &v1[0][0];
-	auto pv2 = &v2[0][0];
+	auto pv1 = v1[0];
+	auto pv2 = v2[0];
+	for (i = 0; i < N; ++i)
+		pv1[i] += pv2[i];
+}
+
+template <class T>
+inline void operator+=(NRMat3d<T> &v1, const NRMat3d<T> & v2)
+{
+	size_t i, N{ v1.dim1()*(size_t)v1.dim2()*v1.dim3() };
+	auto pv1 = v1[0][0];
+	auto pv2 = v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] += pv2[i];
 }
@@ -216,8 +229,18 @@ template <class T>
 inline void operator-=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
 {
 	int i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = &v1[0][0];
-	auto pv2 = &v2[0][0];
+	auto pv1 = v1[0];
+	auto pv2 = v2[0];
+	for (i = 0; i < N; ++i)
+		pv1[i] -= pv2[i];
+}
+
+template <class T>
+inline void operator-=(NRMat3d<T> &v1, const NRMat3d<T> & v2)
+{
+	size_t i, N{ v1.dim1()*(size_t)v1.dim2()*v1.dim3() };
+	auto pv1 = v1[0][0];
+	auto pv2 = v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] -= pv2[i];
 }
@@ -234,8 +257,18 @@ template <class T>
 inline void operator*=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
 {
 	int i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = &v1[0][0];
-	auto pv2 = &v2[0][0];
+	auto pv1 = v1[0];
+	auto pv2 = v2[0];
+	for (i = 0; i < N; ++i)
+		pv1[i] *= pv2[i];
+}
+
+template <class T>
+inline void operator*=(NRMat3d<T> &v1, const NRMat3d<T> & v2)
+{
+	size_t i, N{ v1.dim1()*(size_t)v1.dim2()*v1.dim3() };
+	auto pv1 = v1[0][0];
+	auto pv2 = v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] *= pv2[i];
 }
@@ -252,8 +285,18 @@ template <class T>
 inline void operator/=(NRmatrix<T> &v1, const NRmatrix<T> & v2)
 {
 	int i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = &v1[0][0];
-	auto pv2 = &v2[0][0];
+	auto pv1 = v1[0];
+	auto pv2 = v2[0];
+	for (i = 0; i < N; ++i)
+		pv1[i] /= pv2[i];
+}
+
+template <class T>
+inline void operator/=(NRMat3d<T> &v1, const NRMat3d<T> & v2)
+{
+	size_t i, N{ v1.dim1()*(size_t)v1.dim2()*v1.dim3() };
+	auto pv1 = v1[0][0];
+	auto pv2 = v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv1[i] /= pv2[i];
 }
@@ -270,9 +313,20 @@ template <class T>
 inline void add(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
 {
 	Int i, N{ v1.nrows()*v1.ncols() };
-	auto pv = &v[0][0];
-	auto pv1 = &v1[0][0];
-	auto pv2 = &v2[0][0];
+	auto pv = v[0];
+	auto pv1 = v1[0];
+	auto pv2 = v2[0];
+	for (i = 0; i < N; ++i)
+		pv[i] = pv1[i] + pv2[i];
+}
+
+template <class T>
+inline void add(NRMat3d<T> &v, const NRMat3d<T> &v1, const NRMat3d<T> & v2)
+{
+	size_t i, N{ v1.dim1()*(size_t)v1.dim2()*v1.dim3() };
+	auto pv = v[0][0];
+	auto pv1 = v1[0][0];
+	auto pv2 = v2[0][0];
 	for (i = 0; i < N; ++i)
 		pv[i] = pv1[i] + pv2[i];
 }
@@ -309,6 +363,16 @@ inline void operator+=(NRmatrix<T> &v, const Doub s)
 }
 
 template <class T>
+inline void operator+=(NRMat3d<T> &v, const Doub s)
+{
+	size_t i, N{ v.dim1()*(size_t)v.dim2()*v.dim3() };
+	auto pv = pointer(v);
+	for (i = 0; i < N; ++i) {
+		pv[i] += s;
+	}
+}
+
+template <class T>
 inline void operator-=(NRvector<T> &v, const Doub s)
 {
 	Int i, N{ v.size() };
@@ -328,6 +392,16 @@ inline void operator-=(NRmatrix<T> &v, const Doub s)
 }
 
 template <class T>
+inline void operator-=(NRMat3d<T> &v, const Doub s)
+{
+	size_t i, N{ v.dim1()*(size_t)v.dim2()*v.dim3() };
+	auto pv = pointer(v);
+	for (i = 0; i < N; ++i) {
+		pv[i] -= s;
+	}
+}
+
+template <class T>
 inline void operator*=(NRvector<T> &v, const Doub s)
 {
 	Int i, N{ v.size() };
@@ -340,6 +414,16 @@ template <class T>
 inline void operator*=(NRmatrix<T> &v, const Doub s)
 {
 	Int i, N{ v.nrows()*v.ncols() };
+	auto pv = pointer(v);
+	for (i = 0; i < N; ++i) {
+		pv[i] *= s;
+	}
+}
+
+template <class T>
+inline void operator*=(NRMat3d<T> &v, const Doub s)
+{
+	size_t i, N{ v.dim1()*(size_t)v.dim2()*v.dim3() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
 		pv[i] *= s;
