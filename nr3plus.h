@@ -28,6 +28,8 @@ void disp(MatUchar_I &a, const int precision);
 void disp(MatInt_I &a, const int precision);
 void disp(MatDoub_I &a, const int precision);
 void disp(MatComplex_I &a, const int precision);
+void disp(Mat3DDoub_I &a, const int precision);
+void disp(Mat3DComplex_I &a, const int precision);
 // version 3
 void disp(VecUchar_I &v, const int start, const int n);
 void disp(VecInt_I &v, const int start, const int n);
@@ -37,6 +39,8 @@ void disp(MatUchar_I &a, const int start1, const int start2, const int n1, const
 void disp(MatInt_I &a, const int start1, const int start2, const int n1, const int n2);
 void disp(MatDoub_I &a, const int start1, const int start2, const int n1, const int n2);
 void disp(MatComplex_I &a, const int start1, const int start2, const int n1, const int n2);
+void disp(Mat3DDoub_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3);
+void disp(Mat3DComplex_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3);
 // version 4
 void disp(VecUchar_I &v, const int start, const int n, const int precision);
 void disp(VecInt_I &v, const int start, const int n, const int precision);
@@ -46,7 +50,8 @@ void disp(MatUchar_I &a, const int start1, const int start2, const int n1, const
 void disp(MatInt_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
 void disp(MatDoub_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
 void disp(MatComplex_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
-
+void disp(Mat3DDoub_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3, const int precision);
+void disp(Mat3DComplex_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3, const int precision);
 
 // numel function returns total number of elements
 inline Int numel(VecDoub_I &v) { return v.size(); }

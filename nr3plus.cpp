@@ -260,6 +260,42 @@ void disp(MatComplex_I &a, const int precision)
 	cout.precision(oldPrecision);
 }
 
+void disp(Mat3DDoub_I &a, const int precision)
+{
+	int i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	for (k = 0; k < q; ++k) {
+		cout << "(:, :, " << k << ")" << endl;
+		for (i = 0; i < m; ++i) {
+			for (j = 0; j < n; ++j) {
+				cout << a[i][j][k] << "   ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+	cout.precision(oldPrecision);
+}
+
+void disp(Mat3DComplex_I &a, const int precision)
+{
+	int i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	for (k = 0; k < q; ++k) {
+		cout << "(:, :, " << k << ")" << endl;
+		for (i = 0; i < m; ++i) {
+			for (j = 0; j < n; ++j) {
+				cout << a[i][j][k] << "   ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+	cout.precision(oldPrecision);
+}
+
 // version 3
 
 void disp(VecUchar_I &v, const int start, const int n)
@@ -370,6 +406,42 @@ void disp(MatComplex_I &a, const int start1, const int start2, const int n1, con
 	cout.precision(oldPrecision);
 }
 
+void disp(Mat3DDoub_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3)
+{
+	int i, j, k, precision{ 4 };
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	for (k = start3; k < start3+n3; ++k) {
+		cout << "(:, :, " << k << ")" << endl;
+		for (i = start1; i < start1+n1; ++i) {
+			for (j = start2; j < start2+n2; ++j) {
+				cout << a[i][j][k] << "   ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+	cout.precision(oldPrecision);
+}
+
+void disp(Mat3DComplex_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3)
+{
+	int i, j, k, precision{ 4 };
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	for (k = start3; k < start3 + n3; ++k) {
+		cout << "(:, :, " << k << ")" << endl;
+		for (i = start1; i < start1 + n1; ++i) {
+			for (j = start2; j < start2 + n2; ++j) {
+				cout << a[i][j][k] << "   ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+	cout.precision(oldPrecision);
+}
+
 // version 4
 
 void disp(VecUchar_I &v, const int start, const int n, const int precision)
@@ -477,5 +549,41 @@ void disp(MatComplex_I &a, const int start1, const int start2, const int n1, con
 		cout << endl;
 	}
 	cout << endl;
+	cout.precision(oldPrecision);
+}
+
+void disp(Mat3DDoub_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3, const int precision)
+{
+	int i, j, k;
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	for (k = start3; k < start3 + n3; ++k) {
+		cout << "(:, :, " << k << ")" << endl;
+		for (i = start1; i < start1 + n1; ++i) {
+			for (j = start2; j < start2 + n2; ++j) {
+				cout << a[i][j][k] << "   ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+	cout.precision(oldPrecision);
+}
+
+void disp(Mat3DComplex_I &a, const int start1, const int start2, const int start3, const int n1, const int n2, const int n3, const int precision)
+{
+	int i, j, k;
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	for (k = start3; k < start3 + n3; ++k) {
+		cout << "(:, :, " << k << ")" << endl;
+		for (i = start1; i < start1 + n1; ++i) {
+			for (j = start2; j < start2 + n2; ++j) {
+				cout << a[i][j][k] << "   ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
 	cout.precision(oldPrecision);
 }
