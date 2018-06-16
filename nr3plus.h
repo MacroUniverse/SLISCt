@@ -9,25 +9,43 @@ const Doub E{exp(1.)};
 
 // display vectors and matrices
 // version 1
+void disp(VecUchar_I &v);
+void disp(VecInt_I &v);
 void disp(VecDoub_I &v);
 void disp(VecComplex_I &v);
-void disp(MatDoub_I &v);
-void disp(MatComplex_I &v);
+void disp(MatUchar_I &a);
+void disp(MatInt_I &a);
+void disp(MatDoub_I &a);
+void disp(MatComplex_I &a);
+void disp(Mat3DDoub_I &a);
+void disp(Mat3DComplex_I &a);
 // version 2
+void disp(VecUchar_I &v, const int precision);
+void disp(VecInt_I &v, const int precision);
 void disp(VecDoub_I &v, const int precision);
 void disp(VecComplex_I &v, const int precision);
-void disp(MatDoub_I &v, const int precision);
-void disp(MatComplex_I &v, const int precision);
+void disp(MatUchar_I &a, const int precision);
+void disp(MatInt_I &a, const int precision);
+void disp(MatDoub_I &a, const int precision);
+void disp(MatComplex_I &a, const int precision);
 // version 3
+void disp(VecUchar_I &v, const int start, const int n);
+void disp(VecInt_I &v, const int start, const int n);
 void disp(VecDoub_I &v, const int start, const int n);
 void disp(VecComplex_I &v, const int start, const int n);
-void disp(MatDoub_I &v, const int start1, const int start2, const int n1, const int n2);
-void disp(MatComplex_I &v, const int start1, const int start2, const int n1, const int n2);
+void disp(MatUchar_I &a, const int start1, const int start2, const int n1, const int n2);
+void disp(MatInt_I &a, const int start1, const int start2, const int n1, const int n2);
+void disp(MatDoub_I &a, const int start1, const int start2, const int n1, const int n2);
+void disp(MatComplex_I &a, const int start1, const int start2, const int n1, const int n2);
 // version 4
+void disp(VecUchar_I &v, const int start, const int n, const int precision);
+void disp(VecInt_I &v, const int start, const int n, const int precision);
 void disp(VecDoub_I &v, const int start, const int n, const int precision);
 void disp(VecComplex_I &v, const int start, const int n, const int precision);
-void disp(MatDoub_I &v, const int start1, const int start2, const int n1, const int n2, const int precision);
-void disp(MatComplex_I &v, const int start1, const int start2, const int n1, const int n2, const int precision);
+void disp(MatUchar_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
+void disp(MatInt_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
+void disp(MatDoub_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
+void disp(MatComplex_I &a, const int start1, const int start2, const int n1, const int n2, const int precision);
 
 
 // numel function returns total number of elements
