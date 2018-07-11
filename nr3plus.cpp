@@ -1,10 +1,13 @@
 # include "nr3plus.h"
-using std::cout; using std::endl;
+using std::cout; using std::endl; using std::vector;
 
 // display scalar, vector, or matrix
 // not using template (or functions will not be available during debug)
 
 // version 1
+
+std::chrono::steady_clock::time_point tic_time_start; // for tic() toc()
+vector<std::chrono::steady_clock::time_point> tic_time_starts(20);
 
 void disp(VecUchar_I &v)
 {

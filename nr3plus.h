@@ -2,10 +2,28 @@
 // written by Hongyu Shi
 #pragma once
 #include "nr3.h"
+#include <chrono>
 
+// global constants
 const Doub PI{ 3.14159265358979323 };
 const Complex I(0, 1);
 const Doub E{exp(1.)};
+
+// tic() toc() timer
+extern std::chrono::steady_clock::time_point tic_time_start;
+extern std::vector<std::chrono::steady_clock::time_point> tic_time_starts;
+inline void tic() { tic_time_start = std::chrono::steady_clock::now(); }
+inline Doub toc() {
+	std::chrono::steady_clock::time_point tic_time_stop = std::chrono::steady_clock::now();
+	std::chrono::duration<double> t = std::chrono::duration_cast<std::chrono::duration<double>>(tic_time_stop - tic_time_start);
+	return t.count();
+}
+inline void tic(Int ind) { tic_time_starts[ind] = std::chrono::steady_clock::now(); }
+inline Doub toc(Int ind) {
+	std::chrono::steady_clock::time_point tic_time_stop = std::chrono::steady_clock::now();
+	std::chrono::duration<double> t = std::chrono::duration_cast<std::chrono::duration<double>>(tic_time_stop - tic_time_starts[ind]);
+	return t.count();
+}
 
 // display vectors and matrices
 // version 1
@@ -78,6 +96,41 @@ inline const Doub* pointer(Mat3DDoub_I &v) { return &v[0][0][0]; }
 inline Doub* pointer(Mat3DDoub &v) { return &v[0][0][0]; }
 
 // Matrix/Vector manipulation
+
+template <class T>
+inline T sum(NRvector<T> &v)
+{
+	Int i, n{ v.size() };
+	T sum = 0;
+	for (i = 0; i < n; ++i) {
+		sum += v[i];
+	}
+	return sum;
+}
+
+template <class T>
+inline T sum(NRmatrix<T> &a)
+{
+	Int i, n{ numel(a) };
+	T sum = 0;
+	T *pa = a[0];
+	for (i = 0; i < n; ++i) {
+		sum += pa[i];
+	}
+	return sum;
+}
+
+template <class T>
+inline T sum(NRMat3d<T> &a)
+{
+	size_t i, n{ numel(a) };
+	T sum = 0;
+	T *pa = a[0][0];
+	for (i = 0; i < n; ++i) {
+		sum += pa[i];
+	}
+	return sum;
+}
 
 template <class T>
 inline void flip(NRvector<T> &v)
