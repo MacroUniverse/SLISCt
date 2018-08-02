@@ -6,7 +6,7 @@ struct Base_interp
 	Int n, mm, jsav, cor, dj;
 	const Doub *xx, *yy;
 	Base_interp(VecDoub_I &x, const Doub *y, Int m)
-		: n(x.size()), mm(m), jsav(0), cor(0), xx(&x[0]), yy(y) {
+		: n((Int)x.size()), mm(m), jsav(0), cor(0), xx(&x[0]), yy(y) {
 		dj = MIN(1,(int)pow((Doub)n,0.25));
 	}
 

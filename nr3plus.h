@@ -72,8 +72,8 @@ void disp(MatUchar_I &a);
 void disp(MatInt_I &a);
 void disp(MatDoub_I &a);
 void disp(MatComp_I &a);
-void disp(Mat3DDoub_I &a);
-void disp(Mat3DComp_I &a);
+void disp(Mat3Doub_I &a);
+void disp(Mat3Comp_I &a);
 // version 2
 void disp(VecUchar_I &v, Int_I precision);
 void disp(VecInt_I &v, Int_I precision);
@@ -83,8 +83,8 @@ void disp(MatUchar_I &a, Int_I precision);
 void disp(MatInt_I &a, Int_I precision);
 void disp(MatDoub_I &a, Int_I precision);
 void disp(MatComp_I &a, Int_I precision);
-void disp(Mat3DDoub_I &a, Int_I precision);
-void disp(Mat3DComp_I &a, Int_I precision);
+void disp(Mat3Doub_I &a, Int_I precision);
+void disp(Mat3Comp_I &a, Int_I precision);
 // version 3
 void disp(VecUchar_I &v, Long_I start, Long_I n);
 void disp(VecInt_I &v, Long_I start, Long_I n);
@@ -94,8 +94,8 @@ void disp(MatUchar_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
 void disp(MatInt_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
 void disp(MatDoub_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
 void disp(MatComp_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
-void disp(Mat3DDoub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3);
-void disp(Mat3DComp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3);
+void disp(Mat3Doub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3);
+void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3);
 // version 4
 void disp(VecUchar_I &v, Long_I start, Long_I n, Int_I precision);
 void disp(VecInt_I &v, Long_I start, Long_I n, Int_I precision);
@@ -105,8 +105,8 @@ void disp(MatUchar_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int
 void disp(MatInt_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
 void disp(MatDoub_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
 void disp(MatComp_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
-void disp(Mat3DDoub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision);
-void disp(Mat3DComp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision);
+void disp(Mat3Doub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision);
+void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision);
 
 // === get vec/mat properties ===
 
@@ -288,7 +288,7 @@ inline Doub norm2(MatComp_I &v)
 	return s;
 }
 
-inline Doub norm2(Mat3DComp_I &v)
+inline Doub norm2(Mat3Comp_I &v)
 {
 	Long i, N{ numel(v) };
 	Doub s{}, temp;
@@ -311,9 +311,9 @@ inline void linspace(NRvector<T> &v, const T first, const T last, Llong_I n = -1
 	Long i, N;
 	if (n < 0) N = v.size();
 	else v.resize(N = n);	
-	T delta = (last - first) / (N - 1);
+	T delta = (last - first) / ((T)N - 1);
 	for (i = 0; i < N; ++i)
-		v[i] = first + delta * i;
+		v[i] = first + delta * (T)i;
 }
 
 template <class T>
@@ -324,10 +324,10 @@ inline void linspace(NRmatrix<T> &a, const T first, const T last, Llong_I n = -1
 	else {
 		a.resize(n, m); N = n*m;
 	}
-	T delta = (last - first) / (N - 1);
+	T delta = (last - first) / ((T)N - 1);
 	T *pa = a[0];
 	for (i = 0; i < N; ++i)
-		pa[i] = first + delta * i;
+		pa[i] = first + delta * (T)i;
 }
 
 template <class T>
@@ -370,9 +370,8 @@ inline void flip(NRvector<T> &v)
 template <class T>
 inline void flip(NRvector<T> &v, const NRvector<T> &v0)
 {
-	Int i, n{ v0.size() };
-	T temp;
-	if (v.size() != n) v.resize(n);
+	Int i, n{ (Int)v0.size() };
+	v.resize(n);
 	for (i = 0; i < n; ++i)
 		v[i] = v0[n - i - 1];
 }

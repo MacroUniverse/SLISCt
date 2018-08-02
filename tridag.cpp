@@ -6,7 +6,7 @@
 #include "tridag.h"
 
 // assuming U matrix has diagonal elements of 1
-TridagC2::TridagC2(VecComplex_I & diag0, const Complex upper0, const Complex lower0) :
+TridagC2::TridagC2(VecComp_I & diag0, const Comp upper0, const Comp lower0) :
 	n{ diag0.size() }, lower{ lower0 }, diag{ diag0 }
 {
 	Int i;
@@ -18,9 +18,9 @@ TridagC2::TridagC2(VecComplex_I & diag0, const Complex upper0, const Complex low
 	}
 }
 
-void TridagC2::solve(VecComplex_O &x, VecComplex_I &b)
+void TridagC2::solve(VecComp_O &x, VecComp_I &b)
 {
-	Int i;
+	Long i;
 	x[0] = b[0] / bet[0];
 	for (i = 1; i < n; ++i) {
 		x[i] = (b[i] - lower * x[i - 1]) / bet[i];
@@ -32,7 +32,7 @@ void TridagC2::solve(VecComplex_O &x, VecComplex_I &b)
 
 
 // assuming U matrix has diagonal elements of 1
-TridagC3::TridagC3(const Complex diag0, const Complex upper0, const Complex lower0, const Int n0) :
+TridagC3::TridagC3(const Comp diag0, const Comp upper0, const Comp lower0, const Int n0) :
 	n{ n0 }, lower{ lower0 }, diag{ diag0 }
 {
 	Int i;
@@ -44,9 +44,9 @@ TridagC3::TridagC3(const Complex diag0, const Complex upper0, const Complex lowe
 	}
 }
 
-void TridagC3::solve(VecComplex_O &x, VecComplex_I &b)
+void TridagC3::solve(VecComp_O &x, VecComp_I &b)
 {
-	Int i;
+	Long i;
 	x[0] = b[0] / bet[0];
 	for (i = 1; i < n; ++i) {
 		x[i] = (b[i] - lower * x[i - 1]) / bet[i];

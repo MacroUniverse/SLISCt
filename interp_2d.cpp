@@ -1,9 +1,9 @@
 #include "interp_2d.h"
 #include "nr3plus.h"
 
-void Spline_grid(MatComplex_O &Z, VecDoub_I &x, VecDoub_I &y, MatComplex_I &Z0, VecDoub_I &x0, VecDoub_I &y0)
+void Spline_grid(MatComp_O &Z, VecDoub_I &x, VecDoub_I &y, MatComp_I &Z0, VecDoub_I &x0, VecDoub_I &y0)
 {
-	Int i, j, indi, indj, Nx0{ x0.size() }, Ny0{ y0.size() }, Nx{ x.size() }, Ny{ y.size() };
+	Int i, j, indi, indj, Nx0{ (Int)x0.size() }, Ny0{ (Int)y0.size() }, Nx{ (Int)x.size() }, Ny{ (Int)y.size() };
 	Doub temp;
 	if (Z.nrows() != Ny || Z.ncols() != Nx) Z.resize(Ny, Nx);
 	// decide interpolation range
@@ -26,9 +26,9 @@ void Spline_grid(MatComplex_O &Z, VecDoub_I &x, VecDoub_I &y, MatComplex_I &Z0, 
 			Nj = j - jmin + 1; break;
 		}
 	if (imin < 0 || Ni < 0 || jmin < 0 || Nj < 0) {
-		Z << 0.; return;
+		Z = 0.; return;
 	}
-	MatComplex Z1(Ny0, Nj); // for interp in x direction
+	MatComp Z1(Ny0, Nj); // for interp in x direction
 	// interp. x direction
 	{VecDoub Zx_R(Nx0), Zx_I(Nx0);
 	for (i = 0; i < Ny0; ++i) {
@@ -39,7 +39,7 @@ void Spline_grid(MatComplex_O &Z, VecDoub_I &x, VecDoub_I &y, MatComplex_I &Z0, 
 		Spline_interp f_R(x0, Zx_R), f_I(x0, Zx_I);
 		for (j = 0; j < Nj; ++j) {
 			temp = x[jmin + j];
-			Z1[i][j] = Complex(f_R.interp(temp), f_I.interp(temp));
+			Z1[i][j] = Comp(f_R.interp(temp), f_I.interp(temp));
 		}
 	}}
 	// interp. y direction
@@ -55,7 +55,7 @@ void Spline_grid(MatComplex_O &Z, VecDoub_I &x, VecDoub_I &y, MatComplex_I &Z0, 
 		for (i = 0; i < Ni; ++i) {
 			indi = imin + i;
 			temp = yflip[indi];
-			Z[indi][indj] = Complex(f_R.interp(temp), f_I.interp(temp));
+			Z[indi][indj] = Comp(f_R.interp(temp), f_I.interp(temp));
 		}
 	}}
 }

@@ -1,21 +1,23 @@
 === Introduction ===
-This project is my C++ utilities based on Numerical Recipes 3ed. It typedefs all of the numerical types it uses, and defines some simple template clases for vectors, matrices, and 3D matrices. All other utilities uses these types and classes.
+This project is a simple C++ math library rewritten from Numerical Recipes 3ed. It typedefs some common scalar types, and some simple template clases for vectors, matrices, and 3D matrices. All other utilities uses these types and classes.
 
-"nr3plus.h" and "nr3plus.cpp" include the minimal set of this project, and can be used independently without other files.
+"nr3.h" includes all the typedefs and vector/matrix class definitions and dependencies, and can be used independently;
 
-Vectors or matrixs temporary is hard to deal with, so don't use it! This means, don't ever return a vector or matrix from a function (including operator overloading). Note that +=, -= etc. is totally fine because they don't return anything.
+"nr3plus.h" and "nr3plus.cpp" include the common utilities, and only depends on "nr3.h".
 
+Class object temporary is inefficient (even with move constructor/assignment), using copy/move constructor or move assignment operator for vector/matrix types will create an error. Vector/Matrix type arguments should be passed by reference and should not be returned (use reference for output).
 
 === typedefs ===
-Int is int, Uint is unsigned int, Llong is 64 bit integer, Doub is double, Char is char, Uchar is unsigned char, Ldoub is long double, 
-Long is 64 bit integer by default, define _USE_Int_AS_LONG macro to use int instead.
+Int is int, Uint is unsigned int, Llong is 64 bit integer, Doub is double, Comp is std::complex<double>, Char is char, Uchar is unsigned char, Ldoub is long double.
+Long is 64 bit integer by default, define _USE_Int_AS_LONG macro to use int instead. Use Long for vector/matrix index or loop variable etc.
+Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
 
-Functions output arguments can not be any of the input arguments.
+By default, functions output arguments can not be any of the input arguments (this is called aliasing).
 
 === constants ===
-Doub PI{ 3.14159265358979323 }
-Complex I(0, 1)
-Doub E{exp(1.)}
+const Doub PI = 3.14159265358979323;
+const Doub E  = 2.71828182845904524;
+const Comp I(0., 1.);
 
 === time utilities ===
 void tic()
@@ -76,3 +78,7 @@ void mul(out, in, in) // mat-mat or mat-vec multiplications, whenever make sense
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
 void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub kmin, Doub kmax)
+
+
+=== others ===
+resize() does nothing if size doesn't change

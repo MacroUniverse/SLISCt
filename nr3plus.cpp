@@ -141,7 +141,7 @@ void disp(MatComp_I &a)
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DDoub_I &a)
+void disp(Mat3Doub_I &a)
 {
 	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
 	Int precision{ 4 };
@@ -162,7 +162,7 @@ void disp(Mat3DDoub_I &a)
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DComp_I &a)
+void disp(Mat3Comp_I &a)
 {
 	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
 	Int precision{ 4 };
@@ -309,7 +309,7 @@ void disp(MatComp_I &a, Int_I precision)
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DDoub_I &a, Int_I precision)
+void disp(Mat3Doub_I &a, Int_I precision)
 {
 	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
 	auto oldPrecision = cout.precision();
@@ -329,7 +329,7 @@ void disp(Mat3DDoub_I &a, Int_I precision)
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DComp_I &a, Int_I precision)
+void disp(Mat3Comp_I &a, Int_I precision)
 {
 	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
 	auto oldPrecision = cout.precision();
@@ -483,7 +483,7 @@ void disp(MatComp_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DDoub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
+void disp(Mat3Doub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
 {
 	Long i, j, k;
 	Int precision{ 4 };
@@ -504,7 +504,7 @@ void disp(Mat3DDoub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DComp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
+void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
 {
 	Long i, j, k;
 	Int precision{ 4 };
@@ -651,7 +651,7 @@ void disp(MatComp_I &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DDoub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
+void disp(Mat3Doub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
 {
 	Long i, j, k;
 	auto oldPrecision = cout.precision();
@@ -671,7 +671,7 @@ void disp(Mat3DDoub_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1
 	cout.precision(oldPrecision);
 }
 
-void disp(Mat3DComp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
+void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
 {
 	Long i, j, k;
 	auto oldPrecision = cout.precision();
