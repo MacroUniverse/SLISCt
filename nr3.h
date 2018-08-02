@@ -1,5 +1,4 @@
-// nr3.h from Numerical Recipes
-// modified by Hongyu Shi
+// nr3.h based on Numerical Recipes 3ed
 
 #ifndef _NR3_H_
 #define _NR3_H_
