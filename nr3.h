@@ -1,19 +1,18 @@
-// nr3.h based on Numerical Recipes 3ed
+// nr3.h from Numerical Recipes
+// modified by Hongyu Shi
 
-#ifndef _NR3_H_
-#define _NR3_H_
+#pragma once
 
 #ifdef _DEBUG
+// this will not check the last index
 #define _CHECKBOUNDS_ 1
 #endif
-//#define _USESTDVECTOR_ 1
-//#define _TURNONFPES_ 1
 
 // all the system #include's we'll ever need
+#include <iostream>
 #include <fstream>
 #include <cmath>
 #include <complex>
-#include <iostream>
 #include <iomanip>
 #include <vector>
 #include <limits>
@@ -24,7 +23,60 @@
 #include <string.h>
 #include <ctype.h>
 
+// basic type names (redefine if your bit lengths don't match)
+
+typedef const int Int_I; // 32 bit integer
+typedef int Int, Int_O, Int_IO;
+typedef const unsigned int Uint_I;
+typedef unsigned int Uint, Uint_O, Uint_IO;
+
+#ifdef _MSC_VER
+typedef const __int64 Llong_I; // 64 bit integer
+typedef __int64 Llong, Llong_O, Llong_IO;
+typedef const unsigned __int64 Ullong_I;
+typedef unsigned __int64 Ullong, Ullong_O, Ullong_IO;
+#else
+typedef long long int Llong; // 64 bit integer
+typedef unsigned long long int Ullong;
+#endif
+
+#ifndef _USE_Int_AS_LONG
+typedef Llong Long;
+#else
+typedef Int Long;
+#endif
+typedef const Long Long_I;
+typedef Long Long_O, Long_IO;
+
+typedef const char Char_I; // 8 bit integer
+typedef char Char, Char_O, CharIO;
+typedef const unsigned char Uchar_I;
+typedef unsigned char Uchar, Uchar_O, Uchar_IO;
+
+typedef const double Doub_I; // default floating type
+typedef double Doub, Doub_O, Doub_IO;
+typedef const long double Ldoub_I;
+typedef long double Ldoub, Ldoub_O, Ldoub_IO;
+
+typedef const std::complex<double> Comp_I;
+typedef std::complex<double> Comp, Comp_O, Comp_IO;
+
+typedef const bool Bool_I;
+typedef bool Bool, Bool_O, Bool_IO;
+
+static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
+
+// report error and pause execution
+#define error(str) {std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();}
+
 // macro-like inline functions
+template<class T>
+inline void nrmemset(T *dest, const T val, Long_I n)
+{
+	T *end = dest + n;
+	for (; dest < end; ++dest)
+		*dest = val;
+}
 
 template<class T>
 inline T SQR(const T a) {return a*a;}
@@ -64,422 +116,428 @@ inline void SWAP(T &a, T &b)
 	{T dum=a; a=b; b=dum;}
 
 
-// Vector and Matrix Classes
-
-#ifdef _USESTDVECTOR_
-#define NRvector vector
-#else
+// Vector Class
 
 template <class T>
 class NRvector {
 private:
-	int nn;	// size of array. upper index is nn-1
+	Long nn;	// size of array. upper index is nn-1
 	T *v;
 public:
 	NRvector();
-	explicit NRvector(int n);		// Zero-based array
-	NRvector(int n, const T &a);	//initialize to constant value
-	NRvector(int n, const T *a);	// Initialize to array
-	NRvector(const NRvector &rhs);	// Copy constructor
-	NRvector & operator=(const NRvector &rhs);	//assignment
-	typedef T value_type; // make T available externally
-	inline T & operator[](const int i);	//i'th element
-	inline const T & operator[](const int i) const;
-	inline int size() const;
-	void resize(int newn); // resize (contents not preserved)
-	void assign(int newn, const T &a); // resize and assign a constant value
+	explicit NRvector(Long_I n);
+	NRvector(Long_I n, const T &a);	//initialize to constant value
+	NRvector(Long_I n, const T *a);	// Initialize to array
+	NRvector(const NRvector &rhs);	// Copy constructor forbidden
+	inline NRvector & operator=(const NRvector &rhs);	// copy assignment
+	inline NRvector & operator=(const T rhs);  // assign to constant value
+	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
+	inline T & operator[](Long_I i);	//i'th element
+	inline const T & operator[](Long_I i) const;
+	inline Long_I size() const;
+	inline void resize(Long_I newn); // resize (contents not preserved)
+	template <class T1>
+	inline void resize(const NRvector<T1> &v);
 	~NRvector();
 };
 
-// NRvector definitions
+template <class T>
+NRvector<T>::NRvector() : nn(0), v(nullptr) {}
 
 template <class T>
-NRvector<T>::NRvector() : nn(0), v(NULL) {}
+NRvector<T>::NRvector(Long_I n) : nn(n), v(n>0 ? new T[n] : nullptr) {}
 
 template <class T>
-NRvector<T>::NRvector(int n) : nn(n), v(n>0 ? new T[n] : NULL) {}
-
-template <class T>
-NRvector<T>::NRvector(int n, const T& a) : nn(n), v(n>0 ? new T[n] : NULL)
+NRvector<T>::NRvector(Long_I n, const T& a) : NRvector(n)
 {
-	for(int i=0; i<n; i++) v[i] = a;
+	nrmemset(v, a, n);
 }
 
 template <class T>
-NRvector<T>::NRvector(int n, const T *a) : nn(n), v(n>0 ? new T[n] : NULL)
+NRvector<T>::NRvector(Long_I n, const T *a) : NRvector(n)
 {
-	for(int i=0; i<n; i++) v[i] = *a++;
+	memcpy(v, a, n*sizeof(T));
 }
 
 template <class T>
-NRvector<T>::NRvector(const NRvector<T> &rhs) : nn(rhs.nn), v(nn>0 ? new T[nn] : NULL)
+NRvector<T>::NRvector(const NRvector<T> &rhs)
 {
-	for(int i=0; i<nn; i++) v[i] = rhs[i];
+	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
-NRvector<T> & NRvector<T>::operator=(const NRvector<T> &rhs)
-// postcondition: normal assignment via copying has been performed;
-//		if vector and rhs were different sizes, vector
-//		has been resized to match the size of rhs
+inline NRvector<T> & NRvector<T>::operator=(const NRvector<T> &rhs)
 {
-	if (this != &rhs)
-	{
-		if (nn != rhs.nn) {
-			if (v != NULL) delete [] (v);
-			nn=rhs.nn;
-			v= nn>0 ? new T[nn] : NULL;
-		}
-		for (int i=0; i<nn; i++)
-			v[i]=rhs[i];
-	}
+	if (this == &rhs) error("self assignment is forbidden!");
+	resize(rhs.nn);
+	memcpy(v, rhs.v, nn*sizeof(T));
 	return *this;
 }
 
 template <class T>
-inline T & NRvector<T>::operator[](const int i)	//subscripting
+inline NRvector<T> & NRvector<T>::operator=(const T rhs)
+{
+	if (nn) nrmemset(v, rhs, nn);
+	return *this;
+}
+
+template <class T>
+inline void NRvector<T>::operator<<(NRvector<T> &rhs)
+{
+	if (this == &rhs) error("self move is forbidden!");
+	if (v != nullptr) delete[] v;
+	nn = rhs.nn;
+	v = rhs.v;
+	rhs.v = nullptr;
+	rhs.nn = 0;
+}
+
+template <class T>
+inline T & NRvector<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=nn) {
-	throw("NRvector subscript out of bounds");
-}
+if (i<0 || i>=nn)
+	error("NRvector subscript out of bounds");
 #endif
 	return v[i];
 }
 
 template <class T>
-inline const T & NRvector<T>::operator[](const int i) const	//subscripting
+inline const T & NRvector<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=nn) {
-	throw("NRvector subscript out of bounds");
-}
+if (i<0 || i>=nn)
+	error("NRvector subscript out of bounds");
 #endif
 	return v[i];
 }
 
 template <class T>
-inline int NRvector<T>::size() const
+inline Long_I NRvector<T>::size() const
 {
 	return nn;
 }
 
 template <class T>
-void NRvector<T>::resize(int newn)
+inline void NRvector<T>::resize(Long_I newn)
 {
 	if (newn != nn) {
-		if (v != NULL) delete[] (v);
+		if (v != nullptr) delete[] v;
 		nn = newn;
-		v = nn > 0 ? new T[nn] : NULL;
+		v = nn > 0 ? new T[nn] : nullptr;
 	}
 }
 
-template <class T>
-void NRvector<T>::assign(int newn, const T& a)
+template<class T>
+template<class T1>
+inline void NRvector<T>::resize(const NRvector<T1>& v)
 {
-	if (newn != nn) {
-		if (v != NULL) delete[] (v);
-		nn = newn;
-		v = nn > 0 ? new T[nn] : NULL;
-	}
-	for (int i=0;i<nn;i++) v[i] = a;
+	resize(v.size());
 }
 
 template <class T>
 NRvector<T>::~NRvector()
 {
-	if (v != NULL) delete[] (v);
+	if (v != nullptr) delete[] v;
 }
 
-// end of NRvector definitions
-
-#endif //ifdef _USESTDVECTOR_
+// Matrix Class
 
 template <class T>
 class NRmatrix {
 private:
-	int nn;
-	int mm;
+	Long nn;
+	Long mm;
 	T **v;
+	inline T **data_alloc(Long_I n, Long_I m);
+	inline void data_free();
 public:
 	NRmatrix();
-	NRmatrix(int n, int m);			// Zero-based array
-	NRmatrix(int n, int m, const T &a);	//Initialize to constant
-	NRmatrix(int n, int m, const T *a);	// Initialize to array
+	NRmatrix(Long_I n, Long_I m);
+	NRmatrix(Long_I n, Long_I m, const T &a);	//Initialize to constant
+	NRmatrix(Long_I n, Long_I m, const T *a);	// Initialize to array
 	NRmatrix(const NRmatrix &rhs);		// Copy constructor
-	NRmatrix & operator=(const NRmatrix &rhs);	//assignment
-	typedef T value_type; // make T available externally
-	inline T* operator[](const int i);	//subscripting: pointer to row i
-	inline const T* operator[](const int i) const;
-	inline int nrows() const;
-	inline int ncols() const;
-	void resize(int newn, int newm); // resize (contents not preserved)
-	void assign(int newn, int newm, const T &a); // resize and assign a constant value
+	inline NRmatrix & operator=(const NRmatrix &rhs);	//assignment
+	inline NRmatrix & operator=(const T rhs);
+	inline void operator<<(NRmatrix &rhs); // move data and rhs.resize(0, 0)
+	inline T* operator[](Long_I i);	//subscripting: pointer to row i
+	inline const T* operator[](Long_I i) const;
+	inline Long nrows() const;
+	inline Long ncols() const;
+	inline void resize(Long_I newn, Long_I newm); // resize (contents not preserved)
+	template <class T1>
+	inline void resize(const NRmatrix<T1> &a);
 	~NRmatrix();
 };
 
 template <class T>
-NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(NULL) {}
-
-template <class T>
-NRmatrix<T>::NRmatrix(int n, int m) : nn(n), mm(m), v(n>0 ? new T*[n] : NULL)
+inline T ** NRmatrix<T>::data_alloc(Long_I n, Long_I m)
 {
-	int i,nel=m*n;
-	if (v) v[0] = nel>0 ? new T[nel] : NULL;
-	for (i=1;i<n;i++) v[i] = v[i-1] + m;
+	if (m*n == 0) return nullptr;
+	T **p = new T*[n];
+	p[0] = new T[m*n];
+	for (Long i = 1; i<n; i++)
+		p[i] = p[i-1] + m;
+	return p;
 }
 
 template <class T>
-NRmatrix<T>::NRmatrix(int n, int m, const T &a) : nn(n), mm(m), v(n>0 ? new T*[n] : NULL)
+inline void NRmatrix<T>::data_free()
 {
-	int i,j,nel=m*n;
-	if (v) v[0] = nel>0 ? new T[nel] : NULL;
-	for (i=1; i< n; i++) v[i] = v[i-1] + m;
-	for (i=0; i< n; i++) for (j=0; j<m; j++) v[i][j] = a;
-}
-
-template <class T>
-NRmatrix<T>::NRmatrix(int n, int m, const T *a) : nn(n), mm(m), v(n>0 ? new T*[n] : NULL)
-{
-	int i,j,nel=m*n;
-	if (v) v[0] = nel>0 ? new T[nel] : NULL;
-	for (i=1; i< n; i++) v[i] = v[i-1] + m;
-	for (i=0; i< n; i++) for (j=0; j<m; j++) v[i][j] = *a++;
-}
-
-template <class T>
-NRmatrix<T>::NRmatrix(const NRmatrix &rhs) : nn(rhs.nn), mm(rhs.mm), v(nn>0 ? new T*[nn] : NULL)
-{
-	int i,j,nel=mm*nn;
-	if (v) v[0] = nel>0 ? new T[nel] : NULL;
-	for (i=1; i< nn; i++) v[i] = v[i-1] + mm;
-	for (i=0; i< nn; i++) for (j=0; j<mm; j++) v[i][j] = rhs[i][j];
-}
-
-template <class T>
-NRmatrix<T> & NRmatrix<T>::operator=(const NRmatrix<T> &rhs)
-// postcondition: normal assignment via copying has been performed;
-//		if matrix and rhs were different sizes, matrix
-//		has been resized to match the size of rhs
-{
-	if (this != &rhs) {
-		int i,j,nel;
-		if (nn != rhs.nn || mm != rhs.mm) {
-			if (v != NULL) {
-				delete[] (v[0]);
-				delete[] (v);
-			}
-			nn=rhs.nn;
-			mm=rhs.mm;
-			v = nn>0 ? new T*[nn] : NULL;
-			nel = mm*nn;
-			if (v) v[0] = nel>0 ? new T[nel] : NULL;
-			for (i=1; i< nn; i++) v[i] = v[i-1] + mm;
-		}
-		for (i=0; i< nn; i++) for (j=0; j<mm; j++) v[i][j] = rhs[i][j];
+	if (v != nullptr) {
+		delete v[0]; delete v;
 	}
+}
+
+template <class T>
+NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(nullptr) {}
+
+template <class T>
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : nn(n), mm(m), v(data_alloc(n, m)) {}
+
+template <class T>
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T &a) : NRmatrix(n, m)
+{
+	nrmemset(v[0], a, n*m);
+}
+
+template <class T>
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T *a) : NRmatrix(n, m)
+{
+	memcpy(v[0], a, n*m*sizeof(T));
+}
+
+template <class T>
+NRmatrix<T>::NRmatrix(const NRmatrix<T> &rhs)
+{
+	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!")
+}
+
+template <class T>
+inline NRmatrix<T> & NRmatrix<T>::operator=(const NRmatrix<T> &rhs)
+{
+	if (this == &rhs) error("self assignment is forbidden!")
+	resize(rhs.nn, rhs.mm);
+	memcpy(v[0], rhs.v[0], nn*mm*sizeof(T));
 	return *this;
 }
 
 template <class T>
-inline T* NRmatrix<T>::operator[](const int i)	//subscripting: pointer to row i
+inline NRmatrix<T> & NRmatrix<T>::operator=(const T rhs)
+{
+	Long N = nn*mm;
+	if (N) nrmemset(v[0], rhs, N);
+	return *this;
+}
+
+template <class T>
+inline void NRmatrix<T>::operator<<(NRmatrix<T> &rhs)
+{
+	if (this == &rhs) error("self move is forbidden!")
+	data_free();
+	nn = rhs.nn; mm = rhs.mm; v = rhs.v;
+	rhs.v = nullptr;
+	rhs.nn = rhs.mm = 0;
+}
+
+template <class T>
+inline T* NRmatrix<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=nn) {
-	throw("NRmatrix subscript out of bounds");
-}
+if (i<0 || i>=nn)
+	error("NRmatrix subscript out of bounds")
 #endif
 	return v[i];
 }
 
 template <class T>
-inline const T* NRmatrix<T>::operator[](const int i) const
+inline const T* NRmatrix<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=nn) {
-	throw("NRmatrix subscript out of bounds");
-}
+if (i<0 || i>=nn)
+	error("NRmatrix subscript out of bounds")
 #endif
 	return v[i];
 }
 
 template <class T>
-inline int NRmatrix<T>::nrows() const
+inline Long NRmatrix<T>::nrows() const
 {
 	return nn;
 }
 
 template <class T>
-inline int NRmatrix<T>::ncols() const
+inline Long NRmatrix<T>::ncols() const
 {
 	return mm;
 }
 
 template <class T>
-void NRmatrix<T>::resize(int newn, int newm)
+inline void NRmatrix<T>::resize(Long_I newn, Long_I newm)
 {
-	int i,nel;
 	if (newn != nn || newm != mm) {
-		if (v != NULL) {
-			delete[] (v[0]);
-			delete[] (v);
-		}
+		data_free();
 		nn = newn;
 		mm = newm;
-		v = nn>0 ? new T*[nn] : NULL;
-		nel = mm*nn;
-		if (v) v[0] = nel>0 ? new T[nel] : NULL;
-		for (i=1; i< nn; i++) v[i] = v[i-1] + mm;
+		v = data_alloc(nn, mm);
 	}
 }
 
 template <class T>
-void NRmatrix<T>::assign(int newn, int newm, const T& a)
+template <class T1>
+inline void NRmatrix<T>::resize(const NRmatrix<T1> &a)
 {
-	int i,j,nel;
-	if (newn != nn || newm != mm) {
-		if (v != NULL) {
-			delete[] (v[0]);
-			delete[] (v);
-		}
-		nn = newn;
-		mm = newm;
-		v = nn>0 ? new T*[nn] : NULL;
-		nel = mm*nn;
-		if (v) v[0] = nel>0 ? new T[nel] : NULL;
-		for (i=1; i< nn; i++) v[i] = v[i-1] + mm;
-	}
-	for (i=0; i< nn; i++) for (j=0; j<mm; j++) v[i][j] = a;
+	resize(a.nrows(), a.ncols());
 }
 
 template <class T>
 NRmatrix<T>::~NRmatrix()
 {
-	if (v != NULL) {
-		delete[] (v[0]);
-		delete[] (v);
-	}
+	data_free();
 }
+
+// 3D Matrix Class
 
 template <class T>
 class NRMat3d {
 private:
-	int nn;
-	int mm;
-	int kk;
+	Long nn;
+	Long mm;
+	Long kk;
 	T ***v;
+	inline T *** data_alloc(Long_I n, Long_I m, Long_I k);
+	inline void data_free();
 public:
 	NRMat3d();
-	NRMat3d(int n, int m, int k);
-	void resize(int n, int m, int k);
-	void assign(int n, int m, int k, const T &a);
-	inline T** operator[](const int i);	//subscripting: pointer to row i
-	inline const T* const * operator[](const int i) const;
-	inline int dim1() const;
-	inline int dim2() const;
-	inline int dim3() const;
+	NRMat3d(Long_I n, Long_I m, Long_I k);
+	NRMat3d(Long_I n, Long_I m, Long_I k, const T a);
+	NRMat3d(const NRMat3d &rhs);   // Copy constructor
+	inline NRMat3d & operator=(const NRMat3d &rhs);	//assignment
+	inline NRMat3d & operator=(const T rhs);
+	inline void operator<<(NRMat3d &rhs); // move data and rhs.resize(0, 0, 0)
+	inline void resize(Long_I n, Long_I m, Long_I k);
+	template <class T1>
+	inline void resize(const NRMat3d<T1> &a);
+	inline T** operator[](Long_I i);	//subscripting: pointer to row i
+	inline const T* const * operator[](Long_I i) const;
+	inline Long dim1() const;
+	inline Long dim2() const;
+	inline Long dim3() const;
 	~NRMat3d();
 };
 
 template <class T>
-NRMat3d<T>::NRMat3d(): nn(0), mm(0), kk(0), v(NULL) {}
+inline T *** NRMat3d<T>::data_alloc(Long_I n, Long_I m, Long_I k)
+{
+	if (n*m*k == 0) return nullptr;
+	Long i;
+	Long mn = m*n;
+	T ***p = new T**[n];
+	T **p0 = p[0] = new T*[mn];
+	p[0][0] = new T[mn*k];
+	for(i = 1; i < n; ++i)
+		p[i] = p[i-1] + m;
+	for(i = 1; i < mn; ++i)
+		p0[i] = p0[i-1] + k;
+	return p;
+}
 
 template <class T>
-NRMat3d<T>::NRMat3d(int n, int m, int k) : nn(n), mm(m), kk(k), v(new T**[n])
+inline void NRMat3d<T>::data_free()
 {
-	int i,j;
-	v[0] = new T*[n*m];
-	v[0][0] = new T[n*m*k];
-	for(j=1; j<m; j++) v[0][j] = v[0][j-1] + k;
-	for(i=1; i<n; i++) {
-		v[i] = v[i-1] + m;
-		v[i][0] = v[i-1][0] + m*k;
-		for(j=1; j<m; j++) v[i][j] = v[i][j-1] + k;
+	if (v != nullptr) {
+		delete v[0][0]; delete v[0]; delete v;
 	}
 }
 
 template <class T>
-void NRMat3d<T>::resize(int n, int m, int k)
+NRMat3d<T>::NRMat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
+
+template <class T>
+NRMat3d<T>::NRMat3d(Long_I n, Long_I m, Long_I k) : nn(n), mm(m), kk(k), v(data_alloc(n, m, k)) {}
+
+template <class T>
+NRMat3d<T>::NRMat3d(Long_I n, Long_I m, Long_I k, const T a) : NRMat3d(n, m, k)
+{
+	nrmemset(v, a, n*m*k);
+}
+
+template <class T>
+NRMat3d<T>::NRMat3d(const NRMat3d<T> &rhs)
+{
+	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+}
+
+template <class T>
+inline NRMat3d<T> &NRMat3d<T>::operator=(const NRMat3d<T> &rhs)
+{
+	if (this == &rhs) error("self assignment is forbidden!");
+	resize(rhs.nn, rhs.mm, rhs.kk);
+	memcpy(v[0][0], rhs.v[0][0], nn*mm*kk*sizeof(T));
+	return *this;
+}
+
+template <class T>
+inline NRMat3d<T> & NRMat3d<T>::operator=(const T rhs)
+{
+	Long N = nn*mm*kk;
+	if (N) nrmemset(v[0][0], rhs, N);
+	return *this;
+}
+
+template <class T>
+inline void NRMat3d<T>::operator<<(NRMat3d<T> &rhs)
+{
+	if (this == &rhs) error("self move is forbidden!");
+	data_free();
+	nn = rhs.nn; mm = rhs.mm; kk = rhs.kk; v = rhs.v;
+	rhs.v = nullptr;
+	rhs.nn = rhs.mm = rhs.kk = 0;
+}
+
+template <class T>
+inline void NRMat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 {
 	if (n != nn || m != mm || k != kk) {
-		if (v != NULL) {
-			delete[] v[0][0];
-			delete[] v[0];
-			delete[] v;
-		}
+		data_free();
 		nn = n; mm = m; kk = k;
-		if (n==0 || m==0 || k==0) {
-			v = NULL; return;
-		}
-		int i, j;
-		v = new T**[n];
-		v[0] = new T*[n*m];
-		v[0][0] = new T[n*(size_t)m*k];
-		for (j = 1; j<m; j++) v[0][j] = v[0][j - 1] + k;
-		for (i = 1; i<n; i++) {
-			v[i] = v[i - 1] + m;
-			v[i][0] = v[i - 1][0] + m * k;
-			for (j = 1; j<m; j++) v[i][j] = v[i][j - 1] + k;
-		}
+		v = data_alloc(n, m, k);
 	}
 }
 
 template <class T>
-void NRMat3d<T>::assign(int n, int m, int k, const T& a)
+template <class T1>
+inline void NRMat3d<T>::resize(const NRMat3d<T1> &a)
 {
-	if (n != nn || m != mm || k != kk) {
-		if (v != NULL) {
-			delete[] v[0][0];
-			delete[] v[0];
-			delete[] v;
-		}
-		nn = n; mm = m; kk = k;
-		if (n==0 || m==0 || k==0) {
-			v = NULL; return;
-		}
-		int i, j;
-		v = new T**[n];
-		v[0] = new T*[n*m];
-		size_t nele = n*(size_t)m*k;
-		v[0][0] = new T[nele];
-		for (j = 1; j<m; j++) v[0][j] = v[0][j - 1] + k;
-		for (i = 1; i<n; i++) {
-			v[i] = v[i - 1] + m;
-			v[i][0] = v[i - 1][0] + m * k;
-			for (j = 1; j<m; j++) v[i][j] = v[i][j-1] + k;
-		}
-		T *v00 = v[0][0];
-
-		for (size_t q = 0; q < nele; ++q) v00[q] = a;
-	}
+	resize(a.dim1(), a.dim2(), a.dim3());
 }
 
 template <class T>
-inline T** NRMat3d<T>::operator[](const int i) //subscripting: pointer to row i
+inline T** NRMat3d<T>::operator[](Long_I i)
 {
 	return v[i];
 }
 
 template <class T>
-inline const T* const * NRMat3d<T>::operator[](const int i) const
+inline const T* const * NRMat3d<T>::operator[](Long_I i) const
 {
 	return v[i];
 }
 
 template <class T>
-inline int NRMat3d<T>::dim1() const
+inline Long NRMat3d<T>::dim1() const
 {
 	return nn;
 }
 
 template <class T>
-inline int NRMat3d<T>::dim2() const
+inline Long NRMat3d<T>::dim2() const
 {
 	return mm;
 }
 
 template <class T>
-inline int NRMat3d<T>::dim3() const
+inline Long NRMat3d<T>::dim3() const
 {
 	return kk;
 }
@@ -487,48 +545,10 @@ inline int NRMat3d<T>::dim3() const
 template <class T>
 NRMat3d<T>::~NRMat3d()
 {
-	if (v != NULL) {
-		delete[] (v[0][0]);
-		delete[] (v[0]);
-		delete[] (v);
-	}
+	data_free();
 }
 
-
-// basic type names (redefine if your bit lengths don't match)
-
-typedef int Int; // 32 bit integer
-typedef unsigned int Uint;
-
-#ifdef _MSC_VER
-typedef __int64 Llong; // 64 bit integer
-typedef unsigned __int64 Ullong;
-#else
-typedef long long int Llong; // 64 bit integer
-typedef unsigned long long int Ullong;
-#endif
-
-typedef char Char; // 8 bit integer
-typedef unsigned char Uchar;
-
-typedef double Doub; // default floating type
-typedef long double Ldoub;
-
-typedef std::complex<double> Complex; // default complex type
-
-typedef bool Bool;
-
-// NaN: uncomment one of the following 3 methods of defining a global NaN
-// you can test by verifying that (NaN != NaN) is true
-
-static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
-
-//Uint proto_nan[2]={0xffffffff, 0x7fffffff};
-//double NaN = *( double* )proto_nan;
-
-//Doub NaN = sqrt(-1.);
-
-// vector types
+// Matric and vector types
 
 typedef const NRvector<Int> VecInt_I;
 typedef NRvector<Int> VecInt, VecInt_O, VecInt_IO;
@@ -557,13 +577,11 @@ typedef NRvector<Doub> VecDoub, VecDoub_O, VecDoub_IO;
 typedef const NRvector<Doub*> VecDoubp_I;
 typedef NRvector<Doub*> VecDoubp, VecDoubp_O, VecDoubp_IO;
 
-typedef const NRvector<Complex> VecComplex_I;
-typedef NRvector<Complex> VecComplex, VecComplex_O, VecComplex_IO;
+typedef const NRvector<Comp> VecComp_I;
+typedef NRvector<Comp> VecComp, VecComp_O, VecComp_IO;
 
 typedef const NRvector<Bool> VecBool_I;
 typedef NRvector<Bool> VecBool, VecBool_O, VecBool_IO;
-
-// matrix types
 
 typedef const NRmatrix<Int> MatInt_I;
 typedef NRmatrix<Int> MatInt, MatInt_O, MatInt_IO;
@@ -586,33 +604,14 @@ typedef NRmatrix<Uchar> MatUchar, MatUchar_O, MatUchar_IO;
 typedef const NRmatrix<Doub> MatDoub_I;
 typedef NRmatrix<Doub> MatDoub, MatDoub_O, MatDoub_IO;
 
-typedef const NRmatrix<Complex> MatComplex_I;
-typedef NRmatrix<Complex> MatComplex, MatComplex_O, MatComplex_IO;
+typedef const NRmatrix<Comp> MatComp_I;
+typedef NRmatrix<Comp> MatComp, MatComp_O, MatComp_IO;
 
 typedef const NRmatrix<Bool> MatBool_I;
 typedef NRmatrix<Bool> MatBool, MatBool_O, MatBool_IO;
 
-// 3D matrix types
-
 typedef const NRMat3d<Doub> Mat3DDoub_I;
 typedef NRMat3d<Doub> Mat3DDoub, Mat3DDoub_O, Mat3DDoub_IO;
 
-typedef const NRMat3d<Complex> Mat3DComplex_I;
-typedef NRMat3d<Complex> Mat3DComplex, Mat3DComplex_O, Mat3DComplex_IO;
-
-// Floating Point Exceptions for Microsoft compilers
-
-#ifdef _TURNONFPES_
-#ifdef _MSC_VER
-struct turn_on_floating_exceptions {
-	turn_on_floating_exceptions() {
-		int cw = _controlfp( 0, 0 );
-		cw &=~(EM_INVALID | EM_OVERFLOW | EM_ZERODIVIDE );
-		_controlfp( cw, MCW_EM );
-	}
-};
-turn_on_floating_exceptions yes_turn_on_floating_exceptions;
-#endif /* _MSC_VER */
-#endif /* _TURNONFPES */
-
-#endif /* _NR3_H_ */
+typedef const NRMat3d<Comp> Mat3DComp_I;
+typedef NRMat3d<Comp> Mat3DComp, Mat3DComp_O, Mat3DComp_IO;
