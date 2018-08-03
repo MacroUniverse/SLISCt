@@ -1,18 +1,30 @@
 === Introduction ===
 This project is a simple C++ math library rewritten from Numerical Recipes 3ed. It typedefs some common scalar types, and some simple template clases for vectors, matrices, and 3D matrices. All other utilities uses these types and classes.
 
-"nr3.h" includes all the typedefs and vector/matrix class definitions and dependencies, and can be used independently;
+"nr3.h" includes all the typedefs and vector/matrix class definitions and dependencies, and can be used independently.
 
 "nr3plus.h" and "nr3plus.cpp" include the common utilities, and only depends on "nr3.h".
 
 Class object temporary is inefficient (even with move constructor/assignment), using copy/move constructor or move assignment operator for vector/matrix types will create an error. Vector/Matrix type arguments should be passed by reference and should not be returned (use reference for output).
 
 === typedefs ===
-Int is int, Uint is unsigned int, Llong is 64 bit integer, Doub is double, Comp is std::complex<double>, Char is char, Uchar is unsigned char, Ldoub is long double.
+Int is int, Uint is unsigned int, Llong is 64-bit int, Doub is double, Comp is std::complex<double>, Char is char, Uchar is unsigned char, Ldoub is long double.
 Long is 64 bit integer by default, define _USE_Int_AS_LONG macro to use int instead. Use Long for vector/matrix index or loop variable etc.
 Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
 
 By default, functions output arguments can not be any of the input arguments (this is called aliasing).
+
+=== vector/matrix class template ===
+Constructors: NRvector() for default, NRvector(Long_I n) for vector size, NRvector(Long_I n, const T &a) to specify element as well, NRvector(Long_I n, const T *a) to initialize from array.
+Operator = : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
+Operator [] : get a reference for the i-th element.
+size() : get the number of elements
+resize(Long_I) : resize vector, contents are not preserved. resize() does nothing if size doesn't change.
+resize(NRvector<> v) : resize to the same size of v
+
+The matrix template name is NRmatrix<T>, 3D matrix template name is NRMat3d. Matrix is row-major only. Methods are similar to that of vector class.
+
+The typedefs for vector/matrix classes are (each type also comes with "_I", "_O", and "_IO" versions) :  VecInt, VecUint, VecLlong, VecUllong, VecChar, VecUchar, VecDoub, VecComp, VecBool, MatInt, MatUint, MatLlong, MatUllong, MatChar, MatUchar, MatDoub, MatComp, MatBool, Mat3Doub, Mat3Comp.
 
 === constants ===
 const Doub PI = 3.14159265358979323;
@@ -78,7 +90,3 @@ void mul(out, in, in) // mat-mat or mat-vec multiplications, whenever make sense
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
 void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub kmin, Doub kmax)
-
-
-=== others ===
-resize() does nothing if size doesn't change
