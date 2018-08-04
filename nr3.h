@@ -362,7 +362,7 @@ NRmatrix<T>::~NRmatrix()
 // 3D Matrix Class
 
 template <class T>
-class NRMat3d {
+class NRmat3d {
 private:
 	Long nn;
 	Long mm;
@@ -371,26 +371,26 @@ private:
 	inline T *** data_alloc(Long_I n, Long_I m, Long_I k);
 	inline void data_free();
 public:
-	NRMat3d();
-	NRMat3d(Long_I n, Long_I m, Long_I k);
-	NRMat3d(Long_I n, Long_I m, Long_I k, const T a);
-	NRMat3d(const NRMat3d &rhs);   // Copy constructor
-	inline NRMat3d & operator=(const NRMat3d &rhs);	//assignment
-	inline NRMat3d & operator=(const T rhs);
-	inline void operator<<(NRMat3d &rhs); // move data and rhs.resize(0, 0, 0)
+	NRmat3d();
+	NRmat3d(Long_I n, Long_I m, Long_I k);
+	NRmat3d(Long_I n, Long_I m, Long_I k, const T a);
+	NRmat3d(const NRmat3d &rhs);   // Copy constructor
+	inline NRmat3d & operator=(const NRmat3d &rhs);	//assignment
+	inline NRmat3d & operator=(const T rhs);
+	inline void operator<<(NRmat3d &rhs); // move data and rhs.resize(0, 0, 0)
 	inline void resize(Long_I n, Long_I m, Long_I k);
 	template <class T1>
-	inline void resize(const NRMat3d<T1> &a);
+	inline void resize(const NRmat3d<T1> &a);
 	inline T** operator[](Long_I i);	//subscripting: pointer to row i
 	inline const T* const * operator[](Long_I i) const;
 	inline Long dim1() const;
 	inline Long dim2() const;
 	inline Long dim3() const;
-	~NRMat3d();
+	~NRmat3d();
 };
 
 template <class T>
-inline T *** NRMat3d<T>::data_alloc(Long_I n, Long_I m, Long_I k)
+inline T *** NRmat3d<T>::data_alloc(Long_I n, Long_I m, Long_I k)
 {
 	if (n*m*k == 0) return nullptr;
 	Long i;
@@ -406,7 +406,7 @@ inline T *** NRMat3d<T>::data_alloc(Long_I n, Long_I m, Long_I k)
 }
 
 template <class T>
-inline void NRMat3d<T>::data_free()
+inline void NRmat3d<T>::data_free()
 {
 	if (v != nullptr) {
 		delete v[0][0]; delete v[0]; delete v;
@@ -414,25 +414,25 @@ inline void NRMat3d<T>::data_free()
 }
 
 template <class T>
-NRMat3d<T>::NRMat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
+NRmat3d<T>::NRmat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
 
 template <class T>
-NRMat3d<T>::NRMat3d(Long_I n, Long_I m, Long_I k) : nn(n), mm(m), kk(k), v(data_alloc(n, m, k)) {}
+NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k) : nn(n), mm(m), kk(k), v(data_alloc(n, m, k)) {}
 
 template <class T>
-NRMat3d<T>::NRMat3d(Long_I n, Long_I m, Long_I k, const T a) : NRMat3d(n, m, k)
+NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k, const T a) : NRmat3d(n, m, k)
 {
 	nrmemset(v, a, n*m*k);
 }
 
 template <class T>
-NRMat3d<T>::NRMat3d(const NRMat3d<T> &rhs)
+NRmat3d<T>::NRmat3d(const NRmat3d<T> &rhs)
 {
 	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!")
 }
 
 template <class T>
-inline NRMat3d<T> &NRMat3d<T>::operator=(const NRMat3d<T> &rhs)
+inline NRmat3d<T> &NRmat3d<T>::operator=(const NRmat3d<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!")
 	resize(rhs.nn, rhs.mm, rhs.kk);
@@ -441,7 +441,7 @@ inline NRMat3d<T> &NRMat3d<T>::operator=(const NRMat3d<T> &rhs)
 }
 
 template <class T>
-inline NRMat3d<T> & NRMat3d<T>::operator=(const T rhs)
+inline NRmat3d<T> & NRmat3d<T>::operator=(const T rhs)
 {
 	Long N = nn*mm*kk;
 	if (N) nrmemset(v[0][0], rhs, N);
@@ -449,7 +449,7 @@ inline NRMat3d<T> & NRMat3d<T>::operator=(const T rhs)
 }
 
 template <class T>
-inline void NRMat3d<T>::operator<<(NRMat3d<T> &rhs)
+inline void NRmat3d<T>::operator<<(NRmat3d<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
 	data_free();
@@ -459,7 +459,7 @@ inline void NRMat3d<T>::operator<<(NRMat3d<T> &rhs)
 }
 
 template <class T>
-inline void NRMat3d<T>::resize(Long_I n, Long_I m, Long_I k)
+inline void NRmat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 {
 	if (n != nn || m != mm || k != kk) {
 		data_free();
@@ -470,25 +470,25 @@ inline void NRMat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 
 template <class T>
 template <class T1>
-inline void NRMat3d<T>::resize(const NRMat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
+inline void NRmat3d<T>::resize(const NRmat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
 
 template <class T>
-inline T** NRMat3d<T>::operator[](Long_I i) { return v[i]; }
+inline T** NRmat3d<T>::operator[](Long_I i) { return v[i]; }
 
 template <class T>
-inline const T* const * NRMat3d<T>::operator[](Long_I i) const { return v[i]; }
+inline const T* const * NRmat3d<T>::operator[](Long_I i) const { return v[i]; }
 
 template <class T>
-inline Long NRMat3d<T>::dim1() const { return nn; }
+inline Long NRmat3d<T>::dim1() const { return nn; }
 
 template <class T>
-inline Long NRMat3d<T>::dim2() const { return mm; }
+inline Long NRmat3d<T>::dim2() const { return mm; }
 
 template <class T>
-inline Long NRMat3d<T>::dim3() const { return kk; }
+inline Long NRmat3d<T>::dim3() const { return kk; }
 
 template <class T>
-NRMat3d<T>::~NRMat3d() { data_free(); }
+NRmat3d<T>::~NRmat3d() { data_free(); }
 
 // Matric and vector types
 
@@ -552,11 +552,11 @@ typedef NRmatrix<Comp> MatComp, MatComp_O, MatComp_IO;
 typedef const NRmatrix<Bool> MatBool_I;
 typedef NRmatrix<Bool> MatBool, MatBool_O, MatBool_IO;
 
-typedef const NRMat3d<Doub> Mat3Doub_I;
-typedef NRMat3d<Doub> Mat3Doub, Mat3Doub_O, Mat3Doub_IO;
+typedef const NRmat3d<Doub> Mat3Doub_I;
+typedef NRmat3d<Doub> Mat3Doub, Mat3Doub_O, Mat3Doub_IO;
 
-typedef const NRMat3d<Comp> Mat3Comp_I;
-typedef NRMat3d<Comp> Mat3Comp, Mat3Comp_O, Mat3Comp_IO;
+typedef const NRmat3d<Comp> Mat3Comp_I;
+typedef NRmat3d<Comp> Mat3Comp, Mat3Comp_O, Mat3Comp_IO;
 
 // macro-like functions (don't use them in your code ever, write similar utilities in "nr3plus.h")
 
@@ -565,81 +565,51 @@ inline T SQR(const T a) { return a*a; }
 
 template<class T>
 inline const T &MAX(const T &a, const T &b)
-{
-	return b > a ? (b) : (a);
-}
+{ return b > a ? (b) : (a); }
 
 inline float MAX(const double &a, const float &b)
-{
-	return b > a ? (b) : float(a);
-}
+{ return b > a ? (b) : float(a); }
 
 inline float MAX(const float &a, const double &b)
-{
-	return b > a ? float(b) : (a);
-}
+{ return b > a ? float(b) : (a); }
 
 template<class T>
 inline const T &MIN(const T &a, const T &b)
-{
-	return b < a ? (b) : (a);
-}
+{ return b < a ? (b) : (a); }
 
 inline float MIN(const double &a, const float &b)
-{
-	return b < a ? (b) : float(a);
-}
+{ return b < a ? (b) : float(a); }
 
 inline float MIN(const float &a, const double &b)
-{
-	return b < a ? float(b) : (a);
-}
+{ return b < a ? float(b) : (a); }
 
 template<class T>
 inline T SIGN(const T &a, const T &b)
-{
-	return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a);
-}
+{ return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a); }
 
 inline float SIGN(const float &a, const double &b)
-{
-	return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a);
-}
+{ return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a); }
 
 inline float SIGN(const double &a, const float &b)
-{
-	return (float)(b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a));
-}
+{ return (float)(b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a)); }
 
 template<class T>
 inline void SWAP(T &a, T &b)
-{
-	T dum = a; a = b; b = dum;
-}
+{ T dum = a; a = b; b = dum; }
 
 // NR3 compatibility issues
 
 struct Complex
-{
-	Complex() { error("Replace all \"Complex\" with \"Comp!\"") }
-};
+{ Complex() { error("Replace all \"Complex\" with \"Comp!\"") } };
 
 struct VecComplex
-{
-	VecComplex() { error("Replace all \"Complex\" with \"Comp!\"") }
-};
+{ VecComplex() { error("Replace all \"Complex\" with \"Comp!\"") } };
 
 struct MatComplex
-{
-	MatComplex() { error("Replace all \"Complex\" with \"Comp!\"") }
-};
+{ MatComplex() { error("Replace all \"Complex\" with \"Comp!\"") } };
 
 struct Mat3DDoub
-{
-	Mat3DDoub() { error("Replace all \"Mat3D\" with \"Mat3\"") }
-};
+{ Mat3DDoub() { error("Replace all \"Mat3D\" with \"Mat3\"") } };
 
 struct Mat3DComplex
-{
-	Mat3DComplex() { error("Replace all \"Mat3D\" with \"Mat3\"") }
-};
+{ Mat3DComplex() { error("Replace all \"Mat3D\" with \"Mat3\"") } };
