@@ -359,7 +359,7 @@ inline void her(MatComp_O &h, MatComp_I &a)
 template <class T>
 inline void flip(NRvector<T> &v)
 {
-	Int i, n{ v.size() }, ind;
+	Long i, n{ v.size() }, ind;
 	T temp;
 	for (i = 0; i < n / 2; ++i) {
 		ind = n - i - 1;
@@ -370,7 +370,7 @@ inline void flip(NRvector<T> &v)
 template <class T>
 inline void flip(NRvector<T> &v, const NRvector<T> &v0)
 {
-	Int i, n{ (Int)v0.size() };
+	Long i, n{ v0.size() };
 	v.resize(n);
 	for (i = 0; i < n; ++i)
 		v[i] = v0[n - i - 1];
@@ -454,7 +454,7 @@ void idiagonals(NRmatrix<T> &a)
 template <class T>
 void sin(NRvector<T> &y, const NRvector<T> &x)
 {
-	Int i, N{ x.size() };
+	Long i, N{ x.size() };
 	for (i = 0; i < N; ++i) {
 		y[i] = sin(x[i]);
 	}
@@ -463,7 +463,7 @@ void sin(NRvector<T> &y, const NRvector<T> &x)
 template <class T>
 void sin(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
-	Int i, N{ numel(x) };
+	Long i, N{ numel(x) };
 	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = sin(px[i]);
@@ -473,7 +473,7 @@ void sin(NRmatrix<T> &y, const NRmatrix<T> &x)
 template <class T>
 void cos(NRvector<T> &y, const NRvector<T> &x)
 {
-	Int i, N{ x.size() };
+	Long i, N{ x.size() };
 	for (i = 0; i < N; ++i) {
 		y[i] = cos(x[i]);
 	}
@@ -482,7 +482,7 @@ void cos(NRvector<T> &y, const NRvector<T> &x)
 template <class T>
 void cos(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
-	Int i, N{ numel(x) };
+	Long i, N{ numel(x) };
 	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = cos(px[i]);
@@ -492,7 +492,7 @@ void cos(NRmatrix<T> &y, const NRmatrix<T> &x)
 template <class T>
 void exp(NRvector<T> &y, const NRvector<T> &x)
 {
-	Int i, N{ x.size() };
+	Long i, N{ x.size() };
 	for (i = 0; i < N; ++i) {
 		y[i] = exp(x[i]);
 	}
@@ -501,7 +501,7 @@ void exp(NRvector<T> &y, const NRvector<T> &x)
 template <class T>
 void exp(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
-	Int i, N{ numel(x) };
+	Long i, N{ numel(x) };
 	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = exp(px[i]);
@@ -511,7 +511,7 @@ void exp(NRmatrix<T> &y, const NRmatrix<T> &x)
 template <class T>
 void tan(NRvector<T> &y, const NRvector<T> &x)
 {
-	Int i, N{ x.size() };
+	Long i, N{ x.size() };
 	for (i = 0; i < N; ++i) {
 		y[i] = tan(x[i]);
 	}
@@ -520,7 +520,7 @@ void tan(NRvector<T> &y, const NRvector<T> &x)
 template <class T>
 void tan(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
-	Int i, N{ numel(x) };
+	Long i, N{ numel(x) };
 	T *px{ &y[0][0] }, *py{ &x[0][0] };
 	for (i = 0; i < N; ++i) {
 		py[i] = tan(px[i]);
@@ -533,7 +533,7 @@ void tan(NRmatrix<T> &y, const NRmatrix<T> &x)
 template <class T>
 inline void operator+=(NRvector<T> &v1, const NRvector<T> &v2)
 {
-	Int i, N{ v1.size() };
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
 		v1[i] += v2[i];
 }
@@ -671,7 +671,7 @@ inline void operator+=(NRMat3d<T> &v, Doub_I s)
 template <class T>
 inline void operator-=(NRvector<T> &v, Doub_I s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v[i] -= s;
 }
@@ -679,7 +679,7 @@ inline void operator-=(NRvector<T> &v, Doub_I s)
 template <class T>
 inline void operator-=(NRmatrix<T> &v, Doub_I s)
 {
-	Int i, N{ v.nrows()*v.ncols() };
+	Long i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i)
 		pv[i] -= s;
@@ -697,7 +697,7 @@ inline void operator-=(NRMat3d<T> &v, Doub_I s)
 template <class T>
 inline void operator*=(NRvector<T> &v, Doub_I s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v[i] *= s;
 }
@@ -705,7 +705,7 @@ inline void operator*=(NRvector<T> &v, Doub_I s)
 template <class T>
 inline void operator*=(NRmatrix<T> &v, Doub_I s)
 {
-	Int i, N{ v.nrows()*v.ncols() };
+	Long i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i)
 		pv[i] *= s;
@@ -723,7 +723,7 @@ inline void operator*=(NRMat3d<T> &v, Doub_I s)
 template <class T>
 inline void operator/=(NRvector<T> &v, Doub_I s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	Doub sInv = 1./s;
 	for (i = 0; i < N; ++i)
 		v[i] *= sInv;
@@ -752,7 +752,7 @@ inline void operator/=(NRMat3d<T> &v, Doub_I s)
 template <class T>
 inline void operator+=(NRvector<T> &v, const Comp s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v[i] += s;
 }
@@ -760,7 +760,7 @@ inline void operator+=(NRvector<T> &v, const Comp s)
 template <class T>
 inline void operator+=(NRmatrix<T> &v, const Comp s)
 {
-	Int i, N{ v.nrows()*v.ncols() };
+	Long i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i)
 		pv[i] += s;
@@ -769,7 +769,7 @@ inline void operator+=(NRmatrix<T> &v, const Comp s)
 template <class T>
 inline void operator-=(NRvector<T> &v, const Comp s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v[i] -= s;
 }
@@ -777,7 +777,7 @@ inline void operator-=(NRvector<T> &v, const Comp s)
 template <class T>
 inline void operator-=(NRmatrix<T> &v, const Comp s)
 {
-	Int i, N{ v.nrows()*v.ncols() };
+	Long i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i)
 		pv[i] -= s;
@@ -786,7 +786,7 @@ inline void operator-=(NRmatrix<T> &v, const Comp s)
 template <class T>
 inline void operator*=(NRvector<T> &v, const Comp s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v[i] *= s;
 }
@@ -794,7 +794,7 @@ inline void operator*=(NRvector<T> &v, const Comp s)
 template <class T>
 inline void operator*=(NRmatrix<T> &v, const Comp s)
 {
-	Int i, N{ v.nrows()*v.ncols() };
+	Long i, N{ v.nrows()*v.ncols() };
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i)
 		pv[i] *= s;
@@ -803,7 +803,7 @@ inline void operator*=(NRmatrix<T> &v, const Comp s)
 template <class T>
 inline void operator/=(NRvector<T> &v, const Comp s)
 {
-	Int i, N{ v.size() };
+	Long i, N{ v.size() };
 	Comp sInv = 1./s;
 	for (i = 0; i < N; ++i)
 		v[i] *= sInv;
@@ -812,7 +812,7 @@ inline void operator/=(NRvector<T> &v, const Comp s)
 template <class T>
 inline void operator/=(NRmatrix<T> &v, const Comp s)
 {
-	Int i, N{ v.nrows()*v.ncols() };
+	Long i, N{ v.nrows()*v.ncols() };
 	Comp sInv = 1./s;
 	auto pv = pointer(v);
 	for (i = 0; i < N; ++i) {
@@ -1038,12 +1038,13 @@ inline void complex(VecComp_O &y, VecDoub_I &x)
 		py[2*i] = x[i];
 }
 
-inline void conjugate(VecComp_IO v)
+inline void conjugate(VecComp_IO &v)
 {
 	Long i, N = v.size();
-	for (i = 0; i < N; ++i) {
-		v[i] = conj(v[i]);
-	}
+	Doub *p = (Doub *)&v[0];
+	N *= 2;
+	for (i = 1; i < N; i += 2)
+		p[i] = -p[i];
 }
 
 // dot products ( conj(v1[i])*v2[i] )
@@ -1097,61 +1098,40 @@ inline void outprod(MatComp_O &prod, VecComp_I &v1, VecComp_I &v2)
 	}
 }
 
-// matrix-vector multiplications
-inline void mul(VecDoub_O &y, MatDoub_I &a, VecDoub_I &x)
+// matrix-vector multiplications (column vector assumed)
+template <class T, class T1, class T2>
+inline void mul(NRvector<T> &y, const NRmatrix<T1> &a, const NRvector<T2> &x)
 {
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
+	Long i, k, m{ a.nrows() }, n{ a.ncols() };
 	y.resize(m); y = 0.;
 	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			y[i] += a[i][j] * x[j];
-		}
+		for (k = 0; k < n; ++k)
+			y[i] += a[i][k] * x[k];
 	}
 }
 
-inline void mul(VecComp_O &y, MatDoub_I &a, VecComp_I &x)
+// vector-matrix multiplication (row vector assumed)
+template <class T, class T1, class T2>
+inline void mul(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
 {
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(m); y = 0.;
-	for (i = 0; i < n; ++i) {
-		for (j = 0; j < m; ++j) {
-			y[i] += a[i][j] * x[j];
-		}
-	}
-}
-
-inline void mul(VecComp_O &y, MatComp_I &a, VecDoub_I &x)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(m); y = 0.;
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			y[i] += a[i][j] * x[j];
-		}
-	}
-}
-
-inline void mul(VecComp_O &y, MatComp_I &a, VecComp_I &x)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(m); y = 0.;
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			y[i] += a[i][j] * x[j];
-		}
+	Long j, k, m{ a.nrows() }, n{ a.ncols() };
+	y.resize(n); y = 0.;
+	for (j = 0; j < n; ++j) {
+		for (k = 0; k < m; ++k)
+			y[j] += x[k] * a[k][j];
 	}
 }
 
 // matrix-matrix multiplication
-inline void mul(MatDoub_O &c, MatDoub_I &a, MatDoub_I &b)
+template <class T, class T1, class T2>
+inline void mul(NRmatrix<T> &c, const NRmatrix<T1> &a, const NRmatrix<T2> &b)
 {
 	Long i, j, k, m{ a.nrows() }, n{ b.ncols() }, Nk{ a.ncols() };
 	c.resize(m, n); c = 0.;
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			for (k = 0; k < Nk; ++k) {
+			for (k = 0; k < Nk; ++k)
 				c[i][j] += a[i][k] * b[k][j];
-			}
 		}
 	}
 }
@@ -1161,12 +1141,12 @@ inline void mul(MatDoub_O &c, MatDoub_I &a, MatDoub_I &b)
 template <class T>
 void fftshift(NRmatrix<T> &a, Int_I dim = 1)
 {
-	Int m = a.nrows(), n = a.ncols();
+	Long m{ a.nrows() }, n{ a.ncols() };
 	if (dim == 1) {
 		if (isodd(m))
 			error("fftshift only supports even rows!")
 		else {
-			Int halfm = m/2;
+			Long halfm = m/2;
 			NRmatrix<T> temp(halfm, n);
 			Long size = halfm*n*sizeof(T);
 			memcpy(temp[0], a[0], size);
@@ -1178,9 +1158,9 @@ void fftshift(NRmatrix<T> &a, Int_I dim = 1)
 		if (isodd(n))
 			error("fftshift only supports even columns!")
 		else {
-			Int i, halfn = n/2;
+			Long i, halfn{ n/2 };
 			NRvector<T> temp(halfn);
-			Int size = halfn*sizeof(T);
+			Long size{ halfn*sizeof(T) };
 			for (i = 0; i < m; ++i) {
 				memcpy(&temp[0], a[i], size);
 				memcpy(a[i], &a[i][halfn], size);

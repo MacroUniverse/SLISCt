@@ -5,7 +5,10 @@ This project is a simple C++ math library rewritten from Numerical Recipes 3ed. 
 
 "nr3plus.h" and "nr3plus.cpp" include the common utilities, and only depends on "nr3.h".
 
+=== programming style ===
 Class object temporary is inefficient (even with move constructor/assignment), using copy/move constructor or move assignment operator for vector/matrix types will create an error. Vector/Matrix type arguments should be passed by reference and should not be returned (use reference for output).
+
+Avoid using unsigned integer types as much as possible (this is also the google c++ style).
 
 === typedefs ===
 Int is int, Uint is unsigned int, Llong is 64-bit int, Doub is double, Comp is std::complex<double>, Char is char, Uchar is unsigned char, Ldoub is long double.
