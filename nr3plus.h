@@ -116,7 +116,7 @@ inline Long numel(const NRvector<T> &v) { return v.size(); }
 template <class T>
 inline Long numel(const NRmatrix<T> &a) { return a.nrows()*a.ncols(); }
 template <class T>
-inline Long numel(const NRMat3d<T> &a) { return a.dim1()*a.dim2()*a.dim3(); }
+inline Long numel(const NRmat3d<T> &a) { return a.dim1()*a.dim2()*a.dim3(); }
 
 // pointer to the first element
 template <class T>
@@ -128,9 +128,9 @@ inline const T* pointer(const NRmatrix<T> &v) { return v[0]; }
 template <class T>
 inline T* pointer(NRmatrix<T> &v) { return v[0]; }
 template <class T>
-inline const T* pointer(const NRMat3d<T> &v) { return v[0][0]; }
+inline const T* pointer(const NRmat3d<T> &v) { return v[0][0]; }
 template <class T>
-inline T* pointer(NRMat3d<T> &v) { return v[0][0]; }
+inline T* pointer(NRmat3d<T> &v) { return v[0][0]; }
 
 template <class T>
 inline T sum(const NRvector<T> &v)
@@ -156,7 +156,7 @@ inline T sum(const NRmatrix<T> &a)
 }
 
 template <class T>
-inline T sum(const NRMat3d<T> &a)
+inline T sum(const NRmat3d<T> &a)
 {
 	Long i, n{ numel(a) };
 	T sum = 0;
@@ -331,7 +331,7 @@ inline void linspace(NRmatrix<T> &a, const T first, const T last, Llong_I n = -1
 }
 
 template <class T>
-inline void linspace(NRMat3d<T> &a, const T first, const T last, Llong_I n = -1, Llong_I m = -1, Llong_I k = -1)
+inline void linspace(NRmat3d<T> &a, const T first, const T last, Llong_I n = -1, Llong_I m = -1, Llong_I k = -1)
 {
 	Long i, N;
 	if (n < 0 || m < 0 || k < 0) N = numel(a);
@@ -549,7 +549,7 @@ inline void operator+=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void operator+=(NRMat3d<T> &v1, const NRMat3d<T> &v2)
+inline void operator+=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
 {
 	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
 	auto pv1 = v1[0][0];
@@ -577,7 +577,7 @@ inline void operator-=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void operator-=(NRMat3d<T> &v1, const NRMat3d<T> &v2)
+inline void operator-=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
 {
 	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
 	auto pv1 = v1[0][0];
@@ -605,7 +605,7 @@ inline void operator*=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void operator*=(NRMat3d<T> &v1, const NRMat3d<T> &v2)
+inline void operator*=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
 {
 	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
 	auto pv1 = v1[0][0];
@@ -633,7 +633,7 @@ inline void operator/=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void operator/=(NRMat3d<T> &v1, const NRMat3d<T> &v2)
+inline void operator/=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
 {
 	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
 	auto pv1 = v1[0][0];
@@ -660,7 +660,7 @@ inline void operator+=(NRmatrix<T> &v, Doub_I s)
 }
 
 template <class T>
-inline void operator+=(NRMat3d<T> &v, Doub_I s)
+inline void operator+=(NRmat3d<T> &v, Doub_I s)
 {
 	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
 	auto pv = pointer(v);
@@ -686,7 +686,7 @@ inline void operator-=(NRmatrix<T> &v, Doub_I s)
 }
 
 template <class T>
-inline void operator-=(NRMat3d<T> &v, Doub_I s)
+inline void operator-=(NRmat3d<T> &v, Doub_I s)
 {
 	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
 	auto pv = pointer(v);
@@ -712,7 +712,7 @@ inline void operator*=(NRmatrix<T> &v, Doub_I s)
 }
 
 template <class T>
-inline void operator*=(NRMat3d<T> &v, Doub_I s)
+inline void operator*=(NRmat3d<T> &v, Doub_I s)
 {
 	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
 	auto pv = pointer(v);
@@ -740,7 +740,7 @@ inline void operator/=(NRmatrix<T> &v, Doub_I s)
 }
 
 template <class T>
-inline void operator/=(NRMat3d<T> &v, Doub_I s)
+inline void operator/=(NRmat3d<T> &v, Doub_I s)
 {
 	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
 	Doub sInv = 1./s;
@@ -842,7 +842,7 @@ inline void plus(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void plus(NRMat3d<T> &a, const NRMat3d<T> &a1, const NRMat3d<T> &a2)
+inline void plus(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
 {
 	Long i, N = numel(a1);
 	a.resize(a1);
@@ -875,7 +875,7 @@ inline void minus(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void minus(NRMat3d<T> &a, const NRMat3d<T> &a1, const NRMat3d<T> &a2)
+inline void minus(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
 {
 	Long i, N = numel(a1);
 	a.resize(a1);
@@ -908,7 +908,7 @@ inline void times(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void times(NRMat3d<T> &a, const NRMat3d<T> &a1, const NRMat3d<T> &a2)
+inline void times(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
 {
 	Long i, N = numel(a1);
 	a.resize(a1);
@@ -941,7 +941,7 @@ inline void divide(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
 }
 
 template <class T>
-inline void divide(NRMat3d<T> &a, const NRMat3d<T> &a1, const NRMat3d<T> &a2)
+inline void divide(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
 {
 	Long i, N = numel(a1);
 	a.resize(a1);
@@ -990,7 +990,7 @@ inline void abs(NRmatrix<T> &a)
 }
 
 template <class T>
-inline void abs(NRMat3d<T> &a)
+inline void abs(NRmat3d<T> &a)
 {
 	Long i, N = numel(a);
 	T *p = a[0];
@@ -1019,7 +1019,7 @@ inline void abs(NRmatrix<T1> &out, const NRmatrix<T> &a)
 }
 
 template <class T, class T1>
-inline void abs(NRMat3d<T1> &out, const NRMat3d<T> &a)
+inline void abs(NRmat3d<T1> &out, const NRmat3d<T> &a)
 {
 	Long i, N = numel(a);
 	out.resize(a);
