@@ -952,12 +952,38 @@ inline void divide(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
 		pa[i] = pa1[i] / pa2[i];
 }
 
-inline void real(MatDoub_O &rc, MatComp_I &c)
+inline void real(VecComp &c)
+{
+	Long i, N{ 2 * numel(c) };
+	Doub *pd = (Doub *)pointer(c);
+	for (i = 1; i < N; i += 2)
+		pd[i] = 0.;
+}
+
+template <class T>
+inline void real(NRvector<T> &rc, VecComp_I &c)
+{
+	Long i, N{ numel(c) };
+	rc.resize(N);
+	for (i = 0; i < N; ++i)
+		rc[i] = real(c[i]);
+}
+
+inline void real(MatComp &c)
+{
+	Long i, N{ 2 * numel(c) };
+	Doub *pd = (Doub *)c[0];
+	for (i = 1; i < N; i += 2)
+		pd[i] = 0.;
+}
+
+template <class T>
+inline void real(NRmatrix<T> &rc, MatComp_I &c)
 {
 	Long i, m = c.nrows(), n = c.ncols(), N = m*n;
 	rc.resize(m, n);
-	Doub *prc;
-	Comp *pc;
+	T *prc = pointer(rc);
+	const Comp *pc = pointer(c);
 	for (i = 0; i < N; ++i)
 		prc[i] = real(pc[i]);
 }
@@ -984,7 +1010,7 @@ template <class T>
 inline void abs(NRmatrix<T> &a)
 {
 	Long i, N = numel(a);
-	const T *p = a[0];
+	T *p = a[0];
 	for (i = 0; i < N; ++i)
 		p[i] = abs(p[i]);
 }
@@ -1085,7 +1111,22 @@ inline Comp operator*(VecComp_I &v1, VecDoub_I &v2)
 }
 
 // outer product ( conj(v1[i})*v2[j] )
-inline void outprod(MatComp_O &prod, VecComp_I &v1, VecComp_I &v2)
+template <class T, class T1, class T2>
+inline void outprod(NRmatrix<T> &prod, const NRvector<T1> &v1, const NRvector<T2> &v2)
+{
+	Long i, j, N1 = v1.size(), N2 = v2.size();
+	Comp *pc, v1_i;
+	prod.resize(N1, N2);
+	for (i = 0; i < N1; ++i) {
+		pc = prod[i];
+		v1_i = v1[i];
+		for (j = 0; j < N2; ++j)
+			pc[j] = v1_i*v2[j];
+	}
+}
+
+template<class T, class T2>
+inline void outprod(NRmatrix<T> &prod, VecComp_I &v1, const NRvector<T2> &v2)
 {
 	Long i, j, N1 = v1.size(), N2 = v2.size();
 	Comp *pc, v1_i;
@@ -1181,3 +1222,14 @@ void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin,
 // the inverse of dft, multiplied by 2*pi/(dx*dk).
 // this might not be a precise inverse
 void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
+
+// string utilities
+
+template <typename T>
+inline std::string num2str(T s)
+{
+	std::string str = std::to_string(s);
+	if (str.find('.') != std::string::npos)
+		str.erase(str.find_last_not_of('0') + 1);
+	return str;
+}

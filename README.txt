@@ -93,3 +93,6 @@ void mul(out, in, in) // mat-mat or mat-vec multiplications, whenever make sense
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
 void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub kmin, Doub kmax)
+
+=== string related ===
+template <typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
