@@ -97,6 +97,11 @@ public:
 	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
 	inline T & operator[](Long_I i);	//i'th element
 	inline const T & operator[](Long_I i) const;
+	inline T & operator()(Long_I i);
+	inline const T & operator()(Long_I i) const;
+	inline T & end(); // last element
+	inline const T & end() const;
+	inline 
 	inline Long_I size() const;
 	inline void resize(Long_I newn); // resize (contents not preserved)
 	template <class T1>
@@ -176,6 +181,32 @@ if (i<0 || i>=nn)
 }
 
 template <class T>
+inline T & NRvector<T>::operator()(Long_I i)
+{
+#ifdef _CHECKBOUNDS_
+if (i<0 || i>=nn)
+	error("NRvector subscript out of bounds")
+#endif
+	return v[i];
+}
+
+template <class T>
+inline const T & NRvector<T>::operator()(Long_I i) const
+{
+#ifdef _CHECKBOUNDS_
+if (i<0 || i>=nn)
+	error("NRvector subscript out of bounds")
+#endif
+	return v[i];
+}
+
+template <class T>
+inline T & NRvector<T>::end() { return v[nn-1]; }
+
+template <class T>
+inline const T & NRvector<T>::end() const { return v[nn-1]; }
+
+template <class T>
 inline Long_I NRvector<T>::size() const
 {
 	return nn;
@@ -212,6 +243,7 @@ private:
 	Long nn;
 	Long mm;
 	T **v;
+	T *p;
 	inline T **data_alloc(Long_I n, Long_I m);
 	inline void data_free();
 public:
@@ -225,6 +257,10 @@ public:
 	inline void operator<<(NRmatrix &rhs); // move data and rhs.resize(0, 0)
 	inline T* operator[](Long_I i);	//subscripting: pointer to row i
 	inline const T* operator[](Long_I i) const;
+	inline T& operator()(Long_I i);
+	inline const T& operator()(Long_I i) const;
+	inline T& end();
+	inline const T& end() const;
 	inline Long nrows() const;
 	inline Long ncols() const;
 	inline void resize(Long_I newn, Long_I newm); // resize (contents not preserved)
@@ -253,21 +289,21 @@ inline void NRmatrix<T>::data_free()
 }
 
 template <class T>
-NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(nullptr) {}
+NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(nullptr), p(nullptr) {}
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : nn(n), mm(m), v(data_alloc(n, m)) {}
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : nn(n), mm(m), v(data_alloc(n, m)), p(v[0]) {}
 
 template <class T>
 NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T &a) : NRmatrix(n, m)
 {
-	nrmemset(v[0], a, n*m);
+	nrmemset(p, a, n*m);
 }
 
 template <class T>
 NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T *a) : NRmatrix(n, m)
 {
-	memcpy(v[0], a, n*m*sizeof(T));
+	memcpy(p, a, n*m*sizeof(T));
 }
 
 template <class T>
@@ -281,7 +317,7 @@ inline NRmatrix<T> & NRmatrix<T>::operator=(const NRmatrix<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!")
 	resize(rhs.nn, rhs.mm);
-	memcpy(v[0], rhs.v[0], nn*mm*sizeof(T));
+	memcpy(p, rhs.p, nn*mm*sizeof(T));
 	return *this;
 }
 
@@ -289,7 +325,7 @@ template <class T>
 inline NRmatrix<T> & NRmatrix<T>::operator=(const T rhs)
 {
 	Long N = nn*mm;
-	if (N) nrmemset(v[0], rhs, N);
+	if (N) nrmemset(p, rhs, N);
 	return *this;
 }
 
@@ -298,8 +334,8 @@ inline void NRmatrix<T>::operator<<(NRmatrix<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
 	data_free();
-	nn = rhs.nn; mm = rhs.mm; v = rhs.v;
-	rhs.v = nullptr;
+	nn = rhs.nn; mm = rhs.mm; v = rhs.v; p = rhs.p;
+	rhs.v = rhs.p = nullptr;
 	rhs.nn = rhs.mm = 0;
 }
 
@@ -324,6 +360,26 @@ if (i<0 || i>=nn)
 }
 
 template <class T>
+inline T& NRmatrix<T>::operator()(Long_I i)
+{
+#ifdef _CHECKBOUNDS_
+if (i<0 || i>=nn)
+	error("NRmatrix subscript out of bounds")
+#endif
+	return p[i];
+}
+
+template <class T>
+inline const T& NRmatrix<T>::operator()(Long_I i) const
+{
+#ifdef _CHECKBOUNDS_
+if (i<0 || i>=nn)
+	error("NRmatrix subscript out of bounds")
+#endif
+	return p[i];
+}
+
+template <class T>
 inline Long NRmatrix<T>::nrows() const
 {
 	return nn;
@@ -343,6 +399,7 @@ inline void NRmatrix<T>::resize(Long_I newn, Long_I newm)
 		nn = newn;
 		mm = newm;
 		v = data_alloc(nn, mm);
+		p = v[0];
 	}
 }
 
@@ -497,6 +554,9 @@ typedef NRvector<Int> VecInt, VecInt_O, VecInt_IO;
 
 typedef const NRvector<Uint> VecUint_I;
 typedef NRvector<Uint> VecUint, VecUint_O, VecUint_IO;
+
+typedef const NRvector<Long> VecLong_I;
+typedef NRvector<Long> VecLong, VecLong_O, VecLong_IO;
 
 typedef const NRvector<Llong> VecLlong_I;
 typedef NRvector<Llong> VecLlong, VecLlong_O, VecLlong_IO;

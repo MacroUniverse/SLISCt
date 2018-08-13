@@ -1,13 +1,16 @@
 # include "nr3plus.h"
 using std::cout; using std::endl; using std::vector;
 
+// time utilities
+std::chrono::steady_clock::time_point tic_time_start; // for tic() toc()
+vector<std::chrono::steady_clock::time_point> tic_time_starts(20);
+Llong ctic_time_start; // for ctic() ctoc()
+std::vector<Llong> ctic_time_starts(20);
+
 // display scalar, vector, or matrix
 // not using template (or functions will not be available during debug)
 
 // version 1
-
-std::chrono::steady_clock::time_point tic_time_start; // for tic() toc()
-vector<std::chrono::steady_clock::time_point> tic_time_starts(20);
 
 void disp(VecUchar_I &v)
 {
@@ -711,6 +714,29 @@ void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin,
 	}
 }
 
+// parallel version
+void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
+{
+	Long j, Nx = X.nrows(), Nc = X.ncols();
+	Doub dk = (kmax-kmin)/(Nk-1), dx = (xmax-xmin)/(Nx-1);
+	Y.resize(Nk, Nc); Y = 0.;
+	#pragma omp parallel for
+	for (j = 0; j < Nk; ++j) {
+		Long i, k;
+		const Comp *pxi;
+		Comp *pyj, factor, expo, dexpo;
+		pyj = Y[j];
+		expo = exp(Comp(0, -(kmin + dk*j)*(xmin-dx)));
+		dexpo = exp(Comp(0, -(kmin + dk*j)*dx));
+		for (i = 0; i < Nx; ++i) {
+			pxi = X[i];
+			expo *= dexpo;
+			for (k = 0; k < Nc; ++k)
+				pyj[k] += expo*pxi[k];
+		}
+	}
+}
+
 void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
 {
 	Long i, j, k, Nk = Y.nrows(), Nc = Y.ncols();
@@ -721,6 +747,28 @@ void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin
 	for (j = 0; j < Nx; ++j) {
 		pxj = X[j];
 		expo = exp(Comp(0, (xmin + dx*j)*(kmin-dk)));
+		dexpo = exp(Comp(0, (xmin + dx*j)*dk));
+		for (i = 0; i < Nk; ++i) {
+			pyi = Y[i];
+			expo *= dexpo;
+			for (k = 0; k < Nc; ++k)
+				pxj[k] += expo*pyi[k];
+		}
+	}
+}
+
+void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+{
+	Long j, Nk = Y.nrows(), Nc = Y.ncols();
+	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
+	X.resize(Nx, Nc); X = 0.;
+	#pragma omp parallel for
+	for (j = 0; j < Nx; ++j) {
+		Long i, k;
+		const Comp *pyi;
+		Comp *pxj, factor, expo, dexpo;
+		pxj = X[j];
+		expo = exp(Comp(0, (xmin + dx*j)*(kmin - dk)));
 		dexpo = exp(Comp(0, (xmin + dx*j)*dk));
 		for (i = 0; i < Nk; ++i) {
 			pyi = Y[i];

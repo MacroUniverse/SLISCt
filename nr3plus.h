@@ -3,6 +3,7 @@
 #pragma once
 #include "nr3.h"
 #include <chrono>
+#include <ctime>
 
 // === constants ===
 
@@ -12,6 +13,7 @@ const Comp I(0., 1.);
 
 // === time utilities ===
 
+// real time
 extern std::chrono::steady_clock::time_point tic_time_start;
 extern std::vector<std::chrono::steady_clock::time_point> tic_time_starts;
 
@@ -29,6 +31,23 @@ inline Doub toc(Int ind) {
 	std::chrono::steady_clock::time_point tic_time_stop = std::chrono::steady_clock::now();
 	std::chrono::duration<double> t = std::chrono::duration_cast<std::chrono::duration<double>>(tic_time_stop - tic_time_starts[ind]);
 	return t.count();
+}
+
+// cpu time
+extern Llong ctic_time_start;
+extern std::vector<Llong> ctic_time_starts;
+
+inline void ctic() { ctic_time_start = clock(); }
+
+inline Doub ctoc() { return (clock() - ctic_time_start) / (Doub)CLOCKS_PER_SEC; }
+
+inline void pause()
+{ printf("\nPress return to continue.\n"); getchar(); }
+
+inline void pause(Doub t)
+{
+	tic();
+	while (toc() < t);
 }
 
 // === scalar utilities ===
@@ -425,7 +444,7 @@ void shift(NRmatrix<T> &a, Llong nshift, Int_I dim = 1)
 template <class T>
 void diagonals(NRmatrix<T> &a)
 {
-	Long i, Nr = a.nrows(), Nc = a.ncols();
+	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
 	T *temp = new T[Nc];
 	Long szT = sizeof(T);
 	for (i = 1; i < Nr; ++i) {
@@ -433,12 +452,29 @@ void diagonals(NRmatrix<T> &a)
 		memcpy(a[i], a[i] + i, (Nc-i)*szT);
 		memcpy(a[i] + Nc-i, temp, i*szT);
 	}
+	delete temp;
+}
+
+// parallel version
+template <class T>
+void diagonals_par(NRmatrix<T> &a)
+{
+	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
+	Long szT = sizeof(T);
+	#pragma omp parallel for
+	for (i = 1; i < Nr; ++i) {
+		T *temp = new T[Nc];
+		memcpy(temp, a[i], i*szT);
+		memcpy(a[i], a[i] + i, (Nc-i)*szT);
+		memcpy(a[i] + Nc-i, temp, i*szT);
+		delete temp;
+	}
 }
 
 template <class T>
 void idiagonals(NRmatrix<T> &a)
 {
-	Long i, Nr = a.nrows(), Nc = a.ncols();
+	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
 	T *temp = new T[Nc];
 	Long szT = sizeof(T);
 	for (i = 1; i < Nr; ++i) {
@@ -446,8 +482,23 @@ void idiagonals(NRmatrix<T> &a)
 		memcpy(a[i], a[i] + (Nc-i), i*szT);
 		memcpy(a[i] + i, temp, (Nc-i)*szT);
 	}
+	delete temp;
 }
 
+template <class T>
+void idiagonals_par(NRmatrix<T> &a)
+{
+	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
+	Long szT = sizeof(T);
+	#pragma omp parallel for
+	for (i = 1; i < Nr; ++i) {
+		T *temp = new T[Nc];
+		memcpy(temp, a[i], (Nc-i)*szT);
+		memcpy(a[i], a[i] + (Nc-i), i*szT);
+		memcpy(a[i] + i, temp, (Nc-i)*szT);
+		delete temp;
+	}
+}
 
 // === vectorized math functions ===
 
@@ -821,6 +872,49 @@ inline void operator/=(NRmatrix<T> &v, const Comp s)
 }
 
 template <class T>
+inline void plus(NRvector<T> &v, const NRvector<T> &v1, const T s)
+{
+	Long i, N{ v1.size() };
+	v.resize(N);
+	for (i = 0; i < N; ++i)
+		v[i] = v1[i] + s;
+}
+
+template <class T>
+inline void plus(NRmatrix<T> &v, const NRmatrix<T> &v1, const T s)
+{
+	Long i, N = numel(v1);
+	v.resize(v1);
+	auto pv = v[0];
+	auto pv1 = v1[0];
+	for (i = 0; i < N; ++i)
+		pv[i] = pv1[i] + s;
+}
+
+template <class T>
+inline void plus(NRmat3d<T> &a, const NRmat3d<T> &a1, const T s)
+{
+	Long i, N = numel(a1);
+	a.resize(a1);
+	auto pa = a[0][0];
+	auto pa1 = a1[0][0];
+	for (i = 0; i < N; ++i)
+		pa[i] = pa1[i] + s;
+}
+
+template <class T>
+inline void plus(NRvector<T> &v, const T s, const NRvector<T> &v1)
+{ plus(v, v1, s); }
+
+template <class T>
+inline void plus(NRmatrix<T> &v, const T s, const NRmatrix<T> &v1)
+{ plus(v, v1, s); }
+
+template <class T>
+inline void plus(NRmat3d<T> &a, const T s, const NRmat3d<T> &a1)
+{ plus(a, a1, s); }
+
+template <class T>
 inline void plus(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
 {
 	Long i, N{ v1.size() };
@@ -851,6 +945,128 @@ inline void plus(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
 	auto pa2 = a2[0][0];
 	for (i = 0; i < N; ++i)
 		pa[i] = pa1[i] + pa2[i];
+}
+
+template <class T>
+inline void minus(NRvector<T> &v)
+{
+	Long i, N{ v1.size() };
+	v.resize(N);
+	for (i = 0; i < N; ++i)
+		v[i] *= -1;
+}
+
+template <class T>
+inline void minus(NRmatrix<T> &v)
+{
+	Long i, N = numel(v1);
+	v.resize(v1);
+	auto pv = v[0];
+	for (i = 0; i < N; ++i)
+		pv[i] *= -1;
+}
+
+template <class T>
+inline void minus(NRmat3d<T> &a)
+{
+	Long i, N = numel(a1);
+	a.resize(a1);
+	auto pa = a[0][0];
+	for (i = 0; i < N; ++i)
+		pa[i] *= -1;
+}
+
+template <class T>
+inline void minus(NRvector<T> &v, const NRvector<T> &v1)
+{
+	Long i, N{ v1.size() };
+	v.resize(N);
+	for (i = 0; i < N; ++i)
+		v[i] = -v1[i];
+}
+
+template <class T>
+inline void minus(NRmatrix<T> &v, const NRmatrix<T> &v1)
+{
+	Long i, N = numel(v1);
+	v.resize(v1);
+	auto pv = v[0];
+	auto pv1 = v1[0];
+	for (i = 0; i < N; ++i)
+		pv[i] = -pv1[i];
+}
+
+template <class T>
+inline void minus(NRmat3d<T> &a, const NRmat3d<T> &a1)
+{
+	Long i, N = numel(a1);
+	a.resize(a1);
+	auto pa = a[0][0];
+	auto pa1 = a1[0][0];
+	for (i = 0; i < N; ++i)
+		pa[i] = -pa1[i];
+}
+
+template <class T>
+inline void minus(NRvector<T> &v, const T s, const NRvector<T> &v1)
+{
+	Long i, N{ v1.size() };
+	v.resize(N);
+	for (i = 0; i < N; ++i)
+		v[i] = s - v1[i];
+}
+
+template <class T>
+inline void minus(NRmatrix<T> &v, const T s, const NRmatrix<T> &v1)
+{
+	Long i, N = numel(v1);
+	v.resize(v1);
+	auto pv = v[0];
+	auto pv1 = v1[0];
+	for (i = 0; i < N; ++i)
+		pv[i] = s - pv1[i];
+}
+
+template <class T>
+inline void minus(NRmat3d<T> &a, const T s, const NRmat3d<T> &a1)
+{
+	Long i, N = numel(a1);
+	a.resize(a1);
+	auto pa = a[0][0];
+	auto pa1 = a1[0][0];
+	for (i = 0; i < N; ++i)
+		pa[i] = s - pa1[i];
+}
+
+template <class T>
+inline void minus(NRvector<T> &v, const NRvector<T> &v1, const T s)
+{
+	Long i, N{ v1.size() };
+	v.resize(N);
+	for (i = 0; i < N; ++i)
+		v[i] = v1[i] - s;
+}
+
+template <class T>
+inline void minus(NRmatrix<T> &v, const NRmatrix<T> &v1, const T s)
+{
+	Long i, N = numel(v1);
+	v.resize(v1);
+	auto pv = v[0];
+	auto pv1 = v1[0];
+	for (i = 0; i < N; ++i)
+		pv[i] = pv1[i] - s;
+}
+
+template <class T>
+inline void minus(NRmat3d<T> &a, const NRmat3d<T> &a1, const T s)
+{
+	Long i, N = numel(a1);
+	a.resize(a1);
+	auto pa = a[0][0];
+	auto pa1 = a1[0][0];
+	for (i = 0; i < N; ++i)
+		pa[i] = pa1[i] - s;
 }
 
 template <class T>
@@ -1114,7 +1330,7 @@ inline Comp operator*(VecComp_I &v1, VecDoub_I &v2)
 template <class T, class T1, class T2>
 inline void outprod(NRmatrix<T> &prod, const NRvector<T1> &v1, const NRvector<T2> &v2)
 {
-	Long i, j, N1 = v1.size(), N2 = v2.size();
+	Long i, j, N1{ v1.size() }, N2{ v2.size() };
 	Comp *pc, v1_i;
 	prod.resize(N1, N2);
 	for (i = 0; i < N1; ++i) {
@@ -1125,13 +1341,46 @@ inline void outprod(NRmatrix<T> &prod, const NRvector<T1> &v1, const NRvector<T2
 	}
 }
 
+// parallel version
+template <class T, class T1, class T2>
+inline void outprod_par(NRmatrix<T> &prod, const NRvector<T1> &v1, const NRvector<T2> &v2)
+{
+	Long i, N1{ v1.size() }, N2{ v2.size() };
+	prod.resize(N1, N2);
+	#pragma omp parallel for
+	for (i = 0; i < N1; ++i) {
+		Long j;
+		Comp *pc, v1_i;
+		pc = prod[i];
+		v1_i = v1[i];
+		for (j = 0; j < N2; ++j)
+			pc[j] = v1_i*v2[j];
+	}
+}
+
 template<class T, class T2>
 inline void outprod(NRmatrix<T> &prod, VecComp_I &v1, const NRvector<T2> &v2)
 {
-	Long i, j, N1 = v1.size(), N2 = v2.size();
+	Long i, j, N1{ v1.size() }, N2{ v2.size() };
 	Comp *pc, v1_i;
 	prod.resize(N1, N2);
 	for (i = 0; i < N1; ++i) {
+		pc = prod[i];
+		v1_i = conj(v1[i]);
+		for (j = 0; j < N2; ++j)
+			pc[j] = v1_i*v2[j];
+	}
+}
+
+template<class T, class T2>
+inline void outprod_par(NRmatrix<T> &prod, VecComp_I &v1, const NRvector<T2> &v2)
+{
+	Long i, N1{ v1.size() }, N2{ v2.size() };
+	prod.resize(N1, N2);
+	#pragma omp parallel for
+	for (i = 0; i < N1; ++i) {
+		Long j;
+		Comp *pc, v1_i;
 		pc = prod[i];
 		v1_i = conj(v1[i]);
 		for (j = 0; j < N2; ++j)
@@ -1163,6 +1412,21 @@ inline void mul(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
 	}
 }
 
+// parallel version
+template <class T, class T1, class T2>
+inline void mul_par(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
+{
+	Long j, m{ a.nrows() }, n{ a.ncols() };
+	y.resize(n); y = 0.;
+	#pragma omp parallel for
+	for (j = 0; j < n; ++j) {
+		Long k;
+		for (k = 0; k < m; ++k)
+			y[j] += x[k] * a[k][j];
+	}
+}
+
+
 // matrix-matrix multiplication
 template <class T, class T1, class T2>
 inline void mul(NRmatrix<T> &c, const NRmatrix<T1> &a, const NRmatrix<T2> &b)
@@ -1175,6 +1439,18 @@ inline void mul(NRmatrix<T> &c, const NRmatrix<T1> &a, const NRmatrix<T2> &b)
 				c[i][j] += a[i][k] * b[k][j];
 		}
 	}
+}
+
+// === numerical integration ===
+
+// indefinite integral
+template <class T>
+void integral(NRvector<T> &F, const NRvector<T> &f, Doub_I dx)
+{
+	Long i, N{ f.size() };
+	F.resize(N); F[0] = 0.;
+	for (i = 0; i < N - 1; ++i)
+		F[i + 1] = F[i] + f[i] * dx;
 }
 
 // === FT related ===
@@ -1218,10 +1494,12 @@ void fftshift(NRmatrix<T> &a, Int_I dim = 1)
 // for each column, Y_j = sum_i ( X_i*exp(-I*k_j*X_i) )
 // this is much slower than fft, but for small (xmax-xmin) and (kmax-kmin), could be faster
 void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax);
+void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax);
 
 // the inverse of dft, multiplied by 2*pi/(dx*dk).
 // this might not be a precise inverse
 void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
+void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
 
 // string utilities
 

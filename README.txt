@@ -15,12 +15,15 @@ Int is int, Uint is unsigned int, Llong is 64-bit int, Doub is double, Comp is s
 Long is 64 bit integer by default, define _USE_Int_AS_LONG macro to use int instead. Use Long for vector/matrix index or loop variable etc.
 Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
 
-By default, functions output arguments can not be any of the input arguments (this is called aliasing).
+Generally, functions output arguments can not be any of the input arguments (this is called aliasing), except for element-wise functions.
 
 === vector/matrix class template ===
 Constructors: NRvector() for default, NRvector(Long_I n) for vector size, NRvector(Long_I n, const T &a) to specify element as well, NRvector(Long_I n, const T *a) to initialize from array.
 Operator = : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
-Operator [] : get a reference for the i-th element.
+Operator [] : for vector, get a reference for the i-th element; for matrix, return a pointer for the second index.
+Operator () : get a reference for the i-th element, in row-major order.
+Operator << : move information;
+end() : get a reference for the last element.
 size() : get the number of elements
 resize(Long_I) : resize vector, contents are not preserved. resize() does nothing if size doesn't change.
 resize(NRvector<> v) : resize to the same size of v
@@ -35,10 +38,13 @@ const Doub E  = 2.71828182845904524;
 const Comp I(0., 1.);
 
 === time utilities ===
+// all times are in seconds.
 void tic()
 Doub toc()
 void tic(Int ind)
 Doub toc(Int ind)
+void ctic() // cpu time
+Doub ctoc()
 
 === scalar utilities ===
 Int isodd(Int n) // return 1 if n is odd, return 0 otherwise
@@ -77,8 +83,10 @@ sin(), cos(), exp(), tan(), whenever make sense
 === matrix arithmatics ===
 operators +,-,*,/ scalar/vec/mat, whenever make sense (inefficient!).
 operators +=,-=,*=,/= scalar/vec/mat, whenever make sense
-void plus(out, in, in) for scalar/vec/mat, whenever make sense.
-void minus(out, in, in)
+void plus(out, in, in) //for scalar/vec/mat, whenever make sense.
+void minus(out, in, in) // binary "-" operator
+void minus(in_out) // unary "-" operator
+void minus(out, in)
 void emul(out, in, in) // element-wise multiplication
 void real(MatDoub_O &rc, MatComplex_I &c)
 void imag(MatDoub_O &ic, MatComplex_I &c)
@@ -89,6 +97,9 @@ s = v1*v2 // dot product, whenever make sense
 void outprod(MatComplex_O &prod, VecComplex_I &v1, VecComplex_I &v2) // outer product
 void mul(out, in, in) // mat-mat or mat-vec multiplications, whenever make sense
 
+=== calculus ===
+void integral(NRvector<T> &F, const NRvector<T> &f, Doub_I dx) // simple indefinite integration
+
 === FT related ===
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
@@ -96,3 +107,13 @@ void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub k
 
 === string related ===
 template <typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
+
+=== OpenMP functions ===
+// parallelized version of functions
+void diagonals_par(NRmatrix<T> &a)
+void idiagonals_par(NRmatrix<T> &a)
+void outprod_par(NRmatrix<T> &prod, const NRvector<T1> &v1, const NRvector<T2> &v2)
+void outprod_par(NRmatrix<T> &prod, VecComp_I &v1, const NRvector<T2> &v2)
+void mul_par(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
+void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
+void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
