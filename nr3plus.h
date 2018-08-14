@@ -347,13 +347,13 @@ void shift(NRmatrix<T> &a, Llong nshift, Int_I dim = 1)
 		if (n == 0 || n == Nc) return;
 		Long i;
 		Long sz = n*sizeof(T), sz_ = (Nc-n)*sizeof(T);
-		T *temp = (T*)malloc(sz);
+		T *temp = new T[n];
 		for (i = 0; i < Nr; ++i) {
-			memcpy(temp.ptr(), a[i], sz);
+			memcpy(temp, a[i], sz);
 			memcpy(a[i], a[i] + n, sz_);
-			memcpy(a[i] + Nc-n, temp.ptr(), sz);
+			memcpy(a[i] + Nc-n, temp, sz);
 		}
-		free(temp);
+		delete temp;
 	}
 	else {
 		// I actually want n to be shift up
@@ -366,11 +366,11 @@ void shift(NRmatrix<T> &a, Llong nshift, Int_I dim = 1)
 		if (n == 0 || n == Nr) return;
 		Long sz = n*Nc*sizeof(T);
 		Long sz_ = (Nr-n)*Nc*sizeof(T);
-		T *temp = (T*)malloc(sz);
+		T *temp = new T[n];
 		memcpy(temp, a.ptr(), sz);
 		memcpy(a.ptr(), a[n], sz_);
 		memcpy(a[Nr-n], temp, sz);
-		free(temp);
+		delete temp;
 	}
 }
 
@@ -577,39 +577,63 @@ inline void operator/=(NRbase<T1> &v, const T2 &s)
 }
 
 template <class T, class T1, class T2>
-inline void plus0(NRbase<T> &v, NRbase<T1> &v1, const T2& s)
+inline void plus0(NRbase<T> &v, const NRbase<T1> &v1, const T2& s)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = v1(i) + s;
 }
 
-template <class T, class T1, class T2>
-inline void plus(NRvector<T> &v, const NRvector<T1> &v1, const T2 s)
+template <class T, class T1>
+inline void plus(NRvector<T> &v, const NRvector<T1> &v1, Doub_I s)
 { v.resize(v1); plus0(v, v1, s); }
 
-template <class T, class T1, class T2>
-inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const T2 s)
+template <class T, class T1>
+inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, Doub_I s)
 { v.resize(v1); plus0(v, v1, s); }
 
-template <class T, class T1, class T2>
-inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 s)
+template <class T, class T1>
+inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, Doub_I s)
 { v.resize(v1); plus0(v, v1, s); }
 
-template <class T>
-inline void plus(NRvector<T> &v, const T s, const NRvector<T> &v1)
+template <class T, class T1>
+inline void plus(NRvector<T> &v, const NRvector<T1> &v1, Comp_I s)
+{ v.resize(v1); plus0(v, v1, s); }
+
+template <class T, class T1>
+inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, Comp_I s)
+{ v.resize(v1); plus0(v, v1, s); }
+
+template <class T, class T1>
+inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, Comp_I s)
+{ v.resize(v1); plus0(v, v1, s); }
+
+template <class T, class T1>
+inline void plus(NRvector<T> &v, Doub_I s, const NRvector<T1> &v1)
 { plus(v, v1, s); }
 
-template <class T>
-inline void plus(NRmatrix<T> &v, const T s, const NRmatrix<T> &v1)
+template <class T, class T1>
+inline void plus(NRmatrix<T> &v, Doub_I s, const NRmatrix<T1> &v1)
 { plus(v, v1, s); }
 
-template <class T>
-inline void plus(NRmat3d<T> &v, const T s, const NRmat3d<T> &v1)
+template <class T, class T1>
+inline void plus(NRmat3d<T> &v, Doub_I s, const NRmat3d<T1> &v1)
+{ plus(v, v1, s); }
+
+template <class T, class T1>
+inline void plus(NRvector<T> &v, Comp_I s, const NRvector<T1> &v1)
+{ plus(v, v1, s); }
+
+template <class T, class T1>
+inline void plus(NRmatrix<T> &v, Comp_I s, const NRmatrix<T1> &v1)
+{ plus(v, v1, s); }
+
+template <class T, class T1>
+inline void plus(NRmat3d<T> &v, Comp_I s, const NRmat3d<T1> &v1)
 { plus(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void plus0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void plus1(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -618,26 +642,26 @@ inline void plus0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 
 template <class T, class T1, class T2>
 inline void plus(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
-{ v.resize(v1); plus0(v, v1, v2); }
+{ v.resize(v1); plus1(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
-{ v.resize(v1); plus0(v, v1, v2); }
+{ v.resize(v1); plus1(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
-{ v.resize(v1); plus0(v, v1, v2); }
+{ v.resize(v1); plus1(v, v1, v2); }
 
 template <class T>
-inline void minus0(NRbase<T> &v)
+inline void minus(NRbase<T> &v)
 {
-	Long i, N{ v1.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v(i) *= -1;
 }
 
 template <class T, class T1>
-inline void minus0(NRbase<T> &v, const NRbase<T1> &v1)
+inline void minus1(NRbase<T> &v, const NRbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -646,38 +670,50 @@ inline void minus0(NRbase<T> &v, const NRbase<T1> &v1)
 
 template <class T, class T1>
 inline void minus(NRvector<T> &v, const NRvector<T1> &v1)
-{ v.resize(v1); minus0(v, v1); }
+{ v.resize(v1); minus1(v, v1); }
 
 template <class T, class T1>
 inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1)
-{ v.resize(v1); minus0(v, v1); }
+{ v.resize(v1); minus1(v, v1); }
 
 template <class T, class T1>
 inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1)
-{ v.resize(v1); minus0(v, v1); }
+{ v.resize(v1); minus1(v, v1); }
 
 template <class T, class T1, class T2>
-inline void minus0(NRbase<T> &v, const T1& s, NRbase<T2> &v1, )
+inline void minus2(NRbase<T> &v, const T1& s, const NRbase<T2> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = s - v1(i);
 }
 
-template <class T, class T1, class T2>
-inline void minus(NRvector<T> &v, const T1 s, const NRvector<T2> &v1)
-{ v.resize(v1); minus0(v, s, v1); }
+template <class T, class T1>
+inline void minus(NRvector<T> &v, Doub_I s, const NRvector<T1> &v1)
+{ v.resize(v1); minus2(v, s, v1); }
+
+template <class T, class T1>
+inline void minus(NRmatrix<T> &v, Doub_I s, const NRmatrix<T1> &v1)
+{ v.resize(v1); minus2(v, s, v1); }
+
+template <class T, class T1>
+inline void minus(NRmat3d<T> &v, Doub_I s, const NRmat3d<T1> &v1)
+{ v.resize(v1); minus2(v, s, v1); }
+
+template <class T, class T1>
+inline void minus(NRvector<T> &v, Comp_I s, const NRvector<T1> &v1)
+{ v.resize(v1); minus2(v, s, v1); }
+
+template <class T, class T1>
+inline void minus(NRmatrix<T> &v, Comp_I s, const NRmatrix<T1> &v1)
+{ v.resize(v1); minus2(v, s, v1); }
+
+template <class T, class T1>
+inline void minus(NRmat3d<T> &v, Comp_I s, const NRmat3d<T1> &v1)
+{ v.resize(v1); minus2(v, s, v1); }
 
 template <class T, class T1, class T2>
-inline void minus(NRmatrix<T> &v, const T1 s, const NRmatrix<T2> &v1)
-{ v.resize(v1); minus0(v, s, v1); }
-
-template <class T, class T1, class T2>
-inline void minus(NRmat3d<T> &v, const T1 s, const NRmat3d<T2> &v1)
-{ v.resize(v1); minus0(v, s, v1); }
-
-template <class T, class T1, class T2>
-inline void minus0(NRvector<T> &v, const NRvector<T> &v1, const T s)
+inline void minus3(NRvector<T> &v, const NRvector<T1> &v1, const T2 &s)
 {
 	Long i, N{ v1.size() };
 	v.resize(N);
@@ -685,20 +721,32 @@ inline void minus0(NRvector<T> &v, const NRvector<T> &v1, const T s)
 		v[i] = v1[i] - s;
 }
 
-template <class T, class T1, class T2>
-inline void minus(NRbase<T> &v, NRbase<T1> &v1, const T2& s)
-{ v.resize(v1); minus0(v, v1, s); }
+template <class T, class T1>
+inline void minus(NRvector<T> &v, NRvector<T1> &v1, Doub_I s)
+{ v.resize(v1); minus3(v, v1, s); }
+
+template <class T, class T1>
+inline void minus(NRmatrix<T> &v, NRmatrix<T1> &v1, Doub_I s)
+{ v.resize(v1); minus3(v, v1, s); }
+
+template <class T, class T1>
+inline void minus(NRmat3d<T> &v, NRmat3d<T1> &v1, Doub_I s)
+{ v.resize(v1); minus3(v, v1, s); }
+
+template <class T, class T1>
+inline void minus(NRvector<T> &v, NRvector<T1> &v1, Comp_I s)
+{ v.resize(v1); minus3(v, v1, s); }
+
+template <class T, class T1>
+inline void minus(NRmatrix<T> &v, NRmatrix<T1> &v1, Comp_I s)
+{ v.resize(v1); minus3(v, v1, s); }
+
+template <class T, class T1>
+inline void minus(NRmat3d<T> &v, NRmat3d<T1> &v1, Comp_I s)
+{ v.resize(v1); minus3(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const T2 s)
-{ v.resize(v1); minus0(v, v1, s); }
-
-template <class T, class T1, class T2>
-inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 s)
-{ v.resize(v1); minus0(v, v1, s); }
-
-template <class T, class T1, class T2>
-inline void minus0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void minus4(NRbase<T> &v, const NRbase<T1> &v1, const NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -707,18 +755,74 @@ inline void minus0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 
 template <class T, class T1, class T2>
 inline void minus(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
-{ v.resize(v1); minus0(v, v1, v2); }
+{ v.resize(v1); minus4(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
-{ v.resize(v1); minus0(v, v1, v2); }
+{ v.resize(v1); minus4(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
-{ v.resize(v1); minus0(v, v1, v2); }
+{ v.resize(v1); minus4(v, v1, v2); }
 
 template <class T, class T1, class T2>
-inline void times0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void times0(NRbase<T> &v, NRbase<T1> &v1, const T2 &s)
+{
+	Long i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v(i) = v1(i) * s;
+}
+
+template <class T, class T1>
+inline void times(NRvector<T> &v, const NRvector<T1> &v1, Doub_I s)
+{ v.resize(v1); times0(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmatrix<T> &v, const NRmatrix<T1> &v1, Doub_I s)
+{ v.resize(v1); times0(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, Doub_I s)
+{ v.resize(v1); times0(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRvector<T> &v, const NRvector<T1> &v1, Comp_I s)
+{ v.resize(v1); times0(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmatrix<T> &v, const NRmatrix<T1> &v1, Comp_I s)
+{ v.resize(v1); times0(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, Comp_I s)
+{ v.resize(v1); times0(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRvector<T> &v, Doub_I s, const NRvector<T1> &v1)
+{ times(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmatrix<T> &v, Doub_I s, const NRmatrix<T1> &v1)
+{ times(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmat3d<T> &v, Doub_I s, const NRmat3d<T1> &v1)
+{ times(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRvector<T> &v, Comp_I s, const NRvector<T1> &v1)
+{ times(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmatrix<T> &v, Comp_I s, const NRmatrix<T1> &v1)
+{ times(v, v1, s); }
+
+template <class T, class T1>
+inline void times(NRmat3d<T> &v, Comp_I s, const NRmat3d<T1> &v1)
+{ times(v, v1, s); }
+
+template <class T, class T1, class T2>
+inline void times1(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -727,18 +831,83 @@ inline void times0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 
 template <class T, class T1, class T2>
 inline void times(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
-{ v.resize(v1); times0(v, v1, v2); }
+{ v.resize(v1); times1(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void times(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
-{ v.resize(v1); times0(v, v1, v2); }
+{ v.resize(v1); times1(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
-{ v.resize(v1); times0(v, v1, v2); }
+{ v.resize(v1); times1(v, v1, v2); }
 
 template <class T, class T1, class T2>
-inline void divide0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void divide0(NRbase<T> &v, NRbase<T1> &v1, const T2 &s)
+{
+	Long i, N{ v1.size() };
+	T2 sInv{ 1/s };
+	for (i = 0; i < N; ++i)
+		v(i) = v1(i) * sInv;
+}
+
+template <class T, class T1>
+inline void divide(NRvector<T> &v, NRvector<T1> &v1, Doub_I s)
+{ v.resize(v1); divide0(v, v1, s); }
+
+template <class T, class T1>
+inline void divide(NRmatrix<T> &v, NRmatrix<T1> &v1, Doub_I s)
+{ v.resize(v1); divide0(v, v1, s); }
+
+template <class T, class T1>
+inline void divide(NRmat3d<T> &v, NRmat3d<T1> &v1, Doub_I s)
+{ v.resize(v1); divide0(v, v1, s); }
+
+template <class T, class T1>
+inline void divide(NRvector<T> &v, NRvector<T1> &v1, Comp_I s)
+{ v.resize(v1); divide0(v, v1, s); }
+
+template <class T, class T1>
+inline void divide(NRmatrix<T> &v, NRmatrix<T1> &v1, Comp_I s)
+{ v.resize(v1); divide0(v, v1, s); }
+
+template <class T, class T1>
+inline void divide(NRmat3d<T> &v, NRmat3d<T1> &v1, Comp_I s)
+{ v.resize(v1); divide0(v, v1, s); }
+
+template <class T, class T1, class T2>
+inline void divide1(NRbase<T> &v, const T1 &s, NRbase<T2> &v1)
+{
+	Long i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v(i) = s / v1(i);
+}
+
+template <class T, class T1>
+inline void divide(NRvector<T> &v, Doub_I s, NRvector<T1> &v1)
+{ v.resize(v1); divide1(v, s, v1); }
+
+template <class T, class T1>
+inline void divide(NRmatrix<T> &v, Doub_I s, NRmatrix<T1> &v1)
+{ v.resize(v1); divide1(v, s, v1); }
+
+template <class T, class T1>
+inline void divide(NRmat3d<T> &v, Doub_I s, NRmat3d<T1> &v1)
+{ v.resize(v1); divide1(v, s, v1); }
+
+template <class T, class T1>
+inline void divide(NRvector<T> &v, Comp_I s, NRvector<T1> &v1)
+{ v.resize(v1); divide1(v, s, v1); }
+
+template <class T, class T1>
+inline void divide(NRmatrix<T> &v, Comp_I s, NRmatrix<T1> &v1)
+{ v.resize(v1); divide1(v, s, v1); }
+
+template <class T, class T1>
+inline void divide(NRmat3d<T> &v, Comp_I s, NRmat3d<T1> &v1)
+{ v.resize(v1); divide1(v, s, v1); }
+
+template <class T, class T1, class T2>
+inline void divide3(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -747,127 +916,115 @@ inline void divide0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 
 template <class T, class T1, class T2>
 inline void divide(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
-{ v.resize(v1); divide0(v, v1, v2); }
+{ v.resize(v1); divide3(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void divide(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{ v.resize(v1); divide0(v, v1, v2); }
+{ v.resize(v1); divide3(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void divide(NRmat3d<T> &v, const NRmat3d<T> &v1, const NRmat3d<T> &v2)
-{ v.resize(v1); divide0(v, v1, v2); }
+{ v.resize(v1); divide3(v, v1, v2); }
 
-inline void real(VecComp &c)
+inline void real(NRbase<Comp> &v)
 {
-	Long i, N{ 2 * c.size() };
-	Doub *pd = (Doub *)c.ptr();
+	Long i, N{ 2 * v.size() };
+	Doub *pd = (Doub *)v.ptr();
 	for (i = 1; i < N; i += 2)
 		pd[i] = 0.;
 }
 
 template <class T>
-inline void real(NRvector<T> &rc, VecComp_I &c)
+inline void real0(NRbase<T> &v, const NRbase<Comp> &v1)
 {
-	Long i, N{ c.size() };
-	rc.resize(N);
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		rc[i] = real(c[i]);
+		v(i) = real(v1(i));
 }
 
-inline void real(MatComp &c)
+template <class T>
+inline void real(NRvector<T> &v, const NRvector<Comp> &v1)
+{ v.resize(v1); real0(v, v1); }
+
+template <class T>
+inline void real(NRmatrix<T> &v, const NRmatrix<Comp> &v1)
+{ v.resize(v1); real0(v, v1); }
+
+template <class T>
+inline void real(NRmat3d<T> &v, const NRmat3d<Comp> &v1)
+{ v.resize(v1); real0(v, v1); }
+
+inline void imag(NRbase<Comp> &v)
 {
-	Long i, N{ 2 * c.size() };
-	Doub *pd = (Doub *)c[0];
-	for (i = 1; i < N; i += 2)
+	Long i, N{ 2 * v.size() };
+	Doub *pd = (Doub *)v.ptr();
+	for (i = 0; i < N; i += 2)
 		pd[i] = 0.;
 }
 
 template <class T>
-inline void real(NRmatrix<T> &rc, MatComp_I &c)
+inline void imag0(NRbase<T> &v, const NRbase<Comp> &v1)
 {
-	Long i, m = c.nrows(), n = c.ncols(), N = m*n;
-	rc.resize(m, n);
-	T *prc = rc.ptr();
-	const Comp *pc = c.ptr();
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		prc[i] = real(pc[i]);
-}
-
-inline void imag(MatDoub_O &ic, MatComp_I &c)
-{
-	Long i, m = c.nrows(), n = c.ncols(), N = m*n;
-	ic.resize(m, n);
-	Doub *pic;
-	Comp *pc;
-	for (i = 0; i < N; ++i)
-		pic[i] = imag(pc[i]);
+		v(i) = imag(v1(i));
 }
 
 template <class T>
-inline void abs(NRvector<T> &v)
-{
-	Long i, N = v.size();
-	for (i = 0; i < N; ++i)
-		v[i] = abs(v[i]);
-}
+inline void imag(NRvector<T> &v, const NRvector<Comp> &v1)
+{ v.resize(v1); imag0(v, v1); }
 
 template <class T>
-inline void abs(NRmatrix<T> &a)
-{
-	Long i, N = a.size();
-	T *p = a[0];
-	for (i = 0; i < N; ++i)
-		p[i] = abs(p[i]);
-}
+inline void imag(NRmatrix<T> &v, const NRmatrix<Comp> &v1)
+{ v.resize(v1); imag0(v, v1); }
 
 template <class T>
-inline void abs(NRmat3d<T> &a)
+inline void imag(NRmat3d<T> &v, const NRmat3d<Comp> &v1)
+{ v.resize(v1); imag0(v, v1); }
+
+template <class T>
+inline void abs(NRbase<T> &v)
 {
-	Long i, N = a.size();
-	T *p = a[0];
-	for (i = 0; i < N; ++i)
-		p[i] = abs(p[i]);
+	Long i, N{ v.size() };
+	for (i = 0; i < N; i += 2)
+		v(i) = abs(v(i));
 }
 
 template <class T, class T1>
-inline void abs(NRvector<T1> &out, const NRvector<T> &v)
+inline void abs0(NRbase<T> &v, const NRbase<T1> &v1)
 {
-	Long i, N = v.size();
-	out.resize(N);
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		out[i] = abs(v[i]);
+		v(i) = abs(v1(i));
 }
 
 template <class T, class T1>
-inline void abs(NRmatrix<T1> &out, const NRmatrix<T> &a)
-{
-	Long i, N = a.size();
-	out.resize(a.nrows(), a.ncols());
-	T1 *pout = out[0];
-	const T *pa = a[0];
-	for (i = 0; i < N; ++i)
-		pout[i] = abs(pa[i]);
-}
+inline void abs(NRvector<T> &v, const NRvector<T1> &v1)
+{ v.resize(v1); abs0(v, v1); }
 
 template <class T, class T1>
-inline void abs(NRmat3d<T1> &out, const NRmat3d<T> &a)
+inline void abs(NRmatrix<T> &v, const NRmatrix<T1> &v1)
+{ v.resize(v1); abs0(v, v1); }
+
+template <class T, class T1>
+inline void abs(NRmat3d<T> &v, const NRmat3d<T1> &v1)
+{ v.resize(v1); abs0(v, v1); }
+
+inline void complex0(NRbase<Comp> &v, const NRbase<Doub> &v1)
 {
-	Long i, N = a.size();
-	out.resize(a);
-	T1 *pout = out[0];
-	T2 *pa = a[0];
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		pout[i] = abs(pa[i]);
+		v(i) = v1(i);
 }
 
-inline void complex(VecComp_O &y, VecDoub_I &x)
-{
-	Long i, N = x.size();
-	y.resize(N);
-	Doub *py = (Doub*)&y[0];
-	for (i = 0; i < N; ++i)
-		py[2*i] = x[i];
-}
+inline void complex(NRvector<Comp> &v, const NRvector<Doub> &v1)
+{ v.resize(v1); complex0(v, v1); }
+
+inline void complex(NRmatrix<Comp> &v, const NRmatrix<Doub> &v1)
+{ v.resize(v1); complex0(v, v1); }
+
+inline void complex(NRmat3d<Comp> &v, const NRmat3d<Doub> &v1)
+{ v.resize(v1); complex0(v, v1); }
 
 inline void conjugate(VecComp_IO &v)
 {
