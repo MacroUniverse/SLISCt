@@ -9,6 +9,12 @@ using namespace std;
 
 int main()
 {
+	// test operator() and end()
+	VecDoub vec(3); linspace(vec, 1., 3.);
+	Doub x123 = vec.end();
+	x123 = vec.size();
+	Doub *px = vec.ptr();
+
 	// test new disp()
 	VecUchar v8(3);
 	linspace<Uchar>(v8, 1, 3);

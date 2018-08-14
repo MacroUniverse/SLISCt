@@ -130,103 +130,59 @@ void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1,
 // === get vec/mat properties ===
 
 template <class T>
-inline T sum(const NRvector<T> &v)
+inline T sum(const NRbase<T> &v)
 {
 	Long i, n{ v.size() };
 	T sum = 0;
-	for (i = 0; i < n; ++i) {
-		sum += v[i];
-	}
+	for (i = 0; i < n; ++i)
+		sum += v(i);
 	return sum;
 }
 
 template <class T>
-inline T sum(const NRmatrix<T> &a)
+inline T max(const NRbase<T> &v)
 {
-	Long i, n{ a.size() };
-	T sum = 0;
-	const T *pa = a[0];
-	for (i = 0; i < n; ++i) {
-		sum += pa[i];
-	}
-	return sum;
-}
-
-template <class T>
-inline T sum(const NRmat3d<T> &a)
-{
-	Long i, n{ a.size() };
-	T sum = 0;
-	const T *pa = a[0][0];
-	for (i = 0; i < n; ++i) {
-		sum += pa[i];
-	}
-	return sum;
-}
-
-inline Doub max(VecDoub_I &a)
-{
-	Long i, N = a.size();
-	Doub val = -1e300;
-	const Doub *pa = &a[0];
-	for (i = 0; i < N; ++i) {
-		if (pa[i] > val) {
-			val = pa[i];
-		}
-	}
+	Long i, N{ v.size() };
+	T val{ v(0) };
+	for (i = 1; i < N; ++i)
+		if (v(i) > val)
+			val = v(i);
 	return val;
 }
 
-// return max(abs(a(:)))
-inline Doub max(VecComp_I &a)
+// for T = Comp, return max(abs(a(:)))
+template <>
+inline Comp max(const NRbase<Comp> &v)
 {
-	Long i, N = a.size();
-	Doub val = 0., mod;
-	const Comp *pa = &a[0];
-	for (i = 0; i < N; ++i)
-		if ((mod = abs(pa[i])) > val)
+	Long i, N{ v.size() };
+	Doub val{ abs(v(0)) }, mod;
+	for (i = 1; i < N; ++i)
+		if ((mod = abs(v(i))) > val)
 			val = mod;
 	return val;
 }
 
-inline Doub max(Long_O &ind, VecDoub_I &a)
+template <class T>
+inline T max(Long_O &ind, const NRbase<T> &v)
 {
-	Long i, N = a.size();
-	Doub val = -1e300;
-	Doub *pa;
-	for (i = 0; i < N; ++i) {
-		if (pa[i] > val) {
-			val = pa[i];
-			ind = i;
+	Long i, N{ v.size() };
+	T val{ v(0) };
+	for (i = 1; i < N; ++i)
+		if (v(i) > val) {
+			val = v(i); ind = i;
 		}
-	}
 	return val;
 }
 
-inline Doub max(MatDoub_I &a)
+template <>
+inline Comp max(Long_O &ind, const NRbase<Comp> &v)
 {
-	Long i, N = a.size();
-	Doub val = -1e300;
-	const Doub *pa = a[0];
-	for (i = 0; i < N; ++i) {
-		if (pa[i] > val) {
-			val = pa[i];
+	Long i, N{ v.size() };
+	Doub val{ abs(v(0)) }, mod;
+	for (i = 1; i < N; ++i)
+		if ((mod = abs(v(i))) > val) {
+			val = mod; ind = i;
 		}
-	}
-	return val;
-}
-
-inline Doub max(Long &ind, MatDoub_I &a)
-{
-	Long i, N = a.size();
-	Doub val = -1e300;
-	Doub *pa;
-	for (i = 0; i < N; ++i) {
-		if (pa[i] > val) {
-			val = pa[i];
-			ind = i;
-		}
-	}
 	return val;
 }
 
@@ -322,7 +278,7 @@ inline void linspace(NRmatrix<T> &a, const T first, const T last, Llong_I n = -1
 		a.resize(n, m); N = n*m;
 	}
 	T delta = (last - first) / ((T)N - 1);
-	T *pa = a[0];
+	T *pa = a.ptr();
 	for (i = 0; i < N; ++i)
 		pa[i] = first + delta * (T)i;
 }
@@ -336,7 +292,7 @@ inline void linspace(NRmat3d<T> &a, const T first, const T last, Llong_I n = -1,
 		a.resize(n, m, k); N = n*m*k;
 	}
 	T delta = (last - first) / (N - 1);
-	T *pa = a[0][0];
+	T *pa = a.ptr();
 	for (i = 0; i < N; ++i)
 		pa[i] = first + delta * i;
 }
@@ -393,9 +349,9 @@ void shift(NRmatrix<T> &a, Llong nshift, Int_I dim = 1)
 		Long sz = n*sizeof(T), sz_ = (Nc-n)*sizeof(T);
 		T *temp = (T*)malloc(sz);
 		for (i = 0; i < Nr; ++i) {
-			memcpy(&temp[0], a[i], sz);
+			memcpy(temp.ptr(), a[i], sz);
 			memcpy(a[i], a[i] + n, sz_);
-			memcpy(a[i] + Nc-n, &temp[0], sz);
+			memcpy(a[i] + Nc-n, temp.ptr(), sz);
 		}
 		free(temp);
 	}
@@ -411,8 +367,8 @@ void shift(NRmatrix<T> &a, Llong nshift, Int_I dim = 1)
 		Long sz = n*Nc*sizeof(T);
 		Long sz_ = (Nr-n)*Nc*sizeof(T);
 		T *temp = (T*)malloc(sz);
-		memcpy(temp, a[0], sz);
-		memcpy(a[0], a[n], sz_);
+		memcpy(temp, a.ptr(), sz);
+		memcpy(a.ptr(), a[n], sz_);
 		memcpy(a[Nr-n], temp, sz);
 		free(temp);
 	}
@@ -484,401 +440,161 @@ template <class T>
 void sin(NRvector<T> &y, const NRvector<T> &x)
 {
 	Long i, N{ x.size() };
-	for (i = 0; i < N; ++i) {
+	y.resize(N);
+	for (i = 0; i < N; ++i)
 		y[i] = sin(x[i]);
-	}
 }
 
 template <class T>
 void sin(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Long i, N{ x.size() };
-	T *px{ &y[0][0] }, *py{ &x[0][0] };
-	for (i = 0; i < N; ++i) {
-		py[i] = sin(px[i]);
-	}
+	y.resize(x);
+	for (i = 0; i < N; ++i)
+		y(i) = sin(x(i));
 }
 
 template <class T>
 void cos(NRvector<T> &y, const NRvector<T> &x)
 {
 	Long i, N{ x.size() };
-	for (i = 0; i < N; ++i) {
-		y[i] = cos(x[i]);
-	}
+	y.resize(N);
+	for (i = 0; i < N; ++i)
+		y(i) = cos(x(i));
 }
 
 template <class T>
 void cos(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Long i, N{ x.size() };
-	T *px{ &y[0][0] }, *py{ &x[0][0] };
-	for (i = 0; i < N; ++i) {
-		py[i] = cos(px[i]);
-	}
+	y.resize(x);
+	for (i = 0; i < N; ++i)
+		y(i) = cos(x(i));
 }
 
 template <class T>
 void exp(NRvector<T> &y, const NRvector<T> &x)
 {
 	Long i, N{ x.size() };
-	for (i = 0; i < N; ++i) {
+	y.resize(N);
+	for (i = 0; i < N; ++i)
 		y[i] = exp(x[i]);
-	}
 }
 
 template <class T>
 void exp(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Long i, N{ x.size() };
-	T *px{ &y[0][0] }, *py{ &x[0][0] };
-	for (i = 0; i < N; ++i) {
-		py[i] = exp(px[i]);
-	}
+	y.resize(x);
+	for (i = 0; i < N; ++i)
+		y(i) = exp(x(i));
 }
 
 template <class T>
 void tan(NRvector<T> &y, const NRvector<T> &x)
 {
 	Long i, N{ x.size() };
-	for (i = 0; i < N; ++i) {
+	y.resize(N);
+	for (i = 0; i < N; ++i)
 		y[i] = tan(x[i]);
-	}
 }
 
 template <class T>
 void tan(NRmatrix<T> &y, const NRmatrix<T> &x)
 {
 	Long i, N{ x.size() };
-	T *px{ &y[0][0] }, *py{ &x[0][0] };
-	for (i = 0; i < N; ++i) {
-		py[i] = tan(px[i]);
-	}
+	y.resize(x);
+	for (i = 0; i < N; ++i)
+		y(i) = tan(x(i));
 }
 
 // === matrix arithmatics ===
 
 // operators +=,-=,*=,/= scalar/vec/mat, whenever make sense
 template <class T>
-inline void operator+=(NRvector<T> &v1, const NRvector<T> &v2)
+inline void operator+=(NRbase<T> &v1, const NRbase<T> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		v1[i] += v2[i];
+		v1(i) += v2(i);
 }
 
 template <class T>
-inline void operator+=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv1[i] += pv2[i];
-}
-
-template <class T>
-inline void operator+=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
-{
-	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
-	auto pv1 = v1[0][0];
-	auto pv2 = v2[0][0];
-	for (i = 0; i < N; ++i)
-		pv1[i] += pv2[i];
-}
-
-template <class T>
-inline void operator-=(NRvector<T> &v1, const NRvector<T> &v2)
+inline void operator-=(NRbase<T> &v1, const NRbase<T> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		v1[i] -= v2[i];
+		v1(i) -= v2(i);
 }
 
 template <class T>
-inline void operator-=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv1[i] -= pv2[i];
-}
-
-template <class T>
-inline void operator-=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
-{
-	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
-	auto pv1 = v1[0][0];
-	auto pv2 = v2[0][0];
-	for (i = 0; i < N; ++i)
-		pv1[i] -= pv2[i];
-}
-
-template <class T>
-inline void operator*=(NRvector<T> &v1, const NRvector<T> &v2)
+inline void operator*=(NRbase<T> &v1, const NRbase<T> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		v1[i] *= v2[i];
+		v1(i) *= v2(i);
 }
 
 template <class T>
-inline void operator*=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv1[i] *= pv2[i];
-}
-
-template <class T>
-inline void operator*=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
-{
-	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
-	auto pv1 = v1[0][0];
-	auto pv2 = v2[0][0];
-	for (i = 0; i < N; ++i)
-		pv1[i] *= pv2[i];
-}
-
-template <class T>
-inline void operator/=(NRvector<T> &v1, const NRvector<T> &v2)
+inline void operator/=(NRbase<T> &v1, const NRbase<T> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		v1[i] /= v2[i];
+		v1(i) /= v2(i);
 }
 
-template <class T>
-inline void operator/=(NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N{ v1.nrows()*v1.ncols() };
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv1[i] /= pv2[i];
-}
-
-template <class T>
-inline void operator/=(NRmat3d<T> &v1, const NRmat3d<T> &v2)
-{
-	Long i, N{ v1.dim1()*v1.dim2()*v1.dim3() };
-	auto pv1 = v1[0][0];
-	auto pv2 = v2[0][0];
-	for (i = 0; i < N; ++i)
-		pv1[i] /= pv2[i];
-}
-
-template <class T>
-inline void operator+=(NRvector<T> &v, Doub_I s)
+template <class T1, class T2>
+inline void operator+=(NRbase<T1> &v, const T2 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
-		v[i] += s;
+		v(i) += s;
 }
 
-template <class T>
-inline void operator+=(NRmatrix<T> &v, Doub_I s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] += s;
-}
-
-template <class T>
-inline void operator+=(NRmat3d<T> &v, Doub_I s)
-{
-	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] += s;
-}
-
-template <class T>
-inline void operator-=(NRvector<T> &v, Doub_I s)
+template <class T1, class T2>
+inline void operator-=(NRbase<T1> &v, const T2 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
-		v[i] -= s;
+		v(i) -= s;
 }
 
-template <class T>
-inline void operator-=(NRmatrix<T> &v, Doub_I s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] -= s;
-}
-
-template <class T>
-inline void operator-=(NRmat3d<T> &v, Doub_I s)
-{
-	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] -= s;
-}
-
-template <class T>
-inline void operator*=(NRvector<T> &v, Doub_I s)
+template <class T1, class T2>
+inline void operator*=(NRbase<T1> &v, const T2 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
-		v[i] *= s;
+		v(i) *= s;
 }
 
-template <class T>
-inline void operator*=(NRmatrix<T> &v, Doub_I s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] *= s;
-}
-
-template <class T>
-inline void operator*=(NRmat3d<T> &v, Doub_I s)
-{
-	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] *= s;
-}
-
-template <class T>
-inline void operator/=(NRvector<T> &v, Doub_I s)
+template <class T1, class T2>
+inline void operator/=(NRbase<T1> &v, const T2 &s)
 {
 	Long i, N{ v.size() };
-	Doub sInv = 1./s;
+	T2 sInv = 1./s;
 	for (i = 0; i < N; ++i)
-		v[i] *= sInv;
+		v(i) *= sInv;
 }
 
-template <class T>
-inline void operator/=(NRmatrix<T> &v, Doub_I s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	Doub sInv = 1./s;
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] *= sInv;
-}
-
-template <class T>
-inline void operator/=(NRmat3d<T> &v, Doub_I s)
-{
-	Long i, N{ v.dim1()*v.dim2()*v.dim3() };
-	Doub sInv = 1./s;
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] *= sInv;
-}
-
-template <class T>
-inline void operator+=(NRvector<T> &v, const Comp s)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v[i] += s;
-}
-
-template <class T>
-inline void operator+=(NRmatrix<T> &v, const Comp s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] += s;
-}
-
-template <class T>
-inline void operator-=(NRvector<T> &v, const Comp s)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v[i] -= s;
-}
-
-template <class T>
-inline void operator-=(NRmatrix<T> &v, const Comp s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] -= s;
-}
-
-template <class T>
-inline void operator*=(NRvector<T> &v, const Comp s)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v[i] *= s;
-}
-
-template <class T>
-inline void operator*=(NRmatrix<T> &v, const Comp s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i)
-		pv[i] *= s;
-}
-
-template <class T>
-inline void operator/=(NRvector<T> &v, const Comp s)
-{
-	Long i, N{ v.size() };
-	Comp sInv = 1./s;
-	for (i = 0; i < N; ++i)
-		v[i] *= sInv;
-}
-
-template <class T>
-inline void operator/=(NRmatrix<T> &v, const Comp s)
-{
-	Long i, N{ v.nrows()*v.ncols() };
-	Comp sInv = 1./s;
-	auto pv = v.ptr();
-	for (i = 0; i < N; ++i) {
-		pv[i] *= sInv;
-	}
-}
-
-template <class T>
-inline void plus(NRvector<T> &v, const NRvector<T> &v1, const T s)
+template <class T, class T1, class T2>
+inline void plus0(NRbase<T> &v, NRbase<T1> &v1, const T2& s)
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] = v1[i] + s;
+		v(i) = v1(i) + s;
 }
 
-template <class T>
-inline void plus(NRmatrix<T> &v, const NRmatrix<T> &v1, const T s)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = pv1[i] + s;
-}
+template <class T, class T1, class T2>
+inline void plus(NRvector<T> &v, const NRvector<T1> &v1, const T2 s)
+{ v.resize(v1); plus0(v, v1, s); }
 
-template <class T>
-inline void plus(NRmat3d<T> &a, const NRmat3d<T> &a1, const T s)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = pa1[i] + s;
-}
+template <class T, class T1, class T2>
+inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const T2 s)
+{ v.resize(v1); plus0(v, v1, s); }
+
+template <class T, class T1, class T2>
+inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 s)
+{ v.resize(v1); plus0(v, v1, s); }
 
 template <class T>
 inline void plus(NRvector<T> &v, const T s, const NRvector<T> &v1)
@@ -889,135 +605,79 @@ inline void plus(NRmatrix<T> &v, const T s, const NRmatrix<T> &v1)
 { plus(v, v1, s); }
 
 template <class T>
-inline void plus(NRmat3d<T> &a, const T s, const NRmat3d<T> &a1)
-{ plus(a, a1, s); }
+inline void plus(NRmat3d<T> &v, const T s, const NRmat3d<T> &v1)
+{ plus(v, v1, s); }
 
-template <class T>
-inline void plus(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
+template <class T, class T1, class T2>
+inline void plus0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] = v1[i] + v2[i];
+		v(i) = v1(i) + v2(i);
 }
 
-template <class T>
-inline void plus(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = pv1[i] + pv2[i];
-}
+template <class T, class T1, class T2>
+inline void plus(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
+{ v.resize(v1); plus0(v, v1, v2); }
+
+template <class T, class T1, class T2>
+inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
+{ v.resize(v1); plus0(v, v1, v2); }
+
+template <class T, class T1, class T2>
+inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
+{ v.resize(v1); plus0(v, v1, v2); }
 
 template <class T>
-inline void plus(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	auto pa2 = a2[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = pa1[i] + pa2[i];
-}
-
-template <class T>
-inline void minus(NRvector<T> &v)
+inline void minus0(NRbase<T> &v)
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] *= -1;
+		v(i) *= -1;
 }
 
-template <class T>
-inline void minus(NRmatrix<T> &v)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	for (i = 0; i < N; ++i)
-		pv[i] *= -1;
-}
-
-template <class T>
-inline void minus(NRmat3d<T> &a)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] *= -1;
-}
-
-template <class T>
-inline void minus(NRvector<T> &v, const NRvector<T> &v1)
+template <class T, class T1>
+inline void minus0(NRbase<T> &v, const NRbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] = -v1[i];
+		v(i) = -v1(i);
 }
 
-template <class T>
-inline void minus(NRmatrix<T> &v, const NRmatrix<T> &v1)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = -pv1[i];
-}
+template <class T, class T1>
+inline void minus(NRvector<T> &v, const NRvector<T1> &v1)
+{ v.resize(v1); minus0(v, v1); }
 
-template <class T>
-inline void minus(NRmat3d<T> &a, const NRmat3d<T> &a1)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = -pa1[i];
-}
+template <class T, class T1>
+inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1)
+{ v.resize(v1); minus0(v, v1); }
 
-template <class T>
-inline void minus(NRvector<T> &v, const T s, const NRvector<T> &v1)
+template <class T, class T1>
+inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1)
+{ v.resize(v1); minus0(v, v1); }
+
+template <class T, class T1, class T2>
+inline void minus0(NRbase<T> &v, const T1& s, NRbase<T2> &v1, )
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] = s - v1[i];
+		v(i) = s - v1(i);
 }
 
-template <class T>
-inline void minus(NRmatrix<T> &v, const T s, const NRmatrix<T> &v1)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = s - pv1[i];
-}
+template <class T, class T1, class T2>
+inline void minus(NRvector<T> &v, const T1 s, const NRvector<T2> &v1)
+{ v.resize(v1); minus0(v, s, v1); }
 
-template <class T>
-inline void minus(NRmat3d<T> &a, const T s, const NRmat3d<T> &a1)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = s - pa1[i];
-}
+template <class T, class T1, class T2>
+inline void minus(NRmatrix<T> &v, const T1 s, const NRmatrix<T2> &v1)
+{ v.resize(v1); minus0(v, s, v1); }
 
-template <class T>
-inline void minus(NRvector<T> &v, const NRvector<T> &v1, const T s)
+template <class T, class T1, class T2>
+inline void minus(NRmat3d<T> &v, const T1 s, const NRmat3d<T2> &v1)
+{ v.resize(v1); minus0(v, s, v1); }
+
+template <class T, class T1, class T2>
+inline void minus0(NRvector<T> &v, const NRvector<T> &v1, const T s)
 {
 	Long i, N{ v1.size() };
 	v.resize(N);
@@ -1025,126 +685,77 @@ inline void minus(NRvector<T> &v, const NRvector<T> &v1, const T s)
 		v[i] = v1[i] - s;
 }
 
-template <class T>
-inline void minus(NRmatrix<T> &v, const NRmatrix<T> &v1, const T s)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = pv1[i] - s;
-}
+template <class T, class T1, class T2>
+inline void minus(NRbase<T> &v, NRbase<T1> &v1, const T2& s)
+{ v.resize(v1); minus0(v, v1, s); }
 
-template <class T>
-inline void minus(NRmat3d<T> &a, const NRmat3d<T> &a1, const T s)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = pa1[i] - s;
-}
+template <class T, class T1, class T2>
+inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const T2 s)
+{ v.resize(v1); minus0(v, v1, s); }
 
-template <class T>
-inline void minus(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
+template <class T, class T1, class T2>
+inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 s)
+{ v.resize(v1); minus0(v, v1, s); }
+
+template <class T, class T1, class T2>
+inline void minus0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] = v1[i] - v2[i];
+		v(i) = v1(i) - v2(i);
 }
 
-template <class T>
-inline void minus(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = pv1[i] - pv2[i];
-}
+template <class T, class T1, class T2>
+inline void minus(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
+{ v.resize(v1); minus0(v, v1, v2); }
 
-template <class T>
-inline void minus(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	auto pa2 = a2[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = pa1[i] - pa2[i];
-}
+template <class T, class T1, class T2>
+inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
+{ v.resize(v1); minus0(v, v1, v2); }
 
-template <class T>
-inline void times(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
+template <class T, class T1, class T2>
+inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
+{ v.resize(v1); minus0(v, v1, v2); }
+
+template <class T, class T1, class T2>
+inline void times0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
-	v.resize(N);
 	for (i = 0; i < N; ++i)
-		v[i] = v1[i] * v2[i];
+		v(i) = v1(i) * v2(i);
 }
 
-template <class T>
-inline void times(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
+template <class T, class T1, class T2>
+inline void times(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
+{ v.resize(v1); times0(v, v1, v2); }
+
+template <class T, class T1, class T2>
+inline void times(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
+{ v.resize(v1); times0(v, v1, v2); }
+
+template <class T, class T1, class T2>
+inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
+{ v.resize(v1); times0(v, v1, v2); }
+
+template <class T, class T1, class T2>
+inline void divide0(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
 {
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		pv[i] = pv1[i] * pv2[i];
+		v(i) = v1(i) / v2(i);
 }
 
-template <class T>
-inline void times(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	auto pa2 = a2[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = pa1[i] * pa2[i];
-}
-
-template <class T>
+template <class T, class T1, class T2>
 inline void divide(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
-{
-	Long i, N{ v1.size() };
-	v.resize(N);
-	for (i = 0; i < N; ++i)
-		v[i] = v1[i] / v2[i];
-}
+{ v.resize(v1); divide0(v, v1, v2); }
 
-template <class T>
+template <class T, class T1, class T2>
 inline void divide(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
-{
-	Long i, N = v1.size();
-	v.resize(v1);
-	auto pv = v[0];
-	auto pv1 = v1[0];
-	auto pv2 = v2[0];
-	for (i = 0; i < N; ++i)
-		pv[i] = pv1[i] / pv2[i];
-}
+{ v.resize(v1); divide0(v, v1, v2); }
 
-template <class T>
-inline void divide(NRmat3d<T> &a, const NRmat3d<T> &a1, const NRmat3d<T> &a2)
-{
-	Long i, N = a1.size();
-	a.resize(a1);
-	auto pa = a[0][0];
-	auto pa1 = a1[0][0];
-	auto pa2 = a2[0][0];
-	for (i = 0; i < N; ++i)
-		pa[i] = pa1[i] / pa2[i];
-}
+template <class T, class T1, class T2>
+inline void divide(NRmat3d<T> &v, const NRmat3d<T> &v1, const NRmat3d<T> &v2)
+{ v.resize(v1); divide0(v, v1, v2); }
 
 inline void real(VecComp &c)
 {

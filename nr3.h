@@ -81,8 +81,9 @@ inline void nrmemset(T *dest, const T val, Long_I n)
 
 // Base Class for vector/matrix
 template <class T>
-class NRbase {
-public:
+class NRbase
+{
+protected:
 	Long N; // number of elements
 	T *p; // pointer to the first element
 public:
@@ -122,33 +123,49 @@ inline T & NRbase<T>::operator()(Long_I i)
 if (i<0 || i>=N)
 	error("NRvector subscript out of bounds")
 #endif
-	return v[i];
+	return p[i];
 }
 
 template <class T>
 inline const T & NRbase<T>::operator()(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=N)
-	error("NRvector subscript out of bounds")
+	if (i<0 || i>=N)
+		error("NRvector subscript out of bounds")
 #endif
-	return v[i];
+	return p[i];
 }
 
 template <class T>
-inline T & NRbase<T>::end() { return v[N-1]; }
+inline T & NRbase<T>::end()
+{
+#ifdef _CHECKBOUNDS_
+	if (N < 1)
+		error("Using end() for empty object")
+#endif
+	return p[N-1];
+}
 
 template <class T>
-inline const T & NRbase<T>::end() const { return v[N-1]; }
+inline const T & NRbase<T>::end() const
+{
+#ifdef _CHECKBOUNDS_
+	if (N < 1)
+		error("Using end() for empty object")
+#endif
+	return p[N-1];
+}
 
 // Vector Class
 
 template <class T>
 class NRvector : public NRbase<T>
 {
-protected:
-	Long N;	// size of array. upper index is nn-1
-	T *v;
+	typedef NRbase<T> Base;
+	using Base::p;
+	using Base::N;
+private:
+	T*& v;
 public:
 	NRvector();
 	explicit NRvector(Long_I n);
@@ -167,10 +184,11 @@ public:
 };
 
 template <class T>
-NRvector<T>::NRvector() : N(0), v(nullptr) {}
+NRvector<T>::NRvector() : v(p) {}
 
 template <class T>
-NRvector<T>::NRvector(Long_I n) : N(n), v(n>0 ? new T[n] : nullptr) {}
+NRvector<T>::NRvector(Long_I n) : Base(n), v(p)
+{ p = n>0 ? new T[n] : nullptr; }
 
 template <class T>
 NRvector<T>::NRvector(Long_I n, const T& a) : NRvector(n)
@@ -181,7 +199,7 @@ NRvector<T>::NRvector(Long_I n, const T *a) : NRvector(n)
 { memcpy(v, a, n*sizeof(T)); }
 
 template <class T>
-NRvector<T>::NRvector(const NRvector<T> &rhs)
+NRvector<T>::NRvector(const NRvector<T> &rhs) : v(p)
 {
 	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!")
 }
@@ -196,7 +214,7 @@ inline NRvector<T> & NRvector<T>::operator=(const NRvector<T> &rhs)
 }
 
 template <class T>
-inline NRvector<T> & NRvector<T>::operator=(const T rhs)
+inline NRvector<T>& NRvector<T>::operator=(const T rhs)
 {
 	if (N) nrmemset(v, rhs, N);
 	return *this;
@@ -207,10 +225,8 @@ inline void NRvector<T>::operator<<(NRvector<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
 	if (v != nullptr) delete[] v;
-	N = rhs.N;
-	v = rhs.v;
-	rhs.v = nullptr;
-	rhs.N = 0;
+	N = rhs.N; rhs.N = 0;
+	v = rhs.v; rhs.v = nullptr;
 }
 
 template <class T>
@@ -261,6 +277,9 @@ NRvector<T>::~NRvector()
 template <class T>
 class NRmatrix : public NRbase<T>
 {
+	typedef NRbase<T> Base;
+	using Base::p;
+	using Base::N;
 private:
 	Long nn, mm;
 	T **v;
@@ -308,19 +327,16 @@ template <class T>
 NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(nullptr) {}
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : nn(n), mm(m), N(n*m), v(data_alloc(n, m)), p(v[0]) {}
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : nn(n), mm(m), Base(n*m), v(data_alloc(n, m))
+{ p = v[0]; }
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T &a) : NRmatrix(n, m)
-{
-	nrmemset(p, a, n*m);
-}
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T &s) : NRmatrix(n, m)
+{ nrmemset(p, s, N); }
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T *a) : NRmatrix(n, m)
-{
-	memcpy(p, a, n*m*sizeof(T));
-}
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T *ptr) : NRmatrix(n, m)
+{ memcpy(p, ptr, N*sizeof(T)); }
 
 template <class T>
 NRmatrix<T>::NRmatrix(const NRmatrix<T> &rhs)
@@ -358,8 +374,8 @@ template <class T>
 inline T* NRmatrix<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=nn)
-	error("NRmatrix subscript out of bounds")
+	if (i<0 || i>=nn)
+		error("NRmatrix subscript out of bounds")
 #endif
 	return v[i];
 }
@@ -368,8 +384,8 @@ template <class T>
 inline const T* NRmatrix<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=nn)
-	error("NRmatrix subscript out of bounds")
+	if (i<0 || i>=nn)
+		error("NRmatrix subscript out of bounds")
 #endif
 	return v[i];
 }
@@ -380,9 +396,7 @@ inline Long NRmatrix<T>::nrows() const
 
 template <class T>
 inline Long NRmatrix<T>::ncols() const
-{
-	return mm;
-}
+{ return mm; }
 
 template <class T>
 inline void NRmatrix<T>::resize(Long_I newn, Long_I newm)
@@ -398,15 +412,11 @@ inline void NRmatrix<T>::resize(Long_I newn, Long_I newm)
 template <class T>
 template <class T1>
 inline void NRmatrix<T>::resize(const NRmatrix<T1> &a)
-{
-	resize(a.nrows(), a.ncols());
-}
+{ resize(a.nrows(), a.ncols()); }
 
 template <class T>
 NRmatrix<T>::~NRmatrix()
-{
-	data_free();
-}
+{ data_free(); }
 
 // 3D Matrix Class
 
