@@ -53,12 +53,16 @@ inline void pause(Doub t)
 // === scalar utilities ===
 
 // return 1 if n is odd, return 0 otherwise
-inline Int isodd(Int n) { return n & 1; }
-inline Long isodd(Long n) { return n & 1; }
+inline Int isodd(Int_I n) { return n & 1; }
+inline Long isodd(Long_I n) { return n & 1; }
 
 // return true if n is power of 2 or 0
-inline Bool ispow2(Int n) { return (n&(n-1)) == 0; }
-inline Bool ispow2(Long n) { return (n&(n-1)) == 0; }
+inline Bool ispow2(Int_I n) { return (n&(n-1)) == 0; }
+inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
+
+// return the positive mod (use "%" when i >= 0)
+inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
+inline Long_I mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
 // operators between Comp and Int
 inline Comp operator+(const Comp c, Int_I i) { return c + (Doub)i; }
@@ -558,6 +562,62 @@ inline void operator/=(NRbase<T> &v, Doub_I s)
 template <class T>
 inline void operator/=(NRbase<T> &v, Comp_I &s)
 { divide_equals0(v, s); }
+
+// TODO: operator /= for integers
+
+template <class T>
+inline void operator%=(NRbase<T> &v, const T &s)
+{
+	Long i, N{ v.size() };
+	for (i = 0; i < N; ++i)
+		v(i) %= s;
+}
+
+template <class T>
+inline void rem0(NRbase<T> &v, const NRbase<T> &v1, const T &s)
+{
+	Long i, N{ v.size() };
+	for (i = 0; i < N; ++i)
+		v(i) = v1(i) % s;
+}
+
+template <class T>
+inline void rem(NRvector<T> &v, const NRvector<T> &v1, const T &s)
+{ v.resize(v1); rem0(v, v1, s); }
+
+template <class T>
+inline void rem(NRmatrix<T> &v, const NRmatrix<T> &v1, const T &s)
+{ v.resize(v1); rem0(v, v1, s); }
+
+template <class T>
+inline void rem(NRmat3d<T> &v, const NRmat3d<T> &v1, const T &s)
+{ v.resize(v1); rem0(v, v1, s); }
+
+// TODO : rem(v, s, v1)
+// TODO : rem(v, v1, v2)
+
+template <class T>
+inline void mod0(NRbase<T> &v, const NRbase<T> &v1, const T &s)
+{
+	Long i, N{ v1.size() };
+	for (i = 0; i < N; ++i)
+		v(i) = mod(v1(i), s);
+}
+
+template <class T>
+inline void mod(NRvector<T> &v, const NRvector<T> &v1, const T &s)
+{ v.resize(v1); mod0(v, v1, s); }
+
+template <class T>
+inline void mod(NRmatrix<T> &v, const NRmatrix<T> &v1, const T &s)
+{ v.resize(v1); mod0(v, v1, s); }
+
+template <class T>
+inline void mod(NRmat3d<T> &v, const NRmat3d<T> &v1, const T &s)
+{ v.resize(v1); mod0(v, v1, s); }
+
+// TODO : mod(v, s, v1)
+// TODO : mod(v, v1, v2)
 
 template <class T, class T1, class T2>
 inline void plus0(NRbase<T> &v, const NRbase<T1> &v1, const T2& s)
