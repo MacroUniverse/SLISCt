@@ -5,13 +5,14 @@
 #include "interp_1d.h"
 #include "interp_2d.h"
 
-using std::cout; using std::endl;
+using std::cout; using std::endl; using std::conj;
 
 int main()
 {
 	// test operator() and end()
 	VecDoub xv, xv1(3), xv2(3);
 	linspace(xv1, 1., 3.); linspace(xv2, 4., 6.);
+
 	minus(xv1);
 	minus(xv1);
 	minus(xv, xv1); // version 1
