@@ -423,6 +423,9 @@ NRmatrix<T>::~NRmatrix()
 template <class T>
 class NRmat3d : public NRbase<T>
 {
+	typedef NRbase<T> Base;
+	using Base::p;
+	using Base::N;
 private:
 	Long nn;
 	Long mm;
@@ -477,13 +480,12 @@ template <class T>
 NRmat3d<T>::NRmat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
 
 template <class T>
-NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k) : nn(n), mm(m), kk(k), v(data_alloc(n, m, k)) {}
+NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k) : nn(n), mm(m), kk(k),
+	Base(n*m*k), v(data_alloc(n, m, k)) { p = v[0][0]; }
 
 template <class T>
 NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k, const T a) : NRmat3d(n, m, k)
-{
-	nrmemset(v, a, n*m*k);
-}
+{ nrmemset(p, a, n*m*k); }
 
 template <class T>
 NRmat3d<T>::NRmat3d(const NRmat3d<T> &rhs)
@@ -496,15 +498,14 @@ inline NRmat3d<T> &NRmat3d<T>::operator=(const NRmat3d<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!")
 	resize(rhs.nn, rhs.mm, rhs.kk);
-	memcpy(v[0][0], rhs.v[0][0], nn*mm*kk*sizeof(T));
+	memcpy(p, rhs.p, N*sizeof(T));
 	return *this;
 }
 
 template <class T>
 inline NRmat3d<T> & NRmat3d<T>::operator=(const T rhs)
 {
-	Long N = nn*mm*kk;
-	if (N) nrmemset(v[0][0], rhs, N);
+	if (N) nrmemset(p, rhs, N);
 	return *this;
 }
 
@@ -513,9 +514,10 @@ inline void NRmat3d<T>::operator<<(NRmat3d<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
 	data_free();
-	nn = rhs.nn; mm = rhs.mm; kk = rhs.kk; v = rhs.v;
-	rhs.v = nullptr;
-	rhs.nn = rhs.mm = rhs.kk = 0;
+	N = rhs.N;  nn = rhs.nn; mm = rhs.mm; kk = rhs.kk;
+	v = rhs.v; p = rhs.p;
+	rhs.N = rhs.nn = rhs.mm = rhs.kk = 0;
+	rhs.p = rhs.v = nullptr;
 }
 
 template <class T>
@@ -525,6 +527,7 @@ inline void NRmat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 		data_free();
 		nn = n; mm = m; kk = k;
 		v = data_alloc(n, m, k);
+		p = v[0][0];
 	}
 }
 
@@ -533,10 +536,24 @@ template <class T1>
 inline void NRmat3d<T>::resize(const NRmat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
 
 template <class T>
-inline T** NRmat3d<T>::operator[](Long_I i) { return v[i]; }
+inline T** NRmat3d<T>::operator[](Long_I i)
+{
+#ifdef _CHECKBOUNDS_
+	if (i<0 || i >= nn)
+		error("NRmatrix subscript out of bounds")
+#endif
+	return v[i];
+}
 
 template <class T>
-inline const T* const * NRmat3d<T>::operator[](Long_I i) const { return v[i]; }
+inline const T* const * NRmat3d<T>::operator[](Long_I i) const
+{
+#ifdef _CHECKBOUNDS_
+	if (i<0 || i >= nn)
+		error("NRmatrix subscript out of bounds")
+#endif
+	return v[i];
+}
 
 template <class T>
 inline Long NRmat3d<T>::dim1() const { return nn; }
