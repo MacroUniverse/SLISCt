@@ -5,7 +5,7 @@ struct WrapVecDoub {
 	VecDoub &v;
 	Int n, mask;
 
-	WrapVecDoub(const Int nn) : vvec(nn), v(vvec), n(nn/2),
+	WrapVecDoub(Int_I nn) : vvec(nn), v(vvec), n(nn/2),
 	mask(n-1) {validate();}
 
 	WrapVecDoub(VecDoub &vec) : v(vec), n(vec.size()/2),
@@ -22,18 +22,18 @@ struct WrapVecDoub {
 	operator VecDoub&() {return v;}
 };
 
-void four1(Doub *data, const Int n, const Int isign);
+void four1(Doub *data, Int_I n, Int_I isign);
 
-void four1(VecDoub_IO &data, const Int isign);
+void four1(VecDoub_IO &data, Int_I isign);
 
-void four1(VecComplex_IO &data, const Int isign);
+void four1(VecComplex_IO &data, Int_I isign);
 
-void four1(MatComplex_IO &data, const Int isign);
+void four1(MatComplex_IO &data, Int_I isign);
 
-void realft(VecDoub_IO &data, const Int isign);
+void realft(VecDoub_IO &data, Int_I isign);
 
 void sinft(VecDoub_IO &y);
 
 void cosft1(VecDoub_IO &y);
 
-void cosft2(VecDoub_IO &y, const Int isign);
+void cosft2(VecDoub_IO &y, Int_I isign);

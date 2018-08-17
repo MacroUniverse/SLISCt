@@ -65,24 +65,24 @@ inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long_I mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
 // operators between Comp and Int
-inline Comp operator+(const Comp c, Int_I i) { return c + (Doub)i; }
-inline Comp operator+(Int_I i, const Comp c) { return c + (Doub)i; }
-inline Comp operator-(Int_I i, const Comp c) { return (Doub)i - c; }
-inline Comp operator-(const Comp c, Int_I i) { return c - (Doub)i; }
-inline Comp operator*(const Comp c, Int_I i) { return c*(Doub)i; }
-inline Comp operator*(Int_I i, const Comp c) { return c*(Doub)i; }
-inline Comp operator/(const Comp c, Int_I i) { return c / (Doub)i; }
-inline Comp operator/(Int_I i, const Comp c) { return (Doub)i / c; }
+inline Comp operator+(Comp_I c, Int_I i) { return c + (Doub)i; }
+inline Comp operator+(Int_I i, Comp_I c) { return c + (Doub)i; }
+inline Comp operator-(Int_I i, Comp_I c) { return (Doub)i - c; }
+inline Comp operator-(Comp_I c, Int_I i) { return c - (Doub)i; }
+inline Comp operator*(Comp_I c, Int_I i) { return c*(Doub)i; }
+inline Comp operator*(Int_I i, Comp_I c) { return c*(Doub)i; }
+inline Comp operator/(Comp_I c, Int_I i) { return c / (Doub)i; }
+inline Comp operator/(Int_I i, Comp_I c) { return (Doub)i / c; }
 
 // operators between Comp and Long
-inline Comp operator+(const Comp c, Long_I i) { return c + (Doub)i; }
-inline Comp operator+(Long_I i, const Comp c) { return c + (Doub)i; }
-inline Comp operator-(Long_I i, const Comp c) { return (Doub)i - c; }
-inline Comp operator-(const Comp c, Long_I i) { return c - (Doub)i; }
-inline Comp operator*(const Comp c, Long_I i) { return c*(Doub)i; }
-inline Comp operator*(Long_I i, const Comp c) { return c*(Doub)i; }
-inline Comp operator/(const Comp c, Long_I i) { return c / (Doub)i; }
-inline Comp operator/(Long_I i, const Comp c) { return (Doub)i / c; }
+inline Comp operator+(Comp_I c, Long_I i) { return c + (Doub)i; }
+inline Comp operator+(Long_I i, Comp_I c) { return c + (Doub)i; }
+inline Comp operator-(Long_I i, Comp_I c) { return (Doub)i - c; }
+inline Comp operator-(Comp_I c, Long_I i) { return c - (Doub)i; }
+inline Comp operator*(Comp_I c, Long_I i) { return c*(Doub)i; }
+inline Comp operator*(Long_I i, Comp_I c) { return c*(Doub)i; }
+inline Comp operator/(Comp_I c, Long_I i) { return c / (Doub)i; }
+inline Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
 
 // display vectors and matrices
 // don't use template so disp() can be call when debugging

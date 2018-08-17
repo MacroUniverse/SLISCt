@@ -1,6 +1,6 @@
 #include "fourier.h"
 
-void four1(Doub *data, const Int n, const Int isign) {
+void four1(Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
 	if (n < 2 || n&(n - 1)) {
@@ -47,17 +47,17 @@ void four1(Doub *data, const Int n, const Int isign) {
 	}
 }
 
-void four1(VecDoub_IO &data, const Int isign) {
+void four1(VecDoub_IO &data, Int_I isign) {
 	four1(&data[0],data.size()/2,isign);
 }
 
-void four1(VecComplex_IO &data, const Int isign) {
+void four1(VecComplex_IO &data, Int_I isign) {
 	four1((Doub*)(&data[0]),data.size(),isign);
 }
 
 // four1 for each column of matrix
 // not optimized, very slow
-void four1(MatComplex_IO &data, const Int isign)
+void four1(MatComplex_IO &data, Int_I isign)
 {
 	Int i, j, m = data.nrows(), n = data.ncols();
 	VecComplex column(m);
@@ -70,7 +70,7 @@ void four1(MatComplex_IO &data, const Int isign)
 	}
 }
 
-void realft(VecDoub_IO &data, const Int isign) {
+void realft(VecDoub_IO &data, Int_I isign) {
 	Int i,i1,i2,i3,i4,n=data.size();
 	Doub c1=0.5,c2,h1r,h1i,h2r,h2i,wr,wi,wpr,wpi,wtemp;
 	Doub theta=3.141592653589793238/Doub(n>>1);
@@ -167,7 +167,7 @@ void cosft1(VecDoub_IO &y) {
 	}
 }
 
-void cosft2(VecDoub_IO &y, const Int isign) {
+void cosft2(VecDoub_IO &y, Int_I isign) {
 	const Doub PI=3.141592653589793238;
 	Int i,n=y.size();
 	Doub sum,sum1,y1,y2,ytemp,theta,wi=0.0,wi1,wpi,wpr,wr=1.0,wr1,wtemp;
