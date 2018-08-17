@@ -5,8 +5,8 @@ struct Base_interp
 {
 	Int n, mm, jsav, cor, dj;
 	const Doub *xx, *yy;
-	Base_interp(VecDoub_I &x, const Doub *y, Int m)
-		: n((Int)x.size()), mm(m), jsav(0), cor(0), xx(&x[0]), yy(y) {
+	Base_interp(VecDoub_I &x, Doub_I *y, Int m)
+		: n(x.size()), mm(m), jsav(0), cor(0), xx(&x[0]), yy(y) {
 		dj = MIN(1,(int)pow((Doub)n,0.25));
 	}
 
@@ -15,8 +15,8 @@ struct Base_interp
 		return rawinterp(jlo,x);
 	}
 
-	Int locate(const Doub x);
-	Int hunt(const Doub x);
+	Int locate(Doub_I x);
+	Int hunt(Doub_I x);
 	
 	Doub virtual rawinterp(Int jlo, Doub x) = 0;
 
@@ -46,11 +46,11 @@ struct Spline_interp : Base_interp
 	: Base_interp(xv,&yv[0],2), y2(xv.size())
 	{sety2(&xv[0],&yv[0],yp1,ypn);}
 
-	Spline_interp(VecDoub_I &xv, const Doub *yv, Doub yp1=1.e99, Doub ypn=1.e99)
+	Spline_interp(VecDoub_I &xv, Doub_I *yv, Doub yp1=1.e99, Doub ypn=1.e99)
 	: Base_interp(xv,yv,2), y2(xv.size())
 	{sety2(&xv[0],yv,yp1,ypn);}
 
-	void sety2(const Doub *xv, const Doub *yv, Doub yp1, Doub ypn);
+	void sety2(Doub_I *xv, Doub_I *yv, Doub yp1, Doub ypn);
 	Doub rawinterp(Int jl, Doub xv);
 };
 

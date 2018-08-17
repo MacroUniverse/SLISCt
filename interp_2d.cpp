@@ -3,12 +3,12 @@
 
 void Spline_grid(MatComp_O &Z, VecDoub_I &x, VecDoub_I &y, MatComp_I &Z0, VecDoub_I &x0, VecDoub_I &y0)
 {
-	Int i, j, indi, indj, Nx0{ (Int)x0.size() }, Ny0{ (Int)y0.size() }, Nx{ (Int)x.size() }, Ny{ (Int)y.size() };
+	Long i, j, indi, indj, Nx0{ x0.size() }, Ny0{ y0.size() }, Nx{ x.size() }, Ny{ y.size() };
 	Doub temp;
 	if (Z.nrows() != Ny || Z.ncols() != Nx) Z.resize(Ny, Nx);
 	// decide interpolation range
 	const Doub x0min{ x0[0] }, x0max{ x0[Nx0 - 1] }, y0min{ y0[0] }, y0max{ y0[Ny0 - 1] };
-	Int imin{ -1 }, Ni{ -1 }, jmin{ -1 }, Nj{ -1 };
+	Long imin{ -1 }, Ni{ -1 }, jmin{ -1 }, Nj{ -1 };
 	for (i = 0; i < Ny; ++i)
 		if (y[i] >= y0min) {
 			imin = i; break;

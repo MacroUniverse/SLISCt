@@ -2,7 +2,7 @@
 
 // Base_interp implementation
 
-Int Base_interp::locate(const Doub x)
+Int Base_interp::locate(Doub_I x)
 {
 	Int ju, jm, jl;
 	if (n < 2 || mm < 2 || mm > n) throw("locate size error");
@@ -20,7 +20,7 @@ Int Base_interp::locate(const Doub x)
 	jsav = jl;
 	return MAX(0, MIN(n - mm, jl - ((mm - 2) >> 1)));
 }
-Int Base_interp::hunt(const Doub x)
+Int Base_interp::hunt(Doub_I x)
 {
 	Int jl = jsav, jm, ju, inc = 1;
 	if (n < 2 || mm < 2 || mm > n) throw("hunt size error");
@@ -141,11 +141,11 @@ Doub Rat_interp::rawinterp(Int jl, Doub x)
 
 // Spline_interp implementation
 
-void Spline_interp::sety2(const Doub *xv, const Doub *yv, Doub yp1, Doub ypn)
+void Spline_interp::sety2(Doub_I *xv, Doub_I *yv, Doub yp1, Doub ypn)
 {
 	Int i, k;
 	Doub p, qn, sig, un;
-	Int n = (Int)y2.size();
+	Int n = y2.size();
 	VecDoub u(n - 1);
 	if (yp1 > 0.99e99)
 		y2[0] = u[0] = 0.0;
@@ -186,7 +186,7 @@ Doub Spline_interp::rawinterp(Int jl, Doub x)
 // BarryRat_interp implementation
 
 BaryRat_interp::BaryRat_interp(VecDoub_I &xv, VecDoub_I &yv, Int dd)
-	: Base_interp(xv, &yv[0], (Int)xv.size()), w(n), d(dd)
+	: Base_interp(xv, &yv[0], xv.size()), w(n), d(dd)
 {
 	if (n <= d) throw("d too large for number of points in BaryRat_interp");
 	for (Int k = 0; k<n; k++) {

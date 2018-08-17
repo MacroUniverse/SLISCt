@@ -7,14 +7,17 @@
 #define _TRIDAG_H_
 #include "nr3.h"
 
+void Tri2Mul(VecComp_O y, VecComp_I &diag, Comp_I upper, Comp_I lower, VecComp_I x);
+
 struct TridagC2
 {
 	Long n; // n*n matrix
 	Comp lower;
-	VecComp gam, bet, diag; // U matrix data, first element not used
+	VecComp gam, bet; // U matrix data, first element not used
 	TridagC2() {};
-	TridagC2(VecComp_I & diag0, const Comp upper0, const Comp lower0); // constructor
-	void solve(VecComp_O &x, VecComp_I &b);
+	TridagC2(VecComp_I & diag0, Comp_I upper0, Comp_I lower0); // constructor
+	void solve(Comp *x, Comp_I *b);
+	void solve(Comp *x, Comp_I *b, Int_I stride); // for matrix column, support aliasing
 };
 
 // object for solving complex tridiagonal linear systems for mutiple times
