@@ -262,15 +262,11 @@ inline void NRvector<T>::resize(Long_I newn)
 template<class T>
 template<class T1>
 inline void NRvector<T>::resize(const NRvector<T1>& v)
-{
-	resize(v.size());
-}
+{ resize(v.size()); }
 
 template <class T>
 NRvector<T>::~NRvector()
-{
-	if (v != nullptr) delete[] v;
-}
+{ if (v != nullptr) delete[] v; }
 
 // Matrix Class
 
