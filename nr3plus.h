@@ -467,7 +467,7 @@ void tan(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 
 // operators +=,-=,*=,/= scalar/vec/mat, whenever make sense
 template <class T, class T1>
-inline void operator+=(NRbase<T> &v, const NRbase<T1> &v1)
+inline void plus_equals0(NRbase<T> &v, const NRbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -475,7 +475,20 @@ inline void operator+=(NRbase<T> &v, const NRbase<T1> &v1)
 }
 
 template <class T, class T1>
-inline void operator-=(NRbase<T> &v, const NRbase<T1> &v1)
+inline void operator+=(NRvector<T> &v, const NRvector<T1> &v1)
+{ plus_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator+=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
+{ plus_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator+=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
+{ plus_equals0(v, v1); }
+
+
+template <class T, class T1>
+inline void minus_equals0(NRbase<T> &v, const NRbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -483,7 +496,19 @@ inline void operator-=(NRbase<T> &v, const NRbase<T1> &v1)
 }
 
 template <class T, class T1>
-inline void operator*=(NRbase<T> &v, const NRbase<T1> &v1)
+inline void operator-=(NRvector<T> &v, const NRvector<T1> &v1)
+{ minus_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator-=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
+{ minus_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator-=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
+{ minus_equals0(v, v1); }
+
+template <class T, class T1>
+inline void times_equals0(NRbase<T> &v, const NRbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -491,7 +516,19 @@ inline void operator*=(NRbase<T> &v, const NRbase<T1> &v1)
 }
 
 template <class T, class T1>
-inline void operator/=(NRbase<T> &v, const NRbase<T1> &v1)
+inline void operator*=(NRvector<T> &v, const NRvector<T1> &v1)
+{ times_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator*=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
+{ times_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator*=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
+{ times_equals0(v, v1); }
+
+template <class T, class T1>
+inline void divide_equals0(NRbase<T> &v, const NRbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -499,7 +536,19 @@ inline void operator/=(NRbase<T> &v, const NRbase<T1> &v1)
 }
 
 template <class T, class T1>
-inline void operator+=(NRbase<T> &v, const T1 &s)
+inline void operator/=(NRvector<T> &v, const NRvector<T1> &v1)
+{ divide_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator/=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
+{ divide_equals0(v, v1); }
+
+template <class T, class T1>
+inline void operator/=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
+{ divide_equals0(v, v1); }
+
+template <class T, class T1>
+inline void plus_equals1(NRbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -507,7 +556,19 @@ inline void operator+=(NRbase<T> &v, const T1 &s)
 }
 
 template <class T, class T1>
-inline void operator-=(NRbase<T> &v, const T1 &s)
+inline void operator+=(NRvector<T> &v, const T1 &s)
+{ plus_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator+=(NRmatrix<T> &v, const T1 &s)
+{ plus_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator+=(NRmat3d<T> &v, const T1 &s)
+{ plus_equals1(v, s); }
+
+template <class T, class T1>
+inline void minus_equals1(NRbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -515,7 +576,19 @@ inline void operator-=(NRbase<T> &v, const T1 &s)
 }
 
 template <class T, class T1>
-inline void operator*=(NRbase<T> &v, const T1 &s)
+inline void operator-=(NRvector<T> &v, const T1 &s)
+{ minus_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator-=(NRmatrix<T> &v, const T1 &s)
+{ minus_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator-=(NRmat3d<T> &v, const T1 &s)
+{ minus_equals1(v, s); }
+
+template <class T, class T1>
+inline void times_equals1(NRbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -523,13 +596,37 @@ inline void operator*=(NRbase<T> &v, const T1 &s)
 }
 
 template <class T, class T1>
-inline void operator/=(NRbase<T> &v, const T1 &s)
+inline void operator*=(NRvector<T> &v, const T1 &s)
+{ times_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator*=(NRmatrix<T> &v, const T1 &s)
+{ times_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator*=(NRmat3d<T> &v, const T1 &s)
+{ times_equals1(v, s); }
+
+template <class T, class T1>
+inline void divide_equals1(NRbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	T1 sInv{ 1. / s };
 	for (i = 0; i < N; ++i)
 		v(i) *= sInv;
 }
+
+template <class T, class T1>
+inline void operator/=(NRvector<T> &v, const T1 &s)
+{ divide_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator/=(NRmatrix<T> &v, const T1 &s)
+{ divide_equals1(v, s); }
+
+template <class T, class T1>
+inline void operator/=(NRmat3d<T> &v, const T1 &s)
+{ divide_equals1(v, s); }
 
 // TODO: operator /= for integers
 
@@ -620,7 +717,7 @@ inline void plus(NRmat3d<T> &v, T1 &s, const NRmat3d<T2> &v1)
 { plus(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void plus1(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void plus1(NRbase<T> &v, const NRbase<T1> &v1, const NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -761,7 +858,7 @@ inline void times(NRmat3d<T> &v, const T1 &s, const NRmat3d<T2> &v1)
 { times(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void times1(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void times1(NRbase<T> &v, const NRbase<T1> &v1, const NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -802,7 +899,7 @@ inline void divide(NRmat3d<T> &v, NRmat3d<T1> &v1, const T2 &s)
 { v.resize(v1); divide0(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void divide1(NRbase<T> &v, const T1 &s, NRbase<T2> &v1)
+inline void divide1(NRbase<T> &v, const T1 &s, const NRbase<T2> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -810,19 +907,19 @@ inline void divide1(NRbase<T> &v, const T1 &s, NRbase<T2> &v1)
 }
 
 template <class T, class T1, class T2>
-inline void divide(NRvector<T> &v, const T1 &s, NRvector<T2> &v1)
+inline void divide(NRvector<T> &v, const T1 &s, const NRvector<T2> &v1)
 { v.resize(v1); divide1(v, s, v1); }
 
 template <class T, class T1, class T2>
-inline void divide(NRmatrix<T> &v, const T1 &s, NRmatrix<T2> &v1)
+inline void divide(NRmatrix<T> &v, const T1 &s, const NRmatrix<T2> &v1)
 { v.resize(v1); divide1(v, s, v1); }
 
 template <class T, class T1, class T2>
-inline void divide(NRmat3d<T> &v, const T1 &s, NRmat3d<T2> &v1)
+inline void divide(NRmat3d<T> &v, const T1 &s, const NRmat3d<T2> &v1)
 { v.resize(v1); divide1(v, s, v1); }
 
 template <class T, class T1, class T2>
-inline void divide3(NRbase<T> &v, NRbase<T1> &v1, NRbase<T2> &v2)
+inline void divide3(NRbase<T> &v, const NRbase<T1> &v1, const NRbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
