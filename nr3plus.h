@@ -133,6 +133,75 @@ void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1,
 
 // === get vec/mat properties ===
 
+template <class T1, class T2>
+inline bool equals_to0(const NRbase<T1> &v1, const NRbase<T2> &v2)
+{
+	Long i, N{ v1.size() };
+	if (N != v2.size()) return false;
+	for (i = 0; i < N; ++i)
+		if (v1(i) != v2(i))
+			return false;
+	return true;
+}
+
+template <class T1, class T2>
+inline bool operator==(const NRvector<T1> &v1, const NRvector<T2> &v2)
+{ return equals_to0(v1, v2); }
+
+template <class T1, class T2>
+inline bool operator==(const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
+{ return equals_to0(v1, v2); }
+
+template <class T1, class T2>
+inline bool operator==(const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
+{ return equals_to0(v1, v2); }
+
+template <class T1, class T2>
+inline bool operator!=(const NRvector<T1> &v1, const NRvector<T2> &v2)
+{ return !equals_to0(v1, v2); }
+
+template <class T1, class T2>
+inline bool operator!=(const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
+{ return !equals_to0(v1, v2); }
+
+template <class T1, class T2>
+inline bool operator!=(const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
+{ return !equals_to0(v1, v2); }
+
+template <class T1, class T2>
+inline bool equals_to1(const NRbase<T1> &v, const T2 &s)
+{
+	Long i, N{ v.size() };
+	for (i = 0; i < N; ++i)
+		if (v(i) != s)
+			return false;
+	return true;
+}
+
+template <class T1, class T2>
+inline bool operator==(const NRvector<T1> &v, const T2 &s)
+{ return equals_to1(v, s); }
+
+template <class T1, class T2>
+inline bool operator==(const NRmatrix<T1> &v, const T2 &s)
+{ return equals_to1(v, s); }
+
+template <class T1, class T2>
+inline bool operator==(const NRmat3d<T1> &v, const T2 &s)
+{ return equals_to1(v, s); }
+
+template <class T1, class T2>
+inline bool operator!=(const NRvector<T1> &v, const T2 &s)
+{ return !equals_to1(v, s); }
+
+template <class T1, class T2>
+inline bool operator!=(const NRmatrix<T1> &v, const T2 &s)
+{ return !equals_to1(v, s); }
+
+template <class T1, class T2>
+inline bool operator!=(const NRmat3d<T1> &v, const T2 &s)
+{ return !equals_to1(v, s); }
+
 template <class T>
 inline T sum(const NRbase<T> &v)
 {
@@ -611,7 +680,7 @@ template <class T, class T1>
 inline void divide_equals1(NRbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
-	T1 sInv{ 1. / s };
+	T sInv = 1. / s;
 	for (i = 0; i < N; ++i)
 		v(i) *= sInv;
 }
@@ -705,15 +774,15 @@ inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 &s)
 { v.resize(v1); plus0(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void plus(NRvector<T> &v, T1 &s, const NRvector<T2> &v1)
+inline void plus(NRvector<T> &v, const T1 &s, const NRvector<T2> &v1)
 { plus(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void plus(NRmatrix<T> &v, T1 &s, const NRmatrix<T2> &v1)
+inline void plus(NRmatrix<T> &v, const T1 &s, const NRmatrix<T2> &v1)
 { plus(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void plus(NRmat3d<T> &v, T1 &s, const NRmat3d<T2> &v1)
+inline void plus(NRmat3d<T> &v, const T1 &s, const NRmat3d<T2> &v1)
 { plus(v, v1, s); }
 
 template <class T, class T1, class T2>
@@ -826,7 +895,7 @@ inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 { v.resize(v1); minus4(v, v1, v2); }
 
 template <class T, class T1, class T2>
-inline void times0(NRbase<T> &v, NRbase<T1> &v1, const T2 &s)
+inline void times0(NRbase<T> &v, const NRbase<T1> &v1, const T2 &s)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -834,15 +903,15 @@ inline void times0(NRbase<T> &v, NRbase<T1> &v1, const T2 &s)
 }
 
 template <class T, class T1, class T2>
-inline void times(NRvector<T> &v, NRvector<T1> &v1, const T2 &s)
+inline void times(NRvector<T> &v, const NRvector<T1> &v1, const T2 &s)
 { v.resize(v1); times0(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void times(NRmatrix<T> &v, NRmatrix<T1> &v1, const T2 &s)
+inline void times(NRmatrix<T> &v, const NRmatrix<T1> &v1, const T2 &s)
 { v.resize(v1); times0(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void times(NRmat3d<T> &v, NRmat3d<T1> &v1, const T2 &s)
+inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 &s)
 { v.resize(v1); times0(v, v1, s); }
 
 template <class T, class T1, class T2>
@@ -878,7 +947,7 @@ inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 { v.resize(v1); times1(v, v1, v2); }
 
 template <class T, class T1, class T2>
-inline void divide0(NRbase<T> &v, NRbase<T1> &v1, const T2 &s)
+inline void divide0(NRbase<T> &v, const NRbase<T1> &v1, const T2 &s)
 {
 	Long i, N{ v1.size() };
 	T2 sInv{ 1/s };
@@ -887,15 +956,15 @@ inline void divide0(NRbase<T> &v, NRbase<T1> &v1, const T2 &s)
 }
 
 template <class T, class T1, class T2>
-inline void divide(NRvector<T> &v, NRvector<T1> &v1, const T2 &s)
+inline void divide(NRvector<T> &v, const NRvector<T1> &v1, const T2 &s)
 { v.resize(v1); divide0(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void divide(NRmatrix<T> &v, NRmatrix<T1> &v1, const T2 &s)
+inline void divide(NRmatrix<T> &v, const NRmatrix<T1> &v1, const T2 &s)
 { v.resize(v1); divide0(v, v1, s); }
 
 template <class T, class T1, class T2>
-inline void divide(NRmat3d<T> &v, NRmat3d<T1> &v1, const T2 &s)
+inline void divide(NRmat3d<T> &v, const NRmat3d<T1> &v1, const T2 &s)
 { v.resize(v1); divide0(v, v1, s); }
 
 template <class T, class T1, class T2>
@@ -927,15 +996,15 @@ inline void divide3(NRbase<T> &v, const NRbase<T1> &v1, const NRbase<T2> &v2)
 }
 
 template <class T, class T1, class T2>
-inline void divide(NRvector<T> &v, const NRvector<T> &v1, const NRvector<T> &v2)
+inline void divide(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
 { v.resize(v1); divide3(v, v1, v2); }
 
 template <class T, class T1, class T2>
-inline void divide(NRmatrix<T> &v, const NRmatrix<T> &v1, const NRmatrix<T> &v2)
+inline void divide(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
 { v.resize(v1); divide3(v, v1, v2); }
 
 template <class T, class T1, class T2>
-inline void divide(NRmat3d<T> &v, const NRmat3d<T> &v1, const NRmat3d<T> &v2)
+inline void divide(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 { v.resize(v1); divide3(v, v1, v2); }
 
 inline void real(NRbase<Comp> &v)

@@ -86,23 +86,26 @@ class NRbase
 protected:
 	Long N; // number of elements
 	T *p; // pointer to the first element
+	inline void move(NRbase &rhs);
 public:
 	NRbase();
-	NRbase(Long n);
+	NRbase(Long_I n);
 	inline T* ptr(); // get pointer
 	inline const T* ptr() const;
 	inline Long_I size() const;
+	inline void resize(Long_I n);
 	inline T & operator()(Long_I i);
 	inline const T & operator()(Long_I i) const;
 	inline T& end(); // last element
 	inline const T& end() const;
+	~NRbase();
 };
 
 template <class T>
 NRbase<T>::NRbase(): N(0), p(nullptr) {}
 
 template <class T>
-NRbase<T>::NRbase(Long n) : N(n) {}
+NRbase<T>::NRbase(Long_I n) : N(n), p(new T[n]) {}
 
 template <class T>
 inline T* NRbase<T>::ptr()
@@ -115,6 +118,24 @@ inline const T* NRbase<T>::ptr() const
 template <class T>
 inline Long_I NRbase<T>::size() const
 { return N; }
+
+template <class T>
+inline void NRbase<T>::resize(Long_I n)
+{
+	if (n != N) {
+		if (p != nullptr) delete[] p;
+		N = n;
+		p = n > 0 ? new T[n] : nullptr;
+	}
+}
+
+template <class T>
+inline void NRbase<T>::move(NRbase &rhs)
+{
+	if (p != nullptr) delete[] p;
+	N = rhs.N; rhs.N = 0;
+	p = rhs.p; rhs.p = nullptr;
+}
 
 template <class T>
 inline T & NRbase<T>::operator()(Long_I i)
@@ -156,50 +177,50 @@ inline const T & NRbase<T>::end() const
 	return p[N-1];
 }
 
+template <class T>
+NRbase<T>::~NRbase()
+{ if (p) delete p; }
+
 // Vector Class
 
 template <class T>
 class NRvector : public NRbase<T>
 {
+public:
 	typedef NRbase<T> Base;
 	using Base::p;
 	using Base::N;
-private:
-	T*& v;
-public:
 	NRvector();
 	explicit NRvector(Long_I n);
 	NRvector(Long_I n, const T &a);	//initialize to constant value
 	NRvector(Long_I n, const T *a);	// Initialize to array
 	NRvector(const NRvector &rhs);	// Copy constructor forbidden
 	inline NRvector & operator=(const NRvector &rhs);	// copy assignment
-	inline NRvector & operator=(const T rhs);  // assign to constant value
+	inline NRvector & operator=(const T &rhs);  // assign to constant value
 	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
 	inline T & operator[](Long_I i);	//i'th element
 	inline const T & operator[](Long_I i) const;
 	inline void resize(Long_I newn); // resize (contents not preserved)
 	template <class T1>
 	inline void resize(const NRvector<T1> &v);
-	~NRvector();
 };
 
 template <class T>
-NRvector<T>::NRvector() : v(p) {}
+NRvector<T>::NRvector() {}
 
 template <class T>
-NRvector<T>::NRvector(Long_I n) : Base(n), v(p)
-{ p = n>0 ? new T[n] : nullptr; }
+NRvector<T>::NRvector(Long_I n) : Base(n) {}
 
 template <class T>
-NRvector<T>::NRvector(Long_I n, const T& a) : NRvector(n)
-{ nrmemset(v, a, n); }
+NRvector<T>::NRvector(Long_I n, const T &a) : NRvector(n)
+{ nrmemset(p, a, n); }
 
 template <class T>
 NRvector<T>::NRvector(Long_I n, const T *a) : NRvector(n)
-{ memcpy(v, a, n*sizeof(T)); }
+{ memcpy(p, a, n*sizeof(T)); }
 
 template <class T>
-NRvector<T>::NRvector(const NRvector<T> &rhs) : v(p)
+NRvector<T>::NRvector(const NRvector<T> &rhs)
 {
 	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!")
 }
@@ -208,15 +229,15 @@ template <class T>
 inline NRvector<T> & NRvector<T>::operator=(const NRvector<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!")
-	resize(rhs.N);
-	memcpy(v, rhs.v, N*sizeof(T));
+	resize(rhs);
+	memcpy(p, rhs.p, N*sizeof(T));
 	return *this;
 }
 
 template <class T>
-inline NRvector<T>& NRvector<T>::operator=(const T rhs)
+inline NRvector<T>& NRvector<T>::operator=(const T &rhs)
 {
-	if (N) nrmemset(v, rhs, N);
+	if (N) nrmemset(p, rhs, N);
 	return *this;
 }
 
@@ -224,9 +245,7 @@ template <class T>
 inline void NRvector<T>::operator<<(NRvector<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
-	if (v != nullptr) delete[] v;
-	N = rhs.N; rhs.N = 0;
-	v = rhs.v; rhs.v = nullptr;
+	Base::move(rhs);
 }
 
 template <class T>
@@ -236,7 +255,7 @@ inline T & NRvector<T>::operator[](Long_I i)
 if (i<0 || i>=N)
 	error("NRvector subscript out of bounds")
 #endif
-	return v[i];
+	return p[i];
 }
 
 template <class T>
@@ -246,27 +265,17 @@ inline const T & NRvector<T>::operator[](Long_I i) const
 if (i<0 || i>=N)
 	error("NRvector subscript out of bounds")
 #endif
-	return v[i];
+	return p[i];
 }
 
 template <class T>
-inline void NRvector<T>::resize(Long_I newn)
-{
-	if (newn != N) {
-		if (v != nullptr) delete[] v;
-		N = newn;
-		v = N > 0 ? new T[N] : nullptr;
-	}
-}
+inline void NRvector<T>::resize(Long_I n)
+{ Base::resize(n); }
 
 template<class T>
 template<class T1>
 inline void NRvector<T>::resize(const NRvector<T1>& v)
 { resize(v.size()); }
-
-template <class T>
-NRvector<T>::~NRvector()
-{ if (v != nullptr) delete[] v; }
 
 // Matrix Class
 
@@ -279,8 +288,7 @@ class NRmatrix : public NRbase<T>
 private:
 	Long nn, mm;
 	T **v;
-	inline T **data_alloc(Long_I n, Long_I m);
-	inline void data_free();
+	inline T ** v_alloc();
 public:
 	NRmatrix();
 	NRmatrix(Long_I n, Long_I m);
@@ -288,7 +296,7 @@ public:
 	NRmatrix(Long_I n, Long_I m, const T *a);	// Initialize to array
 	NRmatrix(const NRmatrix &rhs);		// Copy constructor
 	inline NRmatrix & operator=(const NRmatrix &rhs);	//assignment
-	inline NRmatrix & operator=(const T rhs);
+	inline NRmatrix & operator=(const T &rhs);
 	inline void operator<<(NRmatrix &rhs); // move data and rhs.resize(0, 0)
 	inline T* operator[](Long_I i);	//subscripting: pointer to row i
 	inline const T* operator[](Long_I i) const;
@@ -301,30 +309,21 @@ public:
 };
 
 template <class T>
-inline T ** NRmatrix<T>::data_alloc(Long_I n, Long_I m)
+inline T** NRmatrix<T>::v_alloc()
 {
-	if (m*n == 0) return nullptr;
-	T **p = new T*[n];
-	p[0] = new T[m*n];
-	for (Long i = 1; i<n; i++)
-		p[i] = p[i-1] + m;
-	return p;
-}
-
-template <class T>
-inline void NRmatrix<T>::data_free()
-{
-	if (v != nullptr) {
-		delete v[0]; delete v;
-	}
+	if (N == 0) return nullptr;
+	T **v = new T*[nn];
+	v[0] = p;
+	for (Long i = 1; i<nn; i++)
+		v[i] = v[i-1] + mm;
+	return v;
 }
 
 template <class T>
 NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(nullptr) {}
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : nn(n), mm(m), Base(n*m), v(data_alloc(n, m))
-{ p = v[0]; }
+NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : Base(n*m), nn(n), mm(m), v(v_alloc()) {}
 
 template <class T>
 NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T &s) : NRmatrix(n, m)
@@ -350,7 +349,7 @@ inline NRmatrix<T> & NRmatrix<T>::operator=(const NRmatrix<T> &rhs)
 }
 
 template <class T>
-inline NRmatrix<T> & NRmatrix<T>::operator=(const T rhs)
+inline NRmatrix<T> & NRmatrix<T>::operator=(const T &rhs)
 {
 	if (N) nrmemset(p, rhs, N);
 	return *this;
@@ -360,10 +359,10 @@ template <class T>
 inline void NRmatrix<T>::operator<<(NRmatrix<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
-	data_free();
-	N = (nn = rhs.nn)*(mm = rhs.mm); v = rhs.v; p = rhs.p;
-	rhs.v = rhs.p = nullptr;
-	rhs.nn = rhs.mm = rhs.N = 0;
+	Base::move(rhs);
+	if (v) delete v;
+	nn = rhs.nn; mm = rhs.mm; v = rhs.v;
+	rhs.nn = rhs.mm = 0; rhs.v = nullptr;;
 }
 
 template <class T>
@@ -398,10 +397,10 @@ template <class T>
 inline void NRmatrix<T>::resize(Long_I newn, Long_I newm)
 {
 	if (newn != nn || newm != mm) {
-		data_free();
-		N = (nn = newn)*(mm = newm);
-		v = data_alloc(nn, mm);
-		p = v[0];
+		Base::resize(newn*newm);
+		nn = newn; mm = newm;
+		if (v) delete v;
+		v = v_alloc();
 	}
 }
 
@@ -412,7 +411,7 @@ inline void NRmatrix<T>::resize(const NRmatrix<T1> &a)
 
 template <class T>
 NRmatrix<T>::~NRmatrix()
-{ data_free(); }
+{ if(v) delete v; }
 
 // 3D Matrix Class
 
@@ -427,15 +426,15 @@ private:
 	Long mm;
 	Long kk;
 	T ***v;
-	inline T *** data_alloc(Long_I n, Long_I m, Long_I k);
-	inline void data_free();
+	inline T *** v_alloc();
+	inline void v_free();
 public:
 	NRmat3d();
 	NRmat3d(Long_I n, Long_I m, Long_I k);
-	NRmat3d(Long_I n, Long_I m, Long_I k, const T a);
+	NRmat3d(Long_I n, Long_I m, Long_I k, const T &a);
 	NRmat3d(const NRmat3d &rhs);   // Copy constructor
 	inline NRmat3d & operator=(const NRmat3d &rhs);	//assignment
-	inline NRmat3d & operator=(const T rhs);
+	inline NRmat3d & operator=(const T &rhs);
 	inline void operator<<(NRmat3d &rhs); // move data and rhs.resize(0, 0, 0)
 	inline void resize(Long_I n, Long_I m, Long_I k);
 	template <class T1>
@@ -449,26 +448,25 @@ public:
 };
 
 template <class T>
-inline T *** NRmat3d<T>::data_alloc(Long_I n, Long_I m, Long_I k)
+inline T *** NRmat3d<T>::v_alloc()
 {
-	if (n*m*k == 0) return nullptr;
+	if (N == 0) return nullptr;
 	Long i;
-	Long mn = m*n;
-	T ***p = new T**[n];
-	T **p0 = p[0] = new T*[mn];
-	p[0][0] = new T[mn*k];
-	for(i = 1; i < n; ++i)
-		p[i] = p[i-1] + m;
-	for(i = 1; i < mn; ++i)
-		p0[i] = p0[i-1] + k;
-	return p;
+	Long nnmm = nn*mm;
+	T **v0 = new T*[nnmm]; v0[0] = p;
+	for (i = 1; i < nnmm; ++i)
+		v0[i] = v0[i - 1] + kk;
+	T ***v = new T**[nn]; v[0] = v0;
+	for(i = 1; i < nn; ++i)
+		v[i] = v[i-1] + mm;
+	return v;
 }
 
 template <class T>
-inline void NRmat3d<T>::data_free()
+inline void NRmat3d<T>::v_free()
 {
 	if (v != nullptr) {
-		delete v[0][0]; delete v[0]; delete v;
+		delete v[0]; delete v;
 	}
 }
 
@@ -476,12 +474,12 @@ template <class T>
 NRmat3d<T>::NRmat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
 
 template <class T>
-NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k) : nn(n), mm(m), kk(k),
-	Base(n*m*k), v(data_alloc(n, m, k)) { p = v[0][0]; }
+NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k) : Base(n*m*k), nn(n), mm(m), kk(k),
+	v(v_alloc()) {}
 
 template <class T>
-NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k, const T a) : NRmat3d(n, m, k)
-{ nrmemset(p, a, n*m*k); }
+NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k, const T &s) : NRmat3d(n, m, k)
+{ nrmemset(p, s, n*m*k); }
 
 template <class T>
 NRmat3d<T>::NRmat3d(const NRmat3d<T> &rhs)
@@ -499,7 +497,7 @@ inline NRmat3d<T> &NRmat3d<T>::operator=(const NRmat3d<T> &rhs)
 }
 
 template <class T>
-inline NRmat3d<T> & NRmat3d<T>::operator=(const T rhs)
+inline NRmat3d<T> & NRmat3d<T>::operator=(const T &rhs)
 {
 	if (N) nrmemset(p, rhs, N);
 	return *this;
@@ -509,21 +507,20 @@ template <class T>
 inline void NRmat3d<T>::operator<<(NRmat3d<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!")
-	data_free();
-	N = rhs.N;  nn = rhs.nn; mm = rhs.mm; kk = rhs.kk;
-	v = rhs.v; p = rhs.p;
-	rhs.N = rhs.nn = rhs.mm = rhs.kk = 0;
-	rhs.p = rhs.v = nullptr;
+	Base::move(rhs);
+	nn = rhs.nn; mm = rhs.mm; kk = rhs.kk;
+	v_free(); v = rhs.v;
+	rhs.nn = rhs.mm = rhs.kk = 0;
+	rhs.v = nullptr;
 }
 
 template <class T>
 inline void NRmat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 {
 	if (n != nn || m != mm || k != kk) {
-		data_free();
+		Base::resize(n*m*k);
 		nn = n; mm = m; kk = k;
-		v = data_alloc(n, m, k);
-		p = v[0][0];
+		v_free(); v = v_alloc();
 	}
 }
 
@@ -561,7 +558,7 @@ template <class T>
 inline Long NRmat3d<T>::dim3() const { return kk; }
 
 template <class T>
-NRmat3d<T>::~NRmat3d() { data_free(); }
+NRmat3d<T>::~NRmat3d() { v_free(); }
 
 // Matric and vector types
 

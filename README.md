@@ -40,6 +40,8 @@ Class object temporary is inefficient (even with move constructor/assignment), u
 
 Avoid using unsigned integer types as much as possible (this is also the google c++ style).
 
+Place a dot after Doub literals is prefered.
+
 === typedefs ===
 Int is int, Uint is unsigned int, Llong is 64-bit int, Doub is double, Comp is std::complex<double>, Char is char, Uchar is unsigned char, Ldoub is long double.
 Long is 64 bit integer by default, define _USE_Int_AS_LONG macro to use int instead. Use Long for vector/matrix index or loop variable etc.
@@ -54,7 +56,7 @@ Constructors: NRvector() for default, NRvector(Long_I n) for vector size, NRvect
 Operator = : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
 Operator [] : for vector, get a reference for the i-th element; for matrix, return a pointer for the second index.
 Operator () : get a reference for the i-th element, in row-major order.
-Operator << : move information;
+Operator << : move data; empty vector/matrix can not be moved.
 end() : get a reference for the last element.
 size() : get the number of elements
 resize(Long_I) : resize vector, contents are not preserved. resize() does nothing if size doesn't change.
@@ -64,6 +66,7 @@ The matrix template name is NRmatrix<T>, 3D matrix template name is NRMat3d. Mat
 
 The typedefs for vector/matrix classes are (each type also comes with "_I", "_O", and "_IO" versions) :  VecInt, VecUint, VecLlong, VecUllong, VecChar, VecUchar, VecDoub, VecComp, VecBool, MatInt, MatUint, MatLlong, MatUllong, MatChar, MatUchar, MatDoub, MatComp, MatBool, Mat3Doub, Mat3Comp.
 
+NRbase class should never be used.
 
 ## constants
 
@@ -112,7 +115,6 @@ s = norm2(v) // vec/mat norm squared
 
 ## matrix manipulation
 
-a << s  // set vec/mat to a constant value
 void linspace(vec/mat, first, last, N = -1)
 void trans(a) // matrix transpose
 void her(a) // hermitian conjugate
@@ -129,6 +131,7 @@ sin(), cos(), exp(), tan(), whenever make sense
 
 ## matrix arithmatics
 
+operator ==, != // compare size and each element, right hand side can also be a scalar.
 operators +,-,*,/ scalar/vec/mat, whenever make sense (inefficient!).
 operators +=,-=,*=,/= scalar/vec/mat, whenever make sense
 void plus(out, in, in) //for scalar/vec/mat, whenever make sense.
