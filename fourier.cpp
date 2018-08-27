@@ -3,10 +3,7 @@
 void four1(Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
-	if (n < 2 || n&(n - 1)) {
-		std::cout << "n must be power of 2 in four1";
-		exit(EXIT_FAILURE);
-	}
+	if (n<2 || n&(n-1)) error("n must be power of 2 in four1")
 	nn = n << 1;
 	j = 1;
 	for (i=1;i<nn;i+=2) {
@@ -47,28 +44,42 @@ void four1(Doub *data, Int_I n, Int_I isign) {
 	}
 }
 
-void four1(VecDoub_IO &data, Int_I isign) {
-	four1(&data[0],data.size()/2,isign);
-}
+void fft(VecComp_IO &data)
+{ four1((Doub*)data.ptr(), data.size(), 1); }
 
-void four1(VecComp_IO &data, Int_I isign) {
-	four1((Doub*)(&data[0]),data.size(),isign);
-}
+void ifft(VecComp_IO &data)
+{ four1((Doub*)data.ptr(), data.size(), -1); }
 
-// four1 for each column of matrix
+// fft for each column of matrix
 // not optimized, very slow
-void four1(MatComp_IO &data, Int_I isign)
+void fft(MatComp_IO &data)
 {
-	Int i, j, m = data.nrows(), n = data.ncols();
+	Long i, j, m{ data.nrows() }, n{ data.ncols() };
 	VecComp column(m);
 	for (j = 0; j < n; ++j) {
 		for (i = 0; i < m; ++i)
 			column[i] = data[i][j];
-		four1(column, isign);
+		fft(column);
 		for (i = 0; i < m; ++i)
 			data[i][j] = column[i];
 	}
 }
+
+void ifft(MatComp_IO &data)
+{
+	Long i, j, m{ data.nrows() }, n{ data.ncols() };
+	VecComp column(m);
+	for (j = 0; j < n; ++j) {
+		for (i = 0; i < m; ++i)
+			column[i] = data[i][j];
+		ifft(column);
+		for (i = 0; i < m; ++i)
+			data[i][j] = column[i];
+	}
+}
+
+void four1(VecDoub_IO &data, const Int isign)
+{ four1(&data[0], data.size() / 2, isign); }
 
 void realft(VecDoub_IO &data, Int_I isign) {
 	Int i,i1,i2,i3,i4,n=data.size();
@@ -223,4 +234,17 @@ void cosft2(VecDoub_IO &y, Int_I isign) {
 			wi1=wi1*wpr+wtemp*wpi+wi1;
 		}
 	}
+}
+
+// interpolation using sampling theorem
+// assuming y.size() is double
+// x must be linspaced.
+Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y)
+{
+	Comp sum{};
+	Doub dx{ (x.end() - x[0]) / (x.size() - 1.) }, a{ PI/dx };
+	Long i, N{ y.size() };
+	for (i = 0; i < N; ++i)
+		sum += y[i] * sinc(a*(x1 - x[i]));
+	return sum;
 }

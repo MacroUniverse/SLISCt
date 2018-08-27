@@ -4,6 +4,7 @@
 #include "nr3plus.h"
 #include "interp_1d.h"
 #include "interp_2d.h"
+#include "fourier.h"
 
 using std::cout; using std::endl; using std::conj;
 
@@ -292,8 +293,29 @@ void test_plus_minus_times_devide()
 	if (vComp != Comp(0.5, 0.5)) error("failed!")
 }
 
+// new test scratch
+void test()
+{
+	// fft(VecComp_IO) and ifft(VecComp_IO)
+	VecComp v; linspace(v, 1., 4., 4);
+	disp(v);
+	fft(v);
+	disp(v);
+	ifft(v);
+	disp(v);
+	
+	// fft_interp()
+	VecDoub x; linspace(x, 0., PI, 10);
+	VecComp y;
+	sin(y, x);
+	cout << fft_interp(PI/2, x, y); // TODO: is this correct?
+}
+
 int main()
 {
+	// temporary test
+	test();
+
 	// systematic tests
 	test_self_op();
 	test_plus_minus_times_devide();
@@ -302,13 +324,6 @@ int main()
 	// test operator() and end()
 	VecDoub xv, xv1(3), xv2(3);
 	linspace(xv1, 1., 3.); linspace(xv2, 4., 6.);
-
-	minus(xv1);
-	minus(xv1);
-	minus(xv, xv1); // version 1
-	minus(xv, 3., xv1); // version 2
-	minus(xv, xv1, 3); // version 3
-	minus(xv, xv2, xv1); // version 4
 
 	//// test new disp()
 	//VecUchar v8(3);

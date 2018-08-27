@@ -64,6 +64,8 @@ inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long_I mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
+inline Doub sinc(Doub_I x) { return x == 0 ? 1. : sin(x)/x; }
+
 // operators between Comp and Int
 inline Comp operator+(Comp_I c, Int_I i) { return c + (Doub)i; }
 inline Comp operator+(Int_I i, Comp_I c) { return c + (Doub)i; }
@@ -455,7 +457,7 @@ void idiagonals_par(NRmatrix<T> &a)
 template <class T, class T1>
 inline void sin0(NRbase<T> &v, const NRbase<T1> &v1)
 {
-	Long i, N{ x.size() };
+	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = sin(v1(i));
 }
