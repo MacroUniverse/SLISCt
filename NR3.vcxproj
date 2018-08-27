@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="fourier.h" />
     <ClInclude Include="interp_1d.h" />
     <ClInclude Include="interp_2d.h" />
     <ClInclude Include="nr3.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="fourier.cpp" />
     <ClCompile Include="interp_1d.cpp" />
     <ClCompile Include="interp_2d.cpp" />
     <ClCompile Include="main.cpp" />

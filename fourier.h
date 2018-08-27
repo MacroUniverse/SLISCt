@@ -13,7 +13,7 @@ struct WrapVecDoub {
 		
 	void validate() {if (n&(n-1)) throw("vec size must be power of 2");}
 
-	inline Complex& operator[] (Int i) {return (Complex &)v[(i&mask) << 1];}
+	inline Comp& operator[] (Int i) {return (Comp &)v[(i&mask) << 1];}
 
 	inline Doub& real(Int i) {return v[(i&mask) << 1];}
 
@@ -26,9 +26,9 @@ void four1(Doub *data, Int_I n, Int_I isign);
 
 void four1(VecDoub_IO &data, Int_I isign);
 
-void four1(VecComplex_IO &data, Int_I isign);
+void four1(VecComp_IO &data, Int_I isign);
 
-void four1(MatComplex_IO &data, Int_I isign);
+void four1(MatComp_IO &data, Int_I isign);
 
 void realft(VecDoub_IO &data, Int_I isign);
 

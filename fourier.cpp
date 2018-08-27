@@ -51,16 +51,16 @@ void four1(VecDoub_IO &data, Int_I isign) {
 	four1(&data[0],data.size()/2,isign);
 }
 
-void four1(VecComplex_IO &data, Int_I isign) {
+void four1(VecComp_IO &data, Int_I isign) {
 	four1((Doub*)(&data[0]),data.size(),isign);
 }
 
 // four1 for each column of matrix
 // not optimized, very slow
-void four1(MatComplex_IO &data, Int_I isign)
+void four1(MatComp_IO &data, Int_I isign)
 {
 	Int i, j, m = data.nrows(), n = data.ncols();
-	VecComplex column(m);
+	VecComp column(m);
 	for (j = 0; j < n; ++j) {
 		for (i = 0; i < m; ++i)
 			column[i] = data[i][j];
