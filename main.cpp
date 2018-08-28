@@ -321,9 +321,151 @@ void fft_test()
 	if (vInt != vInt1) error("failed!");
 }
 
+void four2x(Doub *data2, Doub *data, Int_I n, Int_I isign) {
+	Int nn,mmax,m,j,istep,i;
+	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
+	if (n<2 || n&(n-1)) error("n must be power of 2 in four1")
+	nn = n << 1;
+	// get bit inverse order
+	j = 1;
+	for (i=1;i<nn;i+=2) {
+		if (j > i) {
+			SWAP(data[j-1],data[i-1]);
+			SWAP(data[j],data[i]);
+		}
+		m=n;
+		while (m >= 2 && j > m) {
+			j -= m;
+			m >>= 1;
+		}
+		j += m;
+	}
+
+	// do two element dft
+	for (i = 0; i < 2*n; i += 4) {
+		j = 2*i;
+		data2[j+2] = data2[j] = data[i];
+		data2[j+3] = data2[j+1] = data[i+1];
+		data2[j+6] = -(data2[j+4] = data[i+2]);
+		data2[j+7] = -(data2[j+5] = data[i+3]);
+	}
+
+	// do the rest
+	nn <<= 1;
+	mmax=4;
+	while (nn > mmax) {
+		istep=mmax << 1;
+		theta=isign*(6.28318530717959/mmax);
+		wtemp=sin(0.5*theta);
+		wpr = -2.0*wtemp*wtemp;
+		wpi=sin(theta);
+		wr=1.0;
+		wi=0.0;
+		for (m=1;m<mmax;m+=2) {
+			for (i=m;i<=nn;i+=istep) {
+				j=i+mmax;
+				tempr=wr*data2[j-1]-wi*data2[j];
+				tempi=wr*data2[j]+wi*data2[j-1];
+				data2[j-1]=data2[i-1]-tempr;
+				data2[j]=data2[i]-tempi;
+				data2[i-1] += tempr;
+				data2[i] += tempi;
+			}
+			wr=(wtemp=wr)*wpr-wi*wpi+wr;
+			wi=wi*wpr+wtemp*wpi+wi;
+		}
+		mmax=istep;
+	}
+}
+
+void fft2x(VecComp_O &data2, VecComp_I &data)
+{
+	VecComp temp; temp = data;
+	data2.resize(data.size()*2);
+	four2x((Doub*)data2.ptr(), (Doub*)temp.ptr(), data.size(), -1);
+}
+
+void four4x(Doub *data2, Doub *data, Int_I n, Int_I isign) {
+	Int nn,mmax,m,j,istep,i;
+	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
+	if (n<2 || n&(n-1)) error("n must be power of 2 in four1")
+	nn = n << 1;
+	// get bit inverse order
+	j = 1;
+	for (i=1;i<nn;i+=2) {
+		if (j > i) {
+			SWAP(data[j-1],data[i-1]);
+			SWAP(data[j],data[i]);
+		}
+		m=n;
+		while (m >= 2 && j > m) {
+			j -= m;
+			m >>= 1;
+		}
+		j += m;
+	}
+
+	// do two element dft
+	for (i = 0; i < 4*n; i += 8) {
+		j = 4*i;
+		data2[j+6] = data2[j+4] = data2[j+2] = data2[j] = data[i];
+		data2[j+7] = data2[j+5] = data2[j+3] = data2[j+1] = data[i+1];
+		data2[j+6] = -(data2[j+4] = data[i+2]);
+		data2[j+7] = -(data2[j+5] = data[i+3]);
+		data2[j+12] = data2[j+11] = -(data2[j+15] = data2[j+8] = data[i+2]);
+		data2[j+14] = data2[j+13] = -(data2[j+10] = data2[j+9] = data[i+3]);
+	}
+
+	// do the rest
+	nn <<= 2;
+	mmax=8;
+	while (nn > mmax) {
+		istep=mmax << 1;
+		theta=isign*(6.28318530717959/mmax);
+		wtemp=sin(0.5*theta);
+		wpr = -2.0*wtemp*wtemp;
+		wpi=sin(theta);
+		wr=1.0;
+		wi=0.0;
+		for (m=1;m<mmax;m+=2) {
+			for (i=m;i<=nn;i+=istep) {
+				j=i+mmax;
+				tempr=wr*data2[j-1]-wi*data2[j];
+				tempi=wr*data2[j]+wi*data2[j-1];
+				data2[j-1]=data2[i-1]-tempr;
+				data2[j]=data2[i]-tempi;
+				data2[i-1] += tempr;
+				data2[i] += tempi;
+			}
+			wr=(wtemp=wr)*wpr-wi*wpi+wr;
+			wi=wi*wpr+wtemp*wpi+wi;
+		}
+		mmax=istep;
+	}
+}
+
+void fft4x(VecComp_O &data2, VecComp_I &data)
+{
+	VecComp temp; temp = data;
+	data2.resize(data.size()*4);
+	four2x((Doub*)data2.ptr(), (Doub*)temp.ptr(), data.size(), -1);
+}
+
 // new test scratch
 void test()
 {
+	VecComp v(4); v[0] = Comp(1., 1.); v[1] = Comp(2., 2.); v[2] = Comp(3., 5.); v[3] = Comp(4., 7.);
+	disp(v);
+	VecComp v1; v1 = v;
+	fft(v1);
+	disp(v1);
+	v1 = v;
+	VecComp v2;
+	fft2x(v2, v1);
+	disp(v2);
+	VecComp v3(8, 0.); v3[0] = v[0]; v3[1] = v[1]; v3[6] = v[2]; v3[7] = v[3];
+	fft(v3);
+	disp(v3);
 }
 
 int main()
