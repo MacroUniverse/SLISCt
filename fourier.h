@@ -8,6 +8,12 @@ void ifft(VecComp_IO &data);
 void fft(MatComp_IO &data);
 void ifft(MatComp_IO &data);
 
+void fft2x(VecComp_O &data2, VecComp_I &data);
+void ifft2x(VecComp_O &data2, VecComp_I &data);
+
+void fft4x(VecComp_O &data4, VecComp_I &data);
+void ifft4x(VecComp_O &data4, VecComp_I &data);
+
 struct WrapVecDoub {
 	VecDoub vvec;
 	VecDoub &v;

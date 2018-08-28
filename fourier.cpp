@@ -1,5 +1,38 @@
 #include "fourier.h"
 
+// reorder a vector in bit inverse order
+// TODO: test this and use this in four1()
+inline void bit_inv(Comp *v, Int_I n)
+{
+	Int i, j, m, nn = n>>1;
+	j = 0;
+	for (i=0; i < n; ++i) {
+		if (j > i)
+			SWAP(v[j],v[i]);
+		m = nn;
+		while (m >= 2 && j >= m) {
+			j -= m;
+			m >>= 1;
+		}
+		j += m;
+	}
+}
+
+inline void bit_inv(Comp *out, const Comp *in, Int_I n)
+{
+	Int i, j, m, nn = n>>1;
+	j = 0;
+	for (i=0; i < n; ++i) {
+		out[j] = in[i];
+		m = nn;
+		while (m >= 2 && j >= m) {
+			j -= m;
+			m >>= 1;
+		}
+		j += m;
+	}
+}
+
 // if isign = 1, replaces data[0..2*n-1] by its ifft(), exponent is exp(ikx) .
 // if isign = -1, replaces data[0..2*n-1] by n times its fft, exponent is exp(-ikx).
 // data is a complex array of length n stored as a real array of length 2*n.
@@ -241,7 +274,8 @@ void cosft2(VecDoub_IO &y, Int_I isign) {
 	}
 }
 
-// interpolation using sampling theorem
+// interpolation using sampling theorem (sinc interp)
+// not recommended, use ifft2x(fft()) instead
 // assuming y.size() is double
 // x must be linspaced.
 Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y)
@@ -263,6 +297,133 @@ void fft_interp(VecComp_O &y1, VecDoub_I &x1, VecDoub_I &x, VecComp_I &y)
 	for (j = 0; j < N1; ++j)
 		for (i = 0; i < N; ++i)
 			y1[j] += y[i] * sinc(a*(x1[j] - x[i]));
+}
+
+// optimized double zero padding: four1([data, 0, 0, data])
+void four2x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
+	Int nn,mmax,m,j,istep,i;
+	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
+	if (n<2 || n&(n-1)) error("n must be power of 2 in four1")
+	nn = n << 1;
+	// get bit inverse order to the end of data2
+	Doub *pwork = data2+nn;
+	bit_inv((Comp*)pwork, (Comp*)data, n);
+	// do two element dft
+	Doub *p = data2;
+	for (i = 0; i < n>>1; ++i) {
+		p[2] = p[0] = pwork[0];
+		p[3] = p[1] = pwork[1];
+		p[6] = -(p[4] = pwork[2]);
+		p[7] = -(p[5] = pwork[3]);
+		pwork += 4; p += 8;
+	}
+	// do the rest
+	nn <<= 1;
+	mmax=4;
+	while (nn > mmax) {
+		istep=mmax << 1;
+		theta=isign*(6.28318530717959/mmax);
+		wtemp=sin(0.5*theta);
+		wpr = -2.0*wtemp*wtemp;
+		wpi=sin(theta);
+		wr=1.0;
+		wi=0.0;
+		for (m=1;m<mmax;m+=2) {
+			for (i=m;i<=nn;i+=istep) {
+				j=i+mmax;
+				tempr=wr*data2[j-1]-wi*data2[j];
+				tempi=wr*data2[j]+wi*data2[j-1];
+				data2[j-1]=data2[i-1]-tempr;
+				data2[j]=data2[i]-tempi;
+				data2[i-1] += tempr;
+				data2[i] += tempi;
+			}
+			wr=(wtemp=wr)*wpr-wi*wpi+wr;
+			wi=wi*wpr+wtemp*wpi+wi;
+		}
+		mmax=istep;
+	}
+}
+
+void fft2x(VecComp_O &data2, VecComp_I &data)
+{
+	data2.resize(data.size()*2);
+	four2x((Doub*)data2.ptr(), (Doub*)data.ptr(), data.size(), -1);
+}
+
+void ifft2x(VecComp_O &data2, VecComp_I &data)
+{
+	data2.resize(data.size()*2);
+	four2x((Doub*)data2.ptr(), (Doub*)data.ptr(), data.size(), 1);
+}
+
+// optimized 4x zero padding: four1([data, 0, 0 ,0, 0, 0, 0, data]);
+void four4x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
+	Int nn,mmax,m,j,istep,i;
+	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
+	if (n<2 || n&(n-1)) error("n must be power of 2 in four1")
+	nn = n << 1;
+	// get bit inverse order to the end of data2
+	Doub *pwork = data2+3*nn;
+	bit_inv((Comp*)pwork, (Comp*)data, n);
+	// do two element dft
+	Doub *p = data2, temp;
+	if (isign < 0)
+		for (i = 0; i < n>>1; ++i) {
+			p[6] = p[4] = p[2] = p[0] = pwork[0];
+			p[7] = p[5] = p[3] = p[1] = pwork[1];
+			p += 8; temp = pwork[3];
+			p[7] = p[4] = -(p[3] = p[0] = pwork[2]);
+			p[5] = p[2] = -(p[6] = p[1] = temp);
+			pwork += 4; p += 8;
+		}
+	else
+		for (i = 0; i < n>>1; ++i) {
+			p[6] = p[4] = p[2] = p[0] = pwork[0];
+			p[7] = p[5] = p[3] = p[1] = pwork[1];
+			p += 8; temp = pwork[3];
+			p[4] = p[3] = -(p[7] = p[0] = pwork[2]);
+			p[6] = p[5] = -(p[2] = p[1] = temp);
+			pwork += 4; p += 8;
+		}
+	// do the rest
+	nn <<= 2;
+	mmax=8;
+	while (nn > mmax) {
+		istep=mmax << 1;
+		theta=isign*(6.28318530717959/mmax);
+		wtemp=sin(0.5*theta);
+		wpr = -2.0*wtemp*wtemp;
+		wpi=sin(theta);
+		wr=1.0;
+		wi=0.0;
+		for (m=1;m<mmax;m+=2) {
+			for (i=m;i<=nn;i+=istep) {
+				j=i+mmax;
+				tempr=wr*data2[j-1]-wi*data2[j];
+				tempi=wr*data2[j]+wi*data2[j-1];
+				data2[j-1]=data2[i-1]-tempr;
+				data2[j]=data2[i]-tempi;
+				data2[i-1] += tempr;
+				data2[i] += tempi;
+			}
+			wr=(wtemp=wr)*wpr-wi*wpi+wr;
+			wi=wi*wpr+wtemp*wpi+wi;
+		}
+		mmax=istep;
+	}
+}
+
+void fft4x(VecComp_O &data4, VecComp_I &data)
+{
+	data4.resize(data.size()*4);
+	four4x((Doub*)data4.ptr(), (Doub*)data.ptr(), data.size(), -1);
+}
+
+void ifft4x(VecComp_O &data4, VecComp_I &data)
+{
+	data4.resize(data.size()*4);
+	four4x((Doub*)data4.ptr(), (Doub*)data.ptr(), data.size(), 1);
 }
 
 void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
