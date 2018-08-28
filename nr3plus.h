@@ -225,9 +225,8 @@ inline T max(const NRbase<T> &v)
 	return val;
 }
 
-// for T = Comp, return max(abs(a(:)))
-template <>
-inline Comp max(const NRbase<Comp> &v)
+// for Comp, return max(abs(a(:))
+inline Doub max(const NRbase<Comp> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -249,8 +248,7 @@ inline T max(Long_O &ind, const NRbase<T> &v)
 	return val;
 }
 
-template <>
-inline Comp max(Long_O &ind, const NRbase<Comp> &v)
+inline Doub max(Long_O &ind, const NRbase<Comp> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -1276,54 +1274,6 @@ void integral(NRvector<T> &F, const NRvector<T1> &f, Doub_I dx)
 	for (i = 0; i < N - 1; ++i)
 		F[i + 1] = F[i] + f[i] * dx;
 }
-
-// === FT related ===
-
-template <class T>
-void fftshift(NRmatrix<T> &a, Int_I dim = 1)
-{
-	Long m{ a.nrows() }, n{ a.ncols() };
-	if (dim == 1) {
-		if (isodd(m))
-			error("fftshift only supports even rows!")
-		else {
-			Long halfm = m/2;
-			NRmatrix<T> temp(halfm, n);
-			Long size = halfm*n*sizeof(T);
-			memcpy(temp[0], a[0], size);
-			memcpy(a[0], a[halfm], size);
-			memcpy(a[halfm], temp[0], size);
-		}
-	}
-	else if (dim == 2) {
-		if (isodd(n))
-			error("fftshift only supports even columns!")
-		else {
-			Long i, halfn{ n/2 };
-			NRvector<T> temp(halfn);
-			Long size{ halfn*sizeof(T) };
-			for (i = 0; i < m; ++i) {
-				memcpy(&temp[0], a[i], size);
-				memcpy(a[i], &a[i][halfn], size);
-				memcpy(&a[i][halfn], &temp[0], size);
-			}
-			
-		}
-	}
-}
-
-// discrete fourier transform from X(x) to Y(k), no fftshift is needed
-// each column of X is transformed to each column of Y
-// using sum instead of integration, result not normalized
-// for each column, Y_j = sum_i ( X_i*exp(-I*k_j*X_i) )
-// this is much slower than fft, but for small (xmax-xmin) and (kmax-kmin), could be faster
-void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax);
-void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax);
-
-// the inverse of dft, multiplied by 2*pi/(dx*dk).
-// this might not be a precise inverse
-void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
-void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
 
 // string utilities
 

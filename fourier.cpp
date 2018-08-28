@@ -1,5 +1,9 @@
 #include "fourier.h"
 
+// if isign = 1, replaces data[0..2*n-1] by its ifft(), exponent is exp(ikx) .
+// if isign = -1, replaces data[0..2*n-1] by n times its fft, exponent is exp(-ikx).
+// data is a complex array of length n stored as a real array of length 2*n.
+// n must be an integer power of 2.
 void four1(Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
@@ -45,10 +49,10 @@ void four1(Doub *data, Int_I n, Int_I isign) {
 }
 
 void fft(VecComp_IO &data)
-{ four1((Doub*)data.ptr(), data.size(), 1); }
+{ four1((Doub*)data.ptr(), data.size(), -1); }
 
 void ifft(VecComp_IO &data)
-{ four1((Doub*)data.ptr(), data.size(), -1); }
+{ four1((Doub*)data.ptr(), data.size(), 1); }
 
 // fft for each column of matrix
 // not optimized, very slow
@@ -78,6 +82,7 @@ void ifft(MatComp_IO &data)
 	}
 }
 
+// internal function, don't use
 void four1(VecDoub_IO &data, const Int isign)
 { four1(&data[0], data.size() / 2, isign); }
 
@@ -247,4 +252,100 @@ Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y)
 	for (i = 0; i < N; ++i)
 		sum += y[i] * sinc(a*(x1 - x[i]));
 	return sum;
+}
+
+// vector version of fft_interp()
+void fft_interp(VecComp_O &y1, VecDoub_I &x1, VecDoub_I &x, VecComp_I &y)
+{
+	Doub dx{ (x.end() - x[0]) / (x.size() - 1.) }, a{ PI / dx };
+	Long i, j, N{ y.size() }, N1{ x1.size() };
+	y1.resize(x1);
+	for (j = 0; j < N1; ++j)
+		for (i = 0; i < N; ++i)
+			y1[j] += y[i] * sinc(a*(x1[j] - x[i]));
+}
+
+void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
+{
+	Long i, j, k, Nx = X.nrows(), Nc = X.ncols();
+	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
+	const Comp *pxi;
+	Comp *pyj, factor, expo, dexpo;
+	Y.resize(Nk, Nc); Y = 0.;
+	for (j = 0; j < Nk; ++j) {
+		pyj = Y[j];
+		expo = exp(Comp(0, -(kmin + dk*j)*(xmin - dx)));
+		dexpo = exp(Comp(0, -(kmin + dk*j)*dx));
+		for (i = 0; i < Nx; ++i) {
+			pxi = X[i];
+			expo *= dexpo;
+			for (k = 0; k < Nc; ++k)
+				pyj[k] += expo*pxi[k];
+		}
+	}
+}
+
+// parallel version
+void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
+{
+	Long j, Nx = X.nrows(), Nc = X.ncols();
+	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
+	Y.resize(Nk, Nc); Y = 0.;
+#pragma omp parallel for
+	for (j = 0; j < Nk; ++j) {
+		Long i, k;
+		const Comp *pxi;
+		Comp *pyj, factor, expo, dexpo;
+		pyj = Y[j];
+		expo = exp(Comp(0, -(kmin + dk*j)*(xmin - dx)));
+		dexpo = exp(Comp(0, -(kmin + dk*j)*dx));
+		for (i = 0; i < Nx; ++i) {
+			pxi = X[i];
+			expo *= dexpo;
+			for (k = 0; k < Nc; ++k)
+				pyj[k] += expo*pxi[k];
+		}
+	}
+}
+
+void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+{
+	Long i, j, k, Nk = Y.nrows(), Nc = Y.ncols();
+	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
+	const Comp *pyi;
+	Comp *pxj, factor, expo, dexpo;
+	X.resize(Nx, Nc); X = 0.;
+	for (j = 0; j < Nx; ++j) {
+		pxj = X[j];
+		expo = exp(Comp(0, (xmin + dx*j)*(kmin - dk)));
+		dexpo = exp(Comp(0, (xmin + dx*j)*dk));
+		for (i = 0; i < Nk; ++i) {
+			pyi = Y[i];
+			expo *= dexpo;
+			for (k = 0; k < Nc; ++k)
+				pxj[k] += expo*pyi[k];
+		}
+	}
+}
+
+void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+{
+	Long j, Nk = Y.nrows(), Nc = Y.ncols();
+	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
+	X.resize(Nx, Nc); X = 0.;
+#pragma omp parallel for
+	for (j = 0; j < Nx; ++j) {
+		Long i, k;
+		const Comp *pyi;
+		Comp *pxj, factor, expo, dexpo;
+		pxj = X[j];
+		expo = exp(Comp(0, (xmin + dx*j)*(kmin - dk)));
+		dexpo = exp(Comp(0, (xmin + dx*j)*dk));
+		for (i = 0; i < Nk; ++i) {
+			pyi = Y[i];
+			expo *= dexpo;
+			for (k = 0; k < Nc; ++k)
+				pxj[k] += expo*pyi[k];
+		}
+	}
 }

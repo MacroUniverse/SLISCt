@@ -293,22 +293,37 @@ void test_plus_minus_times_devide()
 	if (vComp != Comp(0.5, 0.5)) error("failed!")
 }
 
+void fft_test()
+{
+	// fft(VecComp_IO) and ifft(VecComp_IO)
+	VecComp v(4); v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
+	fft(v);
+	VecComp v1(4, 0.); v1[1] = 4.;
+	v -= v1;
+	if (max(v) > 1.5e-15) error("failed!")
+	ifft(v1);
+	v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
+	v1 /= 4.; v1 -= v;
+	if (max(v1) > 1e-15) error("failed!")
+
+
+	// fft_interp()
+	VecDoub x; linspace(x, 1., 3., 3);
+	VecComp y; linspace(y, Comp(1., 1.), Comp(3., 3.), 3);
+	if (abs(fft_interp(x[0], x, y) - y[0]) > 1e-15) error("failed!");
+	if (abs(fft_interp(x[1], x, y) - y[1]) > 1e-15) error("failed!");
+	if (abs(fft_interp(x[2], x, y) - y[2]) > 1e-15) error("failed!");
+
+	// fftshift()
+	VecInt vInt; linspace(vInt, 1, 4, 4);
+	fftshift(vInt);
+	VecInt vInt1(4); vInt1[0] = 3; vInt1[1] = 4; vInt1[2] = 1; vInt1[3] = 2;
+	if (vInt != vInt1) error("failed!");
+}
+
 // new test scratch
 void test()
 {
-	// fft(VecComp_IO) and ifft(VecComp_IO)
-	VecComp v; linspace(v, 1., 4., 4);
-	disp(v);
-	fft(v);
-	disp(v);
-	ifft(v);
-	disp(v);
-	
-	// fft_interp()
-	VecDoub x; linspace(x, 0., PI, 10);
-	VecComp y;
-	sin(y, x);
-	cout << fft_interp(PI/2, x, y); // TODO: is this correct?
 }
 
 int main()
@@ -320,6 +335,7 @@ int main()
 	test_self_op();
 	test_plus_minus_times_devide();
 	class_test();
+	fft_test();
 
 	// test operator() and end()
 	VecDoub xv, xv1(3), xv2(3);
