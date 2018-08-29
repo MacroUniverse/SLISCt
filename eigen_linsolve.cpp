@@ -1,31 +1,40 @@
 #include "eigen_linsolve.h"
 using namespace Eigen;
 
-typedef Matrix<Doub, Dynamic, Dynamic, AutoAlign | RowMajor> RMatrixXd;
-typedef Matrix<Comp, Dynamic, Dynamic, AutoAlign | RowMajor> RMatrixXcd;
-
-void test_eigen_linsolve()
+HouseholderQrDoub::HouseholderQrDoub(MatDoub_I &a)
 {
-	/*using std::cout;
-	RMatrixXcd m(2, 2);
-	m << 1., 2., 2., 4.;
-	VectorXcd b(2);
-	b << -1., -2.;
-	VectorXcd x;
+	Map<const RMatrixXd> map_a(a.ptr(), a.nrows(), a.ncols());
+	qr.compute(map_a);
+}
 
-	HouseholderQR<RMatrixXcd> qr(m);
-	x = qr.solve(b);
-	cout << x;*/
+void HouseholderQrDoub::compute(MatDoub_I &a)
+{
+	Map<const RMatrixXd> map_a(a.ptr(), a.nrows(), a.ncols());
+	qr.compute(map_a);
+}
 
-	MatComp a(2, 2); a(0) = 1.; a(1) = 2.; a(2) = 2.; a(3) = 4.;
-	VecComp y(2); y[0] = -1.; y[1] = -2.;
-	VecComp x(2);
-	Map<RMatrixXcd> map_a(a.ptr(), a.nrows(), a.ncols());
-	Map<VectorXcd> map_y(y.ptr(), y.size());
-	Map<VectorXcd> map_x(x.ptr(), x.size());
-
-	HouseholderQR<RMatrixXcd> qr(map_a);
+void HouseholderQrDoub::solve(VecDoub_O &x, VecDoub_I &y)
+{
+	Map<const VectorXd> map_y(y.ptr(), y.size());
+	Map<VectorXd> map_x(x.ptr(), x.size());
 	map_x = qr.solve(map_y);
-	
-	disp(x);
+}
+
+HouseholderQrComp::HouseholderQrComp(MatComp_I &a)
+{
+	Map<const RMatrixXcd> map_a(a.ptr(), a.nrows(), a.ncols());
+	qr.compute(map_a);
+}
+
+void HouseholderQrComp::compute(MatComp_I &a)
+{
+	Map<const RMatrixXcd> map_a(a.ptr(), a.nrows(), a.ncols());
+	qr.compute(map_a);
+}
+
+void HouseholderQrComp::solve(VecComp_O &x, VecComp_I &y)
+{
+	Map<const VectorXcd> map_y(y.ptr(), y.size());
+	Map<VectorXcd> map_x(x.ptr(), x.size());
+	map_x = qr.solve(map_y);
 }
