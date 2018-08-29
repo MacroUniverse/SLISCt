@@ -5,11 +5,11 @@
 #include "interp_1d.h"
 #include "interp_2d.h"
 #include "fourier.h"
+#include "eigen_basics.h"
 #include "eigen_linsolve.h"
 #include "eigen_fft.h"
 
 using std::cout; using std::endl; using std::conj;
-
 
 // test NRvector<>, NRmatrix<>, NRmat3d<> class themselves
 void test_class()
@@ -368,7 +368,33 @@ void test_fft()
 	if (max(v4) > 1e-14) error("failed!")
 }
 
-void test_HouseHolderQr()
+void test_eigen_basics()
+{
+	// test mul(MatDoub_O, MatDoub_I, MatDoub_I);
+	{
+		Doub a_[]{ 1, 2, 3, 4 };
+		MatDoub a(2, 2, a_);
+		Doub b_[]{ 2, 3, 4, 5 };
+		MatDoub b(2, 2, b_);
+		Doub c1_[]{ 10, 13, 22, 29 };
+		MatDoub c, c1(2, 2, c1_);
+		mul(c, a, b);
+		if (c != c1) error("failed!");
+	}
+
+	// test mul(MatComp_O, MatComp_I, MatComp_I);
+	{
+		Comp s(1. / sqrt(2.), 1. / sqrt(2.));
+		MatComp a(2, 2); a(0) = 1.*s; a(1) = 2.*s; a(2) = 3.*s; a(3) = 4.*s;
+		MatComp b(2, 2); b(0) = 2.*s; b(1) = 3.*s; b(2) = 4.*s; b(3) = 5.*s;
+		MatComp c, c1(2, 2); c1(0) = 10.*I; c1(1) = 13.*I; c1(2) = 22.*I; c1(3) = 29.*I;
+		mul(c, a, b);
+		c -= c1;
+		if (max(c) > 1e-14)  error("failed!");
+	}
+}
+
+void test_eigen_linsolve()
 {
 	{
 		MatDoub A(2, 2), B(2, 2);
@@ -436,6 +462,7 @@ void test_eigen_fft()
 // new test scratch
 void test()
 {
+	
 }
 
 int main()
@@ -448,8 +475,9 @@ int main()
 	test_self_op();
 	test_plus_minus_times_devide();
 	test_fft();
-	test_HouseHolderQr();
+	test_eigen_linsolve();
 	test_eigen_fft();
+	test_eigen_basics();
 
 	//// test new disp()
 	//VecUchar v8(3);

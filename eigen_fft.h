@@ -1,3 +1,6 @@
+// FFT for any length vector
+// TODO: does not need to use map<>, can use pointer for FFT input directly.
+
 #pragma once
 #include "nr3plus.h"
 #define EIGEN_DONT_PARALLELIZE
