@@ -10,7 +10,7 @@ using std::cout; using std::endl; using std::conj;
 
 
 // test NRvector<>, NRmatrix<>, NRmat3d<> class themselves
-void class_test()
+void test_class()
 {
 	// default initialize
 	{
@@ -122,12 +122,21 @@ void class_test()
 	if (a3Doub.dim3() != 0) error("failed!")
 
 	// end()
-	vDoub1.end() = 3.1;
+	vDoub1[vDoub1.size()-1] = 3.1;
 	if (vDoub1.end() != 3.1)  error("failed!")
-	aDoub1.end() = 3.1;
+	if (vDoub1.end(1) != 3.1)  error("failed!")
+	aDoub1(aDoub1.size()-1) = 3.1;
 	if (aDoub1.end() != 3.1)  error("failed!")
-	a3Doub1.end() = 3.1;
+	if (aDoub1.end(1) != 3.1)  error("failed!")
+	a3Doub1(a3Doub1.size()-1) = 3.1;
 	if (a3Doub1.end() != 3.1)  error("failed!")
+	if (a3Doub1.end(1) != 3.1)  error("failed!")
+	vDoub1[vDoub1.size()-2] = 3.2;
+	if (vDoub1.end(2) != 3.2)  error("failed!")
+	aDoub1(aDoub1.size()-2) = 3.2;
+	if (aDoub1.end(2) != 3.2)  error("failed!")
+	a3Doub1(a3Doub1.size()-2) = 3.2;
+	if (a3Doub1.end(2) != 3.2)  error("failed!")
 
 	// operator[]
 	vDoub1[vDoub1.size()-1] = 5.5;
@@ -218,6 +227,7 @@ void test_self_op()
 	if (vComp != Comp(1., 1.)) error("failed!")
 }
 
+// test plus(), minus(), times(), devide()
 void test_plus_minus_times_devide()
 {
 	VecInt vLlong(3), vLlong1(3), vLlong2(3), vLlong3(3);
@@ -293,19 +303,29 @@ void test_plus_minus_times_devide()
 	if (vComp != Comp(0.5, 0.5)) error("failed!")
 }
 
-void fft_test()
+// test fft module
+void test_fft()
 {
+	// test bit_inv()
+	VecComp v; linspace(v, 1., 16., 16);
+	VecComp v1(16);
+	bit_inv(v1.ptr(), v.ptr(), v.size());
+	VecComp v2; v2 = v;
+	bit_inv(v2.ptr(), v2.size());
+	if (v1 != v2) error("failed!")
+	bit_inv(v1.ptr(), v1.size());
+	if (v1 != v) error("failed!")
+
 	// fft(VecComp_IO) and ifft(VecComp_IO)
-	VecComp v(4); v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
+	v.resize(4); v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
 	fft(v);
-	VecComp v1(4, 0.); v1[1] = 4.;
+	v1.resize(4); v1 = 0.; v1[1] = 4.;
 	v -= v1;
 	if (max(v) > 1.5e-15) error("failed!")
 	ifft(v1);
 	v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
 	v1 /= 4.; v1 -= v;
 	if (max(v1) > 1e-15) error("failed!")
-
 
 	// fft_interp()
 	VecDoub x; linspace(x, 1., 3., 3);
@@ -322,7 +342,6 @@ void fft_test()
 
 	// test fft2x(), ifft2x, fft4x(), ifft4x
 	v.resize(4); v[0] = Comp(1., 1.); v[1] = Comp(2., 2.); v[2] = Comp(3., 5.); v[3] = Comp(4., 7.);
-	VecComp v2;
 	fft2x(v2, v);
 	VecComp v3(8, 0.); v3[0] = v[0]; v3[1] = v[1]; v3[6] = v[2]; v3[7] = v[3];
 	fft(v3);
@@ -350,10 +369,7 @@ void fft_test()
 // new test scratch
 void test()
 {
-	/*VecComp v; linspace(v, 1., 8., 8);
-	VecComp v1(8);
-	bit_inv(v1.ptr(), v.ptr(), v.size());
-	disp(v); disp(v1);*/
+	
 }
 
 int main()
@@ -362,14 +378,10 @@ int main()
 	test();
 
 	// systematic tests
+	test_class();
 	test_self_op();
 	test_plus_minus_times_devide();
-	class_test();
-	fft_test();
-
-	// test operator() and end()
-	VecDoub xv, xv1(3), xv2(3);
-	linspace(xv1, 1., 3.); linspace(xv2, 4., 6.);
+	test_fft();
 
 	//// test new disp()
 	//VecUchar v8(3);

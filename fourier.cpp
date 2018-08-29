@@ -1,38 +1,5 @@
 #include "fourier.h"
 
-// reorder a vector in bit inverse order
-// TODO: test this and use this in four1()
-inline void bit_inv(Comp *v, Int_I n)
-{
-	Int i, j, m, nn = n>>1;
-	j = 0;
-	for (i=0; i < n; ++i) {
-		if (j > i)
-			SWAP(v[j],v[i]);
-		m = nn;
-		while (m >= 2 && j >= m) {
-			j -= m;
-			m >>= 1;
-		}
-		j += m;
-	}
-}
-
-inline void bit_inv(Comp *out, const Comp *in, Int_I n)
-{
-	Int i, j, m, nn = n>>1;
-	j = 0;
-	for (i=0; i < n; ++i) {
-		out[j] = in[i];
-		m = nn;
-		while (m >= 2 && j >= m) {
-			j -= m;
-			m >>= 1;
-		}
-		j += m;
-	}
-}
-
 // if isign = 1, replaces data[0..2*n-1] by its ifft(), exponent is exp(ikx) .
 // if isign = -1, replaces data[0..2*n-1] by n times its fft, exponent is exp(-ikx).
 // data is a complex array of length n stored as a real array of length 2*n.
@@ -41,20 +8,8 @@ void four1(Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
 	if (n<2 || n&(n-1)) error("n must be power of 2 in four1")
+	bit_inv((Comp*)data, n);
 	nn = n << 1;
-	j = 1;
-	for (i=1;i<nn;i+=2) {
-		if (j > i) {
-			SWAP(data[j-1],data[i-1]);
-			SWAP(data[j],data[i]);
-		}
-		m=n;
-		while (m >= 2 && j > m) {
-			j -= m;
-			m >>= 1;
-		}
-		j += m;
-	}
 	mmax=2;
 	while (nn > mmax) {
 		istep=mmax << 1;

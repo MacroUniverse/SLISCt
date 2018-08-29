@@ -1,5 +1,38 @@
 #include "nr3plus.h"
 
+// reorder a vector in bit inverse order
+// n must be power of 2, there is no checking
+inline void bit_inv(Comp *v, Int_I n)
+{
+	Int i, j, m, nn = n>>1;
+	j = 0;
+	for (i=0; i < n; ++i) {
+		if (j > i)
+			SWAP(v[j],v[i]);
+		m = nn;
+		while (m >= 2 && j >= m) {
+			j -= m;
+			m >>= 1;
+		}
+		j += m;
+	}
+}
+
+inline void bit_inv(Comp *out, Comp_I *in, Int_I n)
+{
+	Int i, j, m, nn = n>>1;
+	j = 0;
+	for (i=0; i < n; ++i) {
+		out[j] = in[i];
+		m = nn;
+		while (m >= 2 && j >= m) {
+			j -= m;
+			m >>= 1;
+		}
+		j += m;
+	}
+}
+
 void four1(Doub *data, Int_I n, Int_I isign);
 
 void fft(VecComp_IO &data); 

@@ -98,6 +98,8 @@ public:
 	inline const T & operator()(Long_I i) const;
 	inline T& end(); // last element
 	inline const T& end() const;
+	inline T& end(Long_I i);
+	inline const T& end(Long_I i) const;
 	~NRbase();
 };
 
@@ -175,6 +177,26 @@ inline const T & NRbase<T>::end() const
 		error("Using end() for empty object")
 #endif
 	return p[N-1];
+}
+
+template <class T>
+inline T& NRbase<T>::end(Long_I i)
+{
+#ifdef _CHECKBOUNDS_
+	if (i <= 0 || i > N)
+		error("index out of bound")
+#endif
+	return p[N-i];
+}
+
+template <class T>
+inline const T& NRbase<T>::end(Long_I i) const
+{
+#ifdef _CHECKBOUNDS_
+	if (i <= 0 || i > N)
+		error("index out of bound")
+#endif
+	return p[N-i];
 }
 
 template <class T>
