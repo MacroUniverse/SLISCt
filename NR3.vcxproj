@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="eigen_fft.h" />
     <ClInclude Include="eigen_linsolve.h" />
     <ClInclude Include="fourier.h" />
     <ClInclude Include="interp_1d.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="eigen_fft.cpp" />
     <ClCompile Include="eigen_linsolve.cpp" />
     <ClCompile Include="fourier.cpp" />
     <ClCompile Include="interp_1d.cpp" />

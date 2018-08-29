@@ -1,3 +1,4 @@
+#pragma once
 #include "nr3plus.h"
 #define EIGEN_DONT_PARALLELIZE
 #include "Eigen/Dense"

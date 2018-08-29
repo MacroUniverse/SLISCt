@@ -6,6 +6,7 @@
 #include "interp_2d.h"
 #include "fourier.h"
 #include "eigen_linsolve.h"
+#include "eigen_fft.h"
 
 using std::cout; using std::endl; using std::conj;
 
@@ -389,7 +390,6 @@ void test_HouseHolderQr()
 		qr.compute(B);
 		qr.solve(x, y1);
 		x -= x1; abs(x);
-		cout << max(x) << endl;
 		if (max(x) > 2.5e-14) error("failed!");
 	}
 
@@ -413,9 +413,24 @@ void test_HouseHolderQr()
 		qr.compute(B);
 		qr.solve(x, y1);
 		x -= x1;
-		cout << max(x) << endl;
 		if (max(x) > 2.5e-14) error("failed!");
 	}
+}
+
+void test_eigen_fft()
+{
+	VecComp f0(4); f0[0] = 1.; f0[1] = I; f0[2] = -1.; f0[3] = -I;
+	const VecComp f(4, f0.ptr());
+	VecComp g(4), f1(4);
+	FFT fft;
+	fft.fwd(g, f);
+	f1[0] = 0.; f1[1] = 4.; f1[2] = 0.; f1[3] = 0.;
+	g -= f1;
+	if (max(g) > 1e-15) error("failed!");
+	fft.fwd(g, f);
+	fft.inv(f1, g);
+	f1 /= 4.; f1 -= f0;
+	if (max(f1) > 1e-15) error("failed!");
 }
 
 // new test scratch
@@ -434,6 +449,7 @@ int main()
 	test_plus_minus_times_devide();
 	test_fft();
 	test_HouseHolderQr();
+	test_eigen_fft();
 
 	//// test new disp()
 	//VecUchar v8(3);
