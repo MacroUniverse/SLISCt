@@ -72,15 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\EigenTest\Eigen\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\EigenTest\Eigen\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\EigenTest\Eigen\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\EigenTest\Eigen\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,18 +143,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="eigen_linsolve.h" />
     <ClInclude Include="fourier.h" />
     <ClInclude Include="interp_1d.h" />
     <ClInclude Include="interp_2d.h" />
+    <ClInclude Include="ludcmp.h" />
     <ClInclude Include="nr3.h" />
     <ClInclude Include="nr3plus.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="eigen_linsolve.cpp" />
     <ClCompile Include="fourier.cpp" />
     <ClCompile Include="interp_1d.cpp" />
     <ClCompile Include="interp_2d.cpp" />
+    <ClCompile Include="ludcmp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nr3plus.cpp" />
     <ClCompile Include="tridag.cpp" />

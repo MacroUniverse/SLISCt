@@ -5,6 +5,7 @@
 #include "interp_1d.h"
 #include "interp_2d.h"
 #include "fourier.h"
+#include "eigen_linsolve.h"
 
 using std::cout; using std::endl; using std::conj;
 
@@ -369,7 +370,7 @@ void test_fft()
 // new test scratch
 void test()
 {
-	
+	test_eigen_linsolve();
 }
 
 int main()

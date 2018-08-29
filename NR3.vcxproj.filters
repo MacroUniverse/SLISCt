@@ -36,6 +36,12 @@
     <ClInclude Include="fourier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ludcmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eigen_linsolve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="fourier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ludcmp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eigen_linsolve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
