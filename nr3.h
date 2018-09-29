@@ -36,8 +36,10 @@ typedef __int64 Llong, Llong_O, Llong_IO;
 typedef const unsigned __int64 Ullong_I;
 typedef unsigned __int64 Ullong, Ullong_O, Ullong_IO;
 #else
-typedef long long int Llong; // 64 bit integer
-typedef unsigned long long int Ullong;
+typedef const long long int Llong_I; // 64 bit integer
+typedef long long int Llong, Llong_O, Llong_IO;
+typedef const unsigned long long int Ullong_I;
+typedef unsigned long long int Ullong, Ullong_O, Ullong_IO;
 #endif
 
 #ifndef _USE_Int_AS_LONG
