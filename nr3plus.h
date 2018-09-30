@@ -1223,21 +1223,21 @@ template <class T, class T1>
 inline void abs(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 { v.resize(v1); abs0(v, v1); }
 
-inline void complex0(NRbase<Comp> &v, const NRbase<Doub> &v1)
+inline void doub2comp0(NRbase<Comp> &v, const NRbase<Doub> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = v1(i);
 }
 
-inline void complex(NRvector<Comp> &v, const NRvector<Doub> &v1)
-{ v.resize(v1); complex0(v, v1); }
+inline void doub2comp(NRvector<Comp> &v, const NRvector<Doub> &v1)
+{ v.resize(v1); doub2comp0(v, v1); }
 
-inline void complex(NRmatrix<Comp> &v, const NRmatrix<Doub> &v1)
-{ v.resize(v1); complex0(v, v1); }
+inline void doub2comp(NRmatrix<Comp> &v, const NRmatrix<Doub> &v1)
+{ v.resize(v1); doub2comp0(v, v1); }
 
-inline void complex(NRmat3d<Comp> &v, const NRmat3d<Doub> &v1)
-{ v.resize(v1); complex0(v, v1); }
+inline void doub2comp(NRmat3d<Comp> &v, const NRmat3d<Doub> &v1)
+{ v.resize(v1); doub2comp0(v, v1); }
 
 inline void conjugate(NRbase<Comp> &v)
 {
