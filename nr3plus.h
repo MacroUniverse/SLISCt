@@ -487,7 +487,7 @@ void sin(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 template <class T, class T1>
 inline void cos0(NRbase<T> &v, const NRbase<T1> &v1)
 {
-	Long i, N{ x.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = cos(v1(i));
 }
@@ -507,7 +507,7 @@ void cos(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 template <class T, class T1>
 inline void exp0(NRbase<T> &v, const NRbase<T1> &v1)
 {
-	Long i, N{ x.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = exp(v1(i));
 }
@@ -527,7 +527,7 @@ void exp(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 template <class T, class T1>
 inline void tan0(NRbase<T> &v, const NRbase<T1> &v1)
 {
-	Long i, N{ x.size() };
+	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
 		v(i) = tan(v1(i));
 }
