@@ -4,6 +4,9 @@
 #include "Eigen/Dense"
 #include "Eigen/LU"
 
+// simultaneously using HouseholderQR<MatrixXd>::solve() and HouseholderQR<RMatrixXcd>::solve() will
+// cause a bug in gcc
+#ifdef _MSC_VER
 class HouseholderQrDoub
 {
 private:
@@ -15,6 +18,7 @@ public:
 	void compute(MatDoub_I &a);
 	void solve(VecDoub_O &x, VecDoub_I &y);
 };
+#endif
 
 class HouseholderQrComp
 {

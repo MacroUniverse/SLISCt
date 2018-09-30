@@ -1,6 +1,7 @@
 #include "eigen_linsolve.h"
 using namespace Eigen;
 
+#ifdef _MSC_VER
 HouseholderQrDoub::HouseholderQrDoub(MatDoub_I &a)
 {
 	Map<const RMatrixXd> map_a(a.ptr(), a.nrows(), a.ncols());
@@ -19,6 +20,7 @@ void HouseholderQrDoub::solve(VecDoub_O &x, VecDoub_I &y)
 	Map<VectorXd> map_x(x.ptr(), x.size());
 	map_x = qr.solve(map_y);
 }
+#endif
 
 HouseholderQrComp::HouseholderQrComp(MatComp_I &a)
 {

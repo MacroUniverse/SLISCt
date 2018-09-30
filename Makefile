@@ -14,8 +14,8 @@ interp_2d.cpp \
 ludcmp.cpp \
 tridag.cpp \
 eigen_basics.cpp \
-eigen_fft.cpp
-#eigen_linsolve.cpp
+eigen_fft.cpp \
+eigen_linsolve.cpp
 
 objects = $(source:.cpp=.o)
 
