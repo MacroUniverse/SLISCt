@@ -177,8 +177,8 @@ void mul_par(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
 void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
 void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
 
-## CUSLISC
-Experimental modual, create vector/matrix classes for CUDA. Code in "cusliisc.h" and "cutest.cu"
+## cuSLISC
+See cuSLISC project for a GPU version of SLISC using CUDA
 
 ## TODO
 operator=(const T &rhs) member function might be implemented in the NRbase class
