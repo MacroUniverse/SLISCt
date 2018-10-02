@@ -18,9 +18,6 @@
     <ClInclude Include="nr3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="nr3plus.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -152,7 +152,6 @@
     <ClInclude Include="ludcmp.h" />
     <ClInclude Include="nr3.h" />
     <ClInclude Include="nr3plus.h" />
-    <ClInclude Include="test.h" />
     <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
