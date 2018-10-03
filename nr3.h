@@ -91,7 +91,7 @@ protected:
 	inline void move(NRbase &rhs);
 public:
 	NRbase();
-	NRbase(Long_I n);
+	explicit NRbase(Long_I n);
 	inline T* ptr(); // get pointer
 	inline const T* ptr() const;
 	inline Long_I size() const;
@@ -146,7 +146,7 @@ inline T & NRbase<T>::operator()(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 if (i<0 || i>=N)
-	error("NRvector subscript out of bounds")
+	error("NRbase subscript out of bounds")
 #endif
 	return p[i];
 }
@@ -156,7 +156,7 @@ inline const T & NRbase<T>::operator()(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=N)
-		error("NRvector subscript out of bounds")
+		error("NRbase subscript out of bounds")
 #endif
 	return p[i];
 }

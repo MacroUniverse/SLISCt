@@ -4,6 +4,8 @@ Scientific Library In Simple C++ (SLISC)
 
 This project is a scientific library rewritten from Numerical Recipes 3ed, using simple C++ gramars so that it is easy to read, use and modify, while maintaining a high performance. The library currencly provides class templates for vector, matrix and 3D matrix, and some types that has fixed size in memory. Basic matrix/vector manipulation is provided. The library also has some utilities frequently used, such as timers, debug utilities. The library uses standard C++11, and has only 3 files, no other dependency is needed.
 
+However, the library can also use the Eigen project to perform faster and be more versatile.
+
 A simple example :
 
 ```cpp
