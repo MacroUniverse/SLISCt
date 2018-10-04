@@ -559,7 +559,7 @@ template <class T, class T1>
 inline void operator+=(NRvector<T> &v, const NRvector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -568,7 +568,7 @@ template <class T, class T1>
 inline void operator+=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -577,7 +577,7 @@ template <class T, class T1>
 inline void operator+=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -595,7 +595,7 @@ template <class T, class T1>
 inline void operator-=(NRvector<T> &v, const NRvector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v, v1);
 }
@@ -604,7 +604,7 @@ template <class T, class T1>
 inline void operator-=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v, v1);
 }
@@ -613,7 +613,7 @@ template <class T, class T1>
 inline void operator-=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v, v1);
 }
@@ -631,7 +631,7 @@ template <class T, class T1>
 inline void operator*=(NRvector<T> &v, const NRvector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v, v1);
 }
@@ -640,7 +640,7 @@ template <class T, class T1>
 inline void operator*=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v, v1);
 }
@@ -649,7 +649,7 @@ template <class T, class T1>
 inline void operator*=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v, v1);
 }
@@ -667,7 +667,7 @@ template <class T, class T1>
 inline void operator/=(NRvector<T> &v, const NRvector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v, v1);
 }
@@ -676,7 +676,7 @@ template <class T, class T1>
 inline void operator/=(NRmatrix<T> &v, const NRmatrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v, v1);
 }
@@ -685,7 +685,7 @@ template <class T, class T1>
 inline void operator/=(NRmat3d<T> &v, const NRmat3d<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!")
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v, v1);
 }
@@ -871,7 +871,7 @@ template <class T, class T1, class T2>
 inline void plus(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); plus1(v, v1, v2);
 }
@@ -880,7 +880,7 @@ template <class T, class T1, class T2>
 inline void plus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); plus1(v, v1, v2);
 }
@@ -889,7 +889,7 @@ template <class T, class T1, class T2>
 inline void plus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); plus1(v, v1, v2);
 }
@@ -980,7 +980,7 @@ template <class T, class T1, class T2>
 inline void minus(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); minus4(v, v1, v2);
 }
@@ -989,7 +989,7 @@ template <class T, class T1, class T2>
 inline void minus(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); minus4(v, v1, v2);
 }
@@ -998,7 +998,7 @@ template <class T, class T1, class T2>
 inline void minus(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); minus4(v, v1, v2);
 }
@@ -1050,7 +1050,7 @@ template <class T, class T1, class T2>
 inline void times(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); times1(v, v1, v2);
 }
@@ -1059,7 +1059,7 @@ template <class T, class T1, class T2>
 inline void times(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); times1(v, v1, v2);
 }
@@ -1068,7 +1068,7 @@ template <class T, class T1, class T2>
 inline void times(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); times1(v, v1, v2);
 }
@@ -1129,7 +1129,7 @@ template <class T, class T1, class T2>
 inline void divide(NRvector<T> &v, const NRvector<T1> &v1, const NRvector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); divide3(v, v1, v2);
 }
@@ -1138,7 +1138,7 @@ template <class T, class T1, class T2>
 inline void divide(NRmatrix<T> &v, const NRmatrix<T1> &v1, const NRmatrix<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); divide3(v, v1, v2);
 }
@@ -1147,7 +1147,7 @@ template <class T, class T1, class T2>
 inline void divide(NRmat3d<T> &v, const NRmat3d<T1> &v1, const NRmat3d<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); divide3(v, v1, v2);
 }
@@ -1293,7 +1293,7 @@ inline T dot1(const NRvector<T1> &v1, const NRvector<T2> &v2)
 inline Doub operator*(VecDoub_I &v1, VecDoub_I &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot0<Doub>(v1, v2);
 }
@@ -1301,7 +1301,7 @@ inline Doub operator*(VecDoub_I &v1, VecDoub_I &v2)
 inline Comp operator*(VecComp_I &v1, VecComp_I &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot1<Comp>(v1, v2);
 }
@@ -1309,7 +1309,7 @@ inline Comp operator*(VecComp_I &v1, VecComp_I &v2)
 inline Comp operator*(VecDoub_I &v1, VecComp_I &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot0<Comp>(v1, v2);
 }
@@ -1317,7 +1317,7 @@ inline Comp operator*(VecDoub_I &v1, VecComp_I &v2)
 inline Comp operator*(VecComp_I &v1, VecDoub_I &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!")
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot1<Comp>(v1, v2);
 }
@@ -1390,7 +1390,7 @@ template <class T, class T1, class T2>
 inline void mul(NRvector<T> &y, const NRmatrix<T1> &a, const NRvector<T2> &x)
 {
 #ifdef _CHECKBOUNDS_
-	if (a.ncols() != x.size()) error("wrong shape!")
+	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	Long i, k, m{ a.nrows() }, n{ a.ncols() };
 	y.resize(m); y = 0.;
@@ -1405,7 +1405,7 @@ template <class T, class T1, class T2>
 inline void mul(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
 {
 #ifdef _CHECKBOUNDS_
-	if (x.size() != a.nrows()) error("wrong size!")
+	if (x.size() != a.nrows()) error("wrong size!");
 #endif
 	Long j, k, m{ a.nrows() }, n{ a.ncols() };
 	y.resize(n); y = 0.;
@@ -1420,7 +1420,7 @@ template <class T, class T1, class T2>
 inline void mul_par(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
 {
 #ifdef _CHECKBOUNDS_
-	if (x.size() != a.nrows()) error("wrong size!")
+	if (x.size() != a.nrows()) error("wrong size!");
 #endif
 	Long j, m{ a.nrows() }, n{ a.ncols() };
 	y.resize(n); y = 0.;
@@ -1438,7 +1438,7 @@ template <class T, class T1, class T2>
 inline void mul(NRmatrix<T> &c, const NRmatrix<T1> &a, const NRmatrix<T2> &b)
 {
 #ifdef _CHECKBOUNDS_
-	if (a.ncols() != b.nrows()) error("wrong size!")
+	if (a.ncols() != b.nrows()) error("wrong size!");
 #endif
 	Long i, j, k, m{ a.nrows() }, n{ b.ncols() }, Nk{ a.ncols() };
 	c.resize(m, n); c = 0.;
