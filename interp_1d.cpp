@@ -20,6 +20,7 @@ Int Base_interp::locate(Doub_I x)
 	jsav = jl;
 	return MAX(0, MIN(n - mm, jl - ((mm - 2) >> 1)));
 }
+
 Int Base_interp::hunt(Doub_I x)
 {
 	Int jl = jsav, jm, ju, inc = 1;
@@ -170,6 +171,7 @@ void Spline_interp::sety2(Doub_I *xv, Doub_I *yv, Doub yp1, Doub ypn)
 	for (k = n - 2; k >= 0; k--)
 		y2[k] = y2[k] * y2[k + 1] + u[k];
 }
+
 Doub Spline_interp::rawinterp(Int jl, Doub x)
 {
 	Int klo = jl, khi = jl + 1;

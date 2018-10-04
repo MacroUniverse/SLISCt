@@ -2,10 +2,7 @@
 using std::cout; using std::endl; using std::vector;
 
 // time utilities
-std::chrono::steady_clock::time_point tic_time_start; // for tic() toc()
-vector<std::chrono::steady_clock::time_point> tic_time_starts(20);
-Llong ctic_time_start; // for ctic() ctoc()
-std::vector<Llong> ctic_time_starts(20);
+Tic_Data tic_data; Ctic_Data ctic_data;
 
 // display scalar, vector, or matrix
 // not using template (or functions will not be available during debug)

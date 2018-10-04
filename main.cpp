@@ -11,145 +11,164 @@
 
 using std::cout; using std::endl; using std::conj;
 
+// test time utilities
+void test_time()
+{
+	// cpu time
+	ctic(); pause(0.114);
+	if (abs(ctoc() - 0.114) > 1e-4) error("failed!");
+
+	// physical time
+	Int ind;
+	tic(); pause(0.114);
+	if (abs(toc() - 0.114) > 1e-4) error("failed!");
+	tic(ind); pause(0.114);
+	if (abs(toc(ind) - 0.114) > 1e-4) error("failed!");
+	if (ind != 0) error("failed!");
+	tic(ind); pause(0.114);
+	if (abs(toc(ind) - 0.114) > 1e-4) error("failed!");
+	if (ind != 1) error("failed!");
+}
+
 // test NRvector<>, NRmatrix<>, NRmat3d<> class themselves
 void test_class()
 {
 	// default initialize
 	{
 	VecDoub vDoub;
-	if (vDoub.size() != 0) error("failed!")
-	if (vDoub.ptr() != nullptr) error("failed!")
+	if (vDoub.size() != 0) error("failed!");
+	if (vDoub.ptr() != nullptr) error("failed!");
 	MatDoub aDoub;
-	if (aDoub.size() != 0) error("failed!")
-	if (aDoub.nrows() != 0) error("failed!")
-	if (aDoub.ncols() != 0) error("failed!")
-	if (aDoub.ptr() != nullptr) error("failed!")
+	if (aDoub.size() != 0) error("failed!");
+	if (aDoub.nrows() != 0) error("failed!");
+	if (aDoub.ncols() != 0) error("failed!");
+	if (aDoub.ptr() != nullptr) error("failed!");
 	Mat3Doub a3Doub;
-	if (a3Doub.size() != 0) error("failed!")
-	if (a3Doub.dim1() != 0) error("failed!")
-	if (a3Doub.dim2() != 0) error("failed!")
-	if (a3Doub.dim3() != 0) error("failed!")
-	if (a3Doub.ptr() != nullptr) error("failed!")
+	if (a3Doub.size() != 0) error("failed!");
+	if (a3Doub.dim1() != 0) error("failed!");
+	if (a3Doub.dim2() != 0) error("failed!");
+	if (a3Doub.dim3() != 0) error("failed!");
+	if (a3Doub.ptr() != nullptr) error("failed!");
 	}
 
 	// size initialize
 	{
 	VecDoub vDoub(3);
-	if (vDoub.size() != 3) error("failed!")
-	if (vDoub.ptr() != &vDoub[0]) error("failed!")
+	if (vDoub.size() != 3) error("failed!");
+	if (vDoub.ptr() != &vDoub[0]) error("failed!");
 	MatDoub aDoub(3, 3);
-	if (aDoub.size() != 9) error("failed!")
-	if (aDoub.nrows() != 3) error("failed!")
-	if (aDoub.ncols() != 3) error("failed!")
-	if (aDoub.ptr() != &aDoub[0][0]) error("failed!")
+	if (aDoub.size() != 9) error("failed!");
+	if (aDoub.nrows() != 3) error("failed!");
+	if (aDoub.ncols() != 3) error("failed!");
+	if (aDoub.ptr() != &aDoub[0][0]) error("failed!");
 	Mat3Doub a3Doub(3, 3, 3);
-	if (a3Doub.size() != 27) error("failed!")
-	if (a3Doub.dim1() != 3) error("failed!")
-	if (a3Doub.dim2() != 3) error("failed!")
-	if (a3Doub.dim3() != 3) error("failed!")
-	if (a3Doub.ptr() != &a3Doub[0][0][0]) error("failed!")
+	if (a3Doub.size() != 27) error("failed!");
+	if (a3Doub.dim1() != 3) error("failed!");
+	if (a3Doub.dim2() != 3) error("failed!");
+	if (a3Doub.dim3() != 3) error("failed!");
+	if (a3Doub.ptr() != &a3Doub[0][0][0]) error("failed!");
 	}
 
 	// const initialize
 	VecDoub vDoub(3, 1.);
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 	MatDoub aDoub(3, 3, 1.);
-	if (aDoub != 1.) error("failed!")
+	if (aDoub != 1.) error("failed!");
 	Mat3Doub a3Doub(3, 3, 3, 1.);
-	if (a3Doub != 1.) error("failed!")
+	if (a3Doub != 1.) error("failed!");
 
 	// resize
 	vDoub.resize(0);
-	if (vDoub.ptr() != nullptr) error("failed!")
+	if (vDoub.ptr() != nullptr) error("failed!");
 	vDoub.resize(4);
-	if (vDoub.size() != 4) error("failed!")
-	if (vDoub.ptr() != &vDoub[0]) error("failed!")
+	if (vDoub.size() != 4) error("failed!");
+	if (vDoub.ptr() != &vDoub[0]) error("failed!");
 	aDoub.resize(0, 3);
-	if (aDoub.ptr() != nullptr) error("failed!")
+	if (aDoub.ptr() != nullptr) error("failed!");
 	aDoub.resize(3, 0);
-	if (aDoub.ptr() != nullptr) error("failed!")
+	if (aDoub.ptr() != nullptr) error("failed!");
 	aDoub.resize(4, 4);
-	if (aDoub.size() != 16) error("failed!")
-	if (aDoub.nrows() != 4) error("failed!")
-	if (aDoub.ncols() != 4) error("failed!")
-	if (aDoub.ptr() != &aDoub[0][0]) error("failed!")
+	if (aDoub.size() != 16) error("failed!");
+	if (aDoub.nrows() != 4) error("failed!");
+	if (aDoub.ncols() != 4) error("failed!");
+	if (aDoub.ptr() != &aDoub[0][0]) error("failed!");
 	a3Doub.resize(0, 0, 4);
-	if (a3Doub.ptr() != nullptr) error("failed!")
+	if (a3Doub.ptr() != nullptr) error("failed!");
 	a3Doub.resize(0, 4, 0);
-	if (a3Doub.ptr() != nullptr) error("failed!")
+	if (a3Doub.ptr() != nullptr) error("failed!");
 	a3Doub.resize(4, 0, 0);
-	if (a3Doub.ptr() != nullptr) error("failed!")
+	if (a3Doub.ptr() != nullptr) error("failed!");
 	a3Doub.resize(4, 4, 4);
-	if (a3Doub.size() != 64) error("failed!")
-	if (a3Doub.dim1() != 4) error("failed!")
-	if (a3Doub.dim2() != 4) error("failed!")
-	if (a3Doub.dim3() != 4) error("failed!")
-	if (a3Doub.ptr() != &a3Doub[0][0][0]) error("failed!")
+	if (a3Doub.size() != 64) error("failed!");
+	if (a3Doub.dim1() != 4) error("failed!");
+	if (a3Doub.dim2() != 4) error("failed!");
+	if (a3Doub.dim3() != 4) error("failed!");
+	if (a3Doub.ptr() != &a3Doub[0][0][0]) error("failed!");
 
 	// assignment operator
-	vDoub = 1.; if (vDoub != 1.) error("failed!")
-	aDoub = 1.; if (aDoub != 1.) error("failed!")
-	a3Doub = 1.; if (a3Doub != 1.) error("failed!")
+	vDoub = 1.; if (vDoub != 1.) error("failed!");
+	aDoub = 1.; if (aDoub != 1.) error("failed!");
+	a3Doub = 1.; if (a3Doub != 1.) error("failed!");
 	VecDoub vDoub1(4);
 	vDoub1 = 2.;
 	vDoub = vDoub1;
-	if (vDoub != vDoub1) error("failed!")
+	if (vDoub != vDoub1) error("failed!");
 	MatDoub aDoub1(4, 4);
 	aDoub1 = 2.;
 	aDoub = aDoub1;
-	if (aDoub != aDoub1) error("failed!")
+	if (aDoub != aDoub1) error("failed!");
 	Mat3Doub a3Doub1(4, 4, 4);
 	a3Doub1 = 2.;
 	a3Doub = a3Doub1;
-	if (a3Doub != a3Doub1) error("failed!")
+	if (a3Doub != a3Doub1) error("failed!");
 
 	// move operator
 	VecDoub vDoub2;
 	MatDoub aDoub2;
 	Mat3Doub a3Doub2;
 	vDoub2 << vDoub;
-	if (vDoub2 != vDoub1) error("failed!")
-	if (vDoub.size() != 0) error("failed!")
-	if (vDoub.ptr() != 0)  error("failed!")
+	if (vDoub2 != vDoub1) error("failed!");
+	if (vDoub.size() != 0) error("failed!");
+	if (vDoub.ptr() != 0)  error("failed!");
 	aDoub2 << aDoub;
-	if (aDoub2 != aDoub1)  error("failed!")
-	if (aDoub.size() != 0) error("failed!")
-	if (aDoub.nrows() != 0) error("failed!")
-	if (aDoub.ncols() != 0) error("failed!")
+	if (aDoub2 != aDoub1)  error("failed!");
+	if (aDoub.size() != 0) error("failed!");
+	if (aDoub.nrows() != 0) error("failed!");
+	if (aDoub.ncols() != 0) error("failed!");
 	a3Doub2 << a3Doub;
-	if (a3Doub2 != a3Doub1) error("failed!")
-	if (a3Doub.size() != 0) error("failed!")
-	if (a3Doub.dim1() != 0) error("failed!")
-	if (a3Doub.dim2() != 0) error("failed!")
-	if (a3Doub.dim3() != 0) error("failed!")
+	if (a3Doub2 != a3Doub1) error("failed!");
+	if (a3Doub.size() != 0) error("failed!");
+	if (a3Doub.dim1() != 0) error("failed!");
+	if (a3Doub.dim2() != 0) error("failed!");
+	if (a3Doub.dim3() != 0) error("failed!");
 
 	// end()
 	vDoub1[vDoub1.size()-1] = 3.1;
-	if (vDoub1.end() != 3.1)  error("failed!")
-	if (vDoub1.end(1) != 3.1)  error("failed!")
+	if (vDoub1.end() != 3.1)  error("failed!");
+	if (vDoub1.end(1) != 3.1)  error("failed!");
 	aDoub1(aDoub1.size()-1) = 3.1;
-	if (aDoub1.end() != 3.1)  error("failed!")
-	if (aDoub1.end(1) != 3.1)  error("failed!")
+	if (aDoub1.end() != 3.1)  error("failed!");
+	if (aDoub1.end(1) != 3.1)  error("failed!");
 	a3Doub1(a3Doub1.size()-1) = 3.1;
-	if (a3Doub1.end() != 3.1)  error("failed!")
-	if (a3Doub1.end(1) != 3.1)  error("failed!")
+	if (a3Doub1.end() != 3.1)  error("failed!");
+	if (a3Doub1.end(1) != 3.1)  error("failed!");
 	vDoub1[vDoub1.size()-2] = 3.2;
-	if (vDoub1.end(2) != 3.2)  error("failed!")
+	if (vDoub1.end(2) != 3.2)  error("failed!");
 	aDoub1(aDoub1.size()-2) = 3.2;
-	if (aDoub1.end(2) != 3.2)  error("failed!")
+	if (aDoub1.end(2) != 3.2)  error("failed!");
 	a3Doub1(a3Doub1.size()-2) = 3.2;
-	if (a3Doub1.end(2) != 3.2)  error("failed!")
+	if (a3Doub1.end(2) != 3.2)  error("failed!");
 
 	// operator[]
 	vDoub1[vDoub1.size()-1] = 5.5;
-	if ( vDoub1[vDoub1.size()-1] != 5.5 ) error("failed!")
-	if (vDoub1.end() != 5.5)  error("failed!")
+	if ( vDoub1[vDoub1.size()-1] != 5.5 ) error("failed!");
+	if (vDoub1.end() != 5.5)  error("failed!");
 	aDoub1[aDoub1.nrows()-1][aDoub1.ncols()-1] = 5.5;
-	if ( aDoub1[aDoub1.nrows()-1][aDoub1.ncols()-1] != 5.5 ) error("failed!")
-	if (aDoub1.end() != 5.5)  error("failed!")
+	if ( aDoub1[aDoub1.nrows()-1][aDoub1.ncols()-1] != 5.5 ) error("failed!");
+	if (aDoub1.end() != 5.5)  error("failed!");
 	a3Doub1[a3Doub1.dim1()-1][a3Doub1.dim2()-1][a3Doub1.dim3()-1] = 5.5;
-	if ( a3Doub1[a3Doub1.dim1()-1][a3Doub1.dim2()-1][a3Doub1.dim3()-1] != 5.5 ) error("failed!")
-	if (a3Doub1.end() != 5.5)  error("failed!")
+	if ( a3Doub1[a3Doub1.dim1()-1][a3Doub1.dim2()-1][a3Doub1.dim3()-1] != 5.5 ) error("failed!");
+	if (a3Doub1.end() != 5.5)  error("failed!");
 
 	// operator()
 	// TODO:
@@ -166,67 +185,67 @@ void test_self_op()
 
 	vLlong = 1;
 	vLlong += 1;
-	if (vLlong != 2) error("failed!")
+	if (vLlong != 2) error("failed!");
 	vLlong -= 1;
-	if (vLlong != 1) error("failed!")
+	if (vLlong != 1) error("failed!");
 	vLlong *= 2;
-	if (vLlong != 2) error("failed!")
+	if (vLlong != 2) error("failed!");
 	// TODO: vLlong /= 2; failed!
 
 	vDoub = 1.;
 	vDoub += 1.;
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	vDoub -= 1.;
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 	vDoub *= 2.;
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	vDoub /= 2.;
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 
 	vComp = Comp(1., 1.);
 	vComp += Comp(1., 1.);
-	if (vComp != Comp(2., 2.)) error("failed!")
+	if (vComp != Comp(2., 2.)) error("failed!");
 	vComp -= Comp(1., 1.);
-	if (vComp != Comp(1., 1.)) error("failed!")
+	if (vComp != Comp(1., 1.)) error("failed!");
 	vComp *= 2.;
-	if (vComp != Comp(2., 2.)) error("failed!")
+	if (vComp != Comp(2., 2.)) error("failed!");
 	vComp /= 2.;
-	if (vComp != Comp(1., 1.)) error("failed!")
+	if (vComp != Comp(1., 1.)) error("failed!");
 
 	// vector ?= vector
 	
 	vLlong = 1; vLlong1 = 1;
 	vLlong += vLlong1;
-	if (vLlong != 2) error("failed!")
+	if (vLlong != 2) error("failed!");
 	vLlong -= vLlong1;
-	if (vLlong != 1) error("failed!")
+	if (vLlong != 1) error("failed!");
 	vLlong2 = 2;
 	vLlong *= vLlong2;
-	if (vLlong != 2) error("failed!")
+	if (vLlong != 2) error("failed!");
 	vLlong /= vLlong2;
-	if (vLlong != 1) error("failed!")
+	if (vLlong != 1) error("failed!");
 
 	vDoub = 1.; vDoub1 = 1.;
 	vDoub += vDoub1;
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	vDoub -= vDoub1;
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 	vDoub2 = 2.;
 	vDoub *= vDoub2;
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	vDoub /= vDoub2;
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 
 	vComp = Comp(1., 1.); vComp1 = Comp(1., 1.);
 	vComp += vComp1;
-	if (vComp != Comp(2., 2.)) error("failed!")
+	if (vComp != Comp(2., 2.)) error("failed!");
 	vComp -= vComp1;
-	if (vComp != Comp(1., 1.)) error("failed!")
+	if (vComp != Comp(1., 1.)) error("failed!");
 	vComp2 = 2.;
 	vComp *= vComp2;
-	if (vComp != Comp(2., 2.)) error("failed!")
+	if (vComp != Comp(2., 2.)) error("failed!");
 	vComp /= vComp2;
-	if (vComp != Comp(1., 1.)) error("failed!")
+	if (vComp != Comp(1., 1.)) error("failed!");
 }
 
 // test plus(), minus(), times(), devide()
@@ -241,68 +260,85 @@ void test_plus_minus_times_devide()
 	// TODO: Llong version
 	vDoub1 = 1.;
 	plus(vDoub, vDoub1, 1.);
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	minus(vDoub, vDoub1, 1.);
-	if (vDoub != 0.) error("failed!")
+	if (vDoub != 0.) error("failed!");
 	times(vDoub, vDoub1, 2.);
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	divide(vDoub, vDoub1, 2.);
-	if (vDoub != 0.5) error("failed!")
+	if (vDoub != 0.5) error("failed!");
 	// TODO: Comp version
 	vDoub = 1.;
 	plus(vComp, vDoub1, Comp(1., 1.));
-	if (vComp != Comp(2., 1.)) error("failed!")
+	if (vComp != Comp(2., 1.)) error("failed!");
 
 	// op(v, s, v)
 
 	// TODO: Llong version
 	vDoub1 = 1.;
 	plus(vDoub, 1., vDoub1);
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	minus(vDoub, 1., vDoub1);
-	if (vDoub != 0.) error("failed!")
+	if (vDoub != 0.) error("failed!");
 	times(vDoub, 2., vDoub1);
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	vDoub1 = 2.;
 	divide(vDoub, 2., vDoub1);
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 	// TODO: Comp version
 	vDoub1 = 1.;
 	plus(vComp, vDoub1, Comp(1., 1.));
-	if (vComp != Comp(2., 1.)) error("failed!")
+	if (vComp != Comp(2., 1.)) error("failed!");
 
 	// op(v, v, v)
 
 	vLlong1 = 4; vLlong2 = 2;
 	plus(vLlong, vLlong1, vLlong2);
-	if (vLlong != 6) error("failed!")
+	if (vLlong != 6) error("failed!");
 	minus(vLlong, vLlong1, vLlong2);
-	if (vLlong != 2) error("failed!")
+	if (vLlong != 2) error("failed!");
 	times(vLlong, vLlong1, vLlong2);
-	if (vLlong != 8) error("failed!")
+	if (vLlong != 8) error("failed!");
 	divide(vLlong, vLlong1, vLlong2);
-	if (vLlong != 2) error("failed!")
+	if (vLlong != 2) error("failed!");
 
 	vDoub1 = 1.; vDoub2 = 2.;
 	plus(vDoub, vDoub1, vDoub2);
-	if (vDoub != 3.) error("failed!")
+	if (vDoub != 3.) error("failed!");
 	minus(vDoub, vDoub2, vDoub1);
-	if (vDoub != 1.) error("failed!")
+	if (vDoub != 1.) error("failed!");
 	times(vDoub, vDoub1, vDoub2);
-	if (vDoub != 2.) error("failed!")
+	if (vDoub != 2.) error("failed!");
 	divide(vDoub, vDoub1, vDoub2);
-	if (vDoub != 0.5) error("failed!")
+	if (vDoub != 0.5) error("failed!");
 	
 	vComp1 = Comp(1., 1.); vComp2 = Comp(2., 2.);
 	plus(vComp, vComp1, vComp2);
-	if (vComp != Comp(3., 3.)) error("failed!")
+	if (vComp != Comp(3., 3.)) error("failed!");
 	minus(vComp, vComp2, vComp1);
-	if (vComp != Comp(1., 1.)) error("failed!")
+	if (vComp != Comp(1., 1.)) error("failed!");
 	vComp2 = 2.;
 	times(vComp, vComp1, vComp2);
-	if (vComp != Comp(2., 2.)) error("failed!")
+	if (vComp != Comp(2., 2.)) error("failed!");
 	divide(vComp, vComp1, vComp2);
-	if (vComp != Comp(0.5, 0.5)) error("failed!")
+	if (vComp != Comp(0.5, 0.5)) error("failed!");
+}
+
+void test_interp1()
+{
+	Int i, N0 = 10;
+	VecDoub x0; linspace(x0, 0., 2*PI, N0);
+	VecDoub y0; sin(y0, x0);
+	Spline_interp spline(x0, y0);
+	for (i = 0; i < N0; ++i) {
+		if (abs(spline.interp(x0[i]) - y0[i]) > 1e-15) error("failed!");;
+	}
+
+	linspace(x0, 1., (Doub)N0, N0);
+	Spline_interp spline1(x0, x0);
+	for (i = 1; i < N0; ++i) {
+		if (abs(spline1.interp(x0[i] - 0.5) - (x0[i]-0.5)) > 1e-10) error("failed!");;
+	}
 }
 
 // test fft module
@@ -314,20 +350,20 @@ void test_fft()
 	bit_inv(v1.ptr(), v.ptr(), v.size());
 	VecComp v2; v2 = v;
 	bit_inv(v2.ptr(), v2.size());
-	if (v1 != v2) error("failed!")
+	if (v1 != v2) error("failed!");
 	bit_inv(v1.ptr(), v1.size());
-	if (v1 != v) error("failed!")
+	if (v1 != v) error("failed!");
 
 	// fft(VecComp_IO) and ifft(VecComp_IO)
 	v.resize(4); v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
 	fft(v);
 	v1.resize(4); v1 = 0.; v1[1] = 4.;
 	v -= v1;
-	if (max(v) > 1.5e-15) error("failed!")
+	if (max(v) > 1.5e-15) error("failed!");
 	ifft(v1);
 	v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
 	v1 /= 4.; v1 -= v;
-	if (max(v1) > 1e-15) error("failed!")
+	if (max(v1) > 1e-15) error("failed!");
 
 	// fft_interp()
 	VecDoub x; linspace(x, 1., 3., 3);
@@ -347,25 +383,25 @@ void test_fft()
 	fft2x(v2, v);
 	VecComp v3(8, 0.); v3[0] = v[0]; v3[1] = v[1]; v3[6] = v[2]; v3[7] = v[3];
 	fft(v3);
-	if (v2 != v3) error("failed!")
+	if (v2 != v3) error("failed!");
 
 	ifft2x(v2, v);
 	v3 = 0.; v3[0] = v[0]; v3[1] = v[1]; v3[6] = v[2]; v3[7] = v[3];
 	ifft(v3);
-	if (v2 != v3) error("failed!")
+	if (v2 != v3) error("failed!");
 
 	VecComp v4;
 	fft4x(v4, v);
 	VecComp v5(16, 0.);  v5[0] = v[0]; v5[1] = v[1]; v5[14] = v[2]; v5[15] = v[3];
 	fft(v5);
 	v4 -= v5;
-	if (max(v4) > 1e-14) error("failed!")
+	if (max(v4) > 1e-14) error("failed!");
 
 	ifft4x(v4, v);
 	v5 = 0.; v5[0] = v[0]; v5[1] = v[1]; v5[14] = v[2]; v5[15] = v[3];
 	ifft(v5);
 	v4 -= v5;
-	if (max(v4) > 1e-14) error("failed!")
+	if (max(v4) > 1e-14) error("failed!");
 }
 
 void test_eigen_basics()
@@ -475,12 +511,16 @@ int main()
 	test();
 
 	// systematic tests
+	cout << "test_time()" << endl;
+	test_time();
 	cout << "test_class()" << endl;
 	test_class();
 	cout << "test_self_op()" << endl;
 	test_self_op();
 	cout << "test_plus_minus_times_devide()" << endl;
 	test_plus_minus_times_devide();
+	cout << "test_interp1()" << endl;
+	test_interp1();
 	cout << "test_fft()" << endl;
 	test_fft();
 	cout << "test_eigen_basics()" << endl;
