@@ -23,6 +23,12 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef _CUSLISC_
+template <class T> class CUvector;
+template <class T> class CUmatrix;
+template <class T> class CUmat3d;
+#endif
+
 // Scalar types
 
 typedef const int Int_I; // 32 bit integer
@@ -221,6 +227,10 @@ public:
 	NRvector(const NRvector &rhs);	// Copy constructor forbidden
 	inline NRvector & operator=(const NRvector &rhs);	// copy assignment
 	inline NRvector & operator=(const T &rhs);  // assign to constant value
+#ifdef _CUSLISC_
+	NRvector & operator=(const CUvector<T> &rhs) // assign to GPU vector
+	{ rhs.get(*this); return *this; }
+#endif
 	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
 	inline T & operator[](Long_I i);	//i'th element
 	inline const T & operator[](Long_I i) const;
@@ -321,6 +331,10 @@ public:
 	NRmatrix(const NRmatrix &rhs);		// Copy constructor
 	inline NRmatrix & operator=(const NRmatrix &rhs);	//assignment
 	inline NRmatrix & operator=(const T &rhs);
+#ifdef _CUSLISC_
+	NRmatrix & operator=(const CUmatrix<T> &rhs) // assign to GPU vector
+	{ rhs.get(*this); return *this; }
+#endif
 	inline void operator<<(NRmatrix &rhs); // move data and rhs.resize(0, 0)
 	inline T* operator[](Long_I i);	//subscripting: pointer to row i
 	inline const T* operator[](Long_I i) const;
@@ -459,6 +473,10 @@ public:
 	NRmat3d(const NRmat3d &rhs);   // Copy constructor
 	inline NRmat3d & operator=(const NRmat3d &rhs);	//assignment
 	inline NRmat3d & operator=(const T &rhs);
+#ifdef _CUSLISC_
+	NRmat3d & operator=(const CUmat3d<T> &rhs) // assign to GPU vector
+	{ rhs.get(*this); return *this; }
+#endif
 	inline void operator<<(NRmat3d &rhs); // move data and rhs.resize(0, 0, 0)
 	inline void resize(Long_I n, Long_I m, Long_I k);
 	template <class T1>
