@@ -463,8 +463,8 @@ public:
 	inline void resize(Long_I n, Long_I m, Long_I k);
 	template <class T1>
 	inline void resize(const NRmat3d<T1> &a);
-	inline T*const *const operator[](Long_I i);	//subscripting: pointer to row i
-	inline const T*const *const operator[](Long_I i) const;
+	inline T*const * operator[](Long_I i);	//subscripting: pointer to row i
+	inline const T*const * operator[](Long_I i) const;
 	inline Long dim1() const;
 	inline Long dim2() const;
 	inline Long dim3() const;
@@ -553,7 +553,7 @@ template <class T1>
 inline void NRmat3d<T>::resize(const NRmat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
 
 template <class T>
-inline T*const *const NRmat3d<T>::operator[](Long_I i)
+inline T*const * NRmat3d<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i >= nn)
@@ -563,7 +563,7 @@ inline T*const *const NRmat3d<T>::operator[](Long_I i)
 }
 
 template <class T>
-inline const T*const *const NRmat3d<T>::operator[](Long_I i) const
+inline const T*const * NRmat3d<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i >= nn)
