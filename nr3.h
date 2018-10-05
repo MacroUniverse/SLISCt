@@ -228,7 +228,7 @@ public:
 	inline NRvector & operator=(const NRvector &rhs);	// copy assignment
 	inline NRvector & operator=(const T &rhs);  // assign to constant value
 #ifdef _CUSLISC_
-	NRvector & operator=(const CUvector<T> &rhs) // assign to GPU vector
+	NRvector & operator=(const CUvector<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
@@ -329,10 +329,10 @@ public:
 	NRmatrix(Long_I n, Long_I m, const T &a);	//Initialize to constant
 	NRmatrix(Long_I n, Long_I m, const T *a);	// Initialize to array
 	NRmatrix(const NRmatrix &rhs);		// Copy constructor
-	inline NRmatrix & operator=(const NRmatrix &rhs);	//assignment
+	inline NRmatrix & operator=(const NRmatrix &rhs);	// copy assignment
 	inline NRmatrix & operator=(const T &rhs);
 #ifdef _CUSLISC_
-	NRmatrix & operator=(const CUmatrix<T> &rhs) // assign to GPU vector
+	NRmatrix & operator=(const CUmatrix<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(NRmatrix &rhs); // move data and rhs.resize(0, 0)
@@ -471,10 +471,10 @@ public:
 	NRmat3d(Long_I n, Long_I m, Long_I k);
 	NRmat3d(Long_I n, Long_I m, Long_I k, const T &a);
 	NRmat3d(const NRmat3d &rhs);   // Copy constructor
-	inline NRmat3d & operator=(const NRmat3d &rhs);	//assignment
+	inline NRmat3d & operator=(const NRmat3d &rhs);	// copy assignment
 	inline NRmat3d & operator=(const T &rhs);
 #ifdef _CUSLISC_
-	NRmat3d & operator=(const CUmat3d<T> &rhs) // assign to GPU vector
+	NRmat3d & operator=(const CUmat3d<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(NRmat3d &rhs); // move data and rhs.resize(0, 0, 0)
