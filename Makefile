@@ -15,7 +15,8 @@ ludcmp.cpp \
 tridag.cpp \
 eigen_basics.cpp \
 eigen_fft.cpp \
-eigen_linsolve.cpp
+eigen_linsolve.cpp \
+test.cpp
 
 objects = $(source:.cpp=.o)
 

@@ -499,10 +499,12 @@ void test_eigen_fft()
 	if (max(f1) > 1e-15) error("failed!");
 }
 
+void myfun();
+
 // new test scratch
 void test()
 {
-	
+	myfun();
 }
 
 int main()
