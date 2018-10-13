@@ -1,7 +1,24 @@
 // comprehensive test of nr3plus.h
 
-#include "slisc.h"
-#include "slisc_arithmatic.h"
+#include <iostream>
+#include <complex>
+#include "test/test_slisc.h"
+#include "test/test_arithmatic.h"
+#include "test/test_time.h"
+#include "test/test_interp1.h"
+#include "test/test_fft.h"
+#include "test/test_random.h"
+#include "test/test_eigen_basics.h"
+#include "test/test_eigen_linsolve.h"
+#include "test/test_eigen_fft.h"
+
+// === global variables ===
+// should be replaced by static members
+
+// time utilities
+Tic_Data tic_data; Ctic_Data ctic_data;
+// random number generator
+Ran rand_gen;
 
 using std::cout; using std::endl; using std::conj;
 
@@ -19,10 +36,10 @@ int main()
 	//bench_read_write();
 
 	// systematic tests
-	/*cout << "test_time()" << endl;
+	cout << "test_time()" << endl;
 	test_time();
-	cout << "test_class()" << endl;
-	test_class();
+	cout << "test_slisc()" << endl;
+	test_slisc();
 	cout << "test_self_op()" << endl;
 	test_self_op();
 	cout << "test_plus_minus_times_devide()" << endl;
@@ -31,6 +48,8 @@ int main()
 	test_interp1();
 	cout << "test_fft()" << endl;
 	test_fft();
+	cout << "test_rand()" << endl;
+	test_rand();
 	cout << "test_eigen_basics()" << endl;
 	test_eigen_basics();
 	cout << "test_eigen_linsolve()" << endl;
@@ -38,8 +57,6 @@ int main()
 	cout << "test_eigen_fft()" << endl;
 	test_eigen_fft();
 	cout << "done testing!" << endl;
-	cout << "test_rand()" << endl;
-	test_rand();*/
 
 	//// test new disp()
 	//VecUchar v8(3);
