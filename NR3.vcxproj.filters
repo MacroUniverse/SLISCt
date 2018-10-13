@@ -13,37 +13,46 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{24ad886f-def8-4ea5-a166-d11ae86ab139}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="benchmark">
+      <UniqueIdentifier>{28e3dd1a-10c6-49cf-9077-3c53fe9cf77d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="eigen">
+      <UniqueIdentifier>{5a87d3c3-9d9b-4f17-a3a8-3bc88d231aee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="nr3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="nr3plus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tridag.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="interp_1d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="interp_2d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fourier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ludcmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eigen_linsolve.h">
+    <ClInclude Include="slisc_time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eigen_fft.h">
+    <ClInclude Include="slisc_arithmatic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eigen_basics.h">
+    <ClInclude Include="slisc_random.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slisc_interp1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slisc_interp2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slisc_fft.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="benchmark.h">
+      <Filter>benchmark</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,14 +77,37 @@
     <ClCompile Include="ludcmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="eigen_linsolve.cpp">
+    <ClCompile Include="benchmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="eigen_fft.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="eigen_basics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test\test_slisc_arithmatic.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_slisc_interp.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_slisc_time.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_class.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_slisc_fft.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_eigen_basics.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_eigen_linsolve.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_eigen_fft.inl">
+      <Filter>test</Filter>
+    </None>
+    <None Include="test\test_slisc_random.inl">
+      <Filter>test</Filter>
+    </None>
   </ItemGroup>
 </Project>

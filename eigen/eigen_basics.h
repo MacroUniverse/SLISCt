@@ -1,7 +1,7 @@
 // for basic matrix arithmatics
 #pragma once
 #define EIGEN_DONT_PARALLELIZE
-#include "nr3plus.h"
+#include "slisc.h"
 #include "Eigen/Dense"
 
 void mul(MatDoub_O &v, MatDoub_I &v1, MatDoub_I &v2);

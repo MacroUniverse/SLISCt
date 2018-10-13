@@ -1,5 +1,5 @@
 #pragma once
-#include "nr3.h"
+#include "slisc.h"
 
 struct Base_interp
 {

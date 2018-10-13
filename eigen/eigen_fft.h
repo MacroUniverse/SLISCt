@@ -2,7 +2,7 @@
 // TODO: does not need to use map<>, can use pointer for FFT input directly.
 
 #pragma once
-#include "nr3plus.h"
+#include "slisc.h"
 #define EIGEN_DONT_PARALLELIZE
 #include "Eigen/Dense"
 #include "unsupported/Eigen/FFT"

@@ -1,5 +1,5 @@
 #pragma once
-#include "nr3plus.h"
+#include "slisc.h"
 #define EIGEN_DONT_PARALLELIZE
 #include "Eigen/Dense"
 #include "Eigen/LU"

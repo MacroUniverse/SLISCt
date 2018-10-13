@@ -143,28 +143,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="eigen_basics.h" />
-    <ClInclude Include="eigen_fft.h" />
-    <ClInclude Include="eigen_linsolve.h" />
-    <ClInclude Include="fourier.h" />
-    <ClInclude Include="interp_1d.h" />
-    <ClInclude Include="interp_2d.h" />
+    <ClInclude Include="slisc_arithmatic.h" />
+    <ClInclude Include="benchmark.h" />
+    <ClInclude Include="slisc_fft.h" />
+    <ClInclude Include="slisc_interp1.h" />
+    <ClInclude Include="slisc_interp2.h" />
     <ClInclude Include="ludcmp.h" />
-    <ClInclude Include="nr3.h" />
-    <ClInclude Include="nr3plus.h" />
+    <ClInclude Include="slisc.h" />
+    <ClInclude Include="slisc_random.h" />
+    <ClInclude Include="slisc_time.h" />
     <ClInclude Include="tridag.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="eigen_basics.cpp" />
-    <ClCompile Include="eigen_fft.cpp" />
-    <ClCompile Include="eigen_linsolve.cpp" />
     <ClCompile Include="fourier.cpp" />
     <ClCompile Include="interp_1d.cpp" />
     <ClCompile Include="interp_2d.cpp" />
     <ClCompile Include="ludcmp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nr3plus.cpp" />
+    <ClCompile Include="benchmark.cpp" />
     <ClCompile Include="tridag.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test\test_class.inl" />
+    <None Include="test\test_eigen_basics.inl" />
+    <None Include="test\test_eigen_fft.inl" />
+    <None Include="test\test_eigen_linsolve.inl" />
+    <None Include="test\test_slisc_arithmatic.inl" />
+    <None Include="test\test_slisc_fft.inl" />
+    <None Include="test\test_slisc_interp.inl" />
+    <None Include="test\test_slisc_random.inl" />
+    <None Include="test\test_slisc_time.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

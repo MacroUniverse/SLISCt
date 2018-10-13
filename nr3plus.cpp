@@ -3,6 +3,7 @@ using std::cout; using std::endl; using std::vector;
 
 // time utilities
 Tic_Data tic_data; Ctic_Data ctic_data;
+Ran rand_gen;
 
 // display scalar, vector, or matrix
 // not using template (or functions will not be available during debug)

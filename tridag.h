@@ -5,7 +5,7 @@
 
 #ifndef _TRIDAG_H_
 #define _TRIDAG_H_
-#include "nr3.h"
+#include "slisc.h"
 
 void Tri2Mul(VecComp_O y, VecComp_I &diag, Comp_I upper, Comp_I lower, VecComp_I x);
 
