@@ -3,8 +3,8 @@
 
 void test_random()
 {
-	using slisc::internal::Ran;
-	using slisc::rand;
+	using namespace slisc;
+	using internal::Ran;
 	// same seed
 	Ran rangen1(1234), rangen2(1234);
 	Long i, N = 10;

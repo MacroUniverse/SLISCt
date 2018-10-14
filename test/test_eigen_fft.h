@@ -2,6 +2,7 @@
 
 void test_eigen_fft()
 {
+	using namespace slisc;
 	VecComp f0(4); f0[0] = 1.; f0[1] = I; f0[2] = -1.; f0[3] = -I;
 	const VecComp f(4, f0.ptr());
 	VecComp g(4), f1(4);

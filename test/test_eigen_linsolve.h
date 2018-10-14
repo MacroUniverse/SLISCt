@@ -3,6 +3,7 @@
 // using eigen_linsolve.h will cause gcc error????
 void test_eigen_linsolve()
 {
+	using namespace slisc;
 #ifdef _MSC_VER
 	{
 		MatDoub A(2, 2), B(2, 2);

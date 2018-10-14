@@ -3,6 +3,7 @@
 // test fft module
 void test_fft()
 {
+	using namespace slisc;
 	// test bit_inv()
 	VecComp v; linspace(v, 1., 16., 16);
 	VecComp v1(16);

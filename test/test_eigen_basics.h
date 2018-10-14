@@ -2,6 +2,7 @@
 
 void test_eigen_basics()
 {
+	using namespace slisc;
 	// test mul(MatDoub_O, MatDoub_I, MatDoub_I);
 	{
 		Doub a_[]{ 1, 2, 3, 4 };

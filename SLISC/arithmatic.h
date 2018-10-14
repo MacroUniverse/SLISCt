@@ -1126,7 +1126,7 @@ inline void abs(NRbase<T> &v)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; i += 2)
-		v(i) = abs(v(i));
+		v(i) = std::abs(v(i));
 }
 
 // abs(v, v)
