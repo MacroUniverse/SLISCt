@@ -65,6 +65,14 @@ inline void pause()
 { printf("\nPress return to continue.\n"); getchar(); }
 
 inline void pause(Doub t)
-{ tic(); while (toc() < t); }
+{
+	auto start = std::chrono::steady_clock::now();
+	while (true) {
+		auto tic_time_stop = std::chrono::steady_clock::now();
+		Doub t0 = std::chrono::duration_cast<std::chrono::duration<double>>
+			(tic_time_stop - internal::tic_data.start).count();
+		if (t0 > t) return;
+	};
+}
 
 } // namespace slisc
