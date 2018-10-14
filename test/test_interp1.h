@@ -2,6 +2,7 @@
 
 void test_interp1()
 {
+	using namespace slisc;
 	Int i, N0 = 10;
 	VecDoub x0; linspace(x0, 0., 2*PI, N0);
 	VecDoub y0; sin(y0, x0);

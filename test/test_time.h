@@ -3,9 +3,10 @@
 // test time utilities
 void test_time()
 {
+	using namespace slisc;
 	// cpu time
 	ctic(); pause(0.114);
-	if (abs(ctoc() - 0.114) > 1e-4) error("failed!");
+	if (abs(ctoc() - 0.114) > 2e-4) error("failed!");
 
 	// physical time
 	Int ind;

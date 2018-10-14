@@ -3,6 +3,7 @@
 // test +=, -=, *=, /=
 void test_self_op()
 {
+	using namespace slisc;
 	VecInt vLlong(3), vLlong1(3), vLlong2(3), vLlong3(3);
 	VecDoub vDoub(3), vDoub1(3), vDoub2(3), vDoub3(3);
 	VecComp vComp(3), vComp1(3), vComp2(3), vComp3(3);
@@ -77,6 +78,7 @@ void test_self_op()
 // test plus(), minus(), times(), devide()
 void test_plus_minus_times_devide()
 {
+	using namespace slisc;
 	VecInt vLlong(3), vLlong1(3), vLlong2(3), vLlong3(3);
 	VecDoub vDoub(3), vDoub1(3), vDoub2(3), vDoub3(3);
 	VecComp vComp(3), vComp1(3), vComp2(3), vComp3(3);

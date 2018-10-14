@@ -1,17 +1,15 @@
 #include "../SLISC/random.h"
 #include "../SLISC/arithmatic.h"
 
-void test_rand()
+void test_random()
 {
+	using slisc::internal::Ran;
+	using slisc::rand;
 	// same seed
 	Ran rangen1(1234), rangen2(1234);
-	for (Int i = 0; i < 5; ++i)
-		if (rangen1.doub() != rangen2.doub()) error("failed!");
-	Ran rangen3;
-	if (rand_gen.doub() == rangen3.doub()) error("failed!");
-	if (rand_gen.doub() == rangen3.doub()) error("failed!");
-
 	Long i, N = 10;
+	for (i = 0; i < 5; ++i)
+		if (rangen1.doub() != rangen2.doub()) error("failed!");
 	VecDoub vx(N), vx1(N);
 	rand(vx); rand(vx1);
 	if (vx == vx1) error("failed!");

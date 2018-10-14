@@ -144,11 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="disp.cpp" />
-    <ClCompile Include="eigen_basics.cpp" />
-    <ClCompile Include="eigen_fft.cpp" />
-    <ClCompile Include="eigen_linsolve.cpp" />
-    <ClCompile Include="fft.cpp" />
-    <ClCompile Include="interp1.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

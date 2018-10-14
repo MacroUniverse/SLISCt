@@ -1,6 +1,8 @@
 #pragma once
 #include "slisc.h"
 
+namespace slisc {
+
 struct Base_interp
 {
 	Int n, mm, jsav, cor, dj;
@@ -68,3 +70,5 @@ struct BaryRat_interp : Base_interp
 	Doub rawinterp(Int jl, Doub x);
 	Doub interp(Doub x);
 };
+
+} // namespace slisc

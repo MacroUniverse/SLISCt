@@ -3,6 +3,7 @@
 
 void test_slisc()
 {
+	using namespace slisc;
 	// default initialize
 	{
 	VecDoub vDoub;

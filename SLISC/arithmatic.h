@@ -3,6 +3,8 @@
 #pragma once
 #include "slisc.h"
 
+namespace slisc {
+
 // === scalar utilities ===
 
 // return 1 if n is odd, return 0 otherwise
@@ -17,7 +19,7 @@ inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long_I mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
-inline Doub sinc(Doub_I x) { return x == 0 ? 1. : sin(x)/x; }
+inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
 // operators between Comp and Int
 inline Comp operator+(Comp_I c, Int_I i) { return c + (Doub)i; }
@@ -1379,3 +1381,5 @@ inline std::string num2str(T s)
 		str.erase(str.find_last_not_of('0') + 1);
 	return str;
 }
+
+} // namespace slisc

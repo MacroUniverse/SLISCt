@@ -1,10 +1,13 @@
 # include "SLISC/slisc.h"
 using std::cout; using std::endl; using std::vector;
 
+// DON'T MOVE INTO HEADER file or change anything unless you can call them when debugging
 // display scalar, vector, or matrix
 // not using template (or functions will not be available during debug)
 
 // version 1
+
+namespace slisc{
 
 void disp(VecUchar_I &v)
 {
@@ -686,4 +689,6 @@ void disp(Mat3Comp_I &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1,
 		cout << endl;
 	}
 	cout.precision(oldPrecision);
+}
+
 }

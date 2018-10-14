@@ -29,6 +29,9 @@ template <class T> class CUmatrix;
 template <class T> class CUmat3d;
 #endif
 
+namespace slisc
+{
+
 // Scalar types
 
 typedef const int Int_I; // 32 bit integer
@@ -84,7 +87,6 @@ const Comp I(0., 1.);
 // report error and pause execution
 #define error(str) {std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();}
 
-// macro-like inline functions
 template<class T>
 inline void nrmemset(T *dest, const T val, Long_I n)
 {
@@ -102,11 +104,11 @@ protected:
 	T *p; // pointer to the first element
 	inline void move(NRbase &rhs);
 public:
-	NRbase();
-	explicit NRbase(Long_I n);
-	inline T* ptr(); // get pointer
-	inline const T* ptr() const;
-	inline Long_I size() const;
+	NRbase() : N(0), p(nullptr) {}
+	explicit NRbase(Long_I n) : N(n), p(new T[n]) {}
+	T* ptr() { return p; } // get pointer
+	inline const T* ptr() const { return p; }
+	inline Long_I size() const { return N; }
 	inline void resize(Long_I n);
 	inline T & operator()(Long_I i);
 	inline const T & operator()(Long_I i) const;
@@ -114,26 +116,8 @@ public:
 	inline const T& end() const;
 	inline T& end(Long_I i);
 	inline const T& end(Long_I i) const;
-	~NRbase();
+	~NRbase() { if (p) delete p; }
 };
-
-template <class T>
-NRbase<T>::NRbase(): N(0), p(nullptr) {}
-
-template <class T>
-NRbase<T>::NRbase(Long_I n) : N(n), p(new T[n]) {}
-
-template <class T>
-inline T* NRbase<T>::ptr()
-{ return p; }
-
-template <class T>
-inline const T* NRbase<T>::ptr() const
-{ return p; }
-
-template <class T>
-inline Long_I NRbase<T>::size() const
-{ return N; }
 
 template <class T>
 inline void NRbase<T>::resize(Long_I n)
@@ -213,10 +197,6 @@ inline const T& NRbase<T>::end(Long_I i) const
 	return p[N-i];
 }
 
-template <class T>
-NRbase<T>::~NRbase()
-{ if (p) delete p; }
-
 // Vector Class
 
 template <class T>
@@ -226,10 +206,12 @@ public:
 	typedef NRbase<T> Base;
 	using Base::p;
 	using Base::N;
-	NRvector();
-	explicit NRvector(Long_I n);
-	NRvector(Long_I n, const T &a);	//initialize to constant value
-	NRvector(Long_I n, const T *a);	// Initialize to array
+	NRvector() {}
+	explicit NRvector(Long_I n): Base(n) {}
+	NRvector(Long_I n, const T &a) //initialize to constant value
+	: NRvector(n) { nrmemset(p,a,n); }
+	NRvector(Long_I n, const T *a) // Initialize to array
+	: NRvector(n) { memcpy(p, a, n*sizeof(T)); }
 	NRvector(const NRvector &rhs);	// Copy constructor forbidden
 	inline NRvector & operator=(const NRvector &rhs);	// copy assignment
 	inline NRvector & operator=(const T &rhs);  // assign to constant value
@@ -240,29 +222,16 @@ public:
 	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
 	inline T & operator[](Long_I i);	//i'th element
 	inline const T & operator[](Long_I i) const;
-	inline void resize(Long_I newn); // resize (contents not preserved)
+	inline void resize(Long_I n) {Base::resize(n);} // resize (contents not preserved)
 	template <class T1>
-	inline void resize(const NRvector<T1> &v);
+	inline void resize(const NRvector<T1> &v) {resize(v.size());}
 };
-
-template <class T>
-NRvector<T>::NRvector() {}
-
-template <class T>
-NRvector<T>::NRvector(Long_I n) : Base(n) {}
-
-template <class T>
-NRvector<T>::NRvector(Long_I n, const T &a) : NRvector(n)
-{ nrmemset(p, a, n); }
-
-template <class T>
-NRvector<T>::NRvector(Long_I n, const T *a) : NRvector(n)
-{ memcpy(p, a, n*sizeof(T)); }
 
 template <class T>
 NRvector<T>::NRvector(const NRvector<T> &rhs)
 {
-	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	error("Copy constructor or move constructor is forbidden, use reference "
+		 "argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
@@ -307,15 +276,6 @@ if (i<0 || i>=N)
 #endif
 	return p[i];
 }
-
-template <class T>
-inline void NRvector<T>::resize(Long_I n)
-{ Base::resize(n); }
-
-template<class T>
-template<class T1>
-inline void NRvector<T>::resize(const NRvector<T1>& v)
-{ resize(v.size()); }
 
 // Matrix Class
 
@@ -718,19 +678,4 @@ template<class T>
 inline void SWAP(T &a, T &b)
 { T dum = a; a = b; b = dum; }
 
-// NR3 compatibility issues
-
-struct Complex
-{ Complex() { error("Replace all \"Complex\" with \"Comp!\""); } };
-
-struct VecComplex
-{ VecComplex() { error("Replace all \"Complex\" with \"Comp!\""); } };
-
-struct MatComplex
-{ MatComplex() { error("Replace all \"Complex\" with \"Comp!\""); } };
-
-struct Mat3DDoub
-{ Mat3DDoub() { error("Replace all \"Mat3D\" with \"Mat3\""); } };
-
-struct Mat3DComplex
-{ Mat3DComplex() { error("Replace all \"Mat3D\" with \"Mat3\""); } };
+} // namespace slisc

@@ -1,30 +1,27 @@
 # Makefile
 
-exe = nr3.x
+exe = slisc.x
 eigenPath = ../EigenTest/Eigen/
 
 # this project requires "MatFile_linux" github repository
 
 source = \
 main.cpp \
-nr3plus.cpp \
-fourier.cpp \
-interp_1d.cpp \
-interp_2d.cpp \
-ludcmp.cpp \
-tridag.cpp \
+disp.cpp \
+fft.cpp \
+interp1.cpp \
 eigen_basics.cpp \
 eigen_fft.cpp \
-eigen_linsolve.cpp \
-test.cpp
+eigen_linsolve.cpp
 
 objects = $(source:.cpp=.o)
 
 compiler = g++
 
 flags =  \
--I $(eigenPath)\
--std=c++11
+-I $(eigenPath) \
+-std=c++11 \
+-O3
 # -g
 # -O3
 
@@ -34,10 +31,5 @@ $(exe):$(objects)
 $(objects):$(source)
 	$(compiler) -c $(flags) $(source) $(sourcepath)$(xsource)
 
-# must specify shared library directory
-#run:
-#	LD_LIBRARY_PATH=$(libpath) ./$(exe)
-
-# clean all except source
 clean:
 	rm -f *.o *.x *.gch
