@@ -5,24 +5,15 @@ eigenPath = ../EigenTest/Eigen/
 
 # this project requires "MatFile_linux" github repository
 
-source = \
-main.cpp \
-disp.cpp \
-fft.cpp \
-interp1.cpp \
-eigen_basics.cpp \
-eigen_fft.cpp \
-eigen_linsolve.cpp
-
-objects = $(source:.cpp=.o)
+source = main.cpp SLISC/disp.cpp
+objects = main.o disp.o
 
 compiler = g++
 
 flags =  \
 -I $(eigenPath) \
 -std=c++11 \
--O3
-# -g
+-g
 # -O3
 
 $(exe):$(objects)

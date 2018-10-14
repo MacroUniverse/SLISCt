@@ -1,4 +1,4 @@
-# include "SLISC/slisc.h"
+# include "slisc.h"
 using std::cout; using std::endl; using std::vector;
 
 // DON'T MOVE INTO HEADER file or change anything unless you can call them when debugging

@@ -4,11 +4,13 @@
 #include "Eigen/Dense"
 #include "Eigen/LU"
 
-namespace slisc {
-
 // simultaneously using HouseholderQR<MatrixXd>::solve() and HouseholderQR<RMatrixXcd>::solve() will
 // cause a bug in gcc
+// TODO: now even using one will cause a bug!
 #ifdef _MSC_VER
+
+namespace slisc {
+
 class HouseholderQrDoub
 {
 private:
@@ -20,7 +22,6 @@ public:
 	void compute(MatDoub_I &a);
 	void solve(VecDoub_O &x, VecDoub_I &y);
 };
-#endif
 
 class HouseholderQrComp
 {
@@ -34,7 +35,6 @@ public:
 	void solve(VecComp_O &x, VecComp_I &y);
 };
 
-#ifdef _MSC_VER
 HouseholderQrDoub::HouseholderQrDoub(MatDoub_I &a)
 {
 	Eigen::Map<const RMatrixXd> map_a(a.ptr(), a.nrows(), a.ncols());
@@ -54,7 +54,6 @@ void HouseholderQrDoub::solve(VecDoub_O &x, VecDoub_I &y)
 	Map<VectorXd> map_x(x.ptr(), x.size());
 	map_x = qr.solve(map_y);
 }
-#endif
 
 HouseholderQrComp::HouseholderQrComp(MatComp_I &a)
 {
@@ -77,3 +76,5 @@ void HouseholderQrComp::solve(VecComp_O &x, VecComp_I &y)
 }
 
 } // namespace slisc
+
+#endif

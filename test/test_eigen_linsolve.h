@@ -27,7 +27,6 @@ void test_eigen_linsolve()
 		x -= x1; abs(x);
 		if (max(x) > 2.5e-14) error("failed!");
 	}
-#endif
 
 	{
 		MatComp A(2, 2), B(2, 2);
@@ -51,4 +50,8 @@ void test_eigen_linsolve()
 		x -= x1;
 		if (max(x) > 2.5e-14) error("failed!");
 	}
+
+#else
+	std::cout << "Not in Visual Studio, not testing eigen_linsolve!" << std::endl;
+#endif
 }
