@@ -1,3 +1,5 @@
+// === time utilities ===
+
 #pragma once
 #define SLISC_TIME_H
 #include "slisc.h"
@@ -6,73 +8,39 @@
 
 namespace slisc {
 
-// === time utilities ===
-
-namespace internal {
-// global data for tic(), toc()
-struct Tic_Data
+// timer for natural time
+class Timer
 {
-	Int ind = 0;
+private:
 	std::chrono::steady_clock::time_point start;
-	std::chrono::steady_clock::time_point starts[20];
+public:
+	void tic() // start timer
+	{ start = std::chrono::steady_clock::now(); }
+
+	Doub toc() // time elapsed
+	{
+		auto stop = std::chrono::steady_clock::now();
+		auto t = std::chrono::duration_cast<std::chrono::duration<double>>
+			(stop - start);
+		return t.count();
+	}
 };
 
-// global data for ctic(), ctoc()
-struct Ctic_Data
+// timer for cpu time
+class CPUTimer
 {
-	Int ind = 0;
+private:
 	Llong start;
-	Llong starts[20];
+public:
+	void tic() { start = clock(); }
+	Doub toc()
+	{ return (clock() - start) / (Doub)CLOCKS_PER_SEC; }
 };
 
-extern Tic_Data tic_data; extern Ctic_Data ctic_data;
-} // namespace internal
-
-inline void tic()
-{ internal::tic_data.start = std::chrono::steady_clock::now(); }
-
-inline Doub toc() {
-	std::chrono::steady_clock::time_point tic_time_stop
-		= std::chrono::steady_clock::now();
-	std::chrono::duration<double> t
-		= std::chrono::duration_cast<std::chrono::duration<double>>
-		(tic_time_stop - internal::tic_data.start);
-	return t.count();
-}
-
-inline void tic(Int &ind)
-{
-	ind = internal::tic_data.ind;
-	internal::tic_data.starts[ind] = std::chrono::steady_clock::now();
-	++internal::tic_data.ind;
-}
-
-inline Doub toc(Int ind) {
-	std::chrono::steady_clock::time_point tic_time_stop
-		= std::chrono::steady_clock::now();
-	std::chrono::duration<double> t
-		= std::chrono::duration_cast<std::chrono::duration<double>>
-			(tic_time_stop - internal::tic_data.starts[ind]);
-	return t.count();
-}
-
-inline void ctic() { internal::ctic_data.start = clock(); }
-
-inline Doub ctoc()
-{ return (clock() - internal::ctic_data.start) / (Doub)CLOCKS_PER_SEC; }
-
-inline void pause()
+inline void pause() // pause untill key press
 { printf("\nPress return to continue.\n"); getchar(); }
 
-inline void pause(Doub t)
-{
-	auto start = std::chrono::steady_clock::now();
-	while (true) {
-		auto tic_time_stop = std::chrono::steady_clock::now();
-		Doub t0 = std::chrono::duration_cast<std::chrono::duration<double>>
-			(tic_time_stop - internal::tic_data.start).count();
-		if (t0 > t) return;
-	};
-}
+inline void pause(Doub_I t) // pause a certain time
+{ Timer time; time.tic(); while (time.toc() < t); }
 
 } // namespace slisc
