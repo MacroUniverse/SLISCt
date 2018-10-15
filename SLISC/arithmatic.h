@@ -214,7 +214,7 @@ template <class T, class T1, class T2>
 inline void linspace(NRbase<T> &v, const T1 &first, const T2 &last)
 {
 	Long i, N{ v.size() };
-	T delta = (last - first) / (T(N) - 1);
+	T delta = (last - first) / T(N - 1);
 	for (i = 0; i < N; ++i)
 		v(i) = first + delta * T(i);
 }

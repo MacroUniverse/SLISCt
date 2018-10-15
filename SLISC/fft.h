@@ -87,8 +87,8 @@ template <class T>
 void fftshift(NRvector<T> &v)
 {
 	Long n{ v.size() };
-	if (isodd(n)) error("fftshift only supports even columns!")
-		Long i, halfn{ n / 2 };
+	if (isodd(n)) error("fftshift only supports even columns!");
+	Long halfn{ n / 2 };
 	NRvector<T> temp(halfn);
 	size_t size{ halfn * sizeof(T) };
 	memcpy(&temp[0], v.ptr(), size);

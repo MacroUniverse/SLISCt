@@ -2,17 +2,17 @@ Scientific Library In Simple C++ (SLISC)
 
 ## Introduction
 
-This project is a scientific library rewritten from Numerical Recipes 3ed, using simple C++ gramars so that it is easy to read, use and modify, while maintaining a high performance. The library currencly provides class templates for vector, matrix and 3D matrix, and some types that has fixed size in memory. Basic matrix/vector manipulation is provided. The library also has some utilities frequently used, such as timers, debug utilities. The library uses standard C++11, and has only 3 files, no other dependency is needed.
-
-However, the library can also use the Eigen project to perform faster and be more versatile.
+SLISC is a header-only library mostly based on Numerical Recipes 3ed, using simple C++ 11 gramars so that it is easy to read, use and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix and 3D matrix. Algorithms from Numerical Recipes are slowly added. The library also provides some utilities frequently used, such as timers and debug utilities. The library can optionally use some algorithms in Eigen (another header-only library).
 
 A simple example :
 
 ```cpp
-#include "slisc.h" // this is now named "nr3plus.h"
-using std::cout; using std::endl;
+#include "SLISC/algorithm.h"
+#include "SLISC/disp.h"
 int main()
 {
+	using namespace slisc;
+	using std::cout; using std::endl;
 	VecDoub u(3), v(3); // vectors, double type
 	linspace(u, 0, 2); // elements linearly spaced from 0 to 2
 	cout << "u = \n"; disp(u); // display (print) vector/matrix
@@ -31,69 +31,86 @@ int main()
 }
 ```
 
-"nr3.h" includes all the typedefs and vector/matrix class definitions and dependencies, and can be used independently.
-
-"nr3plus.h" and "nr3plus.cpp" include the rest of the library, and only depends on "nr3.h".
-
+SLISC has a modular design like the Standard Template Library. Just include any header file in SLISC folder. All definitions has namespace "slisc".
 
 ## programming style
 
-Class object temporary is inefficient (even with move constructor/assignment), using copy/move constructor or move assignment operator for vector/matrix types will create an error. Vector/Matrix type arguments should be passed by reference and should not be returned (use reference for output).
+* Class object temporary is inefficient (even with move constructor/assignment), using copy/move constructor or move assignment operator for vector/matrix types will create an error. Vector/Matrix type arguments should be passed by reference and should not be returned (use reference for output).
 
-Avoid using unsigned integer types as much as possible (this is also the google c++ style).
+* Avoid using unsigned integer types as much as possible (this is also the google c++ style).
 
-Place a dot after Doub literals is prefered.
+* Place a dot after Doub literals is prefered.
 
-=== typedefs ===
-Int is int, Uint is unsigned int, Llong is 64-bit int, Doub is double, Comp is std::complex<double>, Char is char, Uchar is unsigned char, Ldoub is long double.
-Long is 64 bit integer by default, define _USE_Int_AS_LONG macro to use int instead. Use Long for vector/matrix index or loop variable etc.
-Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
+* Generally, functions output arguments can not be any of the input arguments (this is called aliasing).
 
-Generally, functions output arguments can not be any of the input arguments (this is called aliasing), except for element-wise functions.
+* Intrinsic types are aliased inside the library. "Int" is 32-bit integer; "Uint" is "unsigned Int"; "Llong" is 64-bit integer; "Doub" is double (64-bit); "Comp" is "std::complex\<Doub>"; "Char" is "char"; "Uchar" is "unsigned char"; "Ldoub" is "long double"; "Long" is "Llong" by default, define "_USE_Int_AS_LONG" macro to use "Int" instead. Use "Long" for vector/matrix index or loop variable etc.
 
+* Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
 
-## vector/matrix class template
+## "slisc.h"
+"slisc.h" includes some constants, type alias, and vector/matrix class template definitions.
 
-Constructors: NRvector() for default, NRvector(Long_I n) for vector size, NRvector(Long_I n, const T &a) to specify element as well, NRvector(Long_I n, const T *a) to initialize from array.
-Operator = : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
-Operator [] : for vector, get a reference for the i-th element; for matrix, return a pointer for the second index.
-Operator () : get a reference for the i-th element, in row-major order.
-Operator << : move data; empty vector/matrix can not be moved.
-end() : get a reference for the last element.
-size() : get the number of elements
-resize(Long_I) : resize vector, contents are not preserved. resize() does nothing if size doesn't change.
-resize(NRvector<> v) : resize to the same size of v
-
-The matrix template name is NRmatrix<T>, 3D matrix template name is NRMat3d. Matrix is row-major only. Methods are similar to that of vector class.
-
-The typedefs for vector/matrix classes are (each type also comes with "_I", "_O", and "_IO" versions) :  VecInt, VecUint, VecLlong, VecUllong, VecChar, VecUchar, VecDoub, VecComp, VecBool, MatInt, MatUint, MatLlong, MatUllong, MatChar, MatUchar, MatDoub, MatComp, MatBool, Mat3Doub, Mat3Comp.
-
-NRbase class should never be used.
-
-## constants
-
+```cpp
 const Doub PI = 3.14159265358979323;
 const Doub E  = 2.71828182845904524;
 const Comp I(0., 1.);
+```
+
+### Common Members for Vector, Matrix, Mat3d Templates
+
+Operator () : get a reference for the i-th element, in row-major order.
+Operator << : move data; empty vector/matrix can not be moved.
+
+end() : get a reference for the last element.
+
+size() : get the number of elements
+
+### Vector Class Template
+
+Constructors: NRvector() for default, NRvector(Long_I n) for vector size, NRvector(Long_I n, const T &a) to specify element as well, NRvector(Long_I n, const T *a) to initialize from array.
+
+Operator = : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
+
+Operator [] : for vector, get a reference for the i-th element; for matrix, return a pointer for the second index.
 
 
-## time utilities
+resize(Long_I) : resize vector, contents are not preserved. resize() does nothing if size doesn't change.
+
+resize(NRvector<> v) : resize to the same size of v
+
+### Matrix Class Template
+The matrix template name is NRmatrix<T>, Methods are similar to that of vector class. Matrix is row-major only. 
+
+TODO.
+
+### Mat3D Class Template
+3D matrix template name is NRMat3d. Methods are similar to that of vector class. Mat3d is row-major only.
+
+TODO.
+
+### Vector/Matrix Type Alias
+The typedefs for vector/matrix classes are (each type also comes with "_I", "_O", and "_IO" versions) :  VecInt, VecUint, VecLlong, VecUllong, VecChar, VecUchar, VecDoub, VecComp, VecBool, MatInt, MatUint, MatLlong, MatUllong, MatChar, MatUchar, MatDoub, MatComp, MatBool, Mat3Doub, Mat3Comp.
+
+## algorithm.h
+includes basic arithmatics like "==", "+=", "*=", plus(), minus(), etc.
+
+## disp.h
+includes various overloaded "disp()" functions.
+
+## time.h
+time utilities
 
 // all times are in seconds.
-void tic()
-Doub toc()
-void tic(Int ind)
-Doub toc(Int ind)
-void ctic() // cpu time
-Doub ctoc()
-
+void Timer::tic()
+Doub Timer::toc()
+void CPUTimer::tic()
+Doub CPUTimer::toc()
 
 ## scalar utilities
 
 Int isodd(Int n) // return 1 if n is odd, return 0 otherwise
 Bool ispow2(Int n) // if n is a power of 2 or 0
 operator +,-,*,/ between Complex and Int
-
 
 ## vec/mat display
 
@@ -103,20 +120,21 @@ void disp(a, start1, start2, n1, n2)
 void disp(a3, start1, start2, start3, n1, n2, n3)
 void disp(..., precision)
 
+If you want to use "disp()" in debugger, add "SLISC/print.cpp" to compiler and use "print()" with the same arguments.
 
 ## get vec/mat properties
 
+```cpp
 n = numel(av)
-p = pointer(av) // get the pointer to the first element
 s = sum(av)
 s = max(av) // max of absolute values for complex mat/vec
 s = max(ind, av) // also output the index
 s = norm(v) // vec/mat norm
 s = norm2(v) // vec/mat norm squared
-
+```
 
 ## matrix manipulation
-
+```cpp
 void linspace(vec/mat, first, last, N = -1)
 void trans(a) // matrix transpose
 void her(a) // hermitian conjugate
@@ -124,7 +142,7 @@ void flip(NRvector<T>)
 void shift(NRmatrix<T> &a, const Int nshift, const Int dim = 1)
 void diagonals(NRmatrix<T> &a) // shift the i-th line i times to the left, moving diagonals to columns
 void idiagonals(NRmatrix<T> &a) // inverse of diagonals(), shift the i-th line i times to the right
-
+```
 
 ## element-wise math functions
 
@@ -133,6 +151,7 @@ sin(), cos(), exp(), tan(), whenever make sense
 
 ## matrix arithmatics
 
+```cpp
 operator ==, != // compare size and each element, right hand side can also be a scalar.
 operators +,-,*,/ scalar/vec/mat, whenever make sense (inefficient!).
 operators +=,-=,*=,/= scalar/vec/mat, whenever make sense
@@ -149,7 +168,12 @@ void conjugate(VecComplex_IO v)
 s = v1*v2 // dot product, whenever make sense
 void outprod(MatComplex_O &prod, VecComplex_I &v1, VecComplex_I &v2) // outer product
 void mul(out, in, in) // mat-mat or mat-vec multiplications, whenever make sense
+```
 
+## "print.cpp"
+For debug purpose only.
+
+TODO
 
 ## calculus
 
@@ -157,11 +181,11 @@ void integral(NRvector<T> &F, const NRvector<T> &f, Doub_I dx) // simple indefin
 
 
 ## FT related
-
+```cpp
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
 void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub kmin, Doub kmax)
-
+```
 
 ## string related
 
@@ -169,7 +193,7 @@ template <typename T> inline std::string num2str(T s) // mainly std::to_string()
 
 
 ## OpenMP functions
-
+```cpp
 // parallelized version of functions
 void diagonals_par(NRmatrix<T> &a)
 void idiagonals_par(NRmatrix<T> &a)
@@ -178,9 +202,10 @@ void outprod_par(NRmatrix<T> &prod, VecComp_I &v1, const NRvector<T2> &v2)
 void mul_par(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
 void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
 void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+```
 
 ## cuSLISC
 See cuSLISC project for a GPU version of SLISC using CUDA
 
 ## TODO
-operator=(const T &rhs) member function might be implemented in the NRbase class
+I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.

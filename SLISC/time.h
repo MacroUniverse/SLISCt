@@ -1,7 +1,6 @@
 // === time utilities ===
 
 #pragma once
-#define SLISC_TIME_H
 #include "slisc.h"
 #include <chrono>
 #include <ctime>

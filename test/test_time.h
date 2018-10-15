@@ -19,7 +19,6 @@ void test_time()
 	if (abs(cput.toc() - 0.114) > 2e-4) time_h_error("failed!");
 
 	// natural time
-	Int ind;
 	t.tic(); pause(0.114);
 	if (abs(t.toc() - 0.114) > 1e-4) time_h_error("failed!");
 }

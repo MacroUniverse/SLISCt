@@ -4,6 +4,7 @@
 #include "test/test_slisc.h"
 #include "test/test_arithmatic.h"
 #include "test/test_disp.h"
+#include "test/test_print.h"
 #include "test/test_interp1.h"
 #include "test/test_fft.h"
 #include "test/test_random.h"
@@ -32,8 +33,6 @@ int main()
 	test_self_op();
 	cout << "test_plus_minus_times_devide()" << endl;
 	test_plus_minus_times_devide();
-	//cout << "test_disp()" << endl;
-	//test_disp();
 	cout << "test_interp1()" << endl;
 	test_interp1();
 	cout << "test_fft()" << endl;
@@ -46,5 +45,9 @@ int main()
 	test_eigen_linsolve();
 	cout << "test_eigen_fft()" << endl;
 	test_eigen_fft();
+	cout << "test_disp()" << endl;
+	test_disp();
+	cout << "test_print()" << endl;
+	test_print();
 	cout << "done testing!" << endl;
 }
