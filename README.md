@@ -171,16 +171,18 @@ void mul(out, in, in) // mat-mat or mat-vec multiplications, whenever make sense
 ```
 
 ## "print.cpp"
-For debug purpose only.
+For debug purpose only. Need to compile "print.cpp" along with the program.
 
-TODO
+"print()" are same as "disp()" except they can be called in debugger. To realize this, print() does not have any namespace, and cannot be inlined.
 
-## calculus
+In gdb, things are a little more complicated, since gdb does not fully support function overloading, use "print2()" for 2 arguments, "print3()" for 3 arguments, etc.
+
+## Calculus
 
 void integral(NRvector<T> &F, const NRvector<T> &f, Doub_I dx) // simple indefinite integration
 
 
-## FT related
+## FFT related
 ```cpp
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
