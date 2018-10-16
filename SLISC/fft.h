@@ -84,12 +84,12 @@ Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y);
 void fft_interp(VecComp_O &y1, VecDoub_I &x1, VecDoub_I &x, VecComp_I &y);
 
 template <class T>
-void fftshift(NRvector<T> &v)
+void fftshift(Vector<T> &v)
 {
 	Long n{ v.size() };
 	if (isodd(n)) error("fftshift only supports even columns!");
 	Long halfn{ n / 2 };
-	NRvector<T> temp(halfn);
+	Vector<T> temp(halfn);
 	size_t size{ halfn * sizeof(T) };
 	memcpy(&temp[0], v.ptr(), size);
 	memcpy(v.ptr(), v.ptr() + halfn, size);
@@ -97,13 +97,13 @@ void fftshift(NRvector<T> &v)
 }
 
 template <class T>
-void fftshift(NRmatrix<T> &a, Int_I dim = 1)
+void fftshift(Matrix<T> &a, Int_I dim = 1)
 {
 	Long m{ a.nrows() }, n{ a.ncols() };
 	if (dim == 1) {
 		if (isodd(m)) error("fftshift only supports even rows!")
 			Long halfm = m / 2;
-		NRmatrix<T> temp(halfm, n);
+		Matrix<T> temp(halfm, n);
 		Long size = halfm*n * sizeof(T);
 		memcpy(temp[0], a[0], size);
 		memcpy(a[0], a[halfm], size);
@@ -112,7 +112,7 @@ void fftshift(NRmatrix<T> &a, Int_I dim = 1)
 	else if (dim == 2) {
 		if (isodd(n)) error("fftshift only supports even columns!")
 			Long i, halfn{ n / 2 };
-		NRvector<T> temp(halfn);
+		Vector<T> temp(halfn);
 		Long size{ halfn * sizeof(T) };
 		for (i = 0; i < m; ++i) {
 			memcpy(&temp[0], a[i], size);

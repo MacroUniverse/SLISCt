@@ -9,19 +9,15 @@
 #endif
 
 // all the system #include's we'll ever need
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <cmath>
 #include <complex>
-#include <iomanip>
 #include <vector>
 #include <limits>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <fcntl.h>
 #include <string.h>
-#include <ctype.h>
 
 #ifdef _CUSLISC_
 template <class T> class CUvector;
@@ -88,7 +84,7 @@ const Comp I(0., 1.);
 #define error(str) {std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();}
 
 template<class T>
-inline void nrmemset(T *dest, const T val, Long_I n)
+inline void memset(T *dest, const T val, Long_I n)
 {
 	T *end = dest + n;
 	for (; dest < end; ++dest)
@@ -97,15 +93,15 @@ inline void nrmemset(T *dest, const T val, Long_I n)
 
 // Base Class for vector/matrix
 template <class T>
-class NRbase
+class Base
 {
 protected:
 	Long N; // number of elements
 	T *p; // pointer to the first element
-	inline void move(NRbase &rhs);
+	inline void move(Base &rhs);
 public:
-	NRbase() : N(0), p(nullptr) {}
-	explicit NRbase(Long_I n) : N(n), p(new T[n]) {}
+	Base() : N(0), p(nullptr) {}
+	explicit Base(Long_I n) : N(n), p(new T[n]) {}
 	T* ptr() { return p; } // get pointer
 	inline const T* ptr() const { return p; }
 	inline Long_I size() const { return N; }
@@ -116,11 +112,11 @@ public:
 	inline const T& end() const;
 	inline T& end(Long_I i);
 	inline const T& end(Long_I i) const;
-	~NRbase() { if (p) delete p; }
+	~Base() { if (p) delete p; }
 };
 
 template <class T>
-inline void NRbase<T>::resize(Long_I n)
+inline void Base<T>::resize(Long_I n)
 {
 	if (n != N) {
 		if (p != nullptr) delete[] p;
@@ -130,7 +126,7 @@ inline void NRbase<T>::resize(Long_I n)
 }
 
 template <class T>
-inline void NRbase<T>::move(NRbase &rhs)
+inline void Base<T>::move(Base &rhs)
 {
 	if (p != nullptr) delete[] p;
 	N = rhs.N; rhs.N = 0;
@@ -138,27 +134,27 @@ inline void NRbase<T>::move(NRbase &rhs)
 }
 
 template <class T>
-inline T & NRbase<T>::operator()(Long_I i)
+inline T & Base<T>::operator()(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 if (i<0 || i>=N)
-	error("NRbase subscript out of bounds");
+	error("Base subscript out of bounds");
 #endif
 	return p[i];
 }
 
 template <class T>
-inline const T & NRbase<T>::operator()(Long_I i) const
+inline const T & Base<T>::operator()(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=N)
-		error("NRbase subscript out of bounds");
+		error("Base subscript out of bounds");
 #endif
 	return p[i];
 }
 
 template <class T>
-inline T & NRbase<T>::end()
+inline T & Base<T>::end()
 {
 #ifdef _CHECKBOUNDS_
 	if (N < 1)
@@ -168,7 +164,7 @@ inline T & NRbase<T>::end()
 }
 
 template <class T>
-inline const T & NRbase<T>::end() const
+inline const T & Base<T>::end() const
 {
 #ifdef _CHECKBOUNDS_
 	if (N < 1)
@@ -178,7 +174,7 @@ inline const T & NRbase<T>::end() const
 }
 
 template <class T>
-inline T& NRbase<T>::end(Long_I i)
+inline T& Base<T>::end(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 	if (i <= 0 || i > N)
@@ -188,7 +184,7 @@ inline T& NRbase<T>::end(Long_I i)
 }
 
 template <class T>
-inline const T& NRbase<T>::end(Long_I i) const
+inline const T& Base<T>::end(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i <= 0 || i > N)
@@ -200,42 +196,42 @@ inline const T& NRbase<T>::end(Long_I i) const
 // Vector Class
 
 template <class T>
-class NRvector : public NRbase<T>
+class Vector : public Base<T>
 {
 public:
-	typedef NRbase<T> Base;
+	typedef Base<T> Base;
 	using Base::p;
 	using Base::N;
-	NRvector() {}
-	explicit NRvector(Long_I n): Base(n) {}
-	NRvector(Long_I n, const T &a) //initialize to constant value
-	: NRvector(n) { nrmemset(p,a,n); }
-	NRvector(Long_I n, const T *a) // Initialize to array
-	: NRvector(n) { memcpy(p, a, n*sizeof(T)); }
-	NRvector(const NRvector &rhs);	// Copy constructor forbidden
-	inline NRvector & operator=(const NRvector &rhs);	// copy assignment
-	inline NRvector & operator=(const T &rhs);  // assign to constant value
+	Vector() {}
+	explicit Vector(Long_I n): Base(n) {}
+	Vector(Long_I n, const T &a) //initialize to constant value
+	: Vector(n) { memset(p,a,n); }
+	Vector(Long_I n, const T *a) // Initialize to array
+	: Vector(n) { memcpy(p, a, n*sizeof(T)); }
+	Vector(const Vector &rhs);	// Copy constructor forbidden
+	inline Vector & operator=(const Vector &rhs);	// copy assignment
+	inline Vector & operator=(const T &rhs);  // assign to constant value
 #ifdef _CUSLISC_
-	NRvector & operator=(const CUvector<T> &rhs) // copy from GPU vector
+	Vector & operator=(const CUvector<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	inline void operator<<(NRvector &rhs); // move data and rhs.resize(0)
+	inline void operator<<(Vector &rhs); // move data and rhs.resize(0)
 	inline T & operator[](Long_I i);	//i'th element
 	inline const T & operator[](Long_I i) const;
 	inline void resize(Long_I n) {Base::resize(n);} // resize (contents not preserved)
 	template <class T1>
-	inline void resize(const NRvector<T1> &v) {resize(v.size());}
+	inline void resize(const Vector<T1> &v) {resize(v.size());}
 };
 
 template <class T>
-NRvector<T>::NRvector(const NRvector<T> &rhs)
+Vector<T>::Vector(const Vector<T> &rhs)
 {
 	error("Copy constructor or move constructor is forbidden, use reference "
 		 "argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
-inline NRvector<T> & NRvector<T>::operator=(const NRvector<T> &rhs)
+inline Vector<T> & Vector<T>::operator=(const Vector<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
 	resize(rhs);
@@ -244,35 +240,35 @@ inline NRvector<T> & NRvector<T>::operator=(const NRvector<T> &rhs)
 }
 
 template <class T>
-inline NRvector<T>& NRvector<T>::operator=(const T &rhs)
+inline Vector<T>& Vector<T>::operator=(const T &rhs)
 {
-	if (N) nrmemset(p, rhs, N);
+	if (N) memset(p, rhs, N);
 	return *this;
 }
 
 template <class T>
-inline void NRvector<T>::operator<<(NRvector<T> &rhs)
+inline void Vector<T>::operator<<(Vector<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
 }
 
 template <class T>
-inline T & NRvector<T>::operator[](Long_I i)
+inline T & Vector<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 if (i<0 || i>=N)
-	error("NRvector subscript out of bounds");
+	error("Vector subscript out of bounds");
 #endif
 	return p[i];
 }
 
 template <class T>
-inline const T & NRvector<T>::operator[](Long_I i) const
+inline const T & Vector<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 if (i<0 || i>=N)
-	error("NRvector subscript out of bounds");
+	error("Vector subscript out of bounds");
 #endif
 	return p[i];
 }
@@ -280,9 +276,9 @@ if (i<0 || i>=N)
 // Matrix Class
 
 template <class T>
-class NRmatrix : public NRbase<T>
+class Matrix : public Base<T>
 {
-	typedef NRbase<T> Base;
+	typedef Base<T> Base;
 	using Base::p;
 	using Base::N;
 private:
@@ -290,30 +286,30 @@ private:
 	T **v;
 	inline T ** v_alloc();
 public:
-	NRmatrix();
-	NRmatrix(Long_I n, Long_I m);
-	NRmatrix(Long_I n, Long_I m, const T &a);	//Initialize to constant
-	NRmatrix(Long_I n, Long_I m, const T *a);	// Initialize to array
-	NRmatrix(const NRmatrix &rhs);		// Copy constructor
-	inline NRmatrix & operator=(const NRmatrix &rhs);	// copy assignment
-	inline NRmatrix & operator=(const T &rhs);
+	Matrix();
+	Matrix(Long_I n, Long_I m);
+	Matrix(Long_I n, Long_I m, const T &a);	//Initialize to constant
+	Matrix(Long_I n, Long_I m, const T *a);	// Initialize to array
+	Matrix(const Matrix &rhs);		// Copy constructor
+	inline Matrix & operator=(const Matrix &rhs);	// copy assignment
+	inline Matrix & operator=(const T &rhs);
 #ifdef _CUSLISC_
-	NRmatrix & operator=(const CUmatrix<T> &rhs) // copy from GPU vector
+	Matrix & operator=(const CUmatrix<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	inline void operator<<(NRmatrix &rhs); // move data and rhs.resize(0, 0)
+	inline void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
 	inline T* operator[](Long_I i);	//subscripting: pointer to row i
 	inline const T* operator[](Long_I i) const;
 	inline Long nrows() const;
 	inline Long ncols() const;
 	inline void resize(Long_I n, Long_I m); // resize (contents not preserved)
 	template <class T1>
-	inline void resize(const NRmatrix<T1> &a);
-	~NRmatrix();
+	inline void resize(const Matrix<T1> &a);
+	~Matrix();
 };
 
 template <class T>
-inline T** NRmatrix<T>::v_alloc()
+inline T** Matrix<T>::v_alloc()
 {
 	if (N == 0) return nullptr;
 	T **v = new T*[nn];
@@ -324,27 +320,27 @@ inline T** NRmatrix<T>::v_alloc()
 }
 
 template <class T>
-NRmatrix<T>::NRmatrix() : nn(0), mm(0), v(nullptr) {}
+Matrix<T>::Matrix() : nn(0), mm(0), v(nullptr) {}
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m) : Base(n*m), nn(n), mm(m), v(v_alloc()) {}
+Matrix<T>::Matrix(Long_I n, Long_I m) : Base(n*m), nn(n), mm(m), v(v_alloc()) {}
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T &s) : NRmatrix(n, m)
-{ nrmemset(p, s, N); }
+Matrix<T>::Matrix(Long_I n, Long_I m, const T &s) : Matrix(n, m)
+{ memset(p, s, N); }
 
 template <class T>
-NRmatrix<T>::NRmatrix(Long_I n, Long_I m, const T *ptr) : NRmatrix(n, m)
+Matrix<T>::Matrix(Long_I n, Long_I m, const T *ptr) : Matrix(n, m)
 { memcpy(p, ptr, N*sizeof(T)); }
 
 template <class T>
-NRmatrix<T>::NRmatrix(const NRmatrix<T> &rhs)
+Matrix<T>::Matrix(const Matrix<T> &rhs)
 {
 	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
-inline NRmatrix<T> & NRmatrix<T>::operator=(const NRmatrix<T> &rhs)
+inline Matrix<T> & Matrix<T>::operator=(const Matrix<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
 	resize(rhs.nn, rhs.mm);
@@ -353,14 +349,14 @@ inline NRmatrix<T> & NRmatrix<T>::operator=(const NRmatrix<T> &rhs)
 }
 
 template <class T>
-inline NRmatrix<T> & NRmatrix<T>::operator=(const T &rhs)
+inline Matrix<T> & Matrix<T>::operator=(const T &rhs)
 {
-	if (N) nrmemset(p, rhs, N);
+	if (N) memset(p, rhs, N);
 	return *this;
 }
 
 template <class T>
-inline void NRmatrix<T>::operator<<(NRmatrix<T> &rhs)
+inline void Matrix<T>::operator<<(Matrix<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
@@ -370,35 +366,35 @@ inline void NRmatrix<T>::operator<<(NRmatrix<T> &rhs)
 }
 
 template <class T>
-inline T* NRmatrix<T>::operator[](Long_I i)
+inline T* Matrix<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=nn)
-		error("NRmatrix subscript out of bounds");
+		error("Matrix subscript out of bounds");
 #endif
 	return v[i];
 }
 
 template <class T>
-inline const T* NRmatrix<T>::operator[](Long_I i) const
+inline const T* Matrix<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=nn)
-		error("NRmatrix subscript out of bounds");
+		error("Matrix subscript out of bounds");
 #endif
 	return v[i];
 }
 
 template <class T>
-inline Long NRmatrix<T>::nrows() const
+inline Long Matrix<T>::nrows() const
 { return nn; }
 
 template <class T>
-inline Long NRmatrix<T>::ncols() const
+inline Long Matrix<T>::ncols() const
 { return mm; }
 
 template <class T>
-inline void NRmatrix<T>::resize(Long_I n, Long_I m)
+inline void Matrix<T>::resize(Long_I n, Long_I m)
 {
 	if (n != nn || m != mm) {
 		Base::resize(n*m);
@@ -410,19 +406,19 @@ inline void NRmatrix<T>::resize(Long_I n, Long_I m)
 
 template <class T>
 template <class T1>
-inline void NRmatrix<T>::resize(const NRmatrix<T1> &a)
+inline void Matrix<T>::resize(const Matrix<T1> &a)
 { resize(a.nrows(), a.ncols()); }
 
 template <class T>
-NRmatrix<T>::~NRmatrix()
+Matrix<T>::~Matrix()
 { if(v) delete v; }
 
 // 3D Matrix Class
 
 template <class T>
-class NRmat3d : public NRbase<T>
+class Mat3d : public Base<T>
 {
-	typedef NRbase<T> Base;
+	typedef Base<T> Base;
 	using Base::p;
 	using Base::N;
 private:
@@ -433,30 +429,30 @@ private:
 	inline T *** v_alloc();
 	inline void v_free();
 public:
-	NRmat3d();
-	NRmat3d(Long_I n, Long_I m, Long_I k);
-	NRmat3d(Long_I n, Long_I m, Long_I k, const T &a);
-	NRmat3d(const NRmat3d &rhs);   // Copy constructor
-	inline NRmat3d & operator=(const NRmat3d &rhs);	// copy assignment
-	inline NRmat3d & operator=(const T &rhs);
+	Mat3d();
+	Mat3d(Long_I n, Long_I m, Long_I k);
+	Mat3d(Long_I n, Long_I m, Long_I k, const T &a);
+	Mat3d(const Mat3d &rhs);   // Copy constructor
+	inline Mat3d & operator=(const Mat3d &rhs);	// copy assignment
+	inline Mat3d & operator=(const T &rhs);
 #ifdef _CUSLISC_
-	NRmat3d & operator=(const CUmat3d<T> &rhs) // copy from GPU vector
+	Mat3d & operator=(const CUmat3d<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	inline void operator<<(NRmat3d &rhs); // move data and rhs.resize(0, 0, 0)
+	inline void operator<<(Mat3d &rhs); // move data and rhs.resize(0, 0, 0)
 	inline void resize(Long_I n, Long_I m, Long_I k);
 	template <class T1>
-	inline void resize(const NRmat3d<T1> &a);
+	inline void resize(const Mat3d<T1> &a);
 	inline T*const * operator[](Long_I i);	//subscripting: pointer to row i
 	inline const T*const * operator[](Long_I i) const;
 	inline Long dim1() const;
 	inline Long dim2() const;
 	inline Long dim3() const;
-	~NRmat3d();
+	~Mat3d();
 };
 
 template <class T>
-inline T *** NRmat3d<T>::v_alloc()
+inline T *** Mat3d<T>::v_alloc()
 {
 	if (N == 0) return nullptr;
 	Long i;
@@ -471,7 +467,7 @@ inline T *** NRmat3d<T>::v_alloc()
 }
 
 template <class T>
-inline void NRmat3d<T>::v_free()
+inline void Mat3d<T>::v_free()
 {
 	if (v != nullptr) {
 		delete v[0]; delete v;
@@ -479,24 +475,24 @@ inline void NRmat3d<T>::v_free()
 }
 
 template <class T>
-NRmat3d<T>::NRmat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
+Mat3d<T>::Mat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
 
 template <class T>
-NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k) : Base(n*m*k), nn(n), mm(m), kk(k),
+Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k) : Base(n*m*k), nn(n), mm(m), kk(k),
 	v(v_alloc()) {}
 
 template <class T>
-NRmat3d<T>::NRmat3d(Long_I n, Long_I m, Long_I k, const T &s) : NRmat3d(n, m, k)
-{ nrmemset(p, s, n*m*k); }
+Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k, const T &s) : Mat3d(n, m, k)
+{ memset(p, s, n*m*k); }
 
 template <class T>
-NRmat3d<T>::NRmat3d(const NRmat3d<T> &rhs)
+Mat3d<T>::Mat3d(const Mat3d<T> &rhs)
 {
 	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
-inline NRmat3d<T> &NRmat3d<T>::operator=(const NRmat3d<T> &rhs)
+inline Mat3d<T> &Mat3d<T>::operator=(const Mat3d<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
 	resize(rhs.nn, rhs.mm, rhs.kk);
@@ -505,14 +501,14 @@ inline NRmat3d<T> &NRmat3d<T>::operator=(const NRmat3d<T> &rhs)
 }
 
 template <class T>
-inline NRmat3d<T> & NRmat3d<T>::operator=(const T &rhs)
+inline Mat3d<T> & Mat3d<T>::operator=(const T &rhs)
 {
-	if (N) nrmemset(p, rhs, N);
+	if (N) memset(p, rhs, N);
 	return *this;
 }
 
 template <class T>
-inline void NRmat3d<T>::operator<<(NRmat3d<T> &rhs)
+inline void Mat3d<T>::operator<<(Mat3d<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
@@ -523,7 +519,7 @@ inline void NRmat3d<T>::operator<<(NRmat3d<T> &rhs)
 }
 
 template <class T>
-inline void NRmat3d<T>::resize(Long_I n, Long_I m, Long_I k)
+inline void Mat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 {
 	if (n != nn || m != mm || k != kk) {
 		Base::resize(n*m*k);
@@ -534,112 +530,112 @@ inline void NRmat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 
 template <class T>
 template <class T1>
-inline void NRmat3d<T>::resize(const NRmat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
+inline void Mat3d<T>::resize(const Mat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
 
 template <class T>
-inline T*const * NRmat3d<T>::operator[](Long_I i)
+inline T*const * Mat3d<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i >= nn)
-		error("NRmatrix subscript out of bounds");
+		error("Matrix subscript out of bounds");
 #endif
 	return v[i];
 }
 
 template <class T>
-inline const T*const * NRmat3d<T>::operator[](Long_I i) const
+inline const T*const * Mat3d<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i >= nn)
-		error("NRmatrix subscript out of bounds");
+		error("Matrix subscript out of bounds");
 #endif
 	return v[i];
 }
 
 template <class T>
-inline Long NRmat3d<T>::dim1() const { return nn; }
+inline Long Mat3d<T>::dim1() const { return nn; }
 
 template <class T>
-inline Long NRmat3d<T>::dim2() const { return mm; }
+inline Long Mat3d<T>::dim2() const { return mm; }
 
 template <class T>
-inline Long NRmat3d<T>::dim3() const { return kk; }
+inline Long Mat3d<T>::dim3() const { return kk; }
 
 template <class T>
-NRmat3d<T>::~NRmat3d() { v_free(); }
+Mat3d<T>::~Mat3d() { v_free(); }
 
 // Matric and vector types
 
-typedef const NRvector<Int> VecInt_I;
-typedef NRvector<Int> VecInt, VecInt_O, VecInt_IO;
+typedef const Vector<Int> VecInt_I;
+typedef Vector<Int> VecInt, VecInt_O, VecInt_IO;
 
-typedef const NRvector<Uint> VecUint_I;
-typedef NRvector<Uint> VecUint, VecUint_O, VecUint_IO;
+typedef const Vector<Uint> VecUint_I;
+typedef Vector<Uint> VecUint, VecUint_O, VecUint_IO;
 
-typedef const NRvector<Long> VecLong_I;
-typedef NRvector<Long> VecLong, VecLong_O, VecLong_IO;
+typedef const Vector<Long> VecLong_I;
+typedef Vector<Long> VecLong, VecLong_O, VecLong_IO;
 
-typedef const NRvector<Llong> VecLlong_I;
-typedef NRvector<Llong> VecLlong, VecLlong_O, VecLlong_IO;
+typedef const Vector<Llong> VecLlong_I;
+typedef Vector<Llong> VecLlong, VecLlong_O, VecLlong_IO;
 
-typedef const NRvector<Ullong> VecUllong_I;
-typedef NRvector<Ullong> VecUllong, VecUllong_O, VecUllong_IO;
+typedef const Vector<Ullong> VecUllong_I;
+typedef Vector<Ullong> VecUllong, VecUllong_O, VecUllong_IO;
 
-typedef const NRvector<Char> VecChar_I;
-typedef NRvector<Char> VecChar, VecChar_O, VecChar_IO;
+typedef const Vector<Char> VecChar_I;
+typedef Vector<Char> VecChar, VecChar_O, VecChar_IO;
 
-typedef const NRvector<Char*> VecCharp_I;
-typedef NRvector<Char*> VecCharp, VecCharp_O, VecCharp_IO;
+typedef const Vector<Char*> VecCharp_I;
+typedef Vector<Char*> VecCharp, VecCharp_O, VecCharp_IO;
 
-typedef const NRvector<Uchar> VecUchar_I;
-typedef NRvector<Uchar> VecUchar, VecUchar_O, VecUchar_IO;
+typedef const Vector<Uchar> VecUchar_I;
+typedef Vector<Uchar> VecUchar, VecUchar_O, VecUchar_IO;
 
-typedef const NRvector<Doub> VecDoub_I;
-typedef NRvector<Doub> VecDoub, VecDoub_O, VecDoub_IO;
+typedef const Vector<Doub> VecDoub_I;
+typedef Vector<Doub> VecDoub, VecDoub_O, VecDoub_IO;
 
-typedef const NRvector<Doub*> VecDoubp_I;
-typedef NRvector<Doub*> VecDoubp, VecDoubp_O, VecDoubp_IO;
+typedef const Vector<Doub*> VecDoubp_I;
+typedef Vector<Doub*> VecDoubp, VecDoubp_O, VecDoubp_IO;
 
-typedef const NRvector<Comp> VecComp_I;
-typedef NRvector<Comp> VecComp, VecComp_O, VecComp_IO;
+typedef const Vector<Comp> VecComp_I;
+typedef Vector<Comp> VecComp, VecComp_O, VecComp_IO;
 
-typedef const NRvector<Bool> VecBool_I;
-typedef NRvector<Bool> VecBool, VecBool_O, VecBool_IO;
+typedef const Vector<Bool> VecBool_I;
+typedef Vector<Bool> VecBool, VecBool_O, VecBool_IO;
 
-typedef const NRmatrix<Int> MatInt_I;
-typedef NRmatrix<Int> MatInt, MatInt_O, MatInt_IO;
+typedef const Matrix<Int> MatInt_I;
+typedef Matrix<Int> MatInt, MatInt_O, MatInt_IO;
 
-typedef const NRmatrix<Uint> MatUint_I;
-typedef NRmatrix<Uint> MatUint, MatUint_O, MatUint_IO;
+typedef const Matrix<Uint> MatUint_I;
+typedef Matrix<Uint> MatUint, MatUint_O, MatUint_IO;
 
-typedef const NRmatrix<Llong> MatLlong_I;
-typedef NRmatrix<Llong> MatLlong, MatLlong_O, MatLlong_IO;
+typedef const Matrix<Llong> MatLlong_I;
+typedef Matrix<Llong> MatLlong, MatLlong_O, MatLlong_IO;
 
-typedef const NRmatrix<Ullong> MatUllong_I;
-typedef NRmatrix<Ullong> MatUllong, MatUllong_O, MatUllong_IO;
+typedef const Matrix<Ullong> MatUllong_I;
+typedef Matrix<Ullong> MatUllong, MatUllong_O, MatUllong_IO;
 
-typedef const NRmatrix<Char> MatChar_I;
-typedef NRmatrix<Char> MatChar, MatChar_O, MatChar_IO;
+typedef const Matrix<Char> MatChar_I;
+typedef Matrix<Char> MatChar, MatChar_O, MatChar_IO;
 
-typedef const NRmatrix<Uchar> MatUchar_I;
-typedef NRmatrix<Uchar> MatUchar, MatUchar_O, MatUchar_IO;
+typedef const Matrix<Uchar> MatUchar_I;
+typedef Matrix<Uchar> MatUchar, MatUchar_O, MatUchar_IO;
 
-typedef const NRmatrix<Doub> MatDoub_I;
-typedef NRmatrix<Doub> MatDoub, MatDoub_O, MatDoub_IO;
+typedef const Matrix<Doub> MatDoub_I;
+typedef Matrix<Doub> MatDoub, MatDoub_O, MatDoub_IO;
 
-typedef const NRmatrix<Comp> MatComp_I;
-typedef NRmatrix<Comp> MatComp, MatComp_O, MatComp_IO;
+typedef const Matrix<Comp> MatComp_I;
+typedef Matrix<Comp> MatComp, MatComp_O, MatComp_IO;
 
-typedef const NRmatrix<Bool> MatBool_I;
-typedef NRmatrix<Bool> MatBool, MatBool_O, MatBool_IO;
+typedef const Matrix<Bool> MatBool_I;
+typedef Matrix<Bool> MatBool, MatBool_O, MatBool_IO;
 
-typedef const NRmat3d<Doub> Mat3Doub_I;
-typedef NRmat3d<Doub> Mat3Doub, Mat3Doub_O, Mat3Doub_IO;
+typedef const Mat3d<Doub> Mat3Doub_I;
+typedef Mat3d<Doub> Mat3Doub, Mat3Doub_O, Mat3Doub_IO;
 
-typedef const NRmat3d<Comp> Mat3Comp_I;
-typedef NRmat3d<Comp> Mat3Comp, Mat3Comp_O, Mat3Comp_IO;
+typedef const Mat3d<Comp> Mat3Comp_I;
+typedef Mat3d<Comp> Mat3Comp, Mat3Comp_O, Mat3Comp_IO;
 
-// macro-like functions (don't use them in your code ever, write similar utilities in "nr3plus.h")
+// macro-like functions (don't use them in your code ever, write similar utilities in "algorithm.h")
 
 template<class T>
 inline T SQR(const T a) { return a*a; }

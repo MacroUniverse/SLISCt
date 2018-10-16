@@ -2,21 +2,21 @@
 
 // copy constructor
 template <class T>
-NRvector<T>::NRvector(const NRvector<T> &rhs) : NRvector(rhs.nn)
+Vector<T>::Vector(const Vector<T> &rhs) : Vector(rhs.nn)
 {
 	memcpy(v, rhs.v, nn*sizeof(T));
 }
 
 // move constructor
 template <class T>
-NRvector<T>::NRvector(NRvector<T> &&rhs) : nn(rhs.nn), v(rhs.v)
+Vector<T>::Vector(Vector<T> &&rhs) : nn(rhs.nn), v(rhs.v)
 {
 	rhs.v = nullptr;
 }
 
 // move assignment
 template <class T>
-NRvector<T> & NRvector<T>::operator=(NRvector &&rhs)
+Vector<T> & Vector<T>::operator=(Vector &&rhs)
 {
 	if (v != nullptr) delete[] v;
 	nn = rhs.nn;
@@ -29,21 +29,21 @@ NRvector<T> & NRvector<T>::operator=(NRvector &&rhs)
 
 // copy constructor
 template <class T>
-NRmatrix<T>::NRmatrix(const NRmatrix<T> &rhs) : NRmatrix(rhs.nn, rhs.mm)
+Matrix<T>::Matrix(const Matrix<T> &rhs) : Matrix(rhs.nn, rhs.mm)
 {
 	memcpy(v[0], rhs.v[0], nn*mm*sizeof(T));
 }
 
 // move constructor
 template <class T>
-NRmatrix<T>::NRmatrix(NRmatrix<T> &&rhs) : nn(rhs.nn), mm(rhs.mm), v(rhs.v)
+Matrix<T>::Matrix(Matrix<T> &&rhs) : nn(rhs.nn), mm(rhs.mm), v(rhs.v)
 {
 	rhs.v = nullptr;
 }
 
 // move assignment
 template <class T>
-NRmatrix<T> & NRmatrix<T>::operator=(NRmatrix<T> &&rhs)
+Matrix<T> & Matrix<T>::operator=(Matrix<T> &&rhs)
 {
 	data_free(v);
 	nn = rhs.nn; mm = rhs.mm; v = rhs.v;
@@ -80,81 +80,81 @@ NRMat3d<T> &NRMat3d<T>::operator=(NRMat3d<T> &&rhs)
 // === functions that returns matrixs or vectors ===
 
 template <class T>
-inline NRvector<T> operator+(const NRvector<T> &v1, Doub_I s)
+inline Vector<T> operator+(const Vector<T> &v1, Doub_I s)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = v1[i] + s;
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator+(Doub_I s, const NRvector<T> &v1)
+inline Vector<T> operator+(Doub_I s, const Vector<T> &v1)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = v1[i] + s;
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator-(const NRvector<T> &v1, Doub_I s)
+inline Vector<T> operator-(const Vector<T> &v1, Doub_I s)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = v1[i] - s;
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator-(Doub_I s, const NRvector<T> &v1)
+inline Vector<T> operator-(Doub_I s, const Vector<T> &v1)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = s - v1[i];
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator*(const NRvector<T> &v1, Doub_I s)
+inline Vector<T> operator*(const Vector<T> &v1, Doub_I s)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = v1[i] - s;
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator*(Doub_I s, const NRvector<T> &v1)
+inline Vector<T> operator*(Doub_I s, const Vector<T> &v1)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = v1[i] - s;
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator/(const NRvector<T> &v1, Doub_I s)
+inline Vector<T> operator/(const Vector<T> &v1, Doub_I s)
 {
 	Int i, N{ v1.size() };
 	Doub sInv = 1./s;
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = v1[i] * sInv;
 	return v;
 }
 
 template <class T>
-inline NRvector<T> operator/(Doub_I s, const NRvector<T> &v1)
+inline Vector<T> operator/(Doub_I s, const Vector<T> &v1)
 {
 	Sizet i, N{ v1.size() };
-	NRvector<T> v(N);
+	Vector<T> v(N);
 	for (i = 0; i < N; ++i)
 		v[i] = s / v1[i];
 	return v;
