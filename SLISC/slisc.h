@@ -19,12 +19,6 @@
 #include <limits>
 #include <string.h>
 
-#ifdef _CUSLISC_
-template <class T> class CUvector;
-template <class T> class CUmatrix;
-template <class T> class CUmat3d;
-#endif
-
 namespace slisc
 {
 
@@ -90,6 +84,13 @@ inline void memset(T *dest, const T val, Long_I n)
 	for (; dest < end; ++dest)
 		*dest = val;
 }
+
+// For cuSLISC project
+#ifdef _CUSLISC_
+template <class T> class Gvector;
+template <class T> class Gmatrix;
+template <class T> class Gmat3d;
+#endif
 
 // Base Class for vector/matrix
 template <class T>
@@ -212,7 +213,7 @@ public:
 	inline Vector & operator=(const Vector &rhs);	// copy assignment
 	inline Vector & operator=(const T &rhs);  // assign to constant value
 #ifdef _CUSLISC_
-	Vector & operator=(const CUvector<T> &rhs) // copy from GPU vector
+	Vector & operator=(const Gvector<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(Vector &rhs); // move data and rhs.resize(0)
@@ -294,7 +295,7 @@ public:
 	inline Matrix & operator=(const Matrix &rhs);	// copy assignment
 	inline Matrix & operator=(const T &rhs);
 #ifdef _CUSLISC_
-	Matrix & operator=(const CUmatrix<T> &rhs) // copy from GPU vector
+	Matrix & operator=(const Gmatrix<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
@@ -436,7 +437,7 @@ public:
 	inline Mat3d & operator=(const Mat3d &rhs);	// copy assignment
 	inline Mat3d & operator=(const T &rhs);
 #ifdef _CUSLISC_
-	Mat3d & operator=(const CUmat3d<T> &rhs) // copy from GPU vector
+	Mat3d & operator=(const Gmat3d<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(Mat3d &rhs); // move data and rhs.resize(0, 0, 0)

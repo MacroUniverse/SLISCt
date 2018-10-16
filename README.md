@@ -67,7 +67,7 @@ size() : get the number of elements
 
 ### Vector Class Template
 
-Constructors: NRvector() for default, NRvector(Long_I n) for vector size, NRvector(Long_I n, const T &a) to specify element as well, NRvector(Long_I n, const T *a) to initialize from array.
+Constructors: Vector() for default, Vector(Long_I n) for vector size, Vector(Long_I n, const T &a) to specify element as well, Vector(Long_I n, const T *a) to initialize from array.
 
 Operator = : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
 
@@ -76,15 +76,15 @@ Operator [] : for vector, get a reference for the i-th element; for matrix, retu
 
 resize(Long_I) : resize vector, contents are not preserved. resize() does nothing if size doesn't change.
 
-resize(NRvector<> v) : resize to the same size of v
+resize(Vector<> v) : resize to the same size of v
 
 ### Matrix Class Template
-The matrix template name is NRmatrix<T>, Methods are similar to that of vector class. Matrix is row-major only. 
+The matrix template name is Matrix<T>, Methods are similar to that of vector class. Matrix is row-major only. 
 
 TODO.
 
-### Mat3D Class Template
-3D matrix template name is NRMat3d. Methods are similar to that of vector class. Mat3d is row-major only.
+### Mat3d Class Template
+3D matrix template name is Mat3d. Methods are similar to that of vector class. Mat3d is row-major only.
 
 TODO.
 
@@ -138,10 +138,10 @@ s = norm2(v) // vec/mat norm squared
 void linspace(vec/mat, first, last, N = -1)
 void trans(a) // matrix transpose
 void her(a) // hermitian conjugate
-void flip(NRvector<T>)
-void shift(NRmatrix<T> &a, const Int nshift, const Int dim = 1)
-void diagonals(NRmatrix<T> &a) // shift the i-th line i times to the left, moving diagonals to columns
-void idiagonals(NRmatrix<T> &a) // inverse of diagonals(), shift the i-th line i times to the right
+void flip(Vector<T>)
+void shift(Matrix<T> &a, const Int nshift, const Int dim = 1)
+void diagonals(Matrix<T> &a) // shift the i-th line i times to the left, moving diagonals to columns
+void idiagonals(Matrix<T> &a) // inverse of diagonals(), shift the i-th line i times to the right
 ```
 
 ## element-wise math functions
@@ -179,7 +179,7 @@ In gdb, things are a little more complicated, since gdb does not fully support f
 
 ## Calculus
 
-void integral(NRvector<T> &F, const NRvector<T> &f, Doub_I dx) // simple indefinite integration
+void integral(Vector<T> &F, const Vector<T> &f, Doub_I dx) // simple indefinite integration
 
 
 ## FFT related
@@ -189,25 +189,25 @@ void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xm
 void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub kmin, Doub kmax)
 ```
 
-## string related
+## String related
 
-template <typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
-
+template\<typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
 
 ## OpenMP functions
 ```cpp
 // parallelized version of functions
-void diagonals_par(NRmatrix<T> &a)
-void idiagonals_par(NRmatrix<T> &a)
-void outprod_par(NRmatrix<T> &prod, const NRvector<T1> &v1, const NRvector<T2> &v2)
-void outprod_par(NRmatrix<T> &prod, VecComp_I &v1, const NRvector<T2> &v2)
-void mul_par(NRvector<T> &y, const NRvector<T1> &x, const NRmatrix<T2> &a)
+void diagonals_par(Matrix<T> &a)
+void idiagonals_par(Matrix<T> &a)
+void outprod_par(Matrix<T> &prod, const Vector<T1> &v1, const Vector<T2> &v2)
+void outprod_par(Matrix<T> &prod, VecComp_I &v1, const Vector<T2> &v2)
+void mul_par(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
 void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
 void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
 ```
 
-## cuSLISC
-See cuSLISC project for a GPU version of SLISC using CUDA
+## Related Projects
+* See cuSLISC project for a GPU version of SLISC using CUDA.
+* See MatFile project for saving and reading "Vector" or "Matrix" to/from Matlab data file ".mat", or text based file ".matt".
 
 ## TODO
 I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.

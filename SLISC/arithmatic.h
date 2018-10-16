@@ -190,7 +190,7 @@ inline T norm2(Base<T> &v)
 
 template <class T>
 inline T norm(Base<T> &v)
-{ return sqrt(norm2(v)); }
+{ return std::sqrt(norm2(v)); }
 
 //sum(abs(v(:)). ^ 2) for complex numbers
 inline Doub norm2(Base<Comp> &v)
@@ -203,7 +203,7 @@ inline Doub norm2(Base<Comp> &v)
 }
 
 inline Doub norm(Base<Comp> &v)
-{ return sqrt(norm2(v)); }
+{ return std::sqrt(norm2(v)); }
 
 // === matrix manipulation ===
 
