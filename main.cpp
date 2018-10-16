@@ -3,14 +3,14 @@
 #include "test/test_time.h"
 #include "test/test_slisc.h"
 #include "test/test_arithmatic.h"
-#include "test/test_disp.h"
-#include "test/test_print.h"
 #include "test/test_interp1.h"
 #include "test/test_fft.h"
 #include "test/test_random.h"
 #include "test/test_eigen_basics.h"
 #include "test/test_eigen_linsolve.h"
 #include "test/test_eigen_fft.h"
+#include "test/test_disp.h"
+#include "test/test_print.h"
 
 using std::cout; using std::endl; using std::conj;
 

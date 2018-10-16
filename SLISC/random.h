@@ -44,7 +44,7 @@ namespace slisc
 	{ return Comp(rand(), rand()); }
 
 	template <typename T>
-	inline void rand(Base<T> &v)
+	inline void rand(Vbase<T> &v)
 	{
 		Long i, N = v.size();
 		for (i = 0; i < N; ++i)
@@ -54,7 +54,7 @@ namespace slisc
 	// complex random number
 	// uniform distribution
 	template <>
-	inline void rand<Comp>(Base<Comp> &v)
+	inline void rand<Comp>(Vbase<Comp> &v)
 	{
 		Long i, N = v.size();
 		for (i = 0; i < N; ++i)

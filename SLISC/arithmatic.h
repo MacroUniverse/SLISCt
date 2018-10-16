@@ -42,7 +42,7 @@ inline Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
 // === get vec/mat properties ===
 
 template <class T1, class T2>
-inline bool equals_to0(const Base<T1> &v1, const Base<T2> &v2)
+inline bool equals_to0(const Vbase<T1> &v1, const Vbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	if (N != v2.size()) return false;
@@ -77,7 +77,7 @@ inline bool operator!=(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 { return !equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool equals_to1(const Base<T1> &v, const T2 &s)
+inline bool equals_to1(const Vbase<T1> &v, const T2 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -123,7 +123,7 @@ Bool shape_cmp(const Mat3d<T1> &a1, const Mat3d<T2> &a2)
 { return (a1.dim1() == a2.dim1()) && (a1.dim2() == a2.dim2()) && (a1.dim3() == a2.dim3()); }
 
 template <class T>
-inline T sum(const Base<T> &v)
+inline T sum(const Vbase<T> &v)
 {
 	Long i, n{ v.size() };
 	T sum = 0;
@@ -133,7 +133,7 @@ inline T sum(const Base<T> &v)
 }
 
 template <class T>
-inline T max(const Base<T> &v)
+inline T max(const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -144,7 +144,7 @@ inline T max(const Base<T> &v)
 }
 
 // for Comp, return max(abs(a(:))
-inline Doub max(const Base<Comp> &v)
+inline Doub max(const Vbase<Comp> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -155,7 +155,7 @@ inline Doub max(const Base<Comp> &v)
 }
 
 template <class T>
-inline T max(Long_O &ind, const Base<T> &v)
+inline T max(Long_O &ind, const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -166,7 +166,7 @@ inline T max(Long_O &ind, const Base<T> &v)
 	return val;
 }
 
-inline Doub max(Long_O &ind, const Base<Comp> &v)
+inline Doub max(Long_O &ind, const Vbase<Comp> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -179,7 +179,7 @@ inline Doub max(Long_O &ind, const Base<Comp> &v)
 
 // sum(v(:).^2) for real numbers
 template <class T>
-inline T norm2(Base<T> &v)
+inline T norm2(Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T s2{};
@@ -189,11 +189,11 @@ inline T norm2(Base<T> &v)
 }
 
 template <class T>
-inline T norm(Base<T> &v)
+inline T norm(Vbase<T> &v)
 { return std::sqrt(norm2(v)); }
 
 //sum(abs(v(:)). ^ 2) for complex numbers
-inline Doub norm2(Base<Comp> &v)
+inline Doub norm2(Vbase<Comp> &v)
 {
 	Long i, N{ v.size() };
 	Doub s2{};
@@ -202,14 +202,14 @@ inline Doub norm2(Base<Comp> &v)
 	return s2;
 }
 
-inline Doub norm(Base<Comp> &v)
+inline Doub norm(Vbase<Comp> &v)
 { return std::sqrt(norm2(v)); }
 
 // === matrix manipulation ===
 
 // does not work for integers
 template <class T, class T1, class T2>
-inline void linspace(Base<T> &v, const T1 &first, const T2 &last)
+inline void linspace(Vbase<T> &v, const T1 &first, const T2 &last)
 {
 	Long i, N{ v.size() };
 	T delta = (last - first) / T(N - 1);
@@ -371,7 +371,7 @@ void idiagonals_par(Matrix<T> &a)
 // === vectorized math functions ===
 
 template <class T, class T1>
-inline void sin0(Base<T> &v, const Base<T1> &v1)
+inline void sin0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -391,7 +391,7 @@ void sin(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); sin0(v, v1); }
 
 template <class T, class T1>
-inline void cos0(Base<T> &v, const Base<T1> &v1)
+inline void cos0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -411,7 +411,7 @@ void cos(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); cos0(v, v1); }
 
 template <class T, class T1>
-inline void exp0(Base<T> &v, const Base<T1> &v1)
+inline void exp0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -431,7 +431,7 @@ void exp(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); exp0(v, v1); }
 
 template <class T, class T1>
-inline void tan0(Base<T> &v, const Base<T1> &v1)
+inline void tan0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -454,7 +454,7 @@ void tan(Mat3d<T> &v, const Mat3d<T1> &v1)
 
 // v += v
 template <class T, class T1>
-inline void plus_equals0(Base<T> &v, const Base<T1> &v1)
+inline void plus_equals0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -490,7 +490,7 @@ inline void operator+=(Mat3d<T> &v, const Mat3d<T1> &v1)
 
 // v -= v
 template <class T, class T1>
-inline void minus_equals0(Base<T> &v, const Base<T1> &v1)
+inline void minus_equals0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -526,7 +526,7 @@ inline void operator-=(Mat3d<T> &v, const Mat3d<T1> &v1)
 
 // v *= v
 template <class T, class T1>
-inline void times_equals0(Base<T> &v, const Base<T1> &v1)
+inline void times_equals0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -562,7 +562,7 @@ inline void operator*=(Mat3d<T> &v, const Mat3d<T1> &v1)
 
 // v /= v
 template <class T, class T1>
-inline void divide_equals0(Base<T> &v, const Base<T1> &v1)
+inline void divide_equals0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -597,7 +597,7 @@ inline void operator/=(Mat3d<T> &v, const Mat3d<T1> &v1)
 }
 
 template <class T, class T1>
-inline void plus_equals1(Base<T> &v, const T1 &s)
+inline void plus_equals1(Vbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -619,7 +619,7 @@ inline void operator+=(Mat3d<T> &v, const T1 &s)
 
 // v -= s
 template <class T, class T1>
-inline void minus_equals1(Base<T> &v, const T1 &s)
+inline void minus_equals1(Vbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -640,7 +640,7 @@ inline void operator-=(Mat3d<T> &v, const T1 &s)
 
 // v *= s
 template <class T, class T1>
-inline void times_equals1(Base<T> &v, const T1 &s)
+inline void times_equals1(Vbase<T> &v, const T1 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -676,7 +676,7 @@ inline void operator/=(Mat3d<T> &v, const T1 &s)
 
 // v %= s
 template <class T>
-inline void operator%=(Base<T> &v, const T &s)
+inline void operator%=(Vbase<T> &v, const T &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -685,7 +685,7 @@ inline void operator%=(Base<T> &v, const T &s)
 
 // rem(v, s)
 template <class T>
-inline void rem0(Base<T> &v, const Base<T> &v1, const T &s)
+inline void rem0(Vbase<T> &v, const Vbase<T> &v1, const T &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -709,7 +709,7 @@ inline void rem(Mat3d<T> &v, const Mat3d<T> &v1, const T &s)
 
 // mod(v, v, s)
 template <class T>
-inline void mod0(Base<T> &v, const Base<T> &v1, const T &s)
+inline void mod0(Vbase<T> &v, const Vbase<T> &v1, const T &s)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -733,7 +733,7 @@ inline void mod(Mat3d<T> &v, const Mat3d<T> &v1, const T &s)
 
 // plus(v, v, s)
 template <class T, class T1, class T2>
-inline void plus0(Base<T> &v, const Base<T1> &v1, const T2 &s)
+inline void plus0(Vbase<T> &v, const Vbase<T1> &v1, const T2 &s)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -766,7 +766,7 @@ inline void plus(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
 
 // plus(v, v, v)
 template <class T, class T1, class T2>
-inline void plus1(Base<T> &v, const Base<T1> &v1, const Base<T2> &v2)
+inline void plus1(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -802,7 +802,7 @@ inline void plus(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 
 // minus(v)
 template <class T>
-inline void minus(Base<T> &v)
+inline void minus(Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -811,7 +811,7 @@ inline void minus(Base<T> &v)
 
 // minus(v, v)
 template <class T, class T1>
-inline void minus1(Base<T> &v, const Base<T1> &v1)
+inline void minus1(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -832,7 +832,7 @@ inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1)
 
 // minus(v, s, v)
 template <class T, class T1, class T2>
-inline void minus2(Base<T> &v, const T1 &s, const Base<T2> &v1)
+inline void minus2(Vbase<T> &v, const T1 &s, const Vbase<T2> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -875,7 +875,7 @@ inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
 
 // minus(v, v, v)
 template <class T, class T1, class T2>
-inline void minus4(Base<T> &v, const Base<T1> &v1, const Base<T2> &v2)
+inline void minus4(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -911,7 +911,7 @@ inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 
 // times(v, v, s)
 template <class T, class T1, class T2>
-inline void times0(Base<T> &v, const Base<T1> &v1, const T2 &s)
+inline void times0(Vbase<T> &v, const Vbase<T1> &v1, const T2 &s)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -945,7 +945,7 @@ inline void times(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
 
 // times(v, v, v)
 template <class T, class T1, class T2>
-inline void times1(Base<T> &v, const Base<T1> &v1, const Base<T2> &v2)
+inline void times1(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -981,7 +981,7 @@ inline void times(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 
 // times(v, v, s)
 template <class T, class T1, class T2>
-inline void divide0(Base<T> &v, const Base<T1> &v1, const T2 &s)
+inline void divide0(Vbase<T> &v, const Vbase<T1> &v1, const T2 &s)
 {
 	Long i, N{ v1.size() };
 	T2 sInv{ 1/s };
@@ -1003,7 +1003,7 @@ inline void divide(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
 
 // divide(v, s, v)
 template <class T, class T1, class T2>
-inline void divide1(Base<T> &v, const T1 &s, const Base<T2> &v1)
+inline void divide1(Vbase<T> &v, const T1 &s, const Vbase<T2> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -1024,7 +1024,7 @@ inline void divide(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
 
 // divide(v, v, v)
 template <class T, class T1, class T2>
-inline void divide3(Base<T> &v, const Base<T1> &v1, const Base<T2> &v2)
+inline void divide3(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -1059,7 +1059,7 @@ inline void divide(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 }
 
 // real(v)
-inline void real(Base<Comp> &v)
+inline void real(Vbase<Comp> &v)
 {
 	Long i, N{ 2 * v.size() };
 	Doub *pd = (Doub *)v.ptr();
@@ -1069,7 +1069,7 @@ inline void real(Base<Comp> &v)
 
 // resl(v, v)
 template <class T>
-inline void real0(Base<T> &v, const Base<Comp> &v1)
+inline void real0(Vbase<T> &v, const Vbase<Comp> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -1089,7 +1089,7 @@ inline void real(Mat3d<T> &v, const Mat3d<Comp> &v1)
 { v.resize(v1); real0(v, v1); }
 
 // imag(v)
-inline void imag(Base<Comp> &v)
+inline void imag(Vbase<Comp> &v)
 {
 	Long i, N{ 2 * v.size() };
 	Doub *pd = (Doub *)v.ptr();
@@ -1099,7 +1099,7 @@ inline void imag(Base<Comp> &v)
 
 // imag(v, v)
 template <class T>
-inline void imag0(Base<T> &v, const Base<Comp> &v1)
+inline void imag0(Vbase<T> &v, const Vbase<Comp> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -1120,7 +1120,7 @@ inline void imag(Mat3d<T> &v, const Mat3d<Comp> &v1)
 
 // abs(v)
 template <class T>
-inline void abs(Base<T> &v)
+inline void abs(Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; i += 2)
@@ -1129,7 +1129,7 @@ inline void abs(Base<T> &v)
 
 // abs(v, v)
 template <class T, class T1>
-inline void abs0(Base<T> &v, const Base<T1> &v1)
+inline void abs0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -1149,7 +1149,7 @@ inline void abs(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); abs0(v, v1); }
 
 // doubl2comp(v, v)
-inline void doub2comp0(Base<Comp> &v, const Base<Doub> &v1)
+inline void doub2comp0(Vbase<Comp> &v, const Vbase<Doub> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
@@ -1166,7 +1166,7 @@ inline void doub2comp(Mat3d<Comp> &v, const Mat3d<Doub> &v1)
 { v.resize(v1); doub2comp0(v, v1); }
 
 // conj(v)
-inline void conj(Base<Comp> &v)
+inline void conj(Vbase<Comp> &v)
 {
 	Long i, N{ 2 * v.size() };
 	Doub *p = (Doub *)v.ptr();
@@ -1361,7 +1361,7 @@ inline void mul(Matrix<T> &c, const Matrix<T1> &a, const Matrix<T2> &b)
 // indefinite integral;
 // use cumsum(y)*dx instead
 template <class T, class T1>
-void cumsum(Base<T> &F, const Base<T1> &f)
+void cumsum(Vbase<T> &F, const Vbase<T1> &f)
 {
 	Long i, N{ f.size() };
 	F.resize(N); F(0) = f(0);

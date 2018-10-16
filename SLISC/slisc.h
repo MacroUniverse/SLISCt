@@ -94,15 +94,15 @@ template <class T> class Gmat3d;
 
 // Base Class for vector/matrix
 template <class T>
-class Base
+class Vbase
 {
 protected:
 	Long N; // number of elements
 	T *p; // pointer to the first element
-	inline void move(Base &rhs);
+	inline void move(Vbase &rhs);
 public:
-	Base() : N(0), p(nullptr) {}
-	explicit Base(Long_I n) : N(n), p(new T[n]) {}
+	Vbase() : N(0), p(nullptr) {}
+	explicit Vbase(Long_I n) : N(n), p(new T[n]) {}
 	T* ptr() { return p; } // get pointer
 	inline const T* ptr() const { return p; }
 	inline Long_I size() const { return N; }
@@ -113,11 +113,11 @@ public:
 	inline const T& end() const;
 	inline T& end(Long_I i);
 	inline const T& end(Long_I i) const;
-	~Base() { if (p) delete p; }
+	~Vbase() { if (p) delete p; }
 };
 
 template <class T>
-inline void Base<T>::resize(Long_I n)
+inline void Vbase<T>::resize(Long_I n)
 {
 	if (n != N) {
 		if (p != nullptr) delete[] p;
@@ -127,7 +127,7 @@ inline void Base<T>::resize(Long_I n)
 }
 
 template <class T>
-inline void Base<T>::move(Base &rhs)
+inline void Vbase<T>::move(Vbase &rhs)
 {
 	if (p != nullptr) delete[] p;
 	N = rhs.N; rhs.N = 0;
@@ -135,27 +135,27 @@ inline void Base<T>::move(Base &rhs)
 }
 
 template <class T>
-inline T & Base<T>::operator()(Long_I i)
+inline T & Vbase<T>::operator()(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 if (i<0 || i>=N)
-	error("Base subscript out of bounds");
+	error("Vbase subscript out of bounds");
 #endif
 	return p[i];
 }
 
 template <class T>
-inline const T & Base<T>::operator()(Long_I i) const
+inline const T & Vbase<T>::operator()(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=N)
-		error("Base subscript out of bounds");
+		error("Vbase subscript out of bounds");
 #endif
 	return p[i];
 }
 
 template <class T>
-inline T & Base<T>::end()
+inline T & Vbase<T>::end()
 {
 #ifdef _CHECKBOUNDS_
 	if (N < 1)
@@ -165,7 +165,7 @@ inline T & Base<T>::end()
 }
 
 template <class T>
-inline const T & Base<T>::end() const
+inline const T & Vbase<T>::end() const
 {
 #ifdef _CHECKBOUNDS_
 	if (N < 1)
@@ -175,7 +175,7 @@ inline const T & Base<T>::end() const
 }
 
 template <class T>
-inline T& Base<T>::end(Long_I i)
+inline T& Vbase<T>::end(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 	if (i <= 0 || i > N)
@@ -185,7 +185,7 @@ inline T& Base<T>::end(Long_I i)
 }
 
 template <class T>
-inline const T& Base<T>::end(Long_I i) const
+inline const T& Vbase<T>::end(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i <= 0 || i > N)
@@ -197,10 +197,10 @@ inline const T& Base<T>::end(Long_I i) const
 // Vector Class
 
 template <class T>
-class Vector : public Base<T>
+class Vector : public Vbase<T>
 {
 public:
-	typedef Base<T> Base;
+	typedef Vbase<T> Base;
 	using Base::p;
 	using Base::N;
 	Vector() {}
@@ -277,9 +277,9 @@ if (i<0 || i>=N)
 // Matrix Class
 
 template <class T>
-class Matrix : public Base<T>
+class Matrix : public Vbase<T>
 {
-	typedef Base<T> Base;
+	typedef Vbase<T> Base;
 	using Base::p;
 	using Base::N;
 private:
@@ -417,9 +417,9 @@ Matrix<T>::~Matrix()
 // 3D Matrix Class
 
 template <class T>
-class Mat3d : public Base<T>
+class Mat3d : public Vbase<T>
 {
-	typedef Base<T> Base;
+	typedef Vbase<T> Base;
 	using Base::p;
 	using Base::N;
 private:
