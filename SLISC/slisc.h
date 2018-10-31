@@ -3,9 +3,9 @@
 
 #pragma once
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 // this will not check the last index
-#define _CHECKBOUNDS_ 1
+#define _CHECKBOUNDS_
 #endif
 
 // all the system #include's we'll ever need
