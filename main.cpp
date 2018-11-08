@@ -14,9 +14,21 @@
 
 using std::cout; using std::endl; using std::conj;
 
-// new test scratch
+#include "SLISC/coulomb.h"
 void test()
 {
+	using namespace slisc;
+	Int l = 0;
+	Doub k = 2.;
+	Timer time;
+
+	Long N = 100;
+	VecDoub r(N), F(N); linspace(r, 0., 10., N);
+
+	time.tic();
+	dcoulomb1(F, l, k, r);
+	cout << "time/eval = " << time.toc()/N << endl;
+	disp(F, 15);
 }
 
 int main()
