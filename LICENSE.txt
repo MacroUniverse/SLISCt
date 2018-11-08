@@ -1,0 +1,9 @@
+GPL license v3.0 is used for most of the SLISC project.
+However, this project also uses source code from other projects, those code are subjected to their original license.
+
+Third party code:
+Eigen : http://eigen.tuxfamily.org/index.php?title=Main_Page
+
+The code in "SLISC/cwfcomp" directory forbids redistribution, and should not be used directly in principle.
+However, you can aquire a free copy from their website and modify them yourself.
+cwfcomp : http://cpc.cs.qub.ac.uk/summaries/ADYO_v1_0.html (Computer Physics Communication Program Library, cwfcomplex)
