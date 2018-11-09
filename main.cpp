@@ -31,7 +31,7 @@ void test()
 	//r(1) = 5.691382765531062;
 
 	time.tic();
-	coulomb1(F, l, k, r);
+	coulombF(F, l, k, r);
 	cout << "time/eval = " << time.toc()/N << endl;
 	//disp(r, 15);
 	//disp(F, 15);
