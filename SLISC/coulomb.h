@@ -3,6 +3,7 @@
 // precision is currently 10 digits, set precision in "cwfcomp.h"
 // This is much faster than Matlab's "hypergeom()" (about 1000-10000 times faster).
 
+#include "slisc.h"
 #include "cwfcomp/cwfcomp.h"
 
 namespace slisc {
