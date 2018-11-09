@@ -56,7 +56,7 @@ inline Doub coulombDF(Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
 	Comp F, dF;
 	cwfcomp::Coulomb_wave_functions f(true, l, Z / k);
 	f.F_dF(k*r, F, dF);
-	return real(F);
+	return real(dF);
 }
 
 // for vector/matrix and tensor
