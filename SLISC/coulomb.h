@@ -13,17 +13,23 @@ using cwfcomp::Coulomb_wave_functions;
 inline Doub coulomb1(Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
 {
 	Comp F, dF;
-	cwfcomp::Coulomb_wave_functions(true, l, Z/k).F_dF(k*r, F, dF);
+	cwfcomp::Coulomb_wave_functions f(true, l, Z/k);
+	f.F_dF(k*r, F, dF);
 	return real(F);
 }
 
 // for vector/matrix and tensor
+// efficiency is about 1e-4.
 inline void coulomb10(Vbase<double> &F, Int_I l, Doub_I k, const Vbase<double> &r, Doub_I Z = -1.)
 {
 	Long i;
 	Comp F1, dF1;
-	cwfcomp::Coulomb_wave_functions f(true, l, Z/k);
+	Doub eta = Z / k;
 	for (i = 0; i < r.size(); ++i) {
+		// must use a new "Coulomb_wave_functions" to keep accuracy
+		// if the same object is used, the ODE solver might solve next point based on the previous point
+		// constructor time is only 1/60 to 1/10 of the calculation time, so don't try to optimize this!
+		cwfcomp::Coulomb_wave_functions f(true, l, eta);
 		f.F_dF(k*r(i), F1, dF1);
 		F(i) = real(F1);
 	}

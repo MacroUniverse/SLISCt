@@ -1,20 +1,23 @@
 // comprehensive test of SLISC
 
-#include "test/test_time.h"
-#include "test/test_slisc.h"
-#include "test/test_arithmatic.h"
-#include "test/test_interp1.h"
-#include "test/test_fft.h"
-#include "test/test_random.h"
-#include "test/test_eigen_basics.h"
-#include "test/test_eigen_linsolve.h"
-#include "test/test_eigen_fft.h"
-#include "test/test_disp.h"
-#include "test/test_print.h"
+//#include "test/test_time.h"
+//#include "test/test_slisc.h"
+//#include "test/test_arithmatic.h"
+//#include "test/test_interp1.h"
+//#include "test/test_fft.h"
+//#include "test/test_random.h"
+//#include "test/test_eigen_basics.h"
+//#include "test/test_eigen_linsolve.h"
+//#include "test/test_eigen_fft.h"
+//#include "test/test_disp.h"
+//#include "test/test_print.h"
+
+#include "SLISC/arithmatic.h"
+#include "SLISC/coulomb.h"
+#include "SLISC/time.h"
+#include "SLISC/disp.h"
 
 using std::cout; using std::endl; using std::conj;
-
-#include "SLISC/coulomb.h"
 void test()
 {
 	using namespace slisc;
@@ -22,13 +25,16 @@ void test()
 	Doub k = 2.;
 	Timer time;
 
-	Long N = 100;
-	VecDoub r(N), F(N); linspace(r, 0., 10., N);
+	Long N = 500;
+	VecDoub r(2), F(2); linspace(r, 0., 10., N);
+	//r(0) = 5.671342685370742;
+	//r(1) = 5.691382765531062;
 
 	time.tic();
-	dcoulomb1(F, l, k, r);
+	coulomb1(F, l, k, r);
 	cout << "time/eval = " << time.toc()/N << endl;
-	disp(F, 15);
+	//disp(r, 15);
+	//disp(F, 15);
 }
 
 int main()
@@ -37,7 +43,7 @@ int main()
 	test();
 
 	// systematic tests
-	cout << "test_time()" << endl;
+	/*cout << "test_time()" << endl;
 	test_time();
 	cout << "test_slisc()" << endl;
 	test_slisc();
@@ -61,5 +67,5 @@ int main()
 	test_disp();
 	cout << "test_print()" << endl;
 	test_print();
-	cout << "done testing!" << endl;
+	cout << "done testing!" << endl;*/
 }
