@@ -8,9 +8,10 @@ namespace slisc {
 // Implementations for the simpler operations are listed here.
 struct MParith {
 
-	// Adds the unsigned radix 256 numbers u and v, yielding the unsigned result w.To achieve
+	// Adds the unsigned radix 256 numbers u and v, yielding the unsigned result w. To achieve
 	// the full available accuracy, the array w must be longer, by one element, than the shorter of
 	// the two arrays u and v.
+	// u, v only have one digit before radix point, but w has two. Use "mplsh" to fix.
 	void mpadd(VecUchar_O &w, VecUchar_I &u, VecUchar_I &v) {
 		Int j,n=u.size(),m=v.size(),p=w.size();
 		Int n_min=MIN(n,m),p_min=MIN(n_min,p-1);
@@ -113,7 +114,9 @@ struct MParith {
 		u[n-1]=0;
 	}
 
+	// get the right-most byte of an Uint
 	Uchar lobyte(Uint x) {return (x & 0xff);}
+	// get the second right-most byte of an Uint
 	Uchar hibyte(Uint x) {return ((x >> 8) & 0xff);}
 
 	// The following, more complicated, methods have discussion and implementation below.
@@ -121,12 +124,181 @@ struct MParith {
 	void mpinv(VecUchar_O &u, VecUchar_I &v);
 	void mpdiv(VecUchar_O &q, VecUchar_O &r, VecUchar_I &u, VecUchar_I &v);
 	void mpsqrt(VecUchar_O &w, VecUchar_O &u, VecUchar_I &v);
-	void mp2dfr(VecUchar_IO &a, std::string &s);
-	std::string mppi(const Int np);
+	void mp2str(std::string &s, VecUchar_I &a, Int_I pow = 1);
+	std::string mpPI(Int_I np);
 };
+
+// Multi-precision double type in radix 256
+struct MpDoub
+{
+	VecUchar x; // one digit before radix
+	Long pow; // power
+};
+
+typedef const MpDoub MpDoub_I;
+typedef MpDoub MpDoub_O, MpDoub_IO;
+
+// Multi-precision double type in radix 10
+struct MpDoub10 {
+	VecUchar x; // one digit before radix
+	Long pow; // pow
+};
+
+typedef const MpDoub10 MpDoub10_I;
+typedef MpDoub10 MpDoub10_O, MpDoub10_IO;
+
+// MpDoub multiplication 
+inline void times(MpDoub_O &x, MpDoub_I &x1, MpDoub_I &x2) {
+	MParith a;
+	a.mpmul(x.x, x1.x, x2.x);
+	x.pow = x1.pow + x2.pow + 1;
+}
+
+// short plus for MpDoub
+// add 0-255 to the last digit
+inline void splus(MpDoub_O &x, MpDoub_I &x1, Int_I n)
+{
+	MParith a;
+	Int N = x1.x.size();
+	Int last = a.lobyte(Int(x1.x.end()) + n);
+	x.x.resize(N);
+	a.mpsad(x.x, x.x, n);
+	// no loss
+	if (x.x(0) == 0) {
+		a.mplsh(x.x); x.pow = x1.pow;
+		x.x.end() = last;
+	}
+	// loss one digit and rounded
+	else {
+		x.pow = x1.pow + 1;
+		if (last > 127)
+			x.x.end() += 1; // no need to use splus() again!
+	}
+}
+
+// short multiplication for MpDoub
+// has rounding on the last digit
+inline void stimes(MpDoub_O &x, MpDoub_I &x1, Int_I &n) {
+	Int N = x1.x.size();
+	Int last;
+	MParith a;
+	x.x.resize(N);
+	a.mpsmu(x.x, x1.x, n);
+	last = a.lobyte(Int(x1.x.end())*n);
+	// no loss
+	if (x.x(0) == 0) {
+		a.mplsh(x.x); x.pow = x1.pow;
+		x.x(N - 1) = last;
+	}
+	// loss 1 digit, rounded
+	else {
+		if (last > 127)
+			splus(x, x, 1);
+		x.pow = x1.pow + 1;
+	}
+}
+
+// inverse
+inline void inv(MpDoub_O &x, MpDoub_I &x1) {
+	MParith a;
+	MpDoub temp; temp.x.resize(x1.x);
+	a.mpinv(temp.x, x1.x); x.x = temp.x;
+	x.pow = -x1.pow;
+}
+
+// MpDoub multiplication 
+inline void divide(MpDoub_O &x, MpDoub_I &x1, MpDoub_I &x2) {
+	MParith a;
+	a.mpmul(x.x, x1.x, x2.x);
+	x.pow = x1.pow + x2.pow + 1;
+}
+
+// convert 0.256 to MpDoub with any precision
+// x.x.resize(N)
+inline void MpDoub0256(MpDoub_O &x, Int_I &N)
+{
+	x.pow = -1;
+	x.x.resize(N);
+	Int i, num = 256, temp;
+	for (i = 0; i < N; ++i) {
+		num *= 256;
+		x.x(i) = temp = num/1000;
+		num -= temp*1000;
+	}
+}
+
+inline void MpDoubInv0256(MpDoub_O &x, Int_I &N)
+{
+	x.pow = 0;
+	x.x.resize(N);
+	x.x(0) = 3;	x.x(1) = 232;
+	for (Long i = 2; i < N; ++i)
+		x.x(i) = 0;
+}
+
+// short division for MpDoub, 0 < n <= 255
+void sdivide(MpDoub_O &x, MpDoub_I &x1, Int_I &n) {
+	Int N = x1.x.size();
+	Int rem;
+	MParith a;
+	x.x.resize(N);
+	a.mpsdv(x.x, x1.x, n, rem);
+	if (x.x(0) == 0) {
+		a.mplsh(x.x); x.pow = x1.pow - 1;
+		rem *= 256;
+		x.x(N - 1) = rem / n; rem %= n;
+	}
+	else
+		x.pow = x1.pow;
+
+	// rounding for last digit
+	if (rem*256/n > 127)
+		splus(x, x, 1);
+}
+
+// convert radix 10 number to MpDoub
+inline void createMpDoub(MpDoub_O &x, Long_I &d, Long_I &pow)
+{
+	// TODO
+}
+
+// convert MpDoub to radix 10 number
+// TODO : specify precision
+inline void MpDoub2MpDoub10(MpDoub10_O &x, MpDoub_I &x1) {
+	Long i;
+	Int N = x1.x.size();
+	MParith a;
+	MpDoub x11; // copy of x1, with one more digit
+	x.pow = 0;
+	x11.x.resize(N+1);
+	for (i = 0; i < N; ++i)
+		x11.x(i) = x1.x(i);
+	x11.x.end() = 0;
+	x11.pow = x1.pow;
+
+	if (x1.pow > 0) {
+		while (x11.pow > 0 | x11.x(0) > 9) {
+			sdivide(x11, x11, 10); x.pow += 1;
+		}
+	}
+	else if (x1.pow < 0) {
+		while (x11.pow < 0) {
+			stimes(x11, x11, 10); x.pow -= 1;
+		}
+	}
+
+	std::string str;
+	a.mp2str(str, x11.x);
+	x.x.resize(str.size()-4);
+	x.x(0) = str.at(0) - 48;
+	for (i = 2; i < str.size()-3; ++i)
+		x.x(i-1) = str.at(i) - 48;
+	return;
+}
 
 // Uses fast Fourier transform to multiply the unsigned radix 256 integers u[0..n-1] and v[0..m-1],
 // yielding a product w[0..n + m - 1].
+// u, v have 1 digit before radix point, w has 2
 void MParith::mpmul(VecUchar_O &w, VecUchar_I &u, VecUchar_I &v) {
 	const Doub RX=256.0;
 	Int j,nn=1,n=u.size(),m=v.size(),p=w.size(),n_max=MAX(m,n);
@@ -258,13 +430,14 @@ void MParith::mpsqrt(VecUchar_O &w, VecUchar_O &u, VecUchar_I &v) {
 }
 
 // Converts a radix 256 fraction a[0..n-1] (radix point before a[0]) to a decimal fraction represented
-// as an ASCII string s[0..m - 1], where m is a returned value.The input array a[0..n - 1]
-// is destroyed.NOTE: For simplicity, this routine implements a slow(/ N2) algorithm.Fast
+// as an ASCII string s[0..m - 1], where m is a returned value.
+// NOTE: For simplicity, this routine implements a slow(/ N2) algorithm. Fast
 // (/ N lnN), more complicated, radix conversion algorithms do exist.
-void MParith::mp2dfr(VecUchar_IO &a, std::string &s)
+void MParith::mp2str(std::string &s, VecUchar_I &a0, Int_I pow)
 {
 	const Uint IAZ=48;
 	char buffer[4];
+	VecUchar a; a = a0;
 	Int j,m;
 
 	Int n=a.size();
@@ -281,7 +454,7 @@ void MParith::mp2dfr(VecUchar_IO &a, std::string &s)
 }
 
 // Demonstrate multiple precision routines by calculating and printing the first np bytes of pi.
-std::string MParith::mppi(const Int np) {
+std::string MParith::mpPI(Int_I np) {
 	const Uint MACC=2;
 	Int ir,j,n=np+MACC;
 	Uchar mm;
@@ -317,7 +490,8 @@ std::string MParith::mppi(const Int np) {
 		for (j=1;j < n-1;j++)
 			if (tt[j] != mm) break;
 		if (j == n-1) {
-			mp2dfr(pi,s);
+			mp2str(s,pi);
+			// remove error digits
 			s.erase(Int(2.408*np),s.length());
 			return s;
 		}
