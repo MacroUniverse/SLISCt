@@ -375,7 +375,7 @@ inline void sin0(Vbase<T> &v, const Vbase<T1> &v1)
 {
 	Long i, N{ v1.size() };
 	for (i = 0; i < N; ++i)
-		v(i) = sin(v1(i));
+		v(i) = std::sin(v1(i));
 }
 
 template <class T, class T1>
