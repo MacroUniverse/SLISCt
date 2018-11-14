@@ -3,6 +3,26 @@
 
 namespace slisc {
 
+// Multi-precision double type in radix 256
+struct Mp256
+{
+	VecUchar x; // one digit before radix
+	Long pow; // power
+	Long N; // how many bytes of x used
+	Uchar &operator[](Long_I &ind) { return x[ind]; } // read & write
+	Int operator()(Long_I &ind) { return x[ind]; } // read only
+	// TODO: use only N digits when doing arithmatics
+};
+
+typedef const Mp256 Mp256_I;
+typedef Mp256 Mp256_O, Mp256_IO;
+
+// Multi-precision double type in radix 10
+struct Mp10 {
+	VecUchar x; // one digit before radix
+	Long pow; // pow
+};
+
 // Multiple precision arithmetic operations done on character strings,
 // interpreted as radix 256 numbers with the radix point after the first digit.
 // Implementations for the simpler operations are listed here.
@@ -128,35 +148,19 @@ struct MParith {
 	std::string mpPI(Int_I np);
 };
 
-// Multi-precision double type in radix 256
-struct MpDoub
-{
-	VecUchar x; // one digit before radix
-	Long pow; // power
-};
+typedef const Mp10 Mp10_I;
+typedef Mp10 Mp10_O, Mp10_IO;
 
-typedef const MpDoub MpDoub_I;
-typedef MpDoub MpDoub_O, MpDoub_IO;
-
-// Multi-precision double type in radix 10
-struct MpDoub10 {
-	VecUchar x; // one digit before radix
-	Long pow; // pow
-};
-
-typedef const MpDoub10 MpDoub10_I;
-typedef MpDoub10 MpDoub10_O, MpDoub10_IO;
-
-// MpDoub multiplication 
-inline void times(MpDoub_O &x, MpDoub_I &x1, MpDoub_I &x2) {
+// Mp256 multiplication 
+inline void times(Mp256_O &x, Mp256_I &x1, Mp256_I &x2) {
 	MParith a;
 	a.mpmul(x.x, x1.x, x2.x);
 	x.pow = x1.pow + x2.pow + 1;
 }
 
-// short plus for MpDoub
+// short plus for Mp256
 // add 0-255 to the last digit
-inline void splus(MpDoub_O &x, MpDoub_I &x1, Int_I n)
+inline void splus(Mp256_O &x, Mp256_I &x1, Int_I n)
 {
 	MParith a;
 	Int N = x1.x.size();
@@ -176,9 +180,9 @@ inline void splus(MpDoub_O &x, MpDoub_I &x1, Int_I n)
 	}
 }
 
-// short multiplication for MpDoub
+// short multiplication for Mp256
 // has rounding on the last digit
-inline void stimes(MpDoub_O &x, MpDoub_I &x1, Int_I &n) {
+inline void stimes(Mp256_O &x, Mp256_I &x1, Int_I &n) {
 	Int N = x1.x.size();
 	Int last;
 	MParith a;
@@ -199,23 +203,23 @@ inline void stimes(MpDoub_O &x, MpDoub_I &x1, Int_I &n) {
 }
 
 // inverse
-inline void inv(MpDoub_O &x, MpDoub_I &x1) {
+inline void inv(Mp256_O &x, Mp256_I &x1) {
 	MParith a;
-	MpDoub temp; temp.x.resize(x1.x);
+	Mp256 temp; temp.x.resize(x1.x);
 	a.mpinv(temp.x, x1.x); x.x = temp.x;
 	x.pow = -x1.pow;
 }
 
-// MpDoub multiplication 
-inline void divide(MpDoub_O &x, MpDoub_I &x1, MpDoub_I &x2) {
+// Mp256 multiplication 
+inline void divide(Mp256_O &x, Mp256_I &x1, Mp256_I &x2) {
 	MParith a;
 	a.mpmul(x.x, x1.x, x2.x);
 	x.pow = x1.pow + x2.pow + 1;
 }
 
-// convert 0.256 to MpDoub with any precision
+// convert 0.256 to Mp256 with any precision
 // x.x.resize(N)
-inline void MpDoub0256(MpDoub_O &x, Int_I &N)
+inline void Mp2560256(Mp256_O &x, Int_I &N)
 {
 	x.pow = -1;
 	x.x.resize(N);
@@ -227,7 +231,7 @@ inline void MpDoub0256(MpDoub_O &x, Int_I &N)
 	}
 }
 
-inline void MpDoubInv0256(MpDoub_O &x, Int_I &N)
+inline void Mp256Inv0256(Mp256_O &x, Int_I &N)
 {
 	x.pow = 0;
 	x.x.resize(N);
@@ -236,8 +240,8 @@ inline void MpDoubInv0256(MpDoub_O &x, Int_I &N)
 		x.x(i) = 0;
 }
 
-// short division for MpDoub, 0 < n <= 255
-void sdivide(MpDoub_O &x, MpDoub_I &x1, Int_I &n) {
+// short division for Mp256, 0 < n <= 255
+void sdivide(Mp256_O &x, Mp256_I &x1, Int_I &n) {
 	Int N = x1.x.size();
 	Int rem;
 	MParith a;
@@ -256,19 +260,19 @@ void sdivide(MpDoub_O &x, MpDoub_I &x1, Int_I &n) {
 		splus(x, x, 1);
 }
 
-// convert radix 10 number to MpDoub
-inline void createMpDoub(MpDoub_O &x, Long_I &d, Long_I &pow)
+// convert radix 10 number to Mp256
+inline void createMp256(Mp256_O &x, Long_I &d, Long_I &pow)
 {
 	// TODO
 }
 
-// convert MpDoub to radix 10 number
+// convert Mp256 to radix 10 number
 // TODO : specify precision
-inline void MpDoub2MpDoub10(MpDoub10_O &x, MpDoub_I &x1) {
+inline void Mp2562Mp10(Mp10_O &x, Mp256_I &x1) {
 	Long i;
 	Int N = x1.x.size();
 	MParith a;
-	MpDoub x11; // copy of x1, with one more digit
+	Mp256 x11; // copy of x1, with one more digit
 	x.pow = 0;
 	x11.x.resize(N+1);
 	for (i = 0; i < N; ++i)
@@ -293,8 +297,17 @@ inline void MpDoub2MpDoub10(MpDoub10_O &x, MpDoub_I &x1) {
 	x.x(0) = str.at(0) - 48;
 	for (i = 2; i < str.size()-3; ++i)
 		x.x(i-1) = str.at(i) - 48;
-	return;
 }
+
+// convert from Mp10 to Mp256
+// N is precision
+inline void Mp102Mp256(Mp256_O &x, Mp10_I &x1, Long_I &N)
+{
+	x.x.resize(N);
+	x.x(0) = x1.x(0);
+	// TODO
+}
+
 
 // Uses fast Fourier transform to multiply the unsigned radix 256 integers u[0..n-1] and v[0..m-1],
 // yielding a product w[0..n + m - 1].
