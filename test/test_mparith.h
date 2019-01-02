@@ -10,12 +10,12 @@ inline void test_mparith()
 	using namespace slisc;
 	MParith a;
 
-	MpDoub x1, x2;
+	/*MpDoub x1, x2;
 	x1.pow = 2;
 	x1.x.resize(3); x1.x(0) = 10, x1.x(1) = 1, x1.x(2) = 100;
 
 	MpDoub10 x;
-	MpDoub2MpDoub10(x, x1);
+	MpDoub2MpDoub10(x, x1);*/
 
 	//std::string str = a.mpPI(10);
 	//cout << str << endl;

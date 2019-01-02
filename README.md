@@ -210,4 +210,5 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * See MatFile project for saving and reading "Vector" or "Matrix" to/from Matlab data file ".mat", or text based file ".matt".
 
 ## TODO
-I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
+* I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
+* replace `error()` macro with `throw()`

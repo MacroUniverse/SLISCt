@@ -75,7 +75,7 @@ const Doub E = 2.71828182845904524;
 const Comp I(0., 1.);
 
 // report error and pause execution
-#define error(str) {std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();}
+#define error(str) do{std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();} while(0)
 
 template<class T>
 inline void memset(T *dest, const T val, Long_I n)
