@@ -217,3 +217,5 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * incorporate "arb" library for evaluation of some special functions, and for multi-precision arithmetic (does not work for windows yet)
 * use BLAS/LAPACK to enhance performance (optionally), and time different implementations (mine, Eigen, MKL)
 * implement column major matrix classes
+* Add the "a(i,j)" format of matrix indexing for row majored matrix (and maybe consider abandoning "a[i][j]" format later).
+* Do asearch on why "a[i][j]" is bad. Known reasons: The "a[i][j]" format does not allow bound checking, requires more memory.

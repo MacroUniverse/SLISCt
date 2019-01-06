@@ -279,10 +279,10 @@ if (i<0 || i>=m_N)
 template <class T>
 class Matrix : public Vbase<T>
 {
+private:
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;
-private:
 	Long m_Nr, m_Nc;
 	T **m_v;
 	inline T ** v_alloc();
@@ -414,15 +414,120 @@ template <class T>
 Matrix<T>::~Matrix()
 { if(m_v) delete m_v; }
 
-// 3D Matrix Class
+// Column major Matrix Class
 
 template <class T>
-class Mat3d : public Vbase<T>
+class Cmat : public Vbase<T>
 {
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;
 private:
+	Long m_Nr, m_Nc;
+public:
+	using Base::operator();
+	Cmat();
+	Cmat(Long_I Nr, Long_I Nc);
+	Cmat(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
+	Cmat(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
+	Cmat(const Cmat &rhs);		// Copy constructor
+	inline Cmat & operator=(const Cmat &rhs);	// copy assignment
+	inline Cmat & operator=(const T &rhs);
+	inline void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
+	inline T& operator()(Long_I i, Long_I j);	//subscripting: pointer to row i
+	inline const T& operator()(Long_I i, Long_I j) const;
+	inline Long nrows() const;
+	inline Long ncols() const;
+	inline void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
+	template <class T1>
+	inline void resize(const Cmat<T1> &a);
+	~Cmat() {};
+};
+
+template <class T>
+Cmat<T>::Cmat() : m_Nr(0), m_Nc(0) {}
+
+template <class T>
+Cmat<T>::Cmat(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}
+
+template <class T>
+Cmat<T>::Cmat(Long_I Nr, Long_I Nc, const T &s) : Cmat(Nr, Nc)
+{ memset(m_p, s, m_N); }
+
+template <class T>
+Cmat<T>::Cmat(Long_I Nr, Long_I Nc, const T *ptr) : Cmat(Nr, Nc)
+{ memcpy(m_p, ptr, m_N*sizeof(T)); }
+
+template <class T>
+Cmat<T>::Cmat(const Cmat<T> &rhs)
+{
+	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+}
+
+template <class T>
+inline Cmat<T> & Cmat<T>::operator=(const Cmat<T> &rhs)
+{
+	if (this == &rhs) error("self assignment is forbidden!");
+	resize(rhs.m_Nr, rhs.m_Nc);
+	memcpy(m_p, rhs.m_p, m_N*sizeof(T));
+	return *this;
+}
+
+template <class T>
+inline Cmat<T> & Cmat<T>::operator=(const T &rhs)
+{
+	if (m_N) memset(m_p, rhs, m_N);
+	return *this;
+}
+
+template <class T>
+inline void Cmat<T>::operator<<(Cmat<T> &rhs)
+{
+	if (this == &rhs) error("self move is forbidden!");
+	Base::move(rhs);
+	m_Nr = rhs.m_Nr; m_Nc = rhs.m_Nc;
+	rhs.m_Nr = rhs.m_Nc = 0;
+}
+
+template <class T>
+inline T& Cmat<T>::operator()(Long_I i, Long_I j)
+{ return m_p[i+m_Nr*j]; }
+
+template <class T>
+inline const T& Cmat<T>::operator()(Long_I i, Long_I j) const
+{ return m_p[i+m_Nr*j]; }
+
+template <class T>
+inline Long Cmat<T>::nrows() const
+{ return m_Nr; }
+
+template <class T>
+inline Long Cmat<T>::ncols() const
+{ return m_Nc; }
+
+template <class T>
+inline void Cmat<T>::resize(Long_I Nr, Long_I Nc)
+{
+	if (Nr != m_Nr || Nc != m_Nc) {
+		Base::resize(Nr*Nc);
+		m_Nr = Nr; m_Nc = Nc;
+	}
+}
+
+template <class T>
+template <class T1>
+inline void Cmat<T>::resize(const Cmat<T1> &a)
+{ resize(a.nrows(), a.ncols()); }
+
+// 3D Matrix Class
+
+template <class T>
+class Mat3d : public Vbase<T>
+{
+private:
+	typedef Vbase<T> Base;
+	using Base::m_p;
+	using Base::m_N;
 	Long m_N1;
 	Long m_N2;
 	Long m_N3;
@@ -627,8 +732,35 @@ typedef Matrix<Doub> MatDoub, MatDoub_O, MatDoub_IO;
 typedef const Matrix<Comp> MatComp_I;
 typedef Matrix<Comp> MatComp, MatComp_O, MatComp_IO;
 
-typedef const Matrix<Bool> MatBool_I;
-typedef Matrix<Bool> MatBool, MatBool_O, MatBool_IO;
+typedef const Cmat<Bool> CmatBool_I;
+typedef Cmat<Bool> CmatBool, CmatBool_O, CmatBool_IO;
+
+typedef const Cmat<Int> CmatInt_I;
+typedef Cmat<Int> CmatInt, CmatInt_O, CmatInt_IO;
+
+typedef const Cmat<Uint> CmatUint_I;
+typedef Cmat<Uint> CmatUint, CmatUint_O, CmatUint_IO;
+
+typedef const Cmat<Llong> CmatLlong_I;
+typedef Cmat<Llong> CmatLlong, CmatLlong_O, CmatLlong_IO;
+
+typedef const Cmat<Ullong> CmatUllong_I;
+typedef Cmat<Ullong> CmatUllong, CmatUllong_O, CmatUllong_IO;
+
+typedef const Cmat<Char> CmatChar_I;
+typedef Cmat<Char> CmatChar, CmatChar_O, CmatChar_IO;
+
+typedef const Cmat<Uchar> CmatUchar_I;
+typedef Cmat<Uchar> CmatUchar, CmatUchar_O, CmatUchar_IO;
+
+typedef const Cmat<Doub> CmatDoub_I;
+typedef Cmat<Doub> CmatDoub, CmatDoub_O, CmatDoub_IO;
+
+typedef const Cmat<Comp> CmatComp_I;
+typedef Cmat<Comp> CmatComp, CmatComp_O, CmatComp_IO;
+
+typedef const Cmat<Bool> CmatBool_I;
+typedef Cmat<Bool> CmatBool, CmatBool_O, CmatBool_IO;
 
 typedef const Mat3d<Doub> Mat3Doub_I;
 typedef Mat3d<Doub> Mat3Doub, Mat3Doub_O, Mat3Doub_IO;
