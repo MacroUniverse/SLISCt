@@ -23,7 +23,7 @@ inline void mul(MatDoub_O &v, MatDoub_I &v1, MatDoub_I &v2)
 {
 	using Eigen::Map;
 #ifdef _CHECKBOUNDS_
-	if (v1.ncols() != v2.nrows()) error("wrong size!")
+	if (v1.ncols() != v2.nrows()) error("wrong size!");
 #endif
 	v.resize(v1);
 	Map<const RMatrixXd> map_v1(v1.ptr(), v1.nrows(), v1.ncols()), map_v2(v2.ptr(), v2.nrows(), v2.ncols());
@@ -35,7 +35,7 @@ inline void mul(MatComp_O &v, MatComp_I &v1, MatComp_I &v2)
 {
 	using Eigen::Map;
 #ifdef _CHECKBOUNDS_
-	if (v1.ncols() != v2.nrows()) error("wrong size!")
+	if (v1.ncols() != v2.nrows()) error("wrong size!");
 #endif
 	v.resize(v1);
 	Map<const RMatrixXcd> map_v1(v1.ptr(), v1.nrows(), v1.ncols()), map_v2(v2.ptr(), v2.nrows(), v2.ncols());

@@ -97,15 +97,15 @@ template <class T>
 class Vbase
 {
 protected:
-	Long N; // number of elements
-	T *p; // pointer to the first element
+	Long m_N; // number of elements
+	T *m_p; // pointer to the first element
 	inline void move(Vbase &rhs);
 public:
-	Vbase() : N(0), p(nullptr) {}
-	explicit Vbase(Long_I n) : N(n), p(new T[n]) {}
-	T* ptr() { return p; } // get pointer
-	inline const T* ptr() const { return p; }
-	inline Long_I size() const { return N; }
+	Vbase() : m_N(0), m_p(nullptr) {}
+	explicit Vbase(Long_I n) : m_N(n), m_p(new T[n]) {}
+	T* ptr() { return m_p; } // get pointer
+	inline const T* ptr() const { return m_p; }
+	inline Long_I size() const { return m_N; }
 	inline void resize(Long_I n);
 	inline T & operator()(Long_I i);
 	inline const T & operator()(Long_I i) const;
@@ -113,85 +113,85 @@ public:
 	inline const T& end() const;
 	inline T& end(Long_I i);
 	inline const T& end(Long_I i) const;
-	~Vbase() { if (p) delete p; }
+	~Vbase() { if (m_p) delete m_p; }
 };
 
 template <class T>
 inline void Vbase<T>::resize(Long_I n)
 {
-	if (n != N) {
-		if (p != nullptr) delete[] p;
-		N = n;
-		p = n > 0 ? new T[n] : nullptr;
+	if (n != m_N) {
+		if (m_p != nullptr) delete[] m_p;
+		m_N = n;
+		m_p = n > 0 ? new T[n] : nullptr;
 	}
 }
 
 template <class T>
 inline void Vbase<T>::move(Vbase &rhs)
 {
-	if (p != nullptr) delete[] p;
-	N = rhs.N; rhs.N = 0;
-	p = rhs.p; rhs.p = nullptr;
+	if (m_p != nullptr) delete[] m_p;
+	m_N = rhs.m_N; rhs.m_N = 0;
+	m_p = rhs.m_p; rhs.m_p = nullptr;
 }
 
 template <class T>
 inline T & Vbase<T>::operator()(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=N)
+if (i<0 || i>=m_N)
 	error("Vbase subscript out of bounds");
 #endif
-	return p[i];
+	return m_p[i];
 }
 
 template <class T>
 inline const T & Vbase<T>::operator()(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i>=N)
+	if (i<0 || i>=m_N)
 		error("Vbase subscript out of bounds");
 #endif
-	return p[i];
+	return m_p[i];
 }
 
 template <class T>
 inline T & Vbase<T>::end()
 {
 #ifdef _CHECKBOUNDS_
-	if (N < 1)
+	if (m_N < 1)
 		error("Using end() for empty object");
 #endif
-	return p[N-1];
+	return m_p[m_N-1];
 }
 
 template <class T>
 inline const T & Vbase<T>::end() const
 {
 #ifdef _CHECKBOUNDS_
-	if (N < 1)
+	if (m_N < 1)
 		error("Using end() for empty object");
 #endif
-	return p[N-1];
+	return m_p[m_N-1];
 }
 
 template <class T>
 inline T& Vbase<T>::end(Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-	if (i <= 0 || i > N)
+	if (i <= 0 || i > m_N)
 		error("index out of bound");
 #endif
-	return p[N-i];
+	return m_p[m_N-i];
 }
 
 template <class T>
 inline const T& Vbase<T>::end(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-	if (i <= 0 || i > N)
+	if (i <= 0 || i > m_N)
 		error("index out of bound");
 #endif
-	return p[N-i];
+	return m_p[m_N-i];
 }
 
 // Vector Class
@@ -201,14 +201,14 @@ class Vector : public Vbase<T>
 {
 public:
 	typedef Vbase<T> Base;
-	using Base::p;
-	using Base::N;
+	using Base::m_p;
+	using Base::m_N;
 	Vector() {}
 	explicit Vector(Long_I n): Base(n) {}
 	Vector(Long_I n, const T &a) //initialize to constant value
-	: Vector(n) { memset(p,a,n); }
+	: Vector(n) { memset(m_p,a,n); }
 	Vector(Long_I n, const T *a) // Initialize to array
-	: Vector(n) { memcpy(p, a, n*sizeof(T)); }
+	: Vector(n) { memcpy(m_p, a, n*sizeof(T)); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
 	inline Vector & operator=(const Vector &rhs);	// copy assignment
 	inline Vector & operator=(const T &rhs);  // assign to constant value
@@ -236,14 +236,14 @@ inline Vector<T> & Vector<T>::operator=(const Vector<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
 	resize(rhs);
-	memcpy(p, rhs.p, N*sizeof(T));
+	memcpy(m_p, rhs.m_p, m_N*sizeof(T));
 	return *this;
 }
 
 template <class T>
 inline Vector<T>& Vector<T>::operator=(const T &rhs)
 {
-	if (N) memset(p, rhs, N);
+	if (m_N) memset(m_p, rhs, m_N);
 	return *this;
 }
 
@@ -258,20 +258,20 @@ template <class T>
 inline T & Vector<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=N)
+if (i<0 || i>=m_N)
 	error("Vector subscript out of bounds");
 #endif
-	return p[i];
+	return m_p[i];
 }
 
 template <class T>
 inline const T & Vector<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-if (i<0 || i>=N)
+if (i<0 || i>=m_N)
 	error("Vector subscript out of bounds");
 #endif
-	return p[i];
+	return m_p[i];
 }
 
 // Matrix Class
@@ -280,11 +280,11 @@ template <class T>
 class Matrix : public Vbase<T>
 {
 	typedef Vbase<T> Base;
-	using Base::p;
-	using Base::N;
+	using Base::m_p;
+	using Base::m_N;
 private:
-	Long nn, mm;
-	T **v;
+	Long m_Nr, m_Nc;
+	T **m_v;
 	inline T ** v_alloc();
 public:
 	Matrix();
@@ -312,27 +312,27 @@ public:
 template <class T>
 inline T** Matrix<T>::v_alloc()
 {
-	if (N == 0) return nullptr;
-	T **v = new T*[nn];
-	v[0] = p;
-	for (Long i = 1; i<nn; i++)
-		v[i] = v[i-1] + mm;
+	if (m_N == 0) return nullptr;
+	T **v = new T*[m_Nr];
+	v[0] = m_p;
+	for (Long i = 1; i<m_Nr; i++)
+		v[i] = v[i-1] + m_Nc;
 	return v;
 }
 
 template <class T>
-Matrix<T>::Matrix() : nn(0), mm(0), v(nullptr) {}
+Matrix<T>::Matrix() : m_Nr(0), m_Nc(0), m_v(nullptr) {}
 
 template <class T>
-Matrix<T>::Matrix(Long_I n, Long_I m) : Base(n*m), nn(n), mm(m), v(v_alloc()) {}
+Matrix<T>::Matrix(Long_I n, Long_I m) : Base(n*m), m_Nr(n), m_Nc(m), m_v(v_alloc()) {}
 
 template <class T>
 Matrix<T>::Matrix(Long_I n, Long_I m, const T &s) : Matrix(n, m)
-{ memset(p, s, N); }
+{ memset(m_p, s, m_N); }
 
 template <class T>
 Matrix<T>::Matrix(Long_I n, Long_I m, const T *ptr) : Matrix(n, m)
-{ memcpy(p, ptr, N*sizeof(T)); }
+{ memcpy(m_p, ptr, m_N*sizeof(T)); }
 
 template <class T>
 Matrix<T>::Matrix(const Matrix<T> &rhs)
@@ -344,15 +344,15 @@ template <class T>
 inline Matrix<T> & Matrix<T>::operator=(const Matrix<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
-	resize(rhs.nn, rhs.mm);
-	memcpy(p, rhs.p, N*sizeof(T));
+	resize(rhs.m_Nr, rhs.m_Nc);
+	memcpy(m_p, rhs.m_p, m_N*sizeof(T));
 	return *this;
 }
 
 template <class T>
 inline Matrix<T> & Matrix<T>::operator=(const T &rhs)
 {
-	if (N) memset(p, rhs, N);
+	if (m_N) memset(m_p, rhs, m_N);
 	return *this;
 }
 
@@ -361,47 +361,47 @@ inline void Matrix<T>::operator<<(Matrix<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
-	if (v) delete v;
-	nn = rhs.nn; mm = rhs.mm; v = rhs.v;
-	rhs.nn = rhs.mm = 0; rhs.v = nullptr;;
+	if (m_v) delete m_v;
+	m_Nr = rhs.m_Nr; m_Nc = rhs.m_Nc; m_v = rhs.m_v;
+	rhs.m_Nr = rhs.m_Nc = 0; rhs.m_v = nullptr;
 }
 
 template <class T>
 inline T* Matrix<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i>=nn)
+	if (i<0 || i>= m_Nr)
 		error("Matrix subscript out of bounds");
 #endif
-	return v[i];
+	return m_v[i];
 }
 
 template <class T>
 inline const T* Matrix<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i>=nn)
+	if (i<0 || i>=m_Nr)
 		error("Matrix subscript out of bounds");
 #endif
-	return v[i];
+	return m_v[i];
 }
 
 template <class T>
 inline Long Matrix<T>::nrows() const
-{ return nn; }
+{ return m_Nr; }
 
 template <class T>
 inline Long Matrix<T>::ncols() const
-{ return mm; }
+{ return m_Nc; }
 
 template <class T>
 inline void Matrix<T>::resize(Long_I n, Long_I m)
 {
-	if (n != nn || m != mm) {
+	if (n != m_Nr || m != m_Nc) {
 		Base::resize(n*m);
-		nn = n; mm = m;
-		if (v) delete v;
-		v = v_alloc();
+		m_Nr = n; m_Nc = m;
+		if (m_v) delete m_v;
+		m_v = v_alloc();
 	}
 }
 
@@ -412,7 +412,7 @@ inline void Matrix<T>::resize(const Matrix<T1> &a)
 
 template <class T>
 Matrix<T>::~Matrix()
-{ if(v) delete v; }
+{ if(m_v) delete m_v; }
 
 // 3D Matrix Class
 
@@ -420,13 +420,13 @@ template <class T>
 class Mat3d : public Vbase<T>
 {
 	typedef Vbase<T> Base;
-	using Base::p;
-	using Base::N;
+	using Base::m_p;
+	using Base::m_N;
 private:
-	Long nn;
-	Long mm;
-	Long kk;
-	T ***v;
+	Long m_N1;
+	Long m_N2;
+	Long m_N3;
+	T ***m_v;
 	inline T *** v_alloc();
 	inline void v_free();
 public:
@@ -455,36 +455,36 @@ public:
 template <class T>
 inline T *** Mat3d<T>::v_alloc()
 {
-	if (N == 0) return nullptr;
+	if (m_N == 0) return nullptr;
 	Long i;
-	Long nnmm = nn*mm;
-	T **v0 = new T*[nnmm]; v0[0] = p;
+	Long nnmm = m_N1*m_N2;
+	T **v0 = new T*[nnmm]; v0[0] = m_p;
 	for (i = 1; i < nnmm; ++i)
-		v0[i] = v0[i - 1] + kk;
-	T ***v = new T**[nn]; v[0] = v0;
-	for(i = 1; i < nn; ++i)
-		v[i] = v[i-1] + mm;
+		v0[i] = v0[i - 1] + m_N3;
+	T ***v = new T**[m_N1]; v[0] = v0;
+	for(i = 1; i < m_N1; ++i)
+		v[i] = v[i-1] + m_N2;
 	return v;
 }
 
 template <class T>
 inline void Mat3d<T>::v_free()
 {
-	if (v != nullptr) {
-		delete v[0]; delete v;
+	if (m_v != nullptr) {
+		delete m_v[0]; delete m_v;
 	}
 }
 
 template <class T>
-Mat3d<T>::Mat3d(): nn(0), mm(0), kk(0), v(nullptr) {}
+Mat3d<T>::Mat3d(): m_N1(0), m_N2(0), m_N3(0), m_v(nullptr) {}
 
 template <class T>
-Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k) : Base(n*m*k), nn(n), mm(m), kk(k),
-	v(v_alloc()) {}
+Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k) : Base(n*m*k), m_N1(n), m_N2(m), m_N3(k),
+	m_v(v_alloc()) {}
 
 template <class T>
 Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k, const T &s) : Mat3d(n, m, k)
-{ memset(p, s, n*m*k); }
+{ memset(m_p, s, n*m*k); }
 
 template <class T>
 Mat3d<T>::Mat3d(const Mat3d<T> &rhs)
@@ -496,15 +496,15 @@ template <class T>
 inline Mat3d<T> &Mat3d<T>::operator=(const Mat3d<T> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
-	resize(rhs.nn, rhs.mm, rhs.kk);
-	memcpy(p, rhs.p, N*sizeof(T));
+	resize(rhs.m_N1, rhs.m_N2, rhs.m_N3);
+	memcpy(m_p, rhs.m_p, m_N*sizeof(T));
 	return *this;
 }
 
 template <class T>
 inline Mat3d<T> & Mat3d<T>::operator=(const T &rhs)
 {
-	if (N) memset(p, rhs, N);
+	if (m_N) memset(m_p, rhs, m_N);
 	return *this;
 }
 
@@ -513,19 +513,19 @@ inline void Mat3d<T>::operator<<(Mat3d<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
-	nn = rhs.nn; mm = rhs.mm; kk = rhs.kk;
-	v_free(); v = rhs.v;
-	rhs.nn = rhs.mm = rhs.kk = 0;
-	rhs.v = nullptr;
+	m_N1 = rhs.m_N1; m_N2 = rhs.m_N2; m_N3 = rhs.m_N3;
+	v_free(); m_v = rhs.m_v;
+	rhs.m_N1 = rhs.m_N2 = rhs.m_N3 = 0;
+	rhs.m_v = nullptr;
 }
 
 template <class T>
 inline void Mat3d<T>::resize(Long_I n, Long_I m, Long_I k)
 {
-	if (n != nn || m != mm || k != kk) {
+	if (n != m_N1 || m != m_N2 || k != m_N3) {
 		Base::resize(n*m*k);
-		nn = n; mm = m; kk = k;
-		v_free(); v = v_alloc();
+		m_N1 = n; m_N2 = m; m_N3 = k;
+		v_free(); m_v = v_alloc();
 	}
 }
 
@@ -537,30 +537,30 @@ template <class T>
 inline T*const * Mat3d<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i >= nn)
+	if (i<0 || i>= m_N1)
 		error("Matrix subscript out of bounds");
 #endif
-	return v[i];
+	return m_v[i];
 }
 
 template <class T>
 inline const T*const * Mat3d<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i >= nn)
+	if (i<0 || i >= m_N1)
 		error("Matrix subscript out of bounds");
 #endif
-	return v[i];
+	return m_v[i];
 }
 
 template <class T>
-inline Long Mat3d<T>::dim1() const { return nn; }
+inline Long Mat3d<T>::dim1() const { return m_N1; }
 
 template <class T>
-inline Long Mat3d<T>::dim2() const { return mm; }
+inline Long Mat3d<T>::dim2() const { return m_N2; }
 
 template <class T>
-inline Long Mat3d<T>::dim3() const { return kk; }
+inline Long Mat3d<T>::dim3() const { return m_N3; }
 
 template <class T>
 Mat3d<T>::~Mat3d() { v_free(); }

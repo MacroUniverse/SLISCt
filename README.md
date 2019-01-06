@@ -47,6 +47,8 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
 
+* Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
+
 ## "slisc.h"
 "slisc.h" includes some constants, type alias, and vector/matrix class template definitions.
 
@@ -212,3 +214,6 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 ## TODO
 * I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
 * replace `error()` macro with `throw()`
+* incorporate "arb" library for evaluation of some special functions, and for multi-precision arithmetic (does not work for windows yet)
+* use BLAS/LAPACK to enhance performance (optionally), and time different implementations (mine, Eigen, MKL)
+* implement column major matrix classes
