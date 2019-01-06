@@ -102,11 +102,11 @@ protected:
 	inline void move(Vbase &rhs);
 public:
 	Vbase() : m_N(0), m_p(nullptr) {}
-	explicit Vbase(Long_I n) : m_N(n), m_p(new T[n]) {}
+	explicit Vbase(Long_I N) : m_N(N), m_p(new T[N]) {}
 	T* ptr() { return m_p; } // get pointer
 	inline const T* ptr() const { return m_p; }
 	inline Long_I size() const { return m_N; }
-	inline void resize(Long_I n);
+	inline void resize(Long_I N);
 	inline T & operator()(Long_I i);
 	inline const T & operator()(Long_I i) const;
 	inline T& end(); // last element
@@ -117,12 +117,12 @@ public:
 };
 
 template <class T>
-inline void Vbase<T>::resize(Long_I n)
+inline void Vbase<T>::resize(Long_I N)
 {
-	if (n != m_N) {
+	if (N != m_N) {
 		if (m_p != nullptr) delete[] m_p;
-		m_N = n;
-		m_p = n > 0 ? new T[n] : nullptr;
+		m_N = N;
+		m_p = N > 0 ? new T[N] : nullptr;
 	}
 }
 
@@ -204,11 +204,11 @@ public:
 	using Base::m_p;
 	using Base::m_N;
 	Vector() {}
-	explicit Vector(Long_I n): Base(n) {}
-	Vector(Long_I n, const T &a) //initialize to constant value
-	: Vector(n) { memset(m_p,a,n); }
-	Vector(Long_I n, const T *a) // Initialize to array
-	: Vector(n) { memcpy(m_p, a, n*sizeof(T)); }
+	explicit Vector(Long_I N): Base(N) {}
+	Vector(Long_I N, const T &a) //initialize to constant value
+	: Vector(N) { memset(m_p,a,N); }
+	Vector(Long_I N, const T *a) // Initialize to array
+	: Vector(N) { memcpy(m_p, a, N*sizeof(T)); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
 	inline Vector & operator=(const Vector &rhs);	// copy assignment
 	inline Vector & operator=(const T &rhs);  // assign to constant value
@@ -219,7 +219,7 @@ public:
 	inline void operator<<(Vector &rhs); // move data and rhs.resize(0)
 	inline T & operator[](Long_I i);	//i'th element
 	inline const T & operator[](Long_I i) const;
-	inline void resize(Long_I n) {Base::resize(n);} // resize (contents not preserved)
+	inline void resize(Long_I N) {Base::resize(N);} // resize (contents not preserved)
 	template <class T1>
 	inline void resize(const Vector<T1> &v) {resize(v.size());}
 };
@@ -288,9 +288,9 @@ private:
 	inline T ** v_alloc();
 public:
 	Matrix();
-	Matrix(Long_I n, Long_I m);
-	Matrix(Long_I n, Long_I m, const T &a);	//Initialize to constant
-	Matrix(Long_I n, Long_I m, const T *a);	// Initialize to array
+	Matrix(Long_I Nr, Long_I Nc);
+	Matrix(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
+	Matrix(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Matrix(const Matrix &rhs);		// Copy constructor
 	inline Matrix & operator=(const Matrix &rhs);	// copy assignment
 	inline Matrix & operator=(const T &rhs);
@@ -303,7 +303,7 @@ public:
 	inline const T* operator[](Long_I i) const;
 	inline Long nrows() const;
 	inline Long ncols() const;
-	inline void resize(Long_I n, Long_I m); // resize (contents not preserved)
+	inline void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
 	template <class T1>
 	inline void resize(const Matrix<T1> &a);
 	~Matrix();
@@ -324,14 +324,14 @@ template <class T>
 Matrix<T>::Matrix() : m_Nr(0), m_Nc(0), m_v(nullptr) {}
 
 template <class T>
-Matrix<T>::Matrix(Long_I n, Long_I m) : Base(n*m), m_Nr(n), m_Nc(m), m_v(v_alloc()) {}
+Matrix<T>::Matrix(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc), m_v(v_alloc()) {}
 
 template <class T>
-Matrix<T>::Matrix(Long_I n, Long_I m, const T &s) : Matrix(n, m)
+Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T &s) : Matrix(Nr, Nc)
 { memset(m_p, s, m_N); }
 
 template <class T>
-Matrix<T>::Matrix(Long_I n, Long_I m, const T *ptr) : Matrix(n, m)
+Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T *ptr) : Matrix(Nr, Nc)
 { memcpy(m_p, ptr, m_N*sizeof(T)); }
 
 template <class T>
@@ -395,11 +395,11 @@ inline Long Matrix<T>::ncols() const
 { return m_Nc; }
 
 template <class T>
-inline void Matrix<T>::resize(Long_I n, Long_I m)
+inline void Matrix<T>::resize(Long_I Nr, Long_I Nc)
 {
-	if (n != m_Nr || m != m_Nc) {
-		Base::resize(n*m);
-		m_Nr = n; m_Nc = m;
+	if (Nr != m_Nr || Nc != m_Nc) {
+		Base::resize(Nr*Nc);
+		m_Nr = Nr; m_Nc = Nc;
 		if (m_v) delete m_v;
 		m_v = v_alloc();
 	}
@@ -431,8 +431,8 @@ private:
 	inline void v_free();
 public:
 	Mat3d();
-	Mat3d(Long_I n, Long_I m, Long_I k);
-	Mat3d(Long_I n, Long_I m, Long_I k, const T &a);
+	Mat3d(Long_I N1, Long_I N2, Long_I N3);
+	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
 	inline Mat3d & operator=(const Mat3d &rhs);	// copy assignment
 	inline Mat3d & operator=(const T &rhs);
@@ -441,7 +441,7 @@ public:
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(Mat3d &rhs); // move data and rhs.resize(0, 0, 0)
-	inline void resize(Long_I n, Long_I m, Long_I k);
+	inline void resize(Long_I N1, Long_I N2, Long_I N3);
 	template <class T1>
 	inline void resize(const Mat3d<T1> &a);
 	inline T*const * operator[](Long_I i);	//subscripting: pointer to row i
@@ -479,12 +479,12 @@ template <class T>
 Mat3d<T>::Mat3d(): m_N1(0), m_N2(0), m_N3(0), m_v(nullptr) {}
 
 template <class T>
-Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k) : Base(n*m*k), m_N1(n), m_N2(m), m_N3(k),
+Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N2(N2), m_N3(N3),
 	m_v(v_alloc()) {}
 
 template <class T>
-Mat3d<T>::Mat3d(Long_I n, Long_I m, Long_I k, const T &s) : Mat3d(n, m, k)
-{ memset(m_p, s, n*m*k); }
+Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &s) : Mat3d(N1, N2, N3)
+{ memset(m_p, s, N1*N2*N3); }
 
 template <class T>
 Mat3d<T>::Mat3d(const Mat3d<T> &rhs)
@@ -520,11 +520,11 @@ inline void Mat3d<T>::operator<<(Mat3d<T> &rhs)
 }
 
 template <class T>
-inline void Mat3d<T>::resize(Long_I n, Long_I m, Long_I k)
+inline void Mat3d<T>::resize(Long_I N1, Long_I N2, Long_I N3)
 {
-	if (n != m_N1 || m != m_N2 || k != m_N3) {
-		Base::resize(n*m*k);
-		m_N1 = n; m_N2 = m; m_N3 = k;
+	if (N1 != m_N1 || N2 != m_N2 || N3 != m_N3) {
+		Base::resize(N1*N2*N3);
+		m_N1 = N1; m_N2 = N2; m_N3 = N3;
 		v_free(); m_v = v_alloc();
 	}
 }
