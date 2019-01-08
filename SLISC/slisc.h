@@ -419,10 +419,10 @@ Matrix<T>::~Matrix()
 template <class T>
 class Cmat : public Vbase<T>
 {
+private:
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;
-private:
 	Long m_Nr, m_Nc;
 public:
 	using Base::operator();
@@ -434,7 +434,7 @@ public:
 	inline Cmat & operator=(const Cmat &rhs);	// copy assignment
 	inline Cmat & operator=(const T &rhs);
 	inline void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
-	inline T& operator()(Long_I i, Long_I j);	//subscripting: pointer to row i
+	inline T& operator()(Long_I i, Long_I j);	// double indexing
 	inline const T& operator()(Long_I i, Long_I j) const;
 	inline Long nrows() const;
 	inline Long ncols() const;
@@ -491,11 +491,23 @@ inline void Cmat<T>::operator<<(Cmat<T> &rhs)
 
 template <class T>
 inline T& Cmat<T>::operator()(Long_I i, Long_I j)
-{ return m_p[i+m_Nr*j]; }
+{
+#ifdef _CHECKBOUNDS_
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		error("Matrix subscript out of bounds");
+#endif
+	return m_p[i+m_Nr*j];
+}
 
 template <class T>
 inline const T& Cmat<T>::operator()(Long_I i, Long_I j) const
-{ return m_p[i+m_Nr*j]; }
+{
+#ifdef _CHECKBOUNDS_
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		error("Matrix subscript out of bounds");
+#endif
+	return m_p[i+m_Nr*j];
+}
 
 template <class T>
 inline Long Cmat<T>::nrows() const
@@ -732,8 +744,8 @@ typedef Matrix<Doub> MatDoub, MatDoub_O, MatDoub_IO;
 typedef const Matrix<Comp> MatComp_I;
 typedef Matrix<Comp> MatComp, MatComp_O, MatComp_IO;
 
-typedef const Cmat<Bool> CmatBool_I;
-typedef Cmat<Bool> CmatBool, CmatBool_O, CmatBool_IO;
+typedef const Matrix<Bool> MatBool_I;
+typedef Matrix<Bool> MatBool, MatBool_O, MatBool_IO;
 
 typedef const Cmat<Int> CmatInt_I;
 typedef Cmat<Int> CmatInt, CmatInt_O, CmatInt_IO;
