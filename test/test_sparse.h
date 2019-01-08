@@ -17,8 +17,8 @@ inline void test_sparse()
 			error("failed!");
 	}
 
-	// push, indexing, trim
 	{
+		// push
 		McooDoub a(3, 4, 5);
 		a.push(1., 0, 0);
 		if (a.nnz() != 1) error("failed!");
@@ -28,12 +28,22 @@ inline void test_sparse()
 		if (a.nnz() != 2) error("failed!");
 		if (a(1) != 2.) error("failed!");
 		if (a.row(1) != 1 || a.col(1) != 2) error("failed!");
-		a(1) = 2.2; a.row(1) = 2; a.col(1) = 1;
-		if (a.nnz() != 2) error("failed!");
-		if (a(1) != 2.2) error("failed!");
-		if (a.row(1) != 2 || a.col(1) != 1) error("failed!");
 		a.push(3., 1, 3);
 
+		// single indexing
+		a(1) = 2.2; a.row(1) = 2; a.col(1) = 1;
+		if (a.nnz() != 3) error("failed!");
+		if (a(1) != 2.2) error("failed!");
+		if (a.row(1) != 2 || a.col(1) != 1) error("failed!");
+
+		// double indexing (element must exist)
+		if (a(0, 0) != 1.) error("failed!");
+		if (a(2, 1) != 2.2) error("failed!");
+		if (a(1, 3) != 3.) error("failed!");
+		a(1, 3) = 3.3;
+		if (a(1, 3) != 3.3) error("failed!");
+
+		// trim
 		a.trim(2);
 		if (a.nnz() != 2) error("failed!");
 		if (a(1) != 2.2) error("failed!");

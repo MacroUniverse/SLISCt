@@ -50,5 +50,5 @@ inline void test_all()
 	test_coulomb();
 	//cout << "test_mparith()" << endl;
 	//test_mparith();
-	cout << "done testing!" << endl;
+	cout << "testing successful!" << endl;
 }

@@ -1,6 +1,11 @@
 #pragma once
-#include "slisc.h"
 // sparse matrix classes
+
+#include "slisc.h"
+#ifndef NDEBUG_
+// make sure (i,j) element doesn't exist when using MatCoo<T>::push(s,i,j) 
+#define _CHECK_COO_REPEAT_
+#endif
 
 namespace slisc {
 
@@ -19,8 +24,8 @@ public:
 	MatCoo(const MatCoo &rhs);		// Copy constructor
 	inline MatCoo & operator=(const MatCoo &rhs);	// copy assignment (do resize(rhs))
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
-	// inline T& operator()(Long_I i, Long_I j);	// double indexing
-	// inline const T& operator()(Long_I i, Long_I j) const;
+	inline T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
+	inline const T& operator()(Long_I i, Long_I j) const;
 	inline void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	using Base::size; // return m_N
 	Long nrows() const { return m_Nr; }
@@ -33,7 +38,7 @@ public:
 	inline Long & col(Long_I ind); // column index
 	inline Long col(Long_I ind) const;
 	inline void trim(Long_I Nnz); // decrease m_Nnz to Nnz
-	inline void resize(Long_I N) { Base::resize(N); m_row.resize(N); m_col.resize(N); }
+	inline void resize(Long_I N) { Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
 	inline void resize(Long_I Nr, Long_I Nc) // resize (contents preserved)
 	{ m_Nr = Nr; m_Nc = Nc; }
 	template <class T1>
@@ -61,11 +66,46 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
 }
 
 template <class T>
+inline T& MatCoo<T>::operator()(Long_I i, Long_I j)
+{
+#ifdef _CHECKBOUNDS_
+	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
+		error("MatCoo::operator()(i,j): index out of bounds!");
+#endif
+	Long n;
+	for (n = 0; n < m_Nnz; ++n)
+		if (row(n) == i && col(n) == j)
+			return m_p[n];
+	error("MatCoo::operator()(i,j): element does not exist!");
+}
+
+template <class T>
+inline const T& MatCoo<T>::operator()(Long_I i, Long_I j) const
+{
+#ifdef _CHECKBOUNDS_
+	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
+		error("MatCoo::operator()(i,j): index out of bounds!");
+#endif
+	Long n;
+	for (n = 0; n < m_Nnz; ++n)
+		if (row(n) == i && col(n) == j)
+			return m_p[n];
+	error("MatCoo::operator()(i,j): element does not exist!");
+}
+
+template <class T>
 inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
 		error("MatCoo::push(): index out of bounds!");
+#endif
+#ifdef _CHECK_COO_REPEAT_
+	Long n;
+	for (n = 0; n < m_Nnz; ++n) {
+		if (row(n) == i && col(n) == j)
+			error("MatCoo::push(s,i,j): element already exists!");
+	}
 #endif
 	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please resize!");
 	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
@@ -160,6 +200,9 @@ typedef const MatCoo<Doub> McooDoub_I;
 // matrix vector multiplication
 void mul(VecDoub_O &v, const McooDoub_I &a, const VecDoub_I &v1)
 {
+#ifdef _CHECKBOUNDS_
+	if (a.ncols() != v1.size()) error("wrong shape!");
+#endif
 	Long i;
 	v.resize(a.nrows());
 	v = 0.;
