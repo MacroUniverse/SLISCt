@@ -221,7 +221,7 @@ public:
 	inline const T & operator[](Long_I i) const;
 	inline void resize(Long_I N) {Base::resize(N);} // resize (contents not preserved)
 	template <class T1>
-	inline void resize(const Vector<T1> &v) {resize(v.size());}
+	void resize(const Vector<T1> &v) {resize(v.size());}
 };
 
 template <class T>
