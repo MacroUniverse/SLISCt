@@ -27,6 +27,7 @@ public:
 	inline T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
 	inline const T& operator()(Long_I i, Long_I j) const;
 	inline void push(const T &s, Long_I i, Long_I j); // add one nonzero element
+	inline void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	using Base::size; // return m_N
 	Long nrows() const { return m_Nr; }
 	Long ncols() const { return m_Nc; }
@@ -77,6 +78,7 @@ inline T& MatCoo<T>::operator()(Long_I i, Long_I j)
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
 	error("MatCoo::operator()(i,j): element does not exist!");
+	return m_p[0];
 }
 
 template <class T>
@@ -91,6 +93,7 @@ inline const T& MatCoo<T>::operator()(Long_I i, Long_I j) const
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
 	error("MatCoo::operator()(i,j): element does not exist!");
+	return m_p[0];
 }
 
 template <class T>
@@ -107,6 +110,22 @@ inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 			error("MatCoo::push(s,i,j): element already exists!");
 	}
 #endif
+	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please resize!");
+	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
+	++m_Nnz;
+}
+
+template <class T>
+inline void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
+{
+	Long n;
+	// change
+	for (n = 0; n < m_Nnz; ++n) {
+		if (row(n) == i && col(n) == j) {
+			m_p[n] = s; m_row[n] = i; m_col[n] = j; return;
+		}
+	}
+	// push
 	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please resize!");
 	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
 	++m_Nnz;

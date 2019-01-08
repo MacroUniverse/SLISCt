@@ -43,6 +43,12 @@ inline void test_sparse()
 		a(1, 3) = 3.3;
 		if (a(1, 3) != 3.3) error("failed!");
 
+		// set
+		a.set(4.4, 1, 3);
+		if (a(1, 3) != 4.4) error("failed!");
+		a.set(3.14, 2, 0);
+		if (a(2, 0) != 3.14) error("failed!");
+
 		// trim
 		a.trim(2);
 		if (a.nnz() != 2) error("failed!");
