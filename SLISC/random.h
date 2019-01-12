@@ -1,7 +1,7 @@
 // generate random numbers
 
 #pragma once
-#include "slisc.h"
+#include "arithmatic.h"
 #include <ctime>
 
 namespace slisc
@@ -34,10 +34,30 @@ namespace slisc
 		};
 	}
 
+	// generate random Doub in [0, 1]
 	inline Doub rand()
 	{
 		static internal::Ran rand_gen;
 		return rand_gen.doub();
+	}
+
+	// generate random Int in {0,1,2,...,N-1}
+	inline Int randInt(Int N)
+	{ return Int(round(Doub(N + 1)*rand() - 0.5)); }
+
+	// generate a random permutation of {0,1,2,...,N-1}
+	inline void randPerm(VecInt_O perm, Int_I N)
+	{
+		Int j, n = N, ind;
+		VecInt pool;
+		linspace(pool, 0, N - 1, N);
+		perm.resize(N);
+		for (n = N; n > 0; --n) {
+			ind = randInt(n);
+			perm[n - 1] = pool(ind);
+			for (j = ind; j < n - 1; ++j)
+				pool(ind) = pool(ind + 1);
+		}
 	}
 
 	inline Comp randComp()
