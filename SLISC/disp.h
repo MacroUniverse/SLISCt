@@ -127,7 +127,7 @@ inline void disp(MatUchar_I a)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << (Int)a[i][j] << "   ";
+			std::cout << (Int)a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -145,7 +145,7 @@ inline void disp(MatInt_I a)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -163,7 +163,7 @@ inline void disp(MatDoub_I a)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -181,7 +181,7 @@ inline void disp(MatComp_I a)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -201,7 +201,7 @@ inline void disp(Mat3Doub_I a)
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -222,7 +222,7 @@ inline void disp(Mat3Comp_I a)
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -298,7 +298,7 @@ inline void disp(MatUchar_I a, Int_I precision)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << (Int)a[i][j] << "   ";
+			std::cout << (Int)a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -315,7 +315,7 @@ inline void disp(MatInt_I a, Int_I precision)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -332,7 +332,7 @@ inline void disp(MatDoub_I a, Int_I precision)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -349,7 +349,7 @@ inline void disp(MatComp_I a, Int_I precision)
 	else
 	for (i = 0; i < m; ++i) {
 		for (j = 0; j < n; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -368,7 +368,7 @@ inline void disp(Mat3Doub_I a, Int_I precision)
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -388,7 +388,7 @@ inline void disp(Mat3Comp_I a, Int_I precision)
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -469,7 +469,7 @@ inline void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << (Int)a[i][j] << "   ";
+			std::cout << (Int)a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -487,7 +487,7 @@ inline void disp(MatInt_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -505,7 +505,7 @@ inline void disp(MatDoub_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -523,7 +523,7 @@ inline void disp(MatComp_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -543,7 +543,7 @@ inline void disp(Mat3Doub_I a, Long_I start1, Long_I start2, Long_I start3, Long
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = start1; i < start1+n1; ++i) {
 			for (j = start2; j < start2+n2; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -564,7 +564,7 @@ inline void disp(Mat3Comp_I a, Long_I start1, Long_I start2, Long_I start3, Long
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = start1; i < start1 + n1; ++i) {
 			for (j = start2; j < start2 + n2; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -640,7 +640,7 @@ inline void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << (Int)a[i][j] << "   ";
+			std::cout << (Int)a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -657,7 +657,7 @@ inline void disp(MatInt_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2,
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -674,7 +674,7 @@ inline void disp(MatDoub_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -691,7 +691,7 @@ inline void disp(MatComp_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a[i][j] << "   ";
+			std::cout << a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -710,7 +710,7 @@ inline void disp(Mat3Doub_I a, Long_I start1, Long_I start2, Long_I start3, Long
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = start1; i < start1 + n1; ++i) {
 			for (j = start2; j < start2 + n2; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -730,7 +730,7 @@ inline void disp(Mat3Comp_I a, Long_I start1, Long_I start2, Long_I start3, Long
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = start1; i < start1 + n1; ++i) {
 			for (j = start2; j < start2 + n2; ++j) {
-				std::cout << a[i][j][k] << "   ";
+				std::cout << a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}

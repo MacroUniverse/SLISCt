@@ -190,10 +190,10 @@ inline void fft(MatComp_IO data)
 	VecComp column(m);
 	for (j = 0; j < n; ++j) {
 		for (i = 0; i < m; ++i)
-			column[i] = data[i][j];
+			column[i] = data(i, j);
 		fft(column);
 		for (i = 0; i < m; ++i)
-			data[i][j] = column[i];
+			data(i, j) = column[i];
 	}
 }
 
@@ -203,10 +203,10 @@ inline void ifft(MatComp_IO data)
 	VecComp column(m);
 	for (j = 0; j < n; ++j) {
 		for (i = 0; i < m; ++i)
-			column[i] = data[i][j];
+			column[i] = data(i, j);
 		ifft(column);
 		for (i = 0; i < m; ++i)
-			data[i][j] = column[i];
+			data(i, j) = column[i];
 	}
 }
 
@@ -530,11 +530,11 @@ inline void dft(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub 
 	Comp *pyj, factor, expo, dexpo;
 	Y.resize(Nk, Nc); Y = 0.;
 	for (j = 0; j < Nk; ++j) {
-		pyj = Y[j];
+		pyj = Y.ptr(j);
 		expo = exp(Comp(0, -(kmin + dk*j)*(xmin - dx)));
 		dexpo = exp(Comp(0, -(kmin + dk*j)*dx));
 		for (i = 0; i < Nx; ++i) {
-			pxi = X[i];
+			pxi = X.ptr(i);
 			expo *= dexpo;
 			for (k = 0; k < Nc; ++k)
 				pyj[k] += expo*pxi[k];
@@ -553,11 +553,11 @@ inline void dft_par(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, D
 		Long i, k;
 		const Comp *pxi;
 		Comp *pyj, factor, expo, dexpo;
-		pyj = Y[j];
+		pyj = Y.ptr(j);
 		expo = exp(Comp(0, -(kmin + dk*j)*(xmin - dx)));
 		dexpo = exp(Comp(0, -(kmin + dk*j)*dx));
 		for (i = 0; i < Nx; ++i) {
-			pxi = X[i];
+			pxi = X.ptr(i);
 			expo *= dexpo;
 			for (k = 0; k < Nc; ++k)
 				pyj[k] += expo*pxi[k];
@@ -573,11 +573,11 @@ inline void idft(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub
 	Comp *pxj, factor, expo, dexpo;
 	X.resize(Nx, Nc); X = 0.;
 	for (j = 0; j < Nx; ++j) {
-		pxj = X[j];
+		pxj = X.ptr(j);
 		expo = exp(Comp(0, (xmin + dx*j)*(kmin - dk)));
 		dexpo = exp(Comp(0, (xmin + dx*j)*dk));
 		for (i = 0; i < Nk; ++i) {
-			pyi = Y[i];
+			pyi = Y.ptr(i);
 			expo *= dexpo;
 			for (k = 0; k < Nc; ++k)
 				pxj[k] += expo*pyi[k];
@@ -595,11 +595,11 @@ inline void idft_par(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, 
 		Long i, k;
 		const Comp *pyi;
 		Comp *pxj, factor, expo, dexpo;
-		pxj = X[j];
+		pxj = X.ptr(j);
 		expo = exp(Comp(0, (xmin + dx*j)*(kmin - dk)));
 		dexpo = exp(Comp(0, (xmin + dx*j)*dk));
 		for (i = 0; i < Nk; ++i) {
-			pyi = Y[i];
+			pyi = Y.ptr(i);
 			expo *= dexpo;
 			for (k = 0; k < Nc; ++k)
 				pxj[k] += expo*pyi[k];

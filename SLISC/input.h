@@ -86,25 +86,23 @@ public:
 		using namespace std;
 		string str;
 		Int i;
-		for (i = 0; i < 10000; ++i) {
-			streampos old_pos = m_fin.tellg();
-			getline(m_fin, str);
-			if (str.size() == 1) {
-				if (str[0] == 'y') {
-					cout << prompt << " (y/n) " << 'y' << endl;
-					out = true;
-					return 0;
-				}
-				else if (str[0] == 'n') {
-					cout << prompt << " (y/n) " << 'n' << endl;
-					out = false;
-					return 0;
-				}
+		streampos old_pos = m_fin.tellg();
+		getline(m_fin, str);
+		if (str.size() == 1) {
+			if (str[0] == 'y') {
+				cout << prompt << " (y/n) " << 'y' << endl;
+				out = true;
+				return 0;
 			}
-			// failed
-			out = false;
-			return -1;
+			else if (str[0] == 'n') {
+				cout << prompt << " (y/n) " << 'n' << endl;
+				out = false;
+				return 0;
+			}
 		}
+		// failed
+		out = false;
+		return -1;
 	}
 
 	void Bool_fout(Bool_O out, const std::string &prompt) {
@@ -141,7 +139,7 @@ public:
 	}
 
 	template <class T1, class T2>
-	void Int2_cin(T1 &out1, T2 &out2, const std::string &prompt) {
+	void num2_cin(T1 &out1, T2 &out2, const std::string &prompt) {
 		using namespace std;
 		string str;
 		stringstream ss;
@@ -164,32 +162,52 @@ public:
 	// return 0 if successful
 	// return -1 if fail
 	template <class T1, class T2>
-	Int Int2_fin(T1 &out1, T2 &out2, const std::string &prompt) {
+	Int num2_fin(T1 &out1, T2 &out2, const std::string &prompt) {
 		using namespace std;
 		string str;
 		stringstream ss;
 		Int i;
-		for (i = 0; i < 10000; ++i) {
-			getline(m_fin, str);
-			if (str.size() >= 3) {
-				ss.str(str);
-				ss >> out1;
-				ss >> out2;
-				cout << prompt << " " << out1 << " " << out2 << endl;
-				return 0;
-			}
-			// failed
-			warning("illegal input, try again!");
-			pause(1);
+		getline(m_fin, str);
+		if (str.size() >= 3) {
+			ss.str(str);
+			ss >> out1;
+			ss >> out2;
+			cout << prompt << " " << out1 << " " << out2 << endl;
+			return 0;
 		}
+		// failed
+		return -1;
 	}
 
 	// return 0 if successful
 	// return -1 if fail
 	template <class T1, class T2>
-	void Int2_fout(T1 &out1, T2 &out2, const std::string &prompt) {
-		Int2_cin(out1, out2, prompt);
+	void num2_fout(T1 &out1, T2 &out2, const std::string &prompt) {
+		using namespace std;
+		num2_cin(out1, out2, prompt);
 		m_fout << out1 << " " << out2 << endl;
+	}
+
+	template <class T1, class T2>
+	void num2(T1 &out1, T2 &out2, const std::string &prompt) {
+		if (m_status == Stat::NO_IO) {
+			// no IO
+			num2_cin(out1, out2, prompt);
+		}
+		else if (m_status == Stat::WRITE) {
+			// write
+			num2_fout(out1, out2, prompt);
+		}
+		else if (m_status == Stat::READ) {
+			// read
+			if (num2_fin(out1, out2, prompt) != 0) {
+				m_status = Stat::WRITE;
+				m_fout.open(m_fname, std::ios::app);
+				m_fin.close();
+				num2_fout(out1, out2, prompt);
+			}
+		}
+		return;
 	}
 };
 

@@ -11,14 +11,17 @@
 #include "test_eigen_basics.h"
 #include "test_eigen_linsolve.h"
 #include "test_eigen_fft.h"
+#include "test_coulomb.h"
+#include "test_input.h"
 #include "test_disp.h"
 #include "test_print.h"
-#include "test_coulomb.h"
+
 // #include "test/test_mparith.h"
 
 inline void test_all()
 {
 	using std::cout; using std::endl;
+	using slisc::Input;
 
 	cout << "test_time()" << endl;
 	test_time();
@@ -42,12 +45,17 @@ inline void test_all()
 	test_eigen_linsolve();
 	cout << "test_eigen_fft()" << endl;
 	test_eigen_fft();
-	cout << "test_disp()" << endl;
-	test_disp();
-	cout << "test_print()" << endl;
-	test_print();
 	cout << "test_coulomb()" << endl;
 	test_coulomb();
+	
+	cout << "auto test successful!" << endl;
+	Input inp;
+	if (inp.Bool("test_disp() ?")) {
+		test_disp();
+	}
+	if (inp.Bool("test_print() ?")) {
+		test_print();
+	}
 	//cout << "test_mparith()" << endl;
 	//test_mparith();
 	cout << "testing successful!" << endl;

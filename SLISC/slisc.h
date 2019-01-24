@@ -300,9 +300,8 @@ private:
 	using Base::m_p;
 	using Base::m_N;
 	Long m_Nr, m_Nc;
-	T **m_v;
-	inline T ** v_alloc();
 public:
+	using Base::ptr;
 	using Base::operator();
 	Matrix();
 	Matrix(Long_I Nr, Long_I Nc);
@@ -316,34 +315,22 @@ public:
 	{ rhs.get(*this); return *this; }
 #endif
 	inline void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
-	inline T* operator[](Long_I i);	//subscripting: pointer to row i
 	inline T& operator()(Long_I i, Long_I j); // double indexing
 	inline const T& operator()(Long_I i, Long_I j) const;
-	inline const T* operator[](Long_I i) const;
+	const T *ptr(Long_I i) const; // pointer to the beginning of a row
+	T *ptr(Long_I i);
 	inline Long nrows() const;
 	inline Long ncols() const;
 	inline void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
 	template <class T1>
 	inline void resize(const Matrix<T1> &a);
-	~Matrix();
 };
 
 template <class T>
-inline T** Matrix<T>::v_alloc()
-{
-	if (m_N == 0) return nullptr;
-	T **v = new T*[m_Nr];
-	v[0] = m_p;
-	for (Long i = 1; i<m_Nr; i++)
-		v[i] = v[i-1] + m_Nc;
-	return v;
-}
+Matrix<T>::Matrix() : m_Nr(0), m_Nc(0) {}
 
 template <class T>
-Matrix<T>::Matrix() : m_Nr(0), m_Nc(0), m_v(nullptr) {}
-
-template <class T>
-Matrix<T>::Matrix(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc), m_v(v_alloc()) {}
+Matrix<T>::Matrix(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}
 
 template <class T>
 Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T &s) : Matrix(Nr, Nc)
@@ -380,19 +367,8 @@ inline void Matrix<T>::operator<<(Matrix<T> &rhs)
 {
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
-	if (m_v) delete m_v;
-	m_Nr = rhs.m_Nr; m_Nc = rhs.m_Nc; m_v = rhs.m_v;
-	rhs.m_Nr = rhs.m_Nc = 0; rhs.m_v = nullptr;
-}
-
-template <class T>
-inline T* Matrix<T>::operator[](Long_I i)
-{
-#ifdef _CHECKBOUNDS_
-	if (i<0 || i>= m_Nr)
-		error("Matrix subscript out of bounds");
-#endif
-	return m_v[i];
+	m_Nr = rhs.m_Nr; m_Nc = rhs.m_Nc;
+	rhs.m_Nr = rhs.m_Nc = 0;
 }
 
 template <class T>
@@ -416,13 +392,23 @@ inline const T& Matrix<T>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T>
-inline const T* Matrix<T>::operator[](Long_I i) const
+inline const T * Matrix<T>::ptr(Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i>=m_Nr)
+	if (i < 0 || i >= m_Nr)
 		error("Matrix subscript out of bounds");
 #endif
-	return m_v[i];
+	return m_p + m_Nc*i;
+}
+
+template <class T>
+inline T * Matrix<T>::ptr(Long_I i)
+{
+#ifdef _CHECKBOUNDS_
+	if (i < 0 || i >= m_Nr)
+		error("Matrix subscript out of bounds");
+#endif
+	return m_p + m_Nc*i;
 }
 
 template <class T>
@@ -439,8 +425,6 @@ inline void Matrix<T>::resize(Long_I Nr, Long_I Nc)
 	if (Nr != m_Nr || Nc != m_Nc) {
 		Base::resize(Nr*Nc);
 		m_Nr = Nr; m_Nc = Nc;
-		if (m_v) delete m_v;
-		m_v = v_alloc();
 	}
 }
 
@@ -448,10 +432,6 @@ template <class T>
 template <class T1>
 inline void Matrix<T>::resize(const Matrix<T1> &a)
 { resize(a.nrows(), a.ncols()); }
-
-template <class T>
-Matrix<T>::~Matrix()
-{ if(m_v) delete m_v; }
 
 // Column major Matrix Class
 
@@ -582,10 +562,9 @@ private:
 	Long m_N1;
 	Long m_N2;
 	Long m_N3;
-	T ***m_v;
-	inline T *** v_alloc();
-	inline void v_free();
 public:
+	using Base::operator();
+	using Base::ptr;
 	Mat3d();
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
@@ -600,43 +579,20 @@ public:
 	inline void resize(Long_I N1, Long_I N2, Long_I N3);
 	template <class T1>
 	inline void resize(const Mat3d<T1> &a);
-	inline T*const * operator[](Long_I i);	//subscripting: pointer to row i
-	inline const T*const * operator[](Long_I i) const;
+	inline T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
+	inline const T & operator()(Long_I i, Long_I j, Long_I k) const;
+	const T* ptr(Long_I i, Long_I j) const;
+	T* ptr(Long_I i, Long_I j);
 	inline Long dim1() const;
 	inline Long dim2() const;
 	inline Long dim3() const;
-	~Mat3d();
 };
 
 template <class T>
-inline T *** Mat3d<T>::v_alloc()
-{
-	if (m_N == 0) return nullptr;
-	Long i;
-	Long nnmm = m_N1*m_N2;
-	T **v0 = new T*[nnmm]; v0[0] = m_p;
-	for (i = 1; i < nnmm; ++i)
-		v0[i] = v0[i - 1] + m_N3;
-	T ***v = new T**[m_N1]; v[0] = v0;
-	for(i = 1; i < m_N1; ++i)
-		v[i] = v[i-1] + m_N2;
-	return v;
-}
+Mat3d<T>::Mat3d(): m_N1(0), m_N2(0), m_N3(0) {}
 
 template <class T>
-inline void Mat3d<T>::v_free()
-{
-	if (m_v != nullptr) {
-		delete m_v[0]; delete m_v;
-	}
-}
-
-template <class T>
-Mat3d<T>::Mat3d(): m_N1(0), m_N2(0), m_N3(0), m_v(nullptr) {}
-
-template <class T>
-Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N2(N2), m_N3(N3),
-	m_v(v_alloc()) {}
+Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N2(N2), m_N3(N3) {}
 
 template <class T>
 Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &s) : Mat3d(N1, N2, N3)
@@ -670,9 +626,7 @@ inline void Mat3d<T>::operator<<(Mat3d<T> &rhs)
 	if (this == &rhs) error("self move is forbidden!");
 	Base::move(rhs);
 	m_N1 = rhs.m_N1; m_N2 = rhs.m_N2; m_N3 = rhs.m_N3;
-	v_free(); m_v = rhs.m_v;
 	rhs.m_N1 = rhs.m_N2 = rhs.m_N3 = 0;
-	rhs.m_v = nullptr;
 }
 
 template <class T>
@@ -681,7 +635,6 @@ inline void Mat3d<T>::resize(Long_I N1, Long_I N2, Long_I N3)
 	if (N1 != m_N1 || N2 != m_N2 || N3 != m_N3) {
 		Base::resize(N1*N2*N3);
 		m_N1 = N1; m_N2 = N2; m_N3 = N3;
-		v_free(); m_v = v_alloc();
 	}
 }
 
@@ -690,23 +643,43 @@ template <class T1>
 inline void Mat3d<T>::resize(const Mat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
 
 template <class T>
-inline T*const * Mat3d<T>::operator[](Long_I i)
+inline T &Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i>= m_N1)
+	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		error("Matrix subscript out of bounds");
 #endif
-	return m_v[i];
+	return m_p[m_N2*m_N3*i + m_N3*j + k];
 }
 
 template <class T>
-inline const T*const * Mat3d<T>::operator[](Long_I i) const
+inline const T &Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 {
 #ifdef _CHECKBOUNDS_
-	if (i<0 || i >= m_N1)
+	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		error("Matrix subscript out of bounds");
 #endif
-	return m_v[i];
+	return m_p[m_N2*m_N3*i + m_N3*j + k];
+}
+
+template <class T>
+inline const T * Mat3d<T>::ptr(Long_I i, Long_I j) const
+{
+#ifdef _CHECKBOUNDS_
+	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
+		error("Matrix subscript out of bounds");
+#endif
+	return m_p + m_N2*m_N3*i + m_N3*j;
+}
+
+template <class T>
+inline T *Mat3d<T>::ptr(Long_I i, Long_I j)
+{
+#ifdef _CHECKBOUNDS_
+	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
+		error("Matrix subscript out of bounds");
+#endif
+	return m_p + m_N2*m_N3*i + m_N3*j;
 }
 
 template <class T>
@@ -717,9 +690,6 @@ inline Long Mat3d<T>::dim2() const { return m_N2; }
 
 template <class T>
 inline Long Mat3d<T>::dim3() const { return m_N3; }
-
-template <class T>
-Mat3d<T>::~Mat3d() { v_free(); }
 
 // Matric and vector types
 

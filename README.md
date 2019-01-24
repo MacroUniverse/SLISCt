@@ -22,7 +22,7 @@ int main()
 	MatDoub a, b(1, 1); // matrices, double  type, always row major
 	b.resize(2, 3); // resize b to 2 columns and 3 rows
 	a.resize(b); // resize a to have the size of b
-	a[0][0] = 1.1; // access element by row and column indices
+	a(0, 0) = 1.1; // access element by row and column indices
 	a(3) = 9.9; // access element by a single index
 	a.end() = 5.5; // last element
 	cout << "a has " << a.nrows() << " rows and " << a.ncols()
@@ -218,8 +218,8 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * use BLAS/LAPACK to enhance performance (optionally), and time different implementations (mine, Eigen, MKL)
 * implement column major matrix classes
 * Add the "a(i,j)" format of matrix indexing for row majored matrix (and maybe consider abandoning "a[i][j]" format later).
-* Do asearch on why "a[i][j]" is bad. Known reasons: The "a[i][j]" format does not allow bound checking, requires more memory.
 * put all internal names into "slisc::internal" namespace
-* test `randInt()` and `Matrix::operator()(i,j)`
+* test `randInt()`
 * test single indexing operator() for matrix and mat3d
 * update from Go-Solver project
+* 

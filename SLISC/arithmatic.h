@@ -249,7 +249,7 @@ inline void her(MatComp_O h, MatComp_I a)
 	h.resize(n, m);
 	for (i = 0; i < m; ++i)
 		for (j = 0; j < n; ++j)
-			h[j][i] = conj(a[i][j]);
+			h(j, i) = conj(a(i, j));
 }
 
 template <class T>
@@ -1351,7 +1351,7 @@ inline void mul(Vector<T> &y, const Matrix<T1> &a, const Vector<T2> &x)
 	y.resize(m); y = 0.;
 	for (i = 0; i < m; ++i) {
 		for (k = 0; k < n; ++k)
-			y[i] += a[i][k] * x[k];
+			y[i] += a(i, k) * x(k);
 	}
 }
 

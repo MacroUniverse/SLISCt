@@ -31,13 +31,13 @@ void test_slisc()
 	if (aDoub.size() != 9) error("failed!");
 	if (aDoub.nrows() != 3) error("failed!");
 	if (aDoub.ncols() != 3) error("failed!");
-	if (aDoub.ptr() != &aDoub[0][0]) error("failed!");
+	if (aDoub.ptr() != &aDoub(0, 0)) error("failed!");
 	Mat3Doub a3Doub(3, 3, 3);
 	if (a3Doub.size() != 27) error("failed!");
 	if (a3Doub.dim1() != 3) error("failed!");
 	if (a3Doub.dim2() != 3) error("failed!");
 	if (a3Doub.dim3() != 3) error("failed!");
-	if (a3Doub.ptr() != &a3Doub[0][0][0]) error("failed!");
+	if (a3Doub.ptr() != &a3Doub(0,0,0)) error("failed!");
 	}
 
 	// const initialize
@@ -62,7 +62,7 @@ void test_slisc()
 	if (aDoub.size() != 16) error("failed!");
 	if (aDoub.nrows() != 4) error("failed!");
 	if (aDoub.ncols() != 4) error("failed!");
-	if (aDoub.ptr() != &aDoub[0][0]) error("failed!");
+	if (aDoub.ptr() != &aDoub(0,0)) error("failed!");
 	a3Doub.resize(0, 0, 4);
 	if (a3Doub.ptr() != nullptr) error("failed!");
 	a3Doub.resize(0, 4, 0);
@@ -74,7 +74,7 @@ void test_slisc()
 	if (a3Doub.dim1() != 4) error("failed!");
 	if (a3Doub.dim2() != 4) error("failed!");
 	if (a3Doub.dim3() != 4) error("failed!");
-	if (a3Doub.ptr() != &a3Doub[0][0][0]) error("failed!");
+	if (a3Doub.ptr() != &a3Doub(0,0,0)) error("failed!");
 
 	// assignment operator
 	vDoub = 1.; if (vDoub != 1.) error("failed!");
@@ -130,15 +130,15 @@ void test_slisc()
 	a3Doub1(a3Doub1.size()-2) = 3.2;
 	if (a3Doub1.end(2) != 3.2)  error("failed!");
 
-	// operator[]
+	// operator()
 	vDoub1[vDoub1.size()-1] = 5.5;
 	if ( vDoub1[vDoub1.size()-1] != 5.5 ) error("failed!");
 	if (vDoub1.end() != 5.5)  error("failed!");
-	aDoub1[aDoub1.nrows()-1][aDoub1.ncols()-1] = 5.5;
-	if ( aDoub1[aDoub1.nrows()-1][aDoub1.ncols()-1] != 5.5 ) error("failed!");
+	aDoub1(aDoub1.nrows()-1, aDoub1.ncols()-1) = 5.5;
+	if ( aDoub1(aDoub1.nrows()-1, aDoub1.ncols()-1) != 5.5 ) error("failed!");
 	if (aDoub1.end() != 5.5)  error("failed!");
-	a3Doub1[a3Doub1.dim1()-1][a3Doub1.dim2()-1][a3Doub1.dim3()-1] = 5.5;
-	if ( a3Doub1[a3Doub1.dim1()-1][a3Doub1.dim2()-1][a3Doub1.dim3()-1] != 5.5 ) error("failed!");
+	a3Doub1(a3Doub1.dim1()-1, a3Doub1.dim2()-1, a3Doub1.dim3()-1) = 5.5;
+	if ( a3Doub1(a3Doub1.dim1()-1, a3Doub1.dim2()-1, a3Doub1.dim3()-1) != 5.5 ) error("failed!");
 	if (a3Doub1.end() != 5.5)  error("failed!");
 
 	// operator()
