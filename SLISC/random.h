@@ -4,6 +4,10 @@
 #include "arithmatic.h"
 #include <ctime>
 
+#ifndef _RAND_SEED_
+#define _RAND_SEED_ std::time(nullptr)
+#endif
+
 namespace slisc
 {
 	namespace internal
@@ -24,7 +28,7 @@ namespace slisc
 				return (x + v) ^ w;
 			}
 		public:
-			Ran(Ullong j = std::time(nullptr)) :
+			Ran(Ullong j = _RAND_SEED_) :
 				v(4101842887655102017LL), w(1) {
 				u = j ^ v; int64();
 				v = u; int64();
@@ -43,12 +47,12 @@ namespace slisc
 
 	// generate random Int in {0,1,2,...,N-1}
 	inline Int randInt(Int N)
-	{ return Int(round(Doub(N + 1)*rand() - 0.5)); }
+	{ return Int(round(N*rand() - 0.5)); }
 
 	// generate a random permutation of {0,1,2,...,N-1}
-	inline void randPerm(VecInt_O perm, Int_I N)
+	inline void randPerm(VecInt_O &perm, Int_I N)
 	{
-		Int j, n = N, ind;
+		Int j, n, ind;
 		VecInt pool;
 		linspace(pool, 0, N - 1, N);
 		perm.resize(N);
@@ -56,7 +60,7 @@ namespace slisc
 			ind = randInt(n);
 			perm[n - 1] = pool(ind);
 			for (j = ind; j < n - 1; ++j)
-				pool(ind) = pool(ind + 1);
+				pool(j) = pool(j + 1);
 		}
 	}
 

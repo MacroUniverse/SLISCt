@@ -77,6 +77,8 @@ const Comp I(0., 1.);
 // report error and pause execution
 #define error(str) do{std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();} while(0)
 
+#define warning(str) do{std::cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl;} while(0)
+
 template<class T>
 inline void memset(T *dest, const T val, Long_I n)
 {
@@ -338,9 +340,9 @@ Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T *ptr) : Matrix(Nr, Nc)
 { memcpy(m_p, ptr, m_N*sizeof(T)); }
 
 template <class T>
-Matrix<T>::Matrix(const Matrix<T> &rhs)
+Matrix<T>::Matrix(const Matrix<T> &rhs) : Matrix()
 {
-	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	*this = rhs;
 }
 
 template <class T>

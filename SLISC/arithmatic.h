@@ -132,6 +132,15 @@ inline T sum(const Vbase<T> &v)
 	return sum;
 }
 
+inline Long count(VecBool_I &v)
+{
+	Long i, n{ v.size() };
+	Long count = 0;
+	for (i = 0; i < n; ++i)
+		count += v(i);
+	return count;
+}
+
 template <class T>
 inline T max(const Vbase<T> &v)
 {
