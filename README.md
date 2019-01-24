@@ -222,3 +222,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * put all internal names into "slisc::internal" namespace
 * test `randInt()` and `Matrix::operator()(i,j)`
 * test single indexing operator() for matrix and mat3d
+* update from Go-Solver project
