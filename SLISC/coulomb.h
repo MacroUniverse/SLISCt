@@ -37,13 +37,13 @@ inline void coulombF0(Vbase<Doub> &F, Int_I l, Doub_I k, const Vbase<Doub> &r, D
 	}
 }
 
-inline void coulombF(VecDoub &F, Int_I l, Doub_I k, VecDoub_I &r, Doub_I Z = -1.)
+inline void coulombF(VecDoub &F, Int_I l, Doub_I k, VecDoub_I r, Doub_I Z = -1.)
 { F.resize(r); coulombF0(F, l, k, r, Z); }
 
-inline void coulombF(MatDoub &F, Int_I l, Doub_I k, MatDoub_I &r, Doub_I Z = -1.)
+inline void coulombF(MatDoub &F, Int_I l, Doub_I k, MatDoub_I r, Doub_I Z = -1.)
 { F.resize(r); coulombF0(F, l, k, r, Z); }
 
-inline void coulombF(Mat3Doub &F, Int_I l, Doub_I k, Mat3Doub_I &r, Doub_I Z = -1.)
+inline void coulombF(Mat3Doub &F, Int_I l, Doub_I k, Mat3Doub_I r, Doub_I Z = -1.)
 { F.resize(r); coulombF0(F, l, k, r, Z); }
 
 // === coulombDF() ===
@@ -73,20 +73,20 @@ inline void coulombDF0(Vbase<Doub> &dF, Int_I l, Doub_I k, const Vbase<Doub> &r,
 }
 
 // derivative with respect to "r", not "k*r"
-inline void coulombDF(VecDoub &dF, Int_I l, Doub_I k, VecDoub_I &r, Doub_I Z = -1.)
+inline void coulombDF(VecDoub &dF, Int_I l, Doub_I k, VecDoub_I r, Doub_I Z = -1.)
 { dF.resize(r); coulombDF0(dF, l, k, r, Z); }
 
-inline void coulombDF(MatDoub &dF, Int_I l, Doub_I k, MatDoub_I &r, Doub_I Z = -1.)
+inline void coulombDF(MatDoub &dF, Int_I l, Doub_I k, MatDoub_I r, Doub_I Z = -1.)
 { dF.resize(r); coulombDF0(dF, l, k, r, Z); }
 
-inline void coulombDF(Mat3Doub &dF, Int_I l, Doub_I k, Mat3Doub_I &r, Doub_I Z = -1.)
+inline void coulombDF(Mat3Doub &dF, Int_I l, Doub_I k, Mat3Doub_I r, Doub_I Z = -1.)
 { dF.resize(r); coulombDF0(dF, l, k, r, Z); }
 
 // === coulombFDF() ===
 // coulombF and derivative with no extra cost
 
 // for scalar
-inline void coulombFDF(Doub_O &F, Doub_O &dF, Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
+inline void coulombFDF(Doub_O F, Doub_O dF, Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
 {
 	Comp F1, dF1;
 	cwfcomp::Coulomb_wave_functions f(true, l, Z / k);
@@ -110,17 +110,17 @@ inline void coulombFDF0(Vbase<Doub> &F, Vbase<Doub> &dF, Int_I l, Doub_I k, cons
 	}
 }
 
-inline void coulombFDF(VecDoub &F, Vbase<Doub> &dF, Int_I l, Doub_I k, VecDoub_I &r, Doub_I Z = -1.)
+inline void coulombFDF(VecDoub &F, Vbase<Doub> &dF, Int_I l, Doub_I k, VecDoub_I r, Doub_I Z = -1.)
 {
 	F.resize(r); coulombFDF0(F, dF, l, k, r, Z);
 }
 
-inline void coulombFDF(MatDoub &F, Vbase<Doub> &dF, Int_I l, Doub_I k, MatDoub_I &r, Doub_I Z = -1.)
+inline void coulombFDF(MatDoub &F, Vbase<Doub> &dF, Int_I l, Doub_I k, MatDoub_I r, Doub_I Z = -1.)
 {
 	F.resize(r); coulombFDF0(F, dF, l, k, r, Z);
 }
 
-inline void coulombFDF(Mat3Doub &F, Vbase<Doub> &dF, Int_I l, Doub_I k, Mat3Doub_I &r, Doub_I Z = -1.)
+inline void coulombFDF(Mat3Doub &F, Vbase<Doub> &dF, Int_I l, Doub_I k, Mat3Doub_I r, Doub_I Z = -1.)
 {
 	F.resize(r); coulombFDF0(F, dF, l, k, r, Z);
 }

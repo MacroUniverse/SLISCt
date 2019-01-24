@@ -211,13 +211,14 @@ inline void MatCoo<T>::resize(const MatCoo<T1> &a)
 	m_Nnz = 0;
 }
 
-typedef MatCoo<Doub> McooDoub, McooDoub_O, McooDoub_IO;
-typedef const MatCoo<Doub> McooDoub_I;
+typedef MatCoo<Doub> McooDoub;
+typedef const McooDoub &McooDoub_I;
+typedef McooDoub &McooDoub_O, &McooDoub_IO;
 
 // arithmatics
 
 // matrix vector multiplication
-void mul(VecDoub_O &v, const McooDoub_I &a, const VecDoub_I &v1)
+void mul(VecDoub_O v, const McooDoub_I a, const VecDoub_I v1)
 {
 #ifdef _CHECKBOUNDS_
 	if (a.ncols() != v1.size()) error("wrong shape!");

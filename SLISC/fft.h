@@ -20,7 +20,7 @@ inline void bit_inv(Comp *v, Int_I n)
 	}
 }
 
-inline void bit_inv(Comp *out, Comp_I *in, Int_I n)
+inline void bit_inv(Comp *out, const Comp *in, Int_I n)
 {
 	Int i, j, m, nn = n>>1;
 	j = 0;
@@ -37,17 +37,17 @@ inline void bit_inv(Comp *out, Comp_I *in, Int_I n)
 
 void four1(Doub *data, Int_I n, Int_I isign);
 
-void fft(VecComp_IO &data);
-void ifft(VecComp_IO &data);
+void fft(VecComp_IO data);
+void ifft(VecComp_IO data);
 
-void fft(MatComp_IO &data);
-void ifft(MatComp_IO &data);
+void fft(MatComp_IO data);
+void ifft(MatComp_IO data);
 
-void fft2x(VecComp_O &data2, VecComp_I &data);
-void ifft2x(VecComp_O &data2, VecComp_I &data);
+void fft2x(VecComp_O data2, VecComp_I data);
+void ifft2x(VecComp_O data2, VecComp_I data);
 
-void fft4x(VecComp_O &data4, VecComp_I &data);
-void ifft4x(VecComp_O &data4, VecComp_I &data);
+void fft4x(VecComp_O data4, VecComp_I data);
+void ifft4x(VecComp_O data4, VecComp_I data);
 
 struct WrapVecDoub {
 	VecDoub vvec;
@@ -71,17 +71,17 @@ struct WrapVecDoub {
 	operator VecDoub&() {return v;}
 };
 
-void realft(VecDoub_IO &data, Int_I isign);
+void realft(VecDoub_IO data, Int_I isign);
 
-void sinft(VecDoub_IO &y);
+void sinft(VecDoub_IO y);
 
-void cosft1(VecDoub_IO &y);
+void cosft1(VecDoub_IO y);
 
-void cosft2(VecDoub_IO &y, Int_I isign);
+void cosft2(VecDoub_IO y, Int_I isign);
 
-Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y);
+Comp fft_interp(Doub_I x1, VecDoub_I x, VecComp_I y);
 
-void fft_interp(VecComp_O &y1, VecDoub_I &x1, VecDoub_I &x, VecComp_I &y);
+void fft_interp(VecComp_O y1, VecDoub_I x1, VecDoub_I x, VecComp_I y);
 
 template <class T>
 void fftshift(Vector<T> &v)
@@ -129,13 +129,13 @@ void fftshift(Matrix<T> &a, Int_I dim = 1)
 // using sum instead of integration, result not normalized
 // for each column, Y_j = sum_i ( X_i*exp(-I*k_j*X_i) )
 // this is much slower than fft, but for small (xmax-xmin) and (kmax-kmin), could be faster
-void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax);
-void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax);
+void dft(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax);
+void dft_par(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax);
 
 // the inverse of dft, multiplied by 2*pi/(dx*dk).
 // this might not be a precise inverse
-void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
-void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
+void idft(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub kmin, Doub kmax);
+void idft_par(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub kmin, Doub kmax);
 
 
 // implementation
@@ -176,15 +176,15 @@ inline void four1(Doub *data, Int_I n, Int_I isign) {
 	}
 }
 
-inline void fft(VecComp_IO &data)
+inline void fft(VecComp_IO data)
 { four1((Doub*)data.ptr(), data.size(), -1); }
 
-inline void ifft(VecComp_IO &data)
+inline void ifft(VecComp_IO data)
 { four1((Doub*)data.ptr(), data.size(), 1); }
 
 // fft for each column of matrix
 // not optimized, very slow
-inline void fft(MatComp_IO &data)
+inline void fft(MatComp_IO data)
 {
 	Long i, j, m{ data.nrows() }, n{ data.ncols() };
 	VecComp column(m);
@@ -197,7 +197,7 @@ inline void fft(MatComp_IO &data)
 	}
 }
 
-inline void ifft(MatComp_IO &data)
+inline void ifft(MatComp_IO data)
 {
 	Long i, j, m{ data.nrows() }, n{ data.ncols() };
 	VecComp column(m);
@@ -211,10 +211,10 @@ inline void ifft(MatComp_IO &data)
 }
 
 // internal function, don't use
-inline void four1(VecDoub_IO &data, const Int isign)
+inline void four1(VecDoub_IO data, const Int isign)
 { four1(&data[0], data.size() / 2, isign); }
 
-inline void realft(VecDoub_IO &data, Int_I isign)
+inline void realft(VecDoub_IO data, Int_I isign)
 {
 	Int i,i1,i2,i3,i4,n=data.size();
 	Doub c1=0.5,c2,h1r,h1i,h2r,h2i,wr,wi,wpr,wpi,wtemp;
@@ -255,7 +255,7 @@ inline void realft(VecDoub_IO &data, Int_I isign)
 	}
 }
 
-inline void sinft(VecDoub_IO &y) {
+inline void sinft(VecDoub_IO y) {
 	Int j,n=y.size();
 	Doub sum,y1,y2,theta,wi=0.0,wr=1.0,wpi,wpr,wtemp;
 	theta=3.141592653589793238/Doub(n);
@@ -281,7 +281,7 @@ inline void sinft(VecDoub_IO &y) {
 	}
 }
 
-inline void cosft1(VecDoub_IO &y) {
+inline void cosft1(VecDoub_IO y) {
 	const Doub PI=3.141592653589793238;
 	Int j,n=y.size()-1;
 	Doub sum,y1,y2,theta,wi=0.0,wpi,wpr,wr=1.0,wtemp;
@@ -312,7 +312,7 @@ inline void cosft1(VecDoub_IO &y) {
 	}
 }
 
-inline void cosft2(VecDoub_IO &y, Int_I isign) {
+inline void cosft2(VecDoub_IO y, Int_I isign) {
 	const Doub PI=3.141592653589793238;
 	Int i,n=y.size();
 	Doub sum,sum1,y1,y2,ytemp,theta,wi=0.0,wi1,wpi,wpr,wr=1.0,wr1,wtemp;
@@ -374,7 +374,7 @@ inline void cosft2(VecDoub_IO &y, Int_I isign) {
 // not recommended, use ifft2x(fft()) instead
 // assuming y.size() is double
 // x must be linspaced.
-inline Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y)
+inline Comp fft_interp(Doub_I x1, VecDoub_I x, VecComp_I y)
 {
 	Comp sum{};
 	Doub dx{ (x.end() - x[0]) / (x.size() - 1.) }, a{ PI/dx };
@@ -385,7 +385,7 @@ inline Comp fft_interp(Doub_I x1, VecDoub_I &x, VecComp_I &y)
 }
 
 // vector version of fft_interp()
-inline void fft_interp(VecComp_O &y1, VecDoub_I &x1, VecDoub_I &x, VecComp_I &y)
+inline void fft_interp(VecComp_O y1, VecDoub_I x1, VecDoub_I x, VecComp_I y)
 {
 	Doub dx{ (x.end() - x[0]) / (x.size() - 1.) }, a{ PI / dx };
 	Long i, j, N{ y.size() }, N1{ x1.size() };
@@ -441,13 +441,13 @@ inline void four2x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 	}
 }
 
-inline void fft2x(VecComp_O &data2, VecComp_I &data)
+inline void fft2x(VecComp_O data2, VecComp_I data)
 {
 	data2.resize(data.size()*2);
 	four2x((Doub*)data2.ptr(), (Doub*)data.ptr(), data.size(), -1);
 }
 
-inline void ifft2x(VecComp_O &data2, VecComp_I &data)
+inline void ifft2x(VecComp_O data2, VecComp_I data)
 {
 	data2.resize(data.size()*2);
 	four2x((Doub*)data2.ptr(), (Doub*)data.ptr(), data.size(), 1);
@@ -510,19 +510,19 @@ inline void four4x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 	}
 }
 
-inline void fft4x(VecComp_O &data4, VecComp_I &data)
+inline void fft4x(VecComp_O data4, VecComp_I data)
 {
 	data4.resize(data.size()*4);
 	four4x((Doub*)data4.ptr(), (Doub*)data.ptr(), data.size(), -1);
 }
 
-inline void ifft4x(VecComp_O &data4, VecComp_I &data)
+inline void ifft4x(VecComp_O data4, VecComp_I data)
 {
 	data4.resize(data.size()*4);
 	four4x((Doub*)data4.ptr(), (Doub*)data.ptr(), data.size(), 1);
 }
 
-inline void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
+inline void dft(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax)
 {
 	Long i, j, k, Nx = X.nrows(), Nc = X.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
@@ -543,7 +543,7 @@ inline void dft(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Dou
 }
 
 // parallel version
-inline void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
+inline void dft_par(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax)
 {
 	Long j, Nx = X.nrows(), Nc = X.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
@@ -565,7 +565,7 @@ inline void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X,
 	}
 }
 
-inline void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+inline void idft(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub kmin, Doub kmax)
 {
 	Long i, j, k, Nk = Y.nrows(), Nc = Y.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
@@ -585,7 +585,7 @@ inline void idft(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Do
 	}
 }
 
-inline void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+inline void idft_par(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub kmin, Doub kmax)
 {
 	Long j, Nk = Y.nrows(), Nc = Y.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);

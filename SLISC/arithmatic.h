@@ -132,7 +132,7 @@ inline T sum(const Vbase<T> &v)
 	return sum;
 }
 
-inline Long count(VecBool_I &v)
+inline Long count(VecBool_I v)
 {
 	Long i, n{ v.size() };
 	Long count = 0;
@@ -164,7 +164,7 @@ inline Doub max(const Vbase<Comp> &v)
 }
 
 template <class T>
-inline T max(Long_O &ind, const Vbase<T> &v)
+inline T max(Long_O ind, const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -175,7 +175,7 @@ inline T max(Long_O &ind, const Vbase<T> &v)
 	return val;
 }
 
-inline Doub max(Long_O &ind, const Vbase<Comp> &v)
+inline Doub max(Long_O ind, const Vbase<Comp> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -243,7 +243,7 @@ inline void linspace(Mat3d<T> &v, const T first, const T last, Llong_I dim1, Llo
 // TODO: transpose
 
 // hermitian conjugate
-inline void her(MatComp_O &h, MatComp_I &a)
+inline void her(MatComp_O h, MatComp_I a)
 {
 	Long i, j, m = a.nrows(), n = a.ncols();
 	h.resize(n, m);
@@ -1245,7 +1245,7 @@ inline T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
 	return s;
 }
 
-inline Doub operator*(VecDoub_I &v1, VecDoub_I &v2)
+inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1253,7 +1253,7 @@ inline Doub operator*(VecDoub_I &v1, VecDoub_I &v2)
 	return dot0<Doub>(v1, v2);
 }
 
-inline Comp operator*(VecComp_I &v1, VecComp_I &v2)
+inline Comp operator*(VecComp_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1261,7 +1261,7 @@ inline Comp operator*(VecComp_I &v1, VecComp_I &v2)
 	return dot1<Comp>(v1, v2);
 }
 
-inline Comp operator*(VecDoub_I &v1, VecComp_I &v2)
+inline Comp operator*(VecDoub_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1269,7 +1269,7 @@ inline Comp operator*(VecDoub_I &v1, VecComp_I &v2)
 	return dot0<Comp>(v1, v2);
 }
 
-inline Comp operator*(VecComp_I &v1, VecDoub_I &v2)
+inline Comp operator*(VecComp_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1311,7 +1311,7 @@ inline void outprod_par(Matrix<T> &v, const Vector<T1> &v1, const Vector<T2> &v2
 }
 
 template<class T, class T2>
-inline void outprod(Matrix<T> &v, VecComp_I &v1, const Vector<T2> &v2)
+inline void outprod(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 {
 	Long i, j, N1{ v1.size() }, N2{ v2.size() };
 	Comp *pc, v1_i;
@@ -1325,7 +1325,7 @@ inline void outprod(Matrix<T> &v, VecComp_I &v1, const Vector<T2> &v2)
 }
 
 template<class T, class T2>
-inline void outprod_par(Matrix<T> &v, VecComp_I &v1, const Vector<T2> &v2)
+inline void outprod_par(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 {
 	Long i, N1{ v1.size() }, N2{ v2.size() };
 	v.resize(N1, N2);

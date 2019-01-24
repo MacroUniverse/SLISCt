@@ -327,7 +327,7 @@ namespace slisc {
 
 		template<class T> void index(const T *arr, Int nn);
 
-		void rank(VecInt_O &irank) {
+		void rank(VecInt_O irank) {
 			irank.resize(n);
 			for (Int j = 0; j<n; j++) irank[indx[j]] = j;
 		}

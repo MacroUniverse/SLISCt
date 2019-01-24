@@ -45,7 +45,7 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * Intrinsic types are aliased inside the library. "Int" is 32-bit integer; "Uint" is "unsigned Int"; "Llong" is 64-bit integer; "Doub" is double (64-bit); "Comp" is "std::complex\<Doub>"; "Char" is "char"; "Uchar" is "unsigned char"; "Ldoub" is "long double"; "Long" is "Llong" by default, define "_USE_Int_AS_LONG" macro to use "Int" instead. Use "Long" for vector/matrix index or loop variable etc.
 
-* Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output, "_IO" means both input and output, both of them are just the non-const version of the type.
+* Types ending with "_I" is const version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output (reference type), "_IO" means both input and output (reference type), both of them are just the non-const version of the type. Note that a reference to "_O" or "_IO" types is still a reference type.
 
 * Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
 

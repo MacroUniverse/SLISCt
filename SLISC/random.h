@@ -50,7 +50,7 @@ namespace slisc
 	{ return Int(round(N*rand() - 0.5)); }
 
 	// generate a random permutation of {0,1,2,...,N-1}
-	inline void randPerm(VecInt_O &perm, Int_I N)
+	inline void randPerm(VecInt_O perm, Int_I N)
 	{
 		Int j, n, ind;
 		VecInt pool;

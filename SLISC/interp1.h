@@ -7,7 +7,7 @@ struct Base_interp
 {
 	Int n, mm, jsav, cor, dj;
 	const Doub *xx, *yy;
-	Base_interp(VecDoub_I &x, Doub_I *y, Int m)
+	Base_interp(VecDoub_I x, const Doub *y, Int m)
 		: n(x.size()), mm(m), jsav(0), cor(0), xx(&x[0]), yy(y) {
 		dj = MIN(1,(Int)pow((Doub)n,0.25));
 	}
@@ -33,7 +33,7 @@ struct Base_interp
 struct Poly_interp : Base_interp
 {
 	Doub dy;
-	Poly_interp(VecDoub_I &xv, VecDoub_I &yv, Int m)
+	Poly_interp(VecDoub_I xv, VecDoub_I yv, Int m)
 		: Base_interp(xv,&yv[0],m), dy(0.) {}
 	inline Doub rawinterp(Int jl, Doub x);
 };
@@ -41,7 +41,7 @@ struct Poly_interp : Base_interp
 struct Rat_interp : Base_interp
 {
 	Doub dy;
-	Rat_interp(VecDoub_I &xv, VecDoub_I &yv, Int m)
+	Rat_interp(VecDoub_I xv, VecDoub_I yv, Int m)
 		: Base_interp(xv,&yv[0],m), dy(0.) {}
 	inline Doub rawinterp(Int jl, Doub x);
 };
@@ -50,15 +50,15 @@ struct Spline_interp : Base_interp
 {
 	VecDoub y2;
 	
-	Spline_interp(VecDoub_I &xv, VecDoub_I &yv, Doub yp1=1.e99, Doub ypn=1.e99)
+	Spline_interp(VecDoub_I xv, VecDoub_I yv, Doub yp1=1.e99, Doub ypn=1.e99)
 	: Base_interp(xv,&yv[0],2), y2(xv.size())
 	{sety2(&xv[0],&yv[0],yp1,ypn);}
 
-	Spline_interp(VecDoub_I &xv, Doub_I *yv, Doub yp1=1.e99, Doub ypn=1.e99)
+	Spline_interp(VecDoub_I xv, const Doub *yv, Doub yp1=1.e99, Doub ypn=1.e99)
 	: Base_interp(xv,yv,2), y2(xv.size())
 	{sety2(&xv[0],yv,yp1,ypn);}
 
-	inline void sety2(Doub_I *xv, Doub_I *yv, Doub yp1, Doub ypn);
+	inline void sety2(const Doub *xv, const Doub *yv, Doub_I yp1, Doub_I ypn);
 	inline Doub rawinterp(Int jl, Doub xv);
 };
 
@@ -66,7 +66,7 @@ struct BaryRat_interp : Base_interp
 {
 	VecDoub w;
 	Int d;
-	inline BaryRat_interp(VecDoub_I &xv, VecDoub_I &yv, Int dd);
+	inline BaryRat_interp(VecDoub_I xv, VecDoub_I yv, Int dd);
 	inline Doub rawinterp(Int jl, Doub x);
 	inline Doub interp(Doub x);
 };
@@ -213,7 +213,7 @@ inline Doub Rat_interp::rawinterp(Int jl, Doub x)
 
 // Spline_interp implementation
 
-inline void Spline_interp::sety2(Doub_I *xv, Doub_I *yv, Doub yp1, Doub ypn)
+inline void Spline_interp::sety2(const Doub *xv, const Doub *yv, Doub_I yp1, Doub_I ypn)
 {
 	Int i, k;
 	Doub p, qn, sig, un;
@@ -258,7 +258,7 @@ inline Doub Spline_interp::rawinterp(Int jl, Doub x)
 
 // BarryRat_interp implementation
 
-inline BaryRat_interp::BaryRat_interp(VecDoub_I &xv, VecDoub_I &yv, Int dd)
+inline BaryRat_interp::BaryRat_interp(VecDoub_I xv, VecDoub_I yv, Int dd)
 	: Base_interp(xv, &yv[0], xv.size()), w(n), d(dd)
 {
 	if (n <= d) throw("d too large for number of points in BaryRat_interp");
