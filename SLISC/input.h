@@ -115,7 +115,7 @@ public:
 
 	// input a bool
 	// " (y/n) " will be appended to prompt
-	Bool Input::Bool(const std::string &prompt) {
+	Bool Bool(const std::string &prompt) {
 		slisc::Bool out;
 		if (m_status == Stat::NO_IO) {
 			// no IO
@@ -183,7 +183,6 @@ public:
 	// return -1 if fail
 	template <class T1, class T2>
 	void num2_fout(T1 &out1, T2 &out2, const std::string &prompt) {
-		using namespace std;
 		num2_cin(out1, out2, prompt);
 		m_fout << out1 << " " << out2 << endl;
 	}

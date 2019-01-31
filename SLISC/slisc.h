@@ -24,25 +24,25 @@ namespace slisc
 
 // Scalar types
 
-typedef const int &Int_I; // 32 bit integer
+typedef const int Int_I; // 32 bit integer
 typedef int Int;
 typedef int &Int_O, &Int_IO;
-typedef const unsigned int &Uint_I;
+typedef const unsigned int Uint_I;
 typedef unsigned int Uint;
 typedef unsigned int &Uint_O, &Uint_IO;
 
 #ifdef _MSC_VER
-typedef const __int64 &Llong_I; // 64 bit integer
+typedef const __int64 Llong_I; // 64 bit integer
 typedef __int64 Llong;
 typedef __int64 &Llong_O, &Llong_IO;
-typedef const unsigned __int64 &Ullong_I;
+typedef const unsigned __int64 Ullong_I;
 typedef unsigned __int64 Ullong;
 typedef unsigned __int64 &Ullong_O, &Ullong_IO;
 #else
-typedef const long long int &Llong_I; // 64 bit integer
+typedef const long long int Llong_I; // 64 bit integer
 typedef long long int Llong;
 typedef long long int &Llong_O, &Llong_IO;
-typedef const unsigned long long int &Ullong_I;
+typedef const unsigned long long int Ullong_I;
 typedef unsigned long long int Ullong;
 typedef unsigned long long int &Ullong_O, &Ullong_IO;
 #endif
@@ -52,18 +52,18 @@ typedef Llong Long;
 #else
 typedef Int Long;
 #endif
-typedef const Long &Long_I;
+typedef const Long Long_I;
 typedef Long;
 typedef Long &Long_O, &Long_IO;
 
-typedef const char &Char_I; // 8 bit integer
+typedef const char Char_I; // 8 bit integer
 typedef char Char;
 typedef char &Char_O, &Char_IO;
-typedef const unsigned char &Uchar_I;
+typedef const unsigned char Uchar_I;
 typedef unsigned char Uchar;
 typedef unsigned char &Uchar_O, &Uchar_IO;
 
-typedef const double &Doub_I; // default floating type
+typedef const double Doub_I; // default floating type
 typedef double Doub;
 typedef double &Doub_O, &Doub_IO;
 
@@ -75,7 +75,7 @@ typedef const std::complex<double> &Comp_I;
 typedef std::complex<double> Comp;
 typedef std::complex<double> &Comp_O, &Comp_IO;
 
-typedef const bool &Bool_I;
+typedef const bool Bool_I;
 typedef bool Bool;
 typedef bool &Bool_O, &Bool_IO;
 
