@@ -17,6 +17,21 @@ inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long_I mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
+// check if a type is complex
+template<class T> struct is_complex : std::false_type {};
+template<class T> struct is_complex<std::complex<T>> : std::true_type {};
+
+// conj for complex, do nothing for real
+// not sure if this is implementation for std::conj
+template <class T>
+inline T conj(const T &s)
+{
+	if constexpr (is_complex<T>)
+		return ::conj(s);
+	else
+		return s;
+}
+
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
 // operators between Comp and Int
@@ -115,7 +130,7 @@ Bool shape_cmp(const Vector<T1> &v1, const Vector<T2> &v2)
 { return v1.size() == v2.size(); }
 
 template <class T1, class T2>
-Bool shape_cmp(const Matrix<T1> &a1, const Matrix<T2> &a2)
+Bool shape_cmp(const T1 &a1, const T2 &a2)
 { return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
 
 template <class T1, class T2>
@@ -705,6 +720,10 @@ inline void operator*=(Matrix<T> &v, const T1 &s)
 { times_equals1(v, s); }
 
 template <class T, class T1>
+inline void operator*=(Cmat<T> &v, const T1 &s)
+{ times_equals1(v, s); }
+
+template <class T, class T1>
 inline void operator*=(Mat3d<T> &v, const T1 &s)
 { times_equals1(v, s); }
 
@@ -1215,12 +1234,15 @@ inline void doub2comp(Mat3d<Comp> &v, const Mat3d<Doub> &v1)
 { v.resize(v1); doub2comp0(v, v1); }
 
 // conj(v)
-inline void conj(Vbase<Comp> &v)
+template <class T>
+inline void conj(Vbase<T> &v)
 {
-	Long i, N{ 2 * v.size() };
-	Doub *p = (Doub *)v.ptr();
-	for (i = 1; i < N; i += 2)
-		p[i] = -p[i];
+	if constexpr (std::is_complex<T>) {
+		Long i, N{ 2 * v.size() };
+		Doub *p = (Doub *)v.ptr();
+		for (i = 1; i < N; i += 2)
+			p[i] = -p[i];
+	}
 }
 
 // dot products ( sum conj(v1[i])*v2[i] )
@@ -1342,7 +1364,7 @@ inline void outprod_par(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 
 // matrix-vector multiplications (column vector assumed)
 template <class T, class T1, class T2>
-inline void mul(Vector<T> &y, const Matrix<T1> &a, const Vector<T2> &x)
+inline void mul1(T &y, const T1 &a, const T2 &x)
 {
 #ifdef _CHECKBOUNDS_
 	if (a.ncols() != x.size()) error("wrong shape!");
@@ -1355,6 +1377,14 @@ inline void mul(Vector<T> &y, const Matrix<T1> &a, const Vector<T2> &x)
 	}
 }
 
+template <class T, class T1, class T2>
+inline void mul(Vector<T> &y, const Matrix<T1> &a, const Vector<T2> &x)
+{ mul1(y, a, x); }
+
+template <class T, class T1, class T2>
+inline void mul(Vector<T> &y, const Cmat<T1> &a, const Vector<T2> &x)
+{ mul1(y, a, x); }
+
 // vector-matrix multiplication (row vector assumed)
 template <class T, class T1, class T2>
 inline void mul(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
@@ -1366,7 +1396,7 @@ inline void mul(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
 	y.resize(n); y = 0.;
 	for (j = 0; j < n; ++j) {
 		for (k = 0; k < m; ++k)
-			y[j] += x[k] * a[k][j];
+			y[j] += x[k] * a(k, j);
 	}
 }
 
@@ -1389,8 +1419,9 @@ inline void mul_par(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
 
 // matrix-matrix multiplication
 // TODO: optimize
+
 template <class T, class T1, class T2>
-inline void mul(Matrix<T> &c, const Matrix<T1> &a, const Matrix<T2> &b)
+inline void mul0(T &c, const T1 &a, const T2 &b)
 {
 #ifdef _CHECKBOUNDS_
 	if (a.ncols() != b.nrows()) error("wrong size!");
@@ -1403,6 +1434,18 @@ inline void mul(Matrix<T> &c, const Matrix<T1> &a, const Matrix<T2> &b)
 				c[i][j] += a[i][k] * b[k][j];
 		}
 	}
+}
+
+template <class T, class T1, class T2>
+inline void mul(Matrix<T> &c, const Matrix<T1> &a, const Matrix<T2> &b)
+{
+	mul0(c, a, b);
+}
+
+template <class T, class T1, class T2>
+inline void mul(Cmat<T> &c, const Cmat<T1> &a, const Cmat<T2> &b)
+{
+	mul0(c, a, b);
 }
 
 // === numerical integration ===

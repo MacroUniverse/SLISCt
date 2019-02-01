@@ -117,6 +117,7 @@ protected:
 	T *m_p; // pointer to the first element
 	inline void move(Vbase &rhs);
 public:
+	typedef T type;
 	Vbase() : m_N(0), m_p(nullptr) {}
 	explicit Vbase(Long_I N) : m_N(N), m_p(new T[N]) {}
 	T* ptr() { return m_p; } // get pointer

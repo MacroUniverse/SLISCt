@@ -1,13 +1,31 @@
 #pragma once
 // sparse matrix classes
 
-#include "slisc.h"
+#include "arithmatic.h"
 #ifndef NDEBUG_
 // make sure (i,j) element doesn't exist when using MatCoo<T>::push(s,i,j) 
 #define _CHECK_COO_REPEAT_
 #endif
 
 namespace slisc {
+
+template <class T> class MatCoo<T>;
+typedef MatCoo<Doub> McooDoub;
+typedef const McooDoub &McooDoub_I;
+typedef McooDoub &McooDoub_O, &McooDoub_IO;
+
+typedef MatCoo<Comp> McooComp;
+typedef const McooComp &McooComp_I;
+typedef McooComp &McooComp_O, &McooComp_IO;
+
+template <class T> class MatCooH<T>;
+typedef MatCooH<Doub> McooDoub;
+typedef const McooDoub &McooDoub_I;
+typedef McooDoub &McooDoub_O, &McooDoub_IO;
+
+typedef MatCooH<Comp> McooComp;
+typedef const McooComp &McooComp_I;
+typedef McooComp &McooComp_O, &McooComp_IO;
 
 template <class T>
 class MatCoo : public Vbase<T>
@@ -20,31 +38,31 @@ private:
 	Vector<Long> m_row, m_col;
 public:
 	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0) {}
+	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0) {}
 	MatCoo(Long_I Nr, Long_I Nc, Long_I N): m_Nr(Nr), m_Nc(Nc), m_Nnz(0), Base(N), m_row(N), m_col(N) {}
 	MatCoo(const MatCoo &rhs);		// Copy constructor
-	inline MatCoo & operator=(const MatCoo &rhs);	// copy assignment (do resize(rhs))
+	MatCoo & operator=(const MatCoo &rhs);	// copy assignment (do resize(rhs))
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
-	inline T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
-	inline const T& operator()(Long_I i, Long_I j) const;
-	inline void push(const T &s, Long_I i, Long_I j); // add one nonzero element
-	inline void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
+	T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
+	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
+	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
+	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	using Base::size; // return m_N
 	Long nrows() const { return m_Nr; }
 	Long ncols() const { return m_Nc; }
 	Long nnz() const { return m_Nnz; }
-	inline T &operator()(Long_I ind); // return element
-	inline const T &operator()(Long_I ind) const;
-	inline Long & row(Long_I ind); // row index
-	inline Long row(Long_I ind) const;
-	inline Long & col(Long_I ind); // column index
-	inline Long col(Long_I ind) const;
-	inline void trim(Long_I Nnz); // decrease m_Nnz to Nnz
-	inline void resize(Long_I N) { Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
-	inline void resize(Long_I Nr, Long_I Nc) // resize (contents preserved)
+	T &operator()(Long_I ind); // return element
+	const T &operator()(Long_I ind) const;
+	Long & row(Long_I ind); // row index
+	Long row(Long_I ind) const;
+	Long & col(Long_I ind); // column index
+	Long col(Long_I ind) const;
+	void trim(Long_I Nnz); // decrease m_Nnz to Nnz
+	void resize(Long_I N) { Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
+	void resize(Long_I Nr, Long_I Nc) // resize (contents preserved)
 	{ m_Nr = Nr; m_Nc = Nc; }
 	template <class T1>
-	inline void resize(const MatCoo<T1> &a);
-	~MatCoo() {};
+	void resize(const MatCoo<T1> &a);
 };
 
 template <class T>
@@ -78,7 +96,7 @@ inline T& MatCoo<T>::operator()(Long_I i, Long_I j)
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
 	error("MatCoo::operator()(i,j): element does not exist!");
-	return m_p[0];
+	return 0.;
 }
 
 template <class T>
@@ -92,8 +110,7 @@ inline const T& MatCoo<T>::operator()(Long_I i, Long_I j) const
 	for (n = 0; n < m_Nnz; ++n)
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
-	error("MatCoo::operator()(i,j): element does not exist!");
-	return m_p[0];
+	return 0.;
 }
 
 template <class T>
@@ -211,24 +228,133 @@ inline void MatCoo<T>::resize(const MatCoo<T1> &a)
 	m_Nnz = 0;
 }
 
-typedef MatCoo<Doub> McooDoub;
-typedef const McooDoub &McooDoub_I;
-typedef McooDoub &McooDoub_O, &McooDoub_IO;
+// sparse Hermitian / symmetric
+// only stores the upper triangle
+// nnz() is the actual # of non-zero elem. stored
+template <class T>
+class MatCooH : public MatCoo<T>
+{
+private:
+	typedef MatCoo<T> Base;
+public:
+	T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
+	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
+	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
+	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
+};
+
+template <class T>
+inline T& MatCooH<T>::operator()(Long_I i, Long_I j)
+{
+	if (i > j)
+		return Base::operator()(j, i);
+	else
+		return Base::operator()(i, j);
+}
+
+template <class T>
+inline const T& MatCooH<T>::operator()(Long_I i, Long_I j) const
+{
+	if (i > j)
+		return Base::operator()(j, i);
+	else
+		return Base::operator()(i, j);
+}
+
+template <class T>
+void MatCooH<T>::push(const T &s, Long_I i, Long_I j)
+{
+	if (i > j)
+		Base::push(s, j, i);
+	else
+		Base::push(s, i, j);
+}
+
+template <class T>
+void MatCooH<T>::set(const T &s, Long_I i, Long_I j)
+{
+	if (i > j)
+		Base::set(s, j, i);
+	else
+		Base::set(s, i, j);
+}
 
 // arithmatics
 
 // matrix vector multiplication
-void mul(VecDoub_O v, const McooDoub_I a, const VecDoub_I v1)
+// internal only: no bound checking!
+template <class T>
+void mul(T *y, const MatCoo<T> &a, const T *x)
+{
+	Long i;
+	memset(y, 0., a.nrows());
+	for (i = 0; i < a.nnz(); ++i) {
+		y[a.row(i)] += a(i) * x[a.col(i)];
+	}
+}
+
+// matrix vector multiplication
+template <class T, class T1, class T2>
+void mul(Vector<T> &y, const MatCoo<T1> &a, const Vector<T2> &x)
 {
 #ifdef _CHECKBOUNDS_
 	if (a.ncols() != v1.size()) error("wrong shape!");
 #endif
-	Long i;
 	v.resize(a.nrows());
-	v = 0.;
+	mul(y, a, x);
+}
+
+// internal only: no bound checking!
+template <class T>
+void mul(T *y, const MatCooH<T> &a, const T *x)
+{
+	Long i;
+	memset(y, 0., a.nrows());
 	for (i = 0; i < a.nnz(); ++i) {
-		v(a.row(i)) += a(i) * v1(a.col(i));
+		Long r = a.row(i), c = a.col(i);
+		if (r == c)
+			v(r) += a(i) * v1(c);
+		else {
+			v(r) += a(i) * v1(c);
+			v(c) += conj(a(i)) * v1(r);
+		}
 	}
+}
+
+template <class T, class T1, class T2>
+void mul(Vector<T> &y, const MatCooH<T1> &a, const Vector<T2> &x)
+{
+#ifdef _CHECKBOUNDS_
+	if (a.ncols() != x.size()) error("wrong shape!");
+#endif
+	v_out.resize(a.nrows());
+	mul(y, a, x);
+}
+
+template <class T, class T1>
+inline void operator*=(MatCoo<T> &v, const T1 &s)
+{
+	times_equals1(v, s);
+}
+
+template <class T, class T1>
+inline void operator-=(T &v, const MatCoo<T1> &v1)
+{
+#ifdef _CHECKBOUNDS_
+	if (!shape_cmp(v, v1)) error("wrong shape!");
+#endif
+	for (Long i = 0; i < v1.size(); ++i) {
+		v(v1.row(i), v1.col(i)) -= v1(i);
+	}
+}
+
+Doub norm_inf(McooComp_I A)
+{
+	VecDoub abs_sum(A.nrows(), 0.);
+	for (Int i = 1; i < A.nnz(); ++i) {
+		abs_sum(A.row(i)) += ::abs(A(i));
+	}
+	return max(abs_sum);
 }
 
 } // namespace slisc

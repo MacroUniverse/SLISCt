@@ -7,357 +7,108 @@
 
 namespace slisc {
 
-// version 1
-void disp(VecUchar_I v);
-void disp(VecInt_I v);
-void disp(VecDoub_I v);
-void disp(VecComp_I v);
-void disp(MatUchar_I a);
-void disp(MatInt_I a);
-void disp(MatDoub_I a);
-void disp(MatComp_I a);
-void disp(Mat3Doub_I a);
-void disp(Mat3Comp_I a);
-// version 2
-void disp(VecUchar_I v, Int_I precision);
-void disp(VecInt_I v, Int_I precision);
-void disp(VecDoub_I v, Int_I precision);
-void disp(VecComp_I v, Int_I precision);
-void disp(MatUchar_I a, Int_I precision);
-void disp(MatInt_I a, Int_I precision);
-void disp(MatDoub_I a, Int_I precision);
-void disp(MatComp_I a, Int_I precision);
-void disp(Mat3Doub_I a, Int_I precision);
-void disp(Mat3Comp_I a, Int_I precision);
-// version 3
-void disp(VecUchar_I v, Long_I start, Long_I n);
-void disp(VecInt_I v, Long_I start, Long_I n);
-void disp(VecDoub_I v, Long_I start, Long_I n);
-void disp(VecComp_I v, Long_I start, Long_I n);
-void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
-void disp(MatInt_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
-void disp(MatDoub_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
-void disp(MatComp_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2);
-void disp(Mat3Doub_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3);
-void disp(Mat3Comp_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3);
-// version 4
-void disp(VecUchar_I v, Long_I start, Long_I n, Int_I precision);
-void disp(VecInt_I v, Long_I start, Long_I n, Int_I precision);
-void disp(VecDoub_I v, Long_I start, Long_I n, Int_I precision);
-void disp(VecComp_I v, Long_I start, Long_I n, Int_I precision);
-void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
-void disp(MatInt_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
-void disp(MatDoub_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
-void disp(MatComp_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision);
-void disp(Mat3Doub_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision);
-void disp(Mat3Comp_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision);
+const Int def_disp_prec = 4;
+
+// version 0
+template <class T>
+void disp(const T *ptr, Int_I n, Int_I precision = def_disp_prec);
+
+// version 1 & 2
+template <class T>
+void disp(const Vector<T> &v, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Matrix<T> &a, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Cmat<T> &a, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const MatCoo<T> &a, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Mat3d<T> &a, Int_I precision = def_disp_prec);
+
+// version 3 & 4
+template <class T>
+void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Matrix<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Cmat<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const MatCoo<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision = def_disp_prec);
 
 // implementation
 
+// Char2Int<T>::type is Int when T is Char
+// otherwise return the same T
 
-// version 1
+template <typename T>
+class Char2Int
+{ public: typedef T type; };
 
-inline void disp(VecUchar_I v)
+template<>
+class Char2Int<Char>
+{ public: typedef Int type; };
+
+// version 0
+
+template <class T>
+void disp(const T *ptr, Int_I n, Int_I precision)
+{
+	for (Int i = 0; i < n; ++i) {
+		cout << (typename Char2Int<T>::type)ptr[i] << "   ";
+	}
+}
+
+// version 1 & 2
+
+template <class T>
+inline void disp(const Vector<T> &v, Int_I precision)
 {
 	Long i, n{ v.size() };
-	Int precision = 4;
 	auto oldPrecision = std::cout.precision();
 	std::cout.precision(precision);
 	if (v.size() == 0) std::cout << "empty";
 	else
-	for (i = 0; i < n; ++i) {
-		std::cout << (Int)v[i] << "   ";
-	}
+		for (i = 0; i < n; ++i) {
+			std::cout << (typename Char2Int<T>::type)v[i] << "   ";
+		}
 	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
-inline void disp(VecInt_I v)
-{
-	Long i, n{ v.size() };
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecDoub_I v)
-{
-	Long i, n{ v.size() };
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecComp_I v)
-{
-	Long i, n{ v.size() };
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatUchar_I a)
+template <class T>
+inline void disp_mat(const T &a, Int_I precision)
 {
 	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	Int precision{ 4 };
 	auto oldPrecision = std::cout.precision();
 	std::cout.precision(precision);
 	if (a.size() == 0) std::cout << "empty";
 	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << (Int)a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatInt_I a)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatDoub_I a)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatComp_I a)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(Mat3Doub_I a)
-{
-	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (k = 0; k < q; ++k) {
-		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << a(i, j, k) << "   ";
+				std::cout << (typename Char2Int<typename T::type>::type)a(i, j) << "   ";
 			}
 			std::cout << std::endl;
 		}
-		std::cout << std::endl;
-	}
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(Mat3Comp_I a)
-{
-	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (k = 0; k < q; ++k) {
-		std::cout << "(:, :, " << k << ")" << std::endl;
-		for (i = 0; i < m; ++i) {
-			for (j = 0; j < n; ++j) {
-				std::cout << a(i, j, k) << "   ";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	std::cout.precision(oldPrecision);
-}
-
-// version 2
-
-inline void disp(VecUchar_I v, Int_I precision)
-{
-	Long i, n{ v.size() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << (Int)v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecInt_I v, Int_I precision)
-{
-	Long i, n{ v.size() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecDoub_I v, Int_I precision)
-{
-	Long i, n{ v.size() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecComp_I v, Int_I precision)
-{
-	Long i, n{ v.size() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatUchar_I a, Int_I precision)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << (Int)a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
 	std::cout << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
-inline void disp(MatInt_I a, Int_I precision)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
+template <class T>
+void disp(const Matrix<T> &a, Int_I precision)
+{ disp_mat(a, precision); }
 
-inline void disp(MatDoub_I a, Int_I precision)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
+template <class T>
+void disp(const Cmat<T> &a, Int_I precision)
+{ disp_mat(a, precision); }
 
-inline void disp(MatComp_I a, Int_I precision)
-{
-	Long i, j, m{ a.nrows() }, n{ a.ncols() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
+template <class T>
+void disp(const MatCoo<T> &a, Int_I precision)
+{ disp_mat(a, precision); }
 
-inline void disp(Mat3Doub_I a, Int_I precision)
+template <class T>
+inline void disp(const Mat3d<T> &a, Int_I precision)
 {
 	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
 	auto oldPrecision = std::cout.precision();
@@ -368,7 +119,7 @@ inline void disp(Mat3Doub_I a, Int_I precision)
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << a(i, j, k) << "   ";
+				std::cout << (typename Char2Int<T>::type)a(i, j, k) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -377,205 +128,10 @@ inline void disp(Mat3Doub_I a, Int_I precision)
 	std::cout.precision(oldPrecision);
 }
 
-inline void disp(Mat3Comp_I a, Int_I precision)
-{
-	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (k = 0; k < q; ++k) {
-		std::cout << "(:, :, " << k << ")" << std::endl;
-		for (i = 0; i < m; ++i) {
-			for (j = 0; j < n; ++j) {
-				std::cout << a(i, j, k) << "   ";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	std::cout.precision(oldPrecision);
-}
+// version 3 & 4
 
-// version 3
-
-inline void disp(VecUchar_I v, Long_I start, Long_I n)
-{
-	Long i;
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << (Int)v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecInt_I v, Long_I start, Long_I n)
-{
-	Long i;
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecDoub_I v, Long_I start, Long_I n)
-{
-	Long i;
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecComp_I v, Long_I start, Long_I n)
-{
-	Long i;
-	Int precision = 4;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
-{
-	Long i, j;
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << (Int)a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatInt_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
-{
-	Long i, j;
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatDoub_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
-{
-	Long i, j;
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatComp_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
-{
-	Long i, j;
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(Mat3Doub_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
-{
-	Long i, j, k;
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (k = start3; k < start3+n3; ++k) {
-		std::cout << "(:, :, " << k << ")" << std::endl;
-		for (i = start1; i < start1+n1; ++i) {
-			for (j = start2; j < start2+n2; ++j) {
-				std::cout << a(i, j, k) << "   ";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(Mat3Comp_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
-{
-	Long i, j, k;
-	Int precision{ 4 };
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (k = start3; k < start3 + n3; ++k) {
-		std::cout << "(:, :, " << k << ")" << std::endl;
-		for (i = start1; i < start1 + n1; ++i) {
-			for (j = start2; j < start2 + n2; ++j) {
-				std::cout << a(i, j, k) << "   ";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	std::cout.precision(oldPrecision);
-}
-
-// version 4
-
-inline void disp(VecUchar_I v, Long_I start, Long_I n, Int_I precision)
+template <class T>
+inline void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision)
 {
 	Long i;
 	auto oldPrecision = std::cout.precision();
@@ -583,55 +139,14 @@ inline void disp(VecUchar_I v, Long_I start, Long_I n, Int_I precision)
 	if (v.size() == 0) std::cout << "empty";
 	else
 	for (i = start; i < start + n; ++i) {
-		std::cout << (Int)v[i] << "   ";
+		std::cout << (typename Char2Int<T>::type)v[i] << "   ";
 	}
 	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
 }
 
-inline void disp(VecInt_I v, Long_I start, Long_I n, Int_I precision)
-{
-	Long i;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecDoub_I v, Long_I start, Long_I n, Int_I precision)
-{
-	Long i;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(VecComp_I v, Long_I start, Long_I n, Int_I precision)
-{
-	Long i;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (v.size() == 0) std::cout << "empty";
-	else
-	for (i = start; i < start + n; ++i) {
-		std::cout << v[i] << "   ";
-	}
-	std::cout << std::endl << std::endl;
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+template <class T>
+inline void disp_mat(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 {
 	Long i, j;
 	auto oldPrecision = std::cout.precision();
@@ -640,7 +155,7 @@ inline void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << (Int)a(i, j) << "   ";
+			std::cout << (typename Char2Int<typename T::type>::type)a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}
@@ -648,78 +163,20 @@ inline void disp(MatUchar_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n
 	std::cout.precision(oldPrecision);
 }
 
-inline void disp(MatInt_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
-{
-	Long i, j;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
+template <class T>
+inline void disp(const Matrix<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+{ disp_mat(a, start1, start2, n1, n2, precision); }
 
-inline void disp(MatDoub_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
-{
-	Long i, j;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
+template <class T>
+inline void disp(const Cmat<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+{ disp_mat(a, start1, start2, n1, n2, precision); }
 
-inline void disp(MatComp_I a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
-{
-	Long i, j;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (i = start1; i < start1 + n1; ++i) {
-		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << a(i, j) << "   ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-	std::cout.precision(oldPrecision);
-}
+template <class T>
+inline void disp(const MatCoo<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+{ disp_mat(a, start1, start2, n1, n2, precision); }
 
-inline void disp(Mat3Doub_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
-{
-	Long i, j, k;
-	auto oldPrecision = std::cout.precision();
-	std::cout.precision(precision);
-	if (a.size() == 0) std::cout << "empty";
-	else
-	for (k = start3; k < start3 + n3; ++k) {
-		std::cout << "(:, :, " << k << ")" << std::endl;
-		for (i = start1; i < start1 + n1; ++i) {
-			for (j = start2; j < start2 + n2; ++j) {
-				std::cout << a(i, j, k) << "   ";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	std::cout.precision(oldPrecision);
-}
-
-inline void disp(Mat3Comp_I a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
+template <class T>
+inline void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
 {
 	Long i, j, k;
 	auto oldPrecision = std::cout.precision();

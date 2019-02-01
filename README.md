@@ -222,4 +222,5 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * test `randInt()`
 * test single indexing operator() for matrix and mat3d
 * update from Go-Solver project
-* 
+* test McooH and arithmetic
+* test "expokit.h"
