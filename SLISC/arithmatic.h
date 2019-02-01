@@ -1,5 +1,6 @@
 #pragma once
 #include "slisc.h"
+#include <type_traits>
 
 namespace slisc {
 
@@ -25,12 +26,11 @@ template<class T> struct is_complex<std::complex<T>> : std::true_type {};
 // not sure if this is implementation for std::conj
 template <class T>
 inline T conj(const T &s)
-{
-	if constexpr (is_complex<T>)
-		return ::conj(s);
-	else
-		return s;
-}
+{ return s; }
+
+template <class T>
+inline std::complex<T> conj(const std::complex<T> &s)
+{ return std::conj(s); }
 
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
@@ -264,7 +264,7 @@ inline void her(MatComp_O h, MatComp_I a)
 	h.resize(n, m);
 	for (i = 0; i < m; ++i)
 		for (j = 0; j < n; ++j)
-			h(j, i) = conj(a(i, j));
+			h(j, i) = slisc::conj(a(i, j));
 }
 
 template <class T>
@@ -1234,15 +1234,18 @@ inline void doub2comp(Mat3d<Comp> &v, const Mat3d<Doub> &v1)
 { v.resize(v1); doub2comp0(v, v1); }
 
 // conj(v)
+
 template <class T>
 inline void conj(Vbase<T> &v)
+{ return; }
+
+template <class T>
+inline void conj(Vbase<std::complex<T>> &v)
 {
-	if constexpr (std::is_complex<T>) {
-		Long i, N{ 2 * v.size() };
-		Doub *p = (Doub *)v.ptr();
-		for (i = 1; i < N; i += 2)
-			p[i] = -p[i];
-	}
+	Long i, N{ 2 * v.size() };
+	Doub *p = (Doub *)v.ptr();
+	for (i = 1; i < N; i += 2)
+		p[i] = -p[i];
 }
 
 // dot products ( sum conj(v1[i])*v2[i] )
@@ -1263,7 +1266,7 @@ inline T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
 	Long i, N{ v1.size() };
 	T s{};
 	for (i = 0; i < N; ++i)
-		s += conj(v1[i]) * v2[i];
+		s += slisc::conj(v1[i]) * v2[i];
 	return s;
 }
 
@@ -1340,7 +1343,7 @@ inline void outprod(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 	v.resize(N1, N2);
 	for (i = 0; i < N1; ++i) {
 		pc = v[i];
-		v1_i = conj(v1[i]);
+		v1_i = slisc::conj(v1[i]);
 		for (j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
 	}
@@ -1356,7 +1359,7 @@ inline void outprod_par(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 		Long j;
 		Comp *pc, v1_i;
 		pc = v[i];
-		v1_i = conj(v1[i]);
+		v1_i = slisc::conj(v1[i]);
 		for (j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
 	}

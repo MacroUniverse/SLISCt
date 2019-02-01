@@ -4,6 +4,7 @@
 
 #pragma once
 #include "slisc.h"
+#include "sparse.h"
 
 namespace slisc {
 
@@ -23,6 +24,8 @@ void disp(const Cmat<T> &a, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const MatCoo<T> &a, Int_I precision = def_disp_prec);
 template <class T>
+void disp(const MatCooH<T> &a, Int_I precision = def_disp_prec);
+template <class T>
 void disp(const Mat3d<T> &a, Int_I precision = def_disp_prec);
 
 // version 3 & 4
@@ -34,6 +37,8 @@ template <class T>
 void disp(const Cmat<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const MatCoo<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const MatCooH<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision = def_disp_prec);
 
@@ -56,7 +61,7 @@ template <class T>
 void disp(const T *ptr, Int_I n, Int_I precision)
 {
 	for (Int i = 0; i < n; ++i) {
-		cout << (typename Char2Int<T>::type)ptr[i] << "   ";
+		std::cout << (typename Char2Int<T>::type)ptr[i] << "   ";
 	}
 }
 
@@ -105,6 +110,10 @@ void disp(const Cmat<T> &a, Int_I precision)
 
 template <class T>
 void disp(const MatCoo<T> &a, Int_I precision)
+{ disp_mat(a, precision); }
+
+template <class T>
+void disp(const MatCooH<T> &a, Int_I precision)
 { disp_mat(a, precision); }
 
 template <class T>
@@ -173,6 +182,10 @@ inline void disp(const Cmat<T> &a, Long_I start1, Long_I start2, Long_I n1, Long
 
 template <class T>
 inline void disp(const MatCoo<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+{ disp_mat(a, start1, start2, n1, n2, precision); }
+
+template <class T>
+inline void disp(const MatCooH<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 { disp_mat(a, start1, start2, n1, n2, precision); }
 
 template <class T>

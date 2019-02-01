@@ -79,6 +79,144 @@ typedef const bool Bool_I;
 typedef bool Bool;
 typedef bool &Bool_O, &Bool_IO;
 
+
+// Matric and vector types
+
+template <class T> class Vector;
+typedef const Vector<Int> &VecInt_I;
+typedef Vector<Int> VecInt;
+typedef Vector<Int> &VecInt_O, &VecInt_IO;
+
+typedef const Vector<Uint> &VecUint_I;
+typedef Vector<Uint> VecUint;
+typedef Vector<Uint> &VecUint_O, &VecUint_IO;
+
+typedef const Vector<Long> &VecLong_I;
+typedef Vector<Long> VecLong;
+typedef Vector<Long> &VecLong_O, &VecLong_IO;
+
+typedef const Vector<Llong> &VecLlong_I;
+typedef Vector<Llong> VecLlong;
+typedef Vector<Llong> &VecLlong_O, &VecLlong_IO;
+
+typedef const Vector<Ullong> &VecUllong_I;
+typedef Vector<Ullong> VecUllong;
+typedef Vector<Ullong> &VecUllong_O, &VecUllong_IO;
+
+typedef const Vector<Char> &VecChar_I;
+typedef Vector<Char> VecChar;
+typedef Vector<Char> &VecChar_O, &VecChar_IO;
+
+typedef const Vector<Char*> &VecCharp_I;
+typedef Vector<Char*> VecCharp;
+typedef Vector<Char*> &VecCharp_O, &VecCharp_IO;
+
+typedef const Vector<Uchar> &VecUchar_I;
+typedef Vector<Uchar> VecUchar;
+typedef Vector<Uchar> &VecUchar_O, &VecUchar_IO;
+
+typedef const Vector<Doub> &VecDoub_I;
+typedef Vector<Doub> VecDoub;
+typedef Vector<Doub> &VecDoub_O, &VecDoub_IO;
+
+typedef const Vector<Doub*> &VecDoubp_I;
+typedef Vector<Doub*> VecDoubp;
+typedef Vector<Doub*> &VecDoubp_O, &VecDoubp_IO;
+
+typedef const Vector<Comp> &VecComp_I;
+typedef Vector<Comp> VecComp;
+typedef Vector<Comp> &VecComp_O, &VecComp_IO;
+
+typedef const Vector<Bool> &VecBool_I;
+typedef Vector<Bool> VecBool;
+typedef Vector<Bool> &VecBool_O, &VecBool_IO;
+
+template <class T> class Matrix;
+typedef const Matrix<Int> &MatInt_I;
+typedef Matrix<Int> MatInt;
+typedef Matrix<Int> &MatInt_O, &MatInt_IO;
+
+typedef const Matrix<Uint> &MatUint_I;
+typedef Matrix<Uint> MatUint;
+typedef Matrix<Uint> &MatUint_O, &MatUint_IO;
+
+typedef const Matrix<Llong> &MatLlong_I;
+typedef Matrix<Llong> MatLlong;
+typedef Matrix<Llong> &MatLlong_O, &MatLlong_IO;
+
+typedef const Matrix<Ullong> &MatUllong_I;
+typedef Matrix<Ullong> MatUllong;
+typedef Matrix<Ullong> &MatUllong_O, &MatUllong_IO;
+
+typedef const Matrix<Char> &MatChar_I;
+typedef Matrix<Char> MatChar;
+typedef Matrix<Char> &MatChar_O, &MatChar_IO;
+
+typedef const Matrix<Uchar> &MatUchar_I;
+typedef Matrix<Uchar> MatUchar;
+typedef Matrix<Uchar> &MatUchar_O, &MatUchar_IO;
+
+typedef const Matrix<Doub> &MatDoub_I;
+typedef Matrix<Doub> MatDoub;
+typedef Matrix<Doub> &MatDoub_O, &MatDoub_IO;
+
+typedef const Matrix<Comp> &MatComp_I;
+typedef Matrix<Comp> MatComp;
+typedef Matrix<Comp> &MatComp_O, &MatComp_IO;
+
+typedef const Matrix<Bool> &MatBool_I;
+typedef Matrix<Bool> MatBool;
+typedef Matrix<Bool> &MatBool_O, &MatBool_IO;
+
+template <class T> class Cmat;
+typedef const Cmat<Int> &CmatInt_I;
+typedef Cmat<Int> CmatInt;
+typedef Cmat<Int> &CmatInt_O, &CmatInt_IO;
+
+typedef const Cmat<Uint> &CmatUint_I;
+typedef Cmat<Uint> CmatUint;
+typedef Cmat<Uint> &CmatUint_O, &CmatUint_IO;
+
+typedef const Cmat<Llong> &CmatLlong_I;
+typedef Cmat<Llong> CmatLlong;
+typedef Cmat<Llong> &CmatLlong_O, &CmatLlong_IO;
+
+typedef const Cmat<Ullong> &CmatUllong_I;
+typedef Cmat<Ullong> CmatUllong;
+typedef Cmat<Ullong> &CmatUllong_O, &CmatUllong_IO;
+
+typedef const Cmat<Char> &CmatChar_I;
+typedef Cmat<Char> CmatChar;
+typedef Cmat<Char> &CmatChar_O, &CmatChar_IO;
+
+typedef const Cmat<Uchar> &CmatUchar_I;
+typedef Cmat<Uchar> CmatUchar;
+typedef Cmat<Uchar> &CmatUchar_O, &CmatUchar_IO;
+
+typedef const Cmat<Doub> &CmatDoub_I;
+typedef Cmat<Doub> CmatDoub;
+typedef Cmat<Doub> &CmatDoub_O, &CmatDoub_IO;
+
+typedef const Cmat<Comp> &CmatComp_I;
+typedef Cmat<Comp> CmatComp;
+typedef Cmat<Comp> &CmatComp_O, &CmatComp_IO;
+
+typedef const Cmat<Bool> &CmatBool_I;
+typedef Cmat<Bool> CmatBool;
+typedef Cmat<Bool> &CmatBool_O, &CmatBool_IO;
+
+template <class T> class Mat3d;
+typedef const Mat3d<Doub> &Mat3Doub_I;
+typedef Mat3d<Doub> Mat3Doub;
+typedef Mat3d<Doub> &Mat3Doub_O, &Mat3Doub_IO;
+
+typedef const Mat3d<Comp> &Mat3Comp_I;
+typedef Mat3d<Comp> Mat3Comp;
+typedef Mat3d<Comp> &Mat3Comp_O, &Mat3Comp_IO;
+
+template <class T> class MatCoo;
+template <class T> class MatCooH;
+
 // NaN definition
 static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
 
@@ -115,21 +253,21 @@ class Vbase
 protected:
 	Long m_N; // number of elements
 	T *m_p; // pointer to the first element
-	inline void move(Vbase &rhs);
+	void move(Vbase &rhs);
 public:
 	typedef T type;
 	Vbase() : m_N(0), m_p(nullptr) {}
 	explicit Vbase(Long_I N) : m_N(N), m_p(new T[N]) {}
 	T* ptr() { return m_p; } // get pointer
-	inline const T* ptr() const { return m_p; }
-	inline Long_I size() const { return m_N; }
-	inline void resize(Long_I N);
-	inline T & operator()(Long_I i);
-	inline const T & operator()(Long_I i) const;
-	inline T& end(); // last element
-	inline const T& end() const;
-	inline T& end(Long_I i);
-	inline const T& end(Long_I i) const;
+	const T* ptr() const { return m_p; }
+	Long_I size() const { return m_N; }
+	void resize(Long_I N);
+	T & operator()(Long_I i);
+	const T & operator()(Long_I i) const;
+	T& end(); // last element
+	const T& end() const;
+	T& end(Long_I i);
+	const T& end(Long_I i) const;
 	~Vbase() { if (m_p) delete m_p; }
 };
 
@@ -227,16 +365,16 @@ public:
 	Vector(Long_I N, const T *a) // Initialize to array
 	: Vector(N) { memcpy(m_p, a, N*sizeof(T)); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
-	inline Vector & operator=(const Vector &rhs);	// copy assignment
-	inline Vector & operator=(const T &rhs);  // assign to constant value
+	Vector & operator=(const Vector &rhs);	// copy assignment
+	Vector & operator=(const T &rhs);  // assign to constant value
 #ifdef _CUSLISC_
 	Vector & operator=(const Gvector<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	inline void operator<<(Vector &rhs); // move data and rhs.resize(0)
-	inline T & operator[](Long_I i);	//i'th element
-	inline const T & operator[](Long_I i) const;
-	inline void resize(Long_I N) {Base::resize(N);} // resize (contents not preserved)
+	void operator<<(Vector &rhs); // move data and rhs.resize(0)
+	T & operator[](Long_I i);	//i'th element
+	const T & operator[](Long_I i) const;
+	void resize(Long_I N) {Base::resize(N);} // resize (contents not preserved)
 	template <class T1>
 	void resize(const Vector<T1> &v) {resize(v.size());}
 };
@@ -309,22 +447,26 @@ public:
 	Matrix(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Matrix(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Matrix(const Matrix &rhs);		// Copy constructor
-	inline Matrix & operator=(const Matrix &rhs);	// copy assignment
-	inline Matrix & operator=(const T &rhs);
+	Matrix & operator=(const Matrix &rhs);	// copy assignment
+	Matrix & operator=(const T &rhs);
+	template <class T1>
+	Matrix & operator=(const MatCoo<T1> &rhs);
+	template <class T1>
+	Matrix & operator=(const MatCooH<T1> &rhs);
 #ifdef _CUSLISC_
 	Matrix & operator=(const Gmatrix<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	inline void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
-	inline T& operator()(Long_I i, Long_I j); // double indexing
-	inline const T& operator()(Long_I i, Long_I j) const;
+	void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
+	T& operator()(Long_I i, Long_I j); // double indexing
+	const T& operator()(Long_I i, Long_I j) const;
 	const T *ptr(Long_I i) const; // pointer to the beginning of a row
 	T *ptr(Long_I i);
-	inline Long nrows() const;
-	inline Long ncols() const;
-	inline void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
+	Long nrows() const;
+	Long ncols() const;
+	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
 	template <class T1>
-	inline void resize(const Matrix<T1> &a);
+	void resize(const Matrix<T1> &a);
 };
 
 template <class T>
@@ -360,6 +502,34 @@ template <class T>
 inline Matrix<T> & Matrix<T>::operator=(const T &rhs)
 {
 	if (m_N) memset(m_p, rhs, m_N);
+	return *this;
+}
+
+template <class T> template <class T1>
+inline Matrix<T> & Matrix<T>::operator=(const MatCoo<T1> &rhs)
+{
+	resize(rhs.nrows(), rhs.ncols());
+	operator=(0);
+	for (Long i = 0; i < rhs.size(); ++i) {
+		operator()(rhs.row(i), rhs.col(i)) = rhs(i);
+	}
+	return *this;
+}
+
+template <class T> template <class T1>
+inline Matrix<T> & Matrix<T>::operator=(const MatCooH<T1> &rhs)
+{
+	resize(rhs.nrows(), rhs.ncols());
+	operator=(0);
+	for (Long i = 0; i < rhs.size(); ++i) {
+		Long r = rhs.row(i), c = rhs.col(i);
+		if (r == c)
+			operator()(r, r) = rhs(i);
+		else {
+			operator()(r, c) = rhs(i);
+			operator()(c, r) = conj(rhs(i));
+		}
+	}
 	return *this;
 }
 
@@ -451,17 +621,20 @@ public:
 	Cmat(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Cmat(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Cmat(const Cmat &rhs);		// Copy constructor
-	inline Cmat & operator=(const Cmat &rhs);	// copy assignment
-	inline Cmat & operator=(const T &rhs);
-	inline void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
-	inline T& operator()(Long_I i, Long_I j);	// double indexing
-	inline const T& operator()(Long_I i, Long_I j) const;
-	inline Long nrows() const;
-	inline Long ncols() const;
-	inline void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
+	Cmat & operator=(const Cmat &rhs);	// copy assignment
+	Cmat & operator=(const T &rhs);
 	template <class T1>
-	inline void resize(const Cmat<T1> &a);
-	~Cmat() {};
+	Cmat & operator=(const MatCoo<T1> &rhs);
+	template <class T1>
+	Cmat & operator=(const MatCooH<T1> &rhs);
+	void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
+	T& operator()(Long_I i, Long_I j);	// double indexing
+	const T& operator()(Long_I i, Long_I j) const;
+	Long nrows() const;
+	Long ncols() const;
+	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
+	template <class T1>
+	void resize(const Cmat<T1> &a);
 };
 
 template <class T>
@@ -497,6 +670,34 @@ template <class T>
 inline Cmat<T> & Cmat<T>::operator=(const T &rhs)
 {
 	if (m_N) memset(m_p, rhs, m_N);
+	return *this;
+}
+
+template <class T> template <class T1>
+inline Cmat<T> & Cmat<T>::operator=(const MatCoo<T1> &rhs)
+{
+	resize(rhs.nrows(), rhs.ncols());
+	operator=(0);
+	for (Long i = 0; i < rhs.size(); ++i) {
+		operator()(rhs.row(i), rhs.col(i)) = rhs(i);
+	}
+	return *this;
+}
+
+template <class T> template <class T1>
+inline Cmat<T> & Cmat<T>::operator=(const MatCooH<T1> &rhs)
+{
+	resize(rhs.nrows(), rhs.ncols());
+	operator=(0);
+	for (Long i = 0; i < rhs.size(); ++i) {
+		Long r = rhs.row(i), c = rhs.col(i);
+		if (r == c)
+			operator()(r, r) = rhs(i);
+		else {
+			operator()(r, c) = rhs(i);
+			operator()(c, r) = conj(rhs(i));
+		}
+	}
 	return *this;
 }
 
@@ -570,23 +771,23 @@ public:
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
-	inline Mat3d & operator=(const Mat3d &rhs);	// copy assignment
-	inline Mat3d & operator=(const T &rhs);
+	Mat3d & operator=(const Mat3d &rhs);	// copy assignment
+	Mat3d & operator=(const T &rhs);
 #ifdef _CUSLISC_
 	Mat3d & operator=(const Gmat3d<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	inline void operator<<(Mat3d &rhs); // move data and rhs.resize(0, 0, 0)
-	inline void resize(Long_I N1, Long_I N2, Long_I N3);
+	void operator<<(Mat3d &rhs); // move data and rhs.resize(0, 0, 0)
+	void resize(Long_I N1, Long_I N2, Long_I N3);
 	template <class T1>
-	inline void resize(const Mat3d<T1> &a);
-	inline T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
-	inline const T & operator()(Long_I i, Long_I j, Long_I k) const;
+	void resize(const Mat3d<T1> &a);
+	T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
+	const T & operator()(Long_I i, Long_I j, Long_I k) const;
 	const T* ptr(Long_I i, Long_I j) const;
 	T* ptr(Long_I i, Long_I j);
-	inline Long dim1() const;
-	inline Long dim2() const;
-	inline Long dim3() const;
+	Long dim1() const;
+	Long dim2() const;
+	Long dim3() const;
 };
 
 template <class T>
@@ -691,136 +892,6 @@ inline Long Mat3d<T>::dim2() const { return m_N2; }
 
 template <class T>
 inline Long Mat3d<T>::dim3() const { return m_N3; }
-
-// Matric and vector types
-
-typedef const Vector<Int> &VecInt_I;
-typedef Vector<Int> VecInt;
-typedef Vector<Int> &VecInt_O, &VecInt_IO;
-
-typedef const Vector<Uint> &VecUint_I;
-typedef Vector<Uint> VecUint;
-typedef Vector<Uint> &VecUint_O, &VecUint_IO;
-
-typedef const Vector<Long> &VecLong_I;
-typedef Vector<Long> VecLong;
-typedef Vector<Long> &VecLong_O, &VecLong_IO;
-
-typedef const Vector<Llong> &VecLlong_I;
-typedef Vector<Llong> VecLlong;
-typedef Vector<Llong> &VecLlong_O, &VecLlong_IO;
-
-typedef const Vector<Ullong> &VecUllong_I;
-typedef Vector<Ullong> VecUllong;
-typedef Vector<Ullong> &VecUllong_O, &VecUllong_IO;
-
-typedef const Vector<Char> &VecChar_I;
-typedef Vector<Char> VecChar;
-typedef Vector<Char> &VecChar_O, &VecChar_IO;
-
-typedef const Vector<Char*> &VecCharp_I;
-typedef Vector<Char*> VecCharp;
-typedef Vector<Char*> &VecCharp_O, &VecCharp_IO;
-
-typedef const Vector<Uchar> &VecUchar_I;
-typedef Vector<Uchar> VecUchar;
-typedef Vector<Uchar> &VecUchar_O, &VecUchar_IO;
-
-typedef const Vector<Doub> &VecDoub_I;
-typedef Vector<Doub> VecDoub;
-typedef Vector<Doub> &VecDoub_O, &VecDoub_IO;
-
-typedef const Vector<Doub*> &VecDoubp_I;
-typedef Vector<Doub*> VecDoubp;
-typedef Vector<Doub*> &VecDoubp_O, &VecDoubp_IO;
-
-typedef const Vector<Comp> &VecComp_I;
-typedef Vector<Comp> VecComp;
-typedef Vector<Comp> &VecComp_O, &VecComp_IO;
-
-typedef const Vector<Bool> &VecBool_I;
-typedef Vector<Bool> VecBool;
-typedef Vector<Bool> &VecBool_O, &VecBool_IO;
-
-typedef const Matrix<Int> &MatInt_I;
-typedef Matrix<Int> MatInt;
-typedef Matrix<Int> &MatInt_O, &MatInt_IO;
-
-typedef const Matrix<Uint> &MatUint_I;
-typedef Matrix<Uint> MatUint;
-typedef Matrix<Uint> &MatUint_O, &MatUint_IO;
-
-typedef const Matrix<Llong> &MatLlong_I;
-typedef Matrix<Llong> MatLlong;
-typedef Matrix<Llong> &MatLlong_O, &MatLlong_IO;
-
-typedef const Matrix<Ullong> &MatUllong_I;
-typedef Matrix<Ullong> MatUllong;
-typedef Matrix<Ullong> &MatUllong_O, &MatUllong_IO;
-
-typedef const Matrix<Char> &MatChar_I;
-typedef Matrix<Char> MatChar;
-typedef Matrix<Char> &MatChar_O, &MatChar_IO;
-
-typedef const Matrix<Uchar> &MatUchar_I;
-typedef Matrix<Uchar> MatUchar;
-typedef Matrix<Uchar> &MatUchar_O, &MatUchar_IO;
-
-typedef const Matrix<Doub> &MatDoub_I;
-typedef Matrix<Doub> MatDoub;
-typedef Matrix<Doub> &MatDoub_O, &MatDoub_IO;
-
-typedef const Matrix<Comp> &MatComp_I;
-typedef Matrix<Comp> MatComp;
-typedef Matrix<Comp> &MatComp_O, &MatComp_IO;
-
-typedef const Matrix<Bool> &MatBool_I;
-typedef Matrix<Bool> MatBool;
-typedef Matrix<Bool> &MatBool_O, &MatBool_IO;
-
-typedef const Cmat<Int> &CmatInt_I;
-typedef Cmat<Int> CmatInt;
-typedef Cmat<Int> &CmatInt_O, &CmatInt_IO;
-
-typedef const Cmat<Uint> &CmatUint_I;
-typedef Cmat<Uint> CmatUint;
-typedef Cmat<Uint> &CmatUint_O, &CmatUint_IO;
-
-typedef const Cmat<Llong> &CmatLlong_I;
-typedef Cmat<Llong> CmatLlong;
-typedef Cmat<Llong> &CmatLlong_O, &CmatLlong_IO;
-
-typedef const Cmat<Ullong> &CmatUllong_I;
-typedef Cmat<Ullong> CmatUllong;
-typedef Cmat<Ullong> &CmatUllong_O, &CmatUllong_IO;
-
-typedef const Cmat<Char> &CmatChar_I;
-typedef Cmat<Char> CmatChar;
-typedef Cmat<Char> &CmatChar_O, &CmatChar_IO;
-
-typedef const Cmat<Uchar> &CmatUchar_I;
-typedef Cmat<Uchar> CmatUchar;
-typedef Cmat<Uchar> &CmatUchar_O, &CmatUchar_IO;
-
-typedef const Cmat<Doub> &CmatDoub_I;
-typedef Cmat<Doub> CmatDoub;
-typedef Cmat<Doub> &CmatDoub_O, &CmatDoub_IO;
-
-typedef const Cmat<Comp> &CmatComp_I;
-typedef Cmat<Comp> CmatComp;
-typedef Cmat<Comp> &CmatComp_O, &CmatComp_IO;
-
-typedef const Cmat<Bool> &CmatBool_I;
-typedef Cmat<Bool> CmatBool;
-typedef Cmat<Bool> &CmatBool_O, &CmatBool_IO;
-
-typedef const Mat3d<Doub> &Mat3Doub_I;
-typedef Mat3d<Doub> Mat3Doub;
-typedef Mat3d<Doub> &Mat3Doub_O, &Mat3Doub_IO;
-
-typedef const Mat3d<Comp> &Mat3Comp_I;
-typedef Mat3d<Comp> Mat3Comp;
-typedef Mat3d<Comp> &Mat3Comp_O, &Mat3Comp_IO;
 
 // macro-like functions (don't use them in your code ever, write similar utilities in "algorithm.h")
 

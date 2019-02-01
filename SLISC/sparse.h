@@ -1,5 +1,5 @@
-#pragma once
 // sparse matrix classes
+#pragma once
 
 #include "arithmatic.h"
 #ifndef NDEBUG_
@@ -9,7 +9,7 @@
 
 namespace slisc {
 
-template <class T> class MatCoo<T>;
+template <class T> class MatCoo;
 typedef MatCoo<Doub> McooDoub;
 typedef const McooDoub &McooDoub_I;
 typedef McooDoub &McooDoub_O, &McooDoub_IO;
@@ -18,14 +18,14 @@ typedef MatCoo<Comp> McooComp;
 typedef const McooComp &McooComp_I;
 typedef McooComp &McooComp_O, &McooComp_IO;
 
-template <class T> class MatCooH<T>;
-typedef MatCooH<Doub> McooDoub;
-typedef const McooDoub &McooDoub_I;
-typedef McooDoub &McooDoub_O, &McooDoub_IO;
+template <class T> class MatCooH;
+typedef MatCooH<Doub> McoohDoub;
+typedef const McoohDoub &McoohDoub_I;
+typedef McoohDoub &McoohDoub_O, &McoohDoub_IO;
 
-typedef MatCooH<Comp> McooComp;
-typedef const McooComp &McooComp_I;
-typedef McooComp &McooComp_O, &McooComp_IO;
+typedef MatCooH<Comp> McoohComp;
+typedef const McoohComp &McoohComp_I;
+typedef McoohComp &McoohComp_O, &McoohComp_IO;
 
 template <class T>
 class MatCoo : public Vbase<T>
@@ -39,9 +39,11 @@ private:
 public:
 	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0) {}
 	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0) {}
-	MatCoo(Long_I Nr, Long_I Nc, Long_I N): m_Nr(Nr), m_Nc(Nc), m_Nnz(0), Base(N), m_row(N), m_col(N) {}
+	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
+		m_Nr(Nr), m_Nc(Nc), m_Nnz(0), Base(Nnz), m_row(Nnz), m_col(Nnz) {}
 	MatCoo(const MatCoo &rhs);		// Copy constructor
-	MatCoo & operator=(const MatCoo &rhs);	// copy assignment (do resize(rhs))
+	template <class T1>
+	MatCoo & operator=(const MatCoo<T1> &rhs);	// copy assignment (do resize(rhs))
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
 	T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
 	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
@@ -53,16 +55,17 @@ public:
 	Long nnz() const { return m_Nnz; }
 	T &operator()(Long_I ind); // return element
 	const T &operator()(Long_I ind) const;
-	Long & row(Long_I ind); // row index
-	Long row(Long_I ind) const;
-	Long & col(Long_I ind); // column index
-	Long col(Long_I ind) const;
+	Long row(Long_I ind) const; // row index
+	Long col(Long_I ind) const; // column index
 	void trim(Long_I Nnz); // decrease m_Nnz to Nnz
-	void resize(Long_I N) { Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
-	void resize(Long_I Nr, Long_I Nc) // resize (contents preserved)
+	void resize(Long_I N) // reallocate memory
+	{ Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
+	void reshape(Long_I Nr, Long_I Nc) // change matrix size
 	{ m_Nr = Nr; m_Nc = Nc; }
 	template <class T1>
 	void resize(const MatCoo<T1> &a);
+	template <class T1>
+	void reshape(const MatCoo<T1> &a);
 };
 
 template <class T>
@@ -72,11 +75,11 @@ MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
 		 "argument for function input or output, and use \"=\" to copy!");
 }
 
-template <class T>
-inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
+template <class T> template <class T1>
+inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
-	resize(rhs);
+	reshape(rhs); resize(rhs);
 	m_Nnz = rhs.m_Nnz;
 	memcpy(m_p, rhs.m_p, m_Nnz*sizeof(T));
 	memcpy(m_row.ptr(), rhs.m_row.ptr(), m_Nnz*sizeof(Long));
@@ -92,11 +95,12 @@ inline T& MatCoo<T>::operator()(Long_I i, Long_I j)
 		error("MatCoo::operator()(i,j): index out of bounds!");
 #endif
 	Long n;
-	for (n = 0; n < m_Nnz; ++n)
+	for (n = 0; n < m_Nnz; ++n) {
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
+	}
 	error("MatCoo::operator()(i,j): element does not exist!");
-	return 0.;
+	return m_p[0];
 }
 
 template <class T>
@@ -169,16 +173,6 @@ inline const T & MatCoo<T>::operator()(Long_I ind) const
 }
 
 template <class T>
-inline Long & MatCoo<T>::row(Long_I ind)
-{
-#ifdef _CHECKBOUNDS_
-	if (ind<0 || ind>=m_Nnz)
-		error("MatCoo::row() subscript out of bounds");
-#endif
-	return m_row(ind);
-}
-
-template <class T>
 inline Long MatCoo<T>::row(Long_I ind) const
 {
 #ifdef _CHECKBOUNDS_
@@ -186,16 +180,6 @@ inline Long MatCoo<T>::row(Long_I ind) const
 		error("MatCoo::row() subscript out of bounds");
 #endif
 	return m_row(ind);
-}
-
-template <class T>
-inline Long & MatCoo<T>::col(Long_I ind)
-{
-#ifdef _CHECKBOUNDS_
-	if (ind < 0 || ind >= m_Nnz)
-		error("MatCoo::col() subscript out of bounds");
-#endif
-	return m_col(ind);
 }
 
 template <class T>
@@ -221,11 +205,16 @@ inline void MatCoo<T>::trim(Long_I Nnz)
 
 template <class T>
 template <class T1>
+inline void MatCoo<T>::reshape(const MatCoo<T1> &a)
+{
+	reshape(a.nrows(), a.ncols());
+}
+
+template <class T>
+template <class T1>
 inline void MatCoo<T>::resize(const MatCoo<T1> &a)
 {
 	resize(a.size());
-	resize(a.nrows(), a.ncols()); 
-	m_Nnz = 0;
 }
 
 // sparse Hermitian / symmetric
@@ -237,17 +226,28 @@ class MatCooH : public MatCoo<T>
 private:
 	typedef MatCoo<T> Base;
 public:
-	T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
+	MatCooH() {}
+	MatCooH(Long_I N) : Base(N, N) {}
+	MatCooH(Long_I N, Long_I Nnz) : Base(N, N, Nnz) {}
+	using Base::operator();
+	T operator()(Long_I i, Long_I j);	// double indexing (element must exist)
 	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
+	T &ref(Long_I i, Long_I j); // reference to an element
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
+	void reshape(Long_I N) { Base::reshape(N, N); } // change matrix size
+	template <class T1>
+	void reshape(const MatCoo<T1> &a);
+	template <class T1>
+	MatCooH &operator=(const MatCooH<T1> &rhs)
+	{ Base::operator=(rhs); }
 };
 
 template <class T>
-inline T& MatCooH<T>::operator()(Long_I i, Long_I j)
+inline T MatCooH<T>::operator()(Long_I i, Long_I j)
 {
 	if (i > j)
-		return Base::operator()(j, i);
+		return slisc::conj(Base::operator()(j, i));
 	else
 		return Base::operator()(i, j);
 }
@@ -256,7 +256,16 @@ template <class T>
 inline const T& MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
 	if (i > j)
-		return Base::operator()(j, i);
+		return slisc::conj(Base::operator()(j, i));
+	else
+		return Base::operator()(i, j);
+}
+
+template <class T>
+inline T &MatCooH<T>::ref(Long_I i, Long_I j)
+{
+	if (i > j)
+		error("lower triangle is empty!");
 	else
 		return Base::operator()(i, j);
 }
@@ -265,7 +274,7 @@ template <class T>
 void MatCooH<T>::push(const T &s, Long_I i, Long_I j)
 {
 	if (i > j)
-		Base::push(s, j, i);
+		Base::push(slisc::conj(s), j, i);
 	else
 		Base::push(s, i, j);
 }
@@ -277,6 +286,16 @@ void MatCooH<T>::set(const T &s, Long_I i, Long_I j)
 		Base::set(s, j, i);
 	else
 		Base::set(s, i, j);
+}
+
+template <class T> template <class T1>
+void MatCooH<T>::reshape(const MatCoo<T1> &a)
+{
+#ifdef _CHECKBOUNDS_
+	if (a.nrows() != a.ncols())
+		error("a is not square matrix!");
+#endif
+	reshape(a.nrows());
 }
 
 // arithmatics
@@ -298,10 +317,10 @@ template <class T, class T1, class T2>
 void mul(Vector<T> &y, const MatCoo<T1> &a, const Vector<T2> &x)
 {
 #ifdef _CHECKBOUNDS_
-	if (a.ncols() != v1.size()) error("wrong shape!");
+	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
-	v.resize(a.nrows());
-	mul(y, a, x);
+	y.resize(a.nrows());
+	mul(y.ptr(), a, x.ptr());
 }
 
 // internal only: no bound checking!
@@ -313,10 +332,10 @@ void mul(T *y, const MatCooH<T> &a, const T *x)
 	for (i = 0; i < a.nnz(); ++i) {
 		Long r = a.row(i), c = a.col(i);
 		if (r == c)
-			v(r) += a(i) * v1(c);
+			y(r) += a(i) * x(c);
 		else {
-			v(r) += a(i) * v1(c);
-			v(c) += conj(a(i)) * v1(r);
+			y(r) += a(i) * x(c);
+			y(c) += slisc::conj(a(i)) * x(r);
 		}
 	}
 }
@@ -327,8 +346,8 @@ void mul(Vector<T> &y, const MatCooH<T1> &a, const Vector<T2> &x)
 #ifdef _CHECKBOUNDS_
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
-	v_out.resize(a.nrows());
-	mul(y, a, x);
+	y.resize(a.nrows());
+	mul(y.ptr(), a, x.ptr());
 }
 
 template <class T, class T1>
@@ -348,11 +367,11 @@ inline void operator-=(T &v, const MatCoo<T1> &v1)
 	}
 }
 
-Doub norm_inf(McooComp_I A)
+inline Doub norm_inf(McooComp_I A)
 {
 	VecDoub abs_sum(A.nrows(), 0.);
 	for (Int i = 1; i < A.nnz(); ++i) {
-		abs_sum(A.row(i)) += ::abs(A(i));
+		abs_sum(A.row(i)) += std::abs(A(i));
 	}
 	return max(abs_sum);
 }
