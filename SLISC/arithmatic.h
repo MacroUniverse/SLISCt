@@ -16,48 +16,38 @@ inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 
 // return the positive mod (use "%" when i >= 0)
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
-inline Long_I mod(Long_I i, Long_I n) { return (i % n + n) % n; }
+inline Long mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
 // check if a type is complex
 template<class T> struct is_complex : std::false_type {};
 template<class T> struct is_complex<std::complex<T>> : std::true_type {};
 
-// conj for complex, do nothing for real
-// not sure if this is implementation for std::conj
-template <class T>
-inline T conj(const T &s)
-{ return s; }
-
-template <class T>
-inline std::complex<T> conj(const std::complex<T> &s)
-{ return std::conj(s); }
-
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
 // operators between Comp and Int
-inline Comp operator+(Comp_I c, Int_I i) { return c + (Doub)i; }
-inline Comp operator+(Int_I i, Comp_I c) { return c + (Doub)i; }
-inline Comp operator-(Int_I i, Comp_I c) { return (Doub)i - c; }
-inline Comp operator-(Comp_I c, Int_I i) { return c - (Doub)i; }
-inline Comp operator*(Comp_I c, Int_I i) { return c*(Doub)i; }
-inline Comp operator*(Int_I i, Comp_I c) { return c*(Doub)i; }
-inline Comp operator/(Comp_I c, Int_I i) { return c / (Doub)i; }
-inline Comp operator/(Int_I i, Comp_I c) { return (Doub)i / c; }
+inline const Comp operator+(Comp_I c, Int_I i) { return c + (Doub)i; }
+inline const Comp operator+(Int_I i, Comp_I c) { return c + (Doub)i; }
+inline const Comp operator-(Int_I i, Comp_I c) { return (Doub)i - c; }
+inline const Comp operator-(Comp_I c, Int_I i) { return c - (Doub)i; }
+inline const Comp operator*(Comp_I c, Int_I i) { return c*(Doub)i; }
+inline const Comp operator*(Int_I i, Comp_I c) { return c*(Doub)i; }
+inline const Comp operator/(Comp_I c, Int_I i) { return c / (Doub)i; }
+inline const Comp operator/(Int_I i, Comp_I c) { return (Doub)i / c; }
 
 // operators between Comp and Long
-inline Comp operator+(Comp_I c, Long_I i) { return c + (Doub)i; }
-inline Comp operator+(Long_I i, Comp_I c) { return c + (Doub)i; }
-inline Comp operator-(Long_I i, Comp_I c) { return (Doub)i - c; }
-inline Comp operator-(Comp_I c, Long_I i) { return c - (Doub)i; }
-inline Comp operator*(Comp_I c, Long_I i) { return c*(Doub)i; }
-inline Comp operator*(Long_I i, Comp_I c) { return c*(Doub)i; }
-inline Comp operator/(Comp_I c, Long_I i) { return c / (Doub)i; }
-inline Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
+inline const Comp operator+(Comp_I c, Long_I i) { return c + (Doub)i; }
+inline const Comp operator+(Long_I i, Comp_I c) { return c + (Doub)i; }
+inline const Comp operator-(Long_I i, Comp_I c) { return (Doub)i - c; }
+inline const Comp operator-(Comp_I c, Long_I i) { return c - (Doub)i; }
+inline const Comp operator*(Comp_I c, Long_I i) { return c*(Doub)i; }
+inline const Comp operator*(Long_I i, Comp_I c) { return c*(Doub)i; }
+inline const Comp operator/(Comp_I c, Long_I i) { return c / (Doub)i; }
+inline const Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
 
 // === get vec/mat properties ===
 
 template <class T1, class T2>
-inline bool equals_to0(const Vbase<T1> &v1, const Vbase<T2> &v2)
+Bool equals_to0(const Vbase<T1> &v1, const Vbase<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	if (N != v2.size()) return false;
@@ -68,31 +58,31 @@ inline bool equals_to0(const Vbase<T1> &v1, const Vbase<T2> &v2)
 }
 
 template <class T1, class T2>
-inline bool operator==(const Vector<T1> &v1, const Vector<T2> &v2)
+Bool operator==(const Vector<T1> &v1, const Vector<T2> &v2)
 { return equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool operator==(const Matrix<T1> &v1, const Matrix<T2> &v2)
+Bool operator==(const Matrix<T1> &v1, const Matrix<T2> &v2)
 { return equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool operator==(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
+Bool operator==(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 { return equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool operator!=(const Vector<T1> &v1, const Vector<T2> &v2)
+Bool operator!=(const Vector<T1> &v1, const Vector<T2> &v2)
 { return !equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool operator!=(const Matrix<T1> &v1, const Matrix<T2> &v2)
+Bool operator!=(const Matrix<T1> &v1, const Matrix<T2> &v2)
 { return !equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool operator!=(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
+Bool operator!=(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 { return !equals_to0(v1, v2); }
 
 template <class T1, class T2>
-inline bool equals_to1(const Vbase<T1> &v, const T2 &s)
+Bool equals_to1(const Vbase<T1> &v, const T2 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -102,27 +92,27 @@ inline bool equals_to1(const Vbase<T1> &v, const T2 &s)
 }
 
 template <class T1, class T2>
-inline bool operator==(const Vector<T1> &v, const T2 &s)
+Bool operator==(const Vector<T1> &v, const T2 &s)
 { return equals_to1(v, s); }
 
 template <class T1, class T2>
-inline bool operator==(const Matrix<T1> &v, const T2 &s)
+Bool operator==(const Matrix<T1> &v, const T2 &s)
 { return equals_to1(v, s); }
 
 template <class T1, class T2>
-inline bool operator==(const Mat3d<T1> &v, const T2 &s)
+Bool operator==(const Mat3d<T1> &v, const T2 &s)
 { return equals_to1(v, s); }
 
 template <class T1, class T2>
-inline bool operator!=(const Vector<T1> &v, const T2 &s)
+Bool operator!=(const Vector<T1> &v, const T2 &s)
 { return !equals_to1(v, s); }
 
 template <class T1, class T2>
-inline bool operator!=(const Matrix<T1> &v, const T2 &s)
+Bool operator!=(const Matrix<T1> &v, const T2 &s)
 { return !equals_to1(v, s); }
 
 template <class T1, class T2>
-inline bool operator!=(const Mat3d<T1> &v, const T2 &s)
+Bool operator!=(const Mat3d<T1> &v, const T2 &s)
 { return !equals_to1(v, s); }
 
 template <class T1, class T2>
@@ -138,7 +128,7 @@ Bool shape_cmp(const Mat3d<T1> &a1, const Mat3d<T2> &a2)
 { return (a1.dim1() == a2.dim1()) && (a1.dim2() == a2.dim2()) && (a1.dim3() == a2.dim3()); }
 
 template <class T>
-inline T sum(const Vbase<T> &v)
+inline const T sum(const Vbase<T> &v)
 {
 	Long i, n{ v.size() };
 	T sum = 0;
@@ -157,7 +147,7 @@ inline Long count(VecBool_I v)
 }
 
 template <class T>
-inline T max(const Vbase<T> &v)
+inline const T max(const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -179,7 +169,7 @@ inline Doub max(const Vbase<Comp> &v)
 }
 
 template <class T>
-inline T max(Long_O ind, const Vbase<T> &v)
+inline const T max(Long_O ind, const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -203,7 +193,7 @@ inline Doub max(Long_O ind, const Vbase<Comp> &v)
 
 // sum(v(:).^2) for real numbers
 template <class T>
-inline T norm2(Vbase<T> &v)
+const T norm2(Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	T s2{};
@@ -213,7 +203,7 @@ inline T norm2(Vbase<T> &v)
 }
 
 template <class T>
-inline T norm(Vbase<T> &v)
+const T norm(Vbase<T> &v)
 { return std::sqrt(norm2(v)); }
 
 //sum(abs(v(:)). ^ 2) for complex numbers
@@ -264,7 +254,7 @@ inline void her(MatComp_O h, MatComp_I a)
 	h.resize(n, m);
 	for (i = 0; i < m; ++i)
 		for (j = 0; j < n; ++j)
-			h(j, i) = slisc::conj(a(i, j));
+			h(j, i) = conj(a(i, j));
 }
 
 template <class T>
@@ -1251,7 +1241,7 @@ inline void conj(Vbase<std::complex<T>> &v)
 // dot products ( sum conj(v1[i])*v2[i] )
 // s = dot(v, v)
 template <class T, class T1, class T2>
-inline T dot0(const Vector<T1> &v1, const Vector<T2> &v2)
+inline const T dot0(const Vector<T1> &v1, const Vector<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	T s{};
@@ -1261,12 +1251,12 @@ inline T dot0(const Vector<T1> &v1, const Vector<T2> &v2)
 }
 
 template <class T, class T1, class T2>
-inline T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
+inline const T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
 {
 	Long i, N{ v1.size() };
 	T s{};
 	for (i = 0; i < N; ++i)
-		s += slisc::conj(v1[i]) * v2[i];
+		s += conj(v1[i]) * v2[i];
 	return s;
 }
 
@@ -1278,7 +1268,7 @@ inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 	return dot0<Doub>(v1, v2);
 }
 
-inline Comp operator*(VecComp_I v1, VecComp_I v2)
+inline const Comp operator*(VecComp_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1286,7 +1276,7 @@ inline Comp operator*(VecComp_I v1, VecComp_I v2)
 	return dot1<Comp>(v1, v2);
 }
 
-inline Comp operator*(VecDoub_I v1, VecComp_I v2)
+inline const Comp operator*(VecDoub_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1294,7 +1284,7 @@ inline Comp operator*(VecDoub_I v1, VecComp_I v2)
 	return dot0<Comp>(v1, v2);
 }
 
-inline Comp operator*(VecComp_I v1, VecDoub_I v2)
+inline const Comp operator*(VecComp_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -1343,7 +1333,7 @@ inline void outprod(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 	v.resize(N1, N2);
 	for (i = 0; i < N1; ++i) {
 		pc = v[i];
-		v1_i = slisc::conj(v1[i]);
+		v1_i = conj(v1[i]);
 		for (j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
 	}
@@ -1359,7 +1349,7 @@ inline void outprod_par(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 		Long j;
 		Comp *pc, v1_i;
 		pc = v[i];
-		v1_i = slisc::conj(v1[i]);
+		v1_i = conj(v1[i]);
 		for (j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
 	}
@@ -1373,7 +1363,7 @@ inline void mul1(T &y, const T1 &a, const T2 &x)
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	Long i, k, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(m); y = 0.;
+	y.resize(m); y = T::value_type();
 	for (i = 0; i < m; ++i) {
 		for (k = 0; k < n; ++k)
 			y[i] += a(i, k) * x(k);

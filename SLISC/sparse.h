@@ -40,8 +40,9 @@ public:
 	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0) {}
 	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0) {}
 	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
-		m_Nr(Nr), m_Nc(Nc), m_Nnz(0), Base(Nnz), m_row(Nnz), m_col(Nnz) {}
+		Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz) {}
 	MatCoo(const MatCoo &rhs);		// Copy constructor
+	MatCoo & operator=(const MatCoo &rhs);
 	template <class T1>
 	MatCoo & operator=(const MatCoo<T1> &rhs);	// copy assignment (do resize(rhs))
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
@@ -75,15 +76,23 @@ MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
 		 "argument for function input or output, and use \"=\" to copy!");
 }
 
+template <class T>
+inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
+{
+	return operator=<T>(rhs);
+}
+
 template <class T> template <class T1>
 inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
 	reshape(rhs); resize(rhs);
+	m_row = rhs.m_row;
+	m_col = rhs.m_col;
 	m_Nnz = rhs.m_Nnz;
-	memcpy(m_p, rhs.m_p, m_Nnz*sizeof(T));
-	memcpy(m_row.ptr(), rhs.m_row.ptr(), m_Nnz*sizeof(Long));
-	memcpy(m_col.ptr(), rhs.m_col.ptr(), m_Nnz*sizeof(Long));
+	for (Long i = 0; i < m_Nnz; ++i) {
+		(*this)(i) = rhs(i);
+	}
 	return *this;
 }
 
@@ -226,12 +235,12 @@ class MatCooH : public MatCoo<T>
 private:
 	typedef MatCoo<T> Base;
 public:
-	MatCooH() {}
-	MatCooH(Long_I N) : Base(N, N) {}
-	MatCooH(Long_I N, Long_I Nnz) : Base(N, N, Nnz) {}
+	MatCooH(): Base() {}
+	MatCooH(Long_I Nr, Long_I Nc);
+	MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz);
 	using Base::operator();
-	T operator()(Long_I i, Long_I j);	// double indexing (element must exist)
-	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
+	const T operator()(Long_I i, Long_I j);	// same as the const version, prevent inheritance
+	const T operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	T &ref(Long_I i, Long_I j); // reference to an element
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
@@ -240,23 +249,36 @@ public:
 	void reshape(const MatCoo<T1> &a);
 	template <class T1>
 	MatCooH &operator=(const MatCooH<T1> &rhs)
-	{ Base::operator=(rhs); }
+	{ Base(*this) = Base(rhs); }
 };
 
 template <class T>
-inline T MatCooH<T>::operator()(Long_I i, Long_I j)
+MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc) : Base(Nr, Nc)
 {
-	if (i > j)
-		return slisc::conj(Base::operator()(j, i));
-	else
-		return Base::operator()(i, j);
+#ifdef _CHECKBOUNDS_
+	if (Nr != Nc) error("must be square matrix!");
+#endif
 }
 
 template <class T>
-inline const T& MatCooH<T>::operator()(Long_I i, Long_I j) const
+MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
+{
+#ifdef _CHECKBOUNDS_
+	if (Nr != Nc) error("must be square matrix!");
+#endif
+}
+
+template <class T>
+inline const T MatCooH<T>::operator()(Long_I i, Long_I j)
+{
+	return ((const MatCooH<T>*)this)->operator()(i, j);
+}
+
+template <class T>
+inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
 	if (i > j)
-		return slisc::conj(Base::operator()(j, i));
+		return conj(Base::operator()(j, i));
 	else
 		return Base::operator()(i, j);
 }
@@ -274,7 +296,7 @@ template <class T>
 void MatCooH<T>::push(const T &s, Long_I i, Long_I j)
 {
 	if (i > j)
-		Base::push(slisc::conj(s), j, i);
+		Base::push(conj(s), j, i);
 	else
 		Base::push(s, i, j);
 }
@@ -303,7 +325,7 @@ void MatCooH<T>::reshape(const MatCoo<T1> &a)
 // matrix vector multiplication
 // internal only: no bound checking!
 template <class T>
-void mul(T *y, const MatCoo<T> &a, const T *x)
+void coo_mul(T *y, const MatCoo<T> &a, const T *x)
 {
 	Long i;
 	memset(y, 0., a.nrows());
@@ -320,22 +342,22 @@ void mul(Vector<T> &y, const MatCoo<T1> &a, const Vector<T2> &x)
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	y.resize(a.nrows());
-	mul(y.ptr(), a, x.ptr());
+	coo_mul(y.ptr(), a, x.ptr());
 }
 
 // internal only: no bound checking!
-template <class T>
-void mul(T *y, const MatCooH<T> &a, const T *x)
+template <class T, class T1, class T2>
+void cooh_mul(T *y, const MatCooH<T1> &a, const T2 *x)
 {
 	Long i;
 	memset(y, 0., a.nrows());
 	for (i = 0; i < a.nnz(); ++i) {
 		Long r = a.row(i), c = a.col(i);
 		if (r == c)
-			y(r) += a(i) * x(c);
+			y[r] += a(i) * x[c];
 		else {
-			y(r) += a(i) * x(c);
-			y(c) += slisc::conj(a(i)) * x(r);
+			y[r] += a(i) * x[c];
+			y[c] += conj(a(i)) * x[r];
 		}
 	}
 }
@@ -347,7 +369,7 @@ void mul(Vector<T> &y, const MatCooH<T1> &a, const Vector<T2> &x)
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	y.resize(a.nrows());
-	mul(y.ptr(), a, x.ptr());
+	cooh_mul(y.ptr(), a, x.ptr());
 }
 
 template <class T, class T1>

@@ -55,6 +55,10 @@ template<>
 class Char2Int<Char>
 { public: typedef Int type; };
 
+template<>
+class Char2Int<Uchar>
+{ public: typedef Int type; };
+
 // version 0
 
 template <class T>
@@ -92,7 +96,7 @@ inline void disp_mat(const T &a, Int_I precision)
 	else
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << (typename Char2Int<typename T::type>::type)a(i, j) << "   ";
+				std::cout << (typename Char2Int<typename T::value_type>::type)a(i, j) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -164,7 +168,7 @@ inline void disp_mat(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << (typename Char2Int<typename T::type>::type)a(i, j) << "   ";
+			std::cout << (typename Char2Int<typename T::value_type>::type)a(i, j) << "   ";
 		}
 		std::cout << std::endl;
 	}

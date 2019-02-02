@@ -224,3 +224,5 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * update from Go-Solver project
 * test McooH and arithmetic
 * test "expokit.h"
+* test operator= for different types
+* 

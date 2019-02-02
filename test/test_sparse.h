@@ -20,7 +20,7 @@ inline void test_sparse()
 		McooDoub a(3, 4);
 		if (a.nrows() != 3 || a.ncols() != 4 || a.size() != 0 || a.nnz() != 0)
 			error("failed!");
-		McoohComp b(4);
+		McoohComp b(4, 4);
 		if (b.nrows() != 4 || b.ncols() != 4 || b.size() != 0 || b.nnz() != 0)
 			error("failed!");
 	}
@@ -30,14 +30,14 @@ inline void test_sparse()
 		McooDoub a(3, 4, 5);
 		if (a.nrows() != 3 || a.ncols() != 4 || a.size() != 5 || a.nnz() != 0)
 			error("failed!");
-		McoohComp b(3, 5);
+		McoohComp b(3, 3, 5);
 		if (b.nrows() != 3 || b.ncols() != 3 || b.size() != 5 || b.nnz() != 0)
 			error("failed!");
 	}
 
 	{
 		// push
-		McooDoub a(3, 4, 5); McoohComp b(4, 5);
+		McooDoub a(3, 4, 5); McoohComp b(4, 4, 5);
 		a.push(1., 0, 0); b.push(Comp(1., 1.), 0, 0);
 		if (a.nnz() != 1 || b.nnz() != 1) error("failed!");
 		if (a(0) != 1. || b(0) != Comp(1.,1.)) error("failed!");
@@ -59,7 +59,7 @@ inline void test_sparse()
 		if (a(1, 2) != 2.2 || b(1, 2) != Comp(2.2,2.2)) error("failed!");
 		if (a(1, 3) != 3. || b(1, 3) != Comp(3.,3.)) error("failed!");
 		a(1, 3) = 3.3;
-		b(1, 3) = Comp(3.3, 3.3);
+		b.ref(1, 3) = Comp(3.3, 3.3);
 		if (a(1, 3) != 3.3 || b(1, 3) != Comp(3.3, 3.3)) error("failed!");
 
 		// set
@@ -82,13 +82,13 @@ inline void test_sparse()
 		// copy assignment
 		Long i, j, k = 0;
 		McooDoub a(4, 4, 16), a1;
-		McoohComp b(4, 10), b1;
+		McoohComp b(4, 4, 10), b1;
 		for (i = 0; i < 4; ++i)
-		for (j = 0; j < 4; ++j) {
-			++k;
-			a.push(k, i, j);
-			if (i >= j) b.push(Comp(k, k), i, j);
-		}
+			for (j = 0; j < 4; ++j) {
+				++k;
+				a.push(k, i, j);
+				if (i >= j) b.push(Comp(k, k), i, j);
+			}
 		for (i = 0; i < b.size(); ++i) {
 			if (b.row(i) > b.col(i))
 				error("failed!");
@@ -118,25 +118,25 @@ inline void test_sparse()
 		c = a; d = b;
 		CmatDoub e; CmatComp f;
 		e = a; f = b;
-		disp(b); disp(d); disp(f);
 		for (i = 0; i < 4; ++i) {
 			for (j = 0; j < 4; ++j) {
 				if (c(i, j) != a(i, j) || e(i, j) != a(i, j)) {
 					error("failed!");
 				}
 				if (d(i, j) != b(i, j) || f(i, j) != b(i, j)) {
-					std::cout << d(i, j) << "   " << f(i, j) << "  " << b(i, j) << std::endl;
 					error("failed!");
 				}
 			}
 		}
 
 		// matrix - vector multiplication
-		VecDoub y, x(4);
+		VecDoub y, y1, x(4);
 		linspace(x, 1., 4.);
-		mul(y, a, x);
-		/*if (y.size() != 4) error("failed!");
-		if (abs(v(0)-30.) + abs(v(1)-70.) + abs(v(2)-110.) > 1e-15)
-			error("failed!");*/
+		mul(y, a, x); mul(y1, c, x);
+		if (y != y1) error("failed!");
+
+		VecComp v, v1;
+		mul(v, b, x); mul(v1, d, x);
+		if (v != v1) error("failed!");
 	}
 }

@@ -184,7 +184,7 @@ public:
 	template <class T1, class T2>
 	void num2_fout(T1 &out1, T2 &out2, const std::string &prompt) {
 		num2_cin(out1, out2, prompt);
-		m_fout << out1 << " " << out2 << endl;
+		m_fout << out1 << " " << out2 << std::endl;
 	}
 
 	template <class T1, class T2>
