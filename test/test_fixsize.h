@@ -40,6 +40,20 @@ inline void test_fixsize()
 		v.end(1) = 2.2;
 		if (v[2] != 2.2) error("failed!");
 	}
+	// operator=
+	{
+		// v = s
+		FvecDoub<3> v(0.);
+		v = 301;
+		if (v != 301) error("failed!");
+
+		// v = v
+		FvecComp<3> v1(0.), v2(Comp(2.2, 2.2));
+		v1 = v2;
+		if (v1 != Comp(2.2,2.2)) error("failed!");
+		v1 = v;
+		if (v1 != 301.) error("failed!");
+	}
 
 	// === FixCmat ===
 	// default constructor and size()
@@ -57,21 +71,25 @@ inline void test_fixsize()
 		if (v.nrows() != 3 || v.ncols() != 4) error("failed!");
 		if (v != 3.14) error("failed!");
 	}
-	// test ptr()
+	// test ptr(), operator(i), operator[j], end(), end(i)
 	{
-		FcmatDoub<3, 4> v(3.14);
-		if (v != 3.14) error("failed!");
+		FcmatDoub<2, 4> v(0.);
+		Doub *p = v.ptr();
+		p[0] = 0.; p[1] = 1.;
+		v(2) = 2.; v(3) = 3.;
+		v[4] = 4.; v[5] = 5.;
+		v.end(2) = 6.; v.end() = 7.;
+		if (v(0) != 0. || v(1) != 1. || p[2] != 2. || p[3] != 3.)
+			error("failed!");
+		if (p[4] != 4. || p[5] != 5.) error("failed!");
+		if (p[6] != 6. || p[7] != 7.) error("failed!");
 	}
-	// test operator[], operator(), end()
+	// test operator(i, j), end()
 	{
-		FvecDoub<3> v(0.);
-		v[0] = v[1] = v[2] = 3.1;
-		if (v(0) != 3.1 || v(1) != 3.1 || v(2) != 3.1) error("failed!");
-		v(0) = v(1) = v(2) = 6.2;
-		if (v[0] != 6.2 || v[1] != 6.2 || v[2] != 6.2) error("failed!");
-
-		if (v.end() != 6.2 || v.end(1) != 6.2 || v.end(2) != 6.2 || v.end(3) != 6.2) error("failed!");
-		v.end(1) = 2.2;
-		if (v[2] != 2.2) error("failed!");
+		FcmatDoub<2, 2> v(0.);
+		v(0, 0) = 0.; v(1, 0) = 1.;
+		v(0, 1) = 2.; v(1, 1) = 3.;
+		if (v[0] != 0. || v[1] != 1. || v[2] != 2. || v[3] != 3.)
+			error("failed!");
 	}
 }

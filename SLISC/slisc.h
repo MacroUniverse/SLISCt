@@ -239,14 +239,20 @@ template <class T> struct Comp2Real { typedef T type; };
 template <class T> struct Comp2Real<std::complex<T>> { typedef T type; };
 
 template<class T>
-inline void memSet(T *dest, const T val, Long_I n)
+inline void vecset(T *dest, const T val, Long_I n)
 {
 	for (Long i = 0; i < n; ++i)
 		dest[i] = val;
 }
 
 template<class T>
-inline void memCpy(T *dest, const T *src, Long_I n)
+inline void veccpy(T *dest, const T *src, Long_I n)
+{
+	memcpy(dest, src, n * sizeof(T));
+}
+
+template<class T, class T1>
+inline void veccpy(T *dest, const T1 *src, Long_I n)
 {
 	for (Long i = 0; i < n; ++i)
 		dest[i] = src[i];
@@ -349,7 +355,7 @@ inline Vbase<T> & Vbase<T>::operator=(const Vbase<T> &rhs)
 template <class T>
 inline Vbase<T> & Vbase<T>::operator=(const T &rhs)
 {
-	memSet(m_p, rhs, m_N);
+	vecset(m_p, rhs, m_N);
 	return *this;
 }
 
@@ -357,7 +363,7 @@ template <class T> template <class T1>
 inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
 {
 	resize(rhs.size());
-	memCpy(m_p, rhs.ptr(), m_N);
+	veccpy(m_p, rhs.ptr(), m_N);
 	return *this;
 }
 
@@ -397,7 +403,7 @@ public:
 	Vector(Long_I N, const T &a) //initialize to constant value
 	: Vector(N) { *this = a; }
 	Vector(Long_I N, const T *a) // Initialize to array
-	: Vector(N) { memCpy(m_p, a, N*sizeof(T)); }
+	: Vector(N) { veccpy(m_p, a, N); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
 	Vector &operator=(const Vector &rhs);
 	template <class T1>

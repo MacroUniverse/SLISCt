@@ -40,15 +40,15 @@ void test_eigen_linsolve()
 		HouseholderQrComp qr(A);
 		qr.solve(x, y1);
 		x -= x1;
-		if (max(x) > 2e-14) error("failed!");
+		if (max_abs(x) > 2e-14) error("failed!");
 		qr.solve(x, y2);
 		x -= x2;
-		if (max(x) > 2e-14) error("failed!");
+		if (max_abs(x) > 2e-14) error("failed!");
 		mul(y1, B, x1);
 		qr.compute(B);
 		qr.solve(x, y1);
 		x -= x1;
-		if (max(x) > 2.5e-14) error("failed!");
+		if (max_abs(x) > 2.5e-14) error("failed!");
 	}
 
 #else

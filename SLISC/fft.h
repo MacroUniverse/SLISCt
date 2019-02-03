@@ -113,7 +113,7 @@ void fftshift(Matrix<T> &a, Int_I dim = 1)
 		if (isodd(n)) error("fftshift only supports even columns!");
 			Long i, halfn{ n / 2 };
 		Vector<T> temp(halfn);
-		Long size{ halfn * sizeof(T) };
+		Long size = halfn * sizeof(T);
 		for (i = 0; i < m; ++i) {
 			memcpy(&temp[0], a[i], size);
 			memcpy(a[i], &a[i][halfn], size);

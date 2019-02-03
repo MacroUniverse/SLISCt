@@ -23,6 +23,6 @@ void test_eigen_basics()
 		MatComp c, c1(2, 2); c1(0) = 10.*I; c1(1) = 13.*I; c1(2) = 22.*I; c1(3) = 29.*I;
 		mul(c, a, b);
 		c -= c1;
-		if (max(c) > 1e-14)  error("failed!");
+		if (max_abs(c) > 1e-14)  error("failed!");
 	}
 }

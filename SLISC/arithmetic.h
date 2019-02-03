@@ -520,7 +520,7 @@ template <class T, class T1>
 inline void operator+=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -556,7 +556,7 @@ template <class T, class T1>
 inline void operator-=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v, v1);
 }
@@ -565,7 +565,7 @@ template <class T, class T1>
 inline void operator-=(Matrix<T> &v, const Matrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v, v1);
 }
@@ -592,7 +592,7 @@ template <class T, class T1>
 inline void operator*=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v, v1);
 }
@@ -628,7 +628,7 @@ template <class T, class T1>
 inline void operator/=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v, v1);
 }
@@ -836,7 +836,7 @@ template <class T, class T1, class T2>
 inline void plus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); plus1(v, v1, v2);
 }
@@ -945,7 +945,7 @@ template <class T, class T1, class T2>
 inline void minus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); minus4(v, v1, v2);
 }
@@ -1015,7 +1015,7 @@ template <class T, class T1, class T2>
 inline void times(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); times1(v, v1, v2);
 }
@@ -1094,7 +1094,7 @@ template <class T, class T1, class T2>
 inline void divide(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); divide3(v, v1, v2);
 }

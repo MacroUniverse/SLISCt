@@ -123,7 +123,7 @@ inline const T& MatCoo<T>::operator()(Long_I i, Long_I j) const
 	for (n = 0; n < m_Nnz; ++n)
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
-	return 0.;
+	return T();
 }
 
 template <class T>
@@ -328,7 +328,7 @@ template <class T>
 void coo_mul(T *y, const MatCoo<T> &a, const T *x)
 {
 	Long i;
-	memset(y, 0., a.nrows());
+	vecset(y, T(), a.nrows());
 	for (i = 0; i < a.nnz(); ++i) {
 		y[a.row(i)] += a(i) * x[a.col(i)];
 	}
@@ -350,7 +350,7 @@ template <class T, class T1, class T2>
 void cooh_mul(T *y, const MatCooH<T1> &a, const T2 *x)
 {
 	Long i;
-	memset(y, 0., a.nrows());
+	vecset(y, T(), a.nrows());
 	for (i = 0; i < a.nnz(); ++i) {
 		Long r = a.row(i), c = a.col(i);
 		if (r == c)

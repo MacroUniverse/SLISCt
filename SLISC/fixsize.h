@@ -5,16 +5,47 @@
 namespace slisc {
 
 template <class T, Long N> class FixVec;
+template <class T, Long Nr, Long Nc> class FixCmat;
+
+template <Long N> using FvecChar = FixVec<Char, N>;
+template <Long N> using FvecChar_I = const FixVec<Char, N> &;
+template <Long N> using FvecChar_O = FixVec<Char, N> &;
+template <Long N> using FvecChar_IO = FixVec<Char, N> &;
+
+template <Long N> using FvecInt = FixVec<Int, N>;
+template <Long N> using FvecInt_I = const FixVec<Int, N> &;
+template <Long N> using FvecInt_O = FixVec<Int, N> &;
+template <Long N> using FvecInt_IO = FixVec<Int, N> &;
+
 template <Long N> using FvecDoub = FixVec<Doub, N>;
 template <Long N> using FvecDoub_I = const FixVec<Doub, N> &;
 template <Long N> using FvecDoub_O = FixVec<Doub, N> &;
 template <Long N> using FvecDoub_IO = FixVec<Doub, N> &;
 
-template <class T, Long Nr, Long Nc> class FixCmat;
+template <Long N> using FvecComp = FixVec<Comp, N>;
+template <Long N> using FvecComp_I = const FixVec<Comp, N> &;
+template <Long N> using FvecComp_O = FixVec<Comp, N> &;
+template <Long N> using FvecComp_IO = FixVec<Comp, N> &;
+
+template <Long Nr, Long Nc> using FcmatChar = FixCmat<Char, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatChar_I = const FixCmat<Char, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatChar_O = FixCmat<Char, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatChar_IO = FixCmat<Char, Nr, Nc> &;
+
+template <Long Nr, Long Nc> using FcmatInt = FixCmat<Int, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatInt_I = const FixCmat<Int, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatInt_O = FixCmat<Int, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatInt_IO = FixCmat<Int, Nr, Nc> &;
+
 template <Long Nr, Long Nc> using FcmatDoub = FixCmat<Doub, Nr, Nc>;
 template <Long Nr, Long Nc> using FcmatDoub_I = const FixCmat<Doub, Nr, Nc> &;
 template <Long Nr, Long Nc> using FcmatDoub_O = FixCmat<Doub, Nr, Nc> &;
 template <Long Nr, Long Nc> using FcmatDoub_IO = FixCmat<Doub, Nr, Nc> &;
+
+template <Long Nr, Long Nc> using FcmatComp = FixCmat<Comp, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatComp_I = const FixCmat<Comp, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatComp_O = FixCmat<Comp, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatComp_IO = FixCmat<Comp, Nr, Nc> &;
 
 // Base Class for vector/matrix
 template <class T, Long N>
@@ -71,22 +102,19 @@ inline const T & FixVec<T, N>::operator()(Long_I i) const
 
 template <class T, Long N>
 inline FixVec<T, N> & FixVec<T, N>::operator=(const FixVec<T, N> &rhs)
-{
-	return operator=<T>(rhs);
-}
+{ return operator=<T>(rhs); }
 
 template <class T, Long N>
 inline FixVec<T, N> & FixVec<T, N>::operator=(const T &rhs)
 {
-	memSet(m_data, rhs, N);
+	vecset(m_data, rhs, N);
 	return *this;
 }
 
 template <class T, Long N> template <class T1>
 inline FixVec<T, N> & FixVec<T, N>::operator=(const FixVec<T1, N> &rhs)
 {
-	resize(rhs.size());
-	memCpy(m_data, rhs.ptr(), N);
+	veccpy(m_data, rhs.ptr(), N);
 	return *this;
 }
 

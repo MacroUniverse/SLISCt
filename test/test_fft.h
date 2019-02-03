@@ -19,11 +19,11 @@ void test_fft()
 	fft(v);
 	v1.resize(4); v1 = 0.; v1[1] = 4.;
 	v -= v1;
-	if (max(v) > 1.5e-15) error("failed!");
+	if (max_abs(v) > 1.5e-15) error("failed!");
 	ifft(v1);
 	v[0] = 1; v[1] = I;  v[2] = -1; v[3] = -I;
 	v1 /= 4.; v1 -= v;
-	if (max(v1) > 1e-15) error("failed!");
+	if (max_abs(v1) > 1e-15) error("failed!");
 
 	// fft_interp()
 	VecDoub x; linspace(x, 1., 3., 3);
@@ -55,11 +55,11 @@ void test_fft()
 	VecComp v5(16, 0.);  v5[0] = v[0]; v5[1] = v[1]; v5[14] = v[2]; v5[15] = v[3];
 	fft(v5);
 	v4 -= v5;
-	if (max(v4) > 1e-14) error("failed!");
+	if (max_abs(v4) > 1e-14) error("failed!");
 
 	ifft4x(v4, v);
 	v5 = 0.; v5[0] = v[0]; v5[1] = v[1]; v5[14] = v[2]; v5[15] = v[3];
 	ifft(v5);
 	v4 -= v5;
-	if (max(v4) > 1e-14) error("failed!");
+	if (max_abs(v4) > 1e-14) error("failed!");
 }
