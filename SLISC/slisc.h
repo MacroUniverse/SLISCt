@@ -230,12 +230,26 @@ const Comp I(0., 1.);
 
 #define warning(str) do{std::cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl;} while(0)
 
+// === meta programming utilities ===
+template <typename T> struct Char2Int { typedef T type; };
+template<> struct Char2Int<Char> { public: typedef Int type; };
+template<> struct Char2Int<Uchar> { public: typedef Int type; };
+
+template <class T> struct Comp2Real { typedef T type; };
+template <class T> struct Comp2Real<std::complex<T>> { typedef T type; };
+
 template<class T>
-inline void memset(T *dest, const T val, Long_I n)
+inline void memSet(T *dest, const T val, Long_I n)
 {
-	T *end = dest + n;
-	for (; dest < end; ++dest)
-		*dest = val;
+	for (Long i = 0; i < n; ++i)
+		dest[i] = val;
+}
+
+template<class T>
+inline void memCpy(T *dest, const T *src, Long_I n)
+{
+	for (Long i = 0; i < n; ++i)
+		dest[i] = src[i];
 }
 
 // For cuSLISC project
@@ -260,19 +274,17 @@ public:
 	const T* ptr() const { return m_p; }
 	Long size() const { return m_N; }
 	void resize(Long_I N);
-	T & operator()(Long_I i);
-	const T & operator()(Long_I i) const;
 	T & operator[](Long_I i);
 	const T & operator[](Long_I i) const;
+	T & operator()(Long_I i);
+	const T & operator()(Long_I i) const;
+	T& end(Long_I i = 1);
+	const T& end(Long_I i = 1) const;
 	Vbase & operator=(const Vbase &rhs);
 	template <class T1>
 	Vbase & operator=(const Vbase<T1> &rhs);
 	Vbase & operator=(const T &rhs); // for scalar
 	void operator<<(Vbase &rhs);
-	T& end(); // last element
-	const T& end() const;
-	T& end(Long_I i);
-	const T& end(Long_I i) const;
 	~Vbase() {
 		if (m_p)
 			delete m_p;
@@ -301,7 +313,7 @@ inline void Vbase<T>::operator<<(Vbase &rhs)
 }
 
 template <class T>
-inline T & Vbase<T>::operator()(Long_I i)
+inline T & Vbase<T>::operator[](Long_I i)
 {
 #ifdef _CHECKBOUNDS_
 if (i<0 || i>=m_N)
@@ -311,7 +323,7 @@ if (i<0 || i>=m_N)
 }
 
 template <class T>
-inline const T & Vbase<T>::operator()(Long_I i) const
+inline const T & Vbase<T>::operator[](Long_I i) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=m_N)
@@ -321,24 +333,23 @@ inline const T & Vbase<T>::operator()(Long_I i) const
 }
 
 template <class T>
-inline T & Vbase<T>::operator[](Long_I i)
-{ return operator()(i); }
+inline T & Vbase<T>::operator()(Long_I i)
+{ return (*this)[i]; }
 
 template <class T>
-inline const T & Vbase<T>::operator[](Long_I i) const
-{ return operator()(i); }
+inline const T & Vbase<T>::operator()(Long_I i) const
+{ return (*this)[i]; }
 
 template <class T>
-Vbase<T> & Vbase<T>::operator=(const Vbase<T> &rhs)
+inline Vbase<T> & Vbase<T>::operator=(const Vbase<T> &rhs)
 {
-	if (this == &rhs) error("self assignment is forbidden!");
 	return operator=<T>(rhs);
 }
 
 template <class T>
 inline Vbase<T> & Vbase<T>::operator=(const T &rhs)
 {
-	if (m_N) memset(m_p, rhs, m_N);
+	memSet(m_p, rhs, m_N);
 	return *this;
 }
 
@@ -346,30 +357,8 @@ template <class T> template <class T1>
 inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
 {
 	resize(rhs.size());
-	for (Long i = 0; i < m_N; ++i) {
-		m_p[i] = rhs[i];
-	}
+	memCpy(m_p, rhs.ptr(), m_N);
 	return *this;
-}
-
-template <class T>
-inline T & Vbase<T>::end()
-{
-#ifdef _CHECKBOUNDS_
-	if (m_N < 1)
-		error("Using end() for empty object");
-#endif
-	return m_p[m_N-1];
-}
-
-template <class T>
-inline const T & Vbase<T>::end() const
-{
-#ifdef _CHECKBOUNDS_
-	if (m_N < 1)
-		error("Using end() for empty object");
-#endif
-	return m_p[m_N-1];
 }
 
 template <class T>
@@ -401,13 +390,14 @@ public:
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;
+	using Base::resize;
 	using Base::operator=;
 	Vector() {}
 	explicit Vector(Long_I N): Base(N) {}
 	Vector(Long_I N, const T &a) //initialize to constant value
-	: Vector(N) { memset(m_p,a,N); }
+	: Vector(N) { *this = a; }
 	Vector(Long_I N, const T *a) // Initialize to array
-	: Vector(N) { memcpy(m_p, a, N*sizeof(T)); }
+	: Vector(N) { memCpy(m_p, a, N*sizeof(T)); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
 	Vector &operator=(const Vector &rhs);
 	template <class T1>
@@ -417,7 +407,6 @@ public:
 	{ rhs.get(*this); return *this; }
 #endif
 	void operator<<(Vector &rhs); // move data and rhs.resize(0)
-	void resize(Long_I N) {Base::resize(N);} // resize (contents not preserved)
 	template <class T1>
 	void resize(const Vector<T1> &v) {resize(v.size());}
 };
@@ -528,7 +517,7 @@ Matrix<T>::Matrix(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}
 
 template <class T>
 Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T &s) : Matrix(Nr, Nc)
-{ memset(m_p, s, m_N); }
+{ *this = s; }
 
 template <class T>
 Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T *ptr) : Matrix(Nr, Nc)
@@ -681,7 +670,7 @@ Cmat<T>::Cmat(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}
 
 template <class T>
 Cmat<T>::Cmat(Long_I Nr, Long_I Nc, const T &s) : Cmat(Nr, Nc)
-{ memset(m_p, s, m_N); }
+{ *this = s; }
 
 template <class T>
 Cmat<T>::Cmat(Long_I Nr, Long_I Nc, const T *ptr) : Cmat(Nr, Nc)
@@ -711,7 +700,7 @@ inline Cmat<T> & Cmat<T>::operator=(const Cmat<T1> &rhs)
 template <class T>
 inline Cmat<T> & Cmat<T>::operator=(const T &rhs)
 {
-	if (m_N) memset(m_p, rhs, m_N);
+	Base::operator=(rhs);
 	return *this;
 }
 
@@ -825,7 +814,7 @@ Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N
 
 template <class T>
 Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &s) : Mat3d(N1, N2, N3)
-{ memset(m_p, s, N1*N2*N3); }
+{ *this = s; }
 
 template <class T>
 Mat3d<T>::Mat3d(const Mat3d<T> &rhs)

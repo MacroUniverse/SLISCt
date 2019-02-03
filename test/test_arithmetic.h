@@ -1,4 +1,4 @@
-#include "../SLISC/arithmatic.h"
+#include "../SLISC/arithmetic.h"
 
 // test +=, -=, *=, /=
 void test_self_op()

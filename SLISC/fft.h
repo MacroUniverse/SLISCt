@@ -1,4 +1,4 @@
-#include "arithmatic.h"
+#include "arithmetic.h"
 
 namespace slisc {
 

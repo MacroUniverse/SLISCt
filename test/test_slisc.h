@@ -1,5 +1,5 @@
 #pragma once
-#include "../SLISC/arithmatic.h"
+#include "../SLISC/arithmetic.h"
 
 void test_slisc()
 {

@@ -47,18 +47,6 @@ void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I
 // Char2Int<T>::type is Int when T is Char
 // otherwise return the same T
 
-template <typename T>
-class Char2Int
-{ public: typedef T type; };
-
-template<>
-class Char2Int<Char>
-{ public: typedef Int type; };
-
-template<>
-class Char2Int<Uchar>
-{ public: typedef Int type; };
-
 // version 0
 
 template <class T>

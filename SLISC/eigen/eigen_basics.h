@@ -1,4 +1,4 @@
-// for basic matrix arithmatics
+// for basic matrix arithmetics
 #pragma once
 #include "../slisc.h"
 #define EIGEN_DONT_PARALLELIZE

@@ -1,5 +1,5 @@
 #include "../SLISC/random.h"
-#include "../SLISC/arithmatic.h"
+#include "../SLISC/arithmetic.h"
 
 void test_random()
 {

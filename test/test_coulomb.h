@@ -1,4 +1,4 @@
-#include "SLISC/arithmatic.h"
+#include "SLISC/arithmetic.h"
 #include "SLISC/coulomb.h"
 #include "SLISC/time.h"
 #include "SLISC/disp.h"

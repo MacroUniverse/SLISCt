@@ -47,7 +47,19 @@ inline const Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
 // === get vec/mat properties ===
 
 template <class T1, class T2>
-Bool equals_to0(const Vbase<T1> &v1, const Vbase<T2> &v2)
+Bool vec_shape_cmp(const T1 &v1, const T2 &v2)
+{ return v1.size() == v2.size(); }
+
+template <class T1, class T2>
+Bool mat_shape_cmp(const T1 &a1, const T2 &a2)
+{ return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
+
+template <class T1, class T2>
+Bool mat3_shape_cmp(const T1 &a1, const T2 &a2)
+{ return (a1.dim1() == a2.dim1()) && (a1.dim2() == a2.dim2()) && (a1.dim3() == a2.dim3()); }
+
+template <class T1, class T2>
+Bool equals_to0(const T1 &v1, const T2 &v2)
 {
 	Long i, N{ v1.size() };
 	if (N != v2.size()) return false;
@@ -59,30 +71,30 @@ Bool equals_to0(const Vbase<T1> &v1, const Vbase<T2> &v2)
 
 template <class T1, class T2>
 Bool operator==(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return equals_to0(v1, v2); }
+{ return vec_shape_cmp(v1, v2) && equals_to0(v1, v2); }
 
 template <class T1, class T2>
 Bool operator==(const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ return equals_to0(v1, v2); }
+{ return mat_shape_cmp(v1, v2) && equals_to0(v1, v2); }
 
 template <class T1, class T2>
 Bool operator==(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ return equals_to0(v1, v2); }
+{ return mat3_shape_cmp(v1, v2) && equals_to0(v1, v2); }
 
 template <class T1, class T2>
 Bool operator!=(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return !equals_to0(v1, v2); }
+{ return !(v1 == v2); }
 
 template <class T1, class T2>
 Bool operator!=(const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ return !equals_to0(v1, v2); }
+{ return !(v1 == v2); }
 
 template <class T1, class T2>
 Bool operator!=(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ return !equals_to0(v1, v2); }
+{ return !(v1 == v2); }
 
 template <class T1, class T2>
-Bool equals_to1(const Vbase<T1> &v, const T2 &s)
+Bool equals_to1(const T1 &v, const T2 &s)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
@@ -105,27 +117,15 @@ Bool operator==(const Mat3d<T1> &v, const T2 &s)
 
 template <class T1, class T2>
 Bool operator!=(const Vector<T1> &v, const T2 &s)
-{ return !equals_to1(v, s); }
+{ return !(v == s); }
 
 template <class T1, class T2>
 Bool operator!=(const Matrix<T1> &v, const T2 &s)
-{ return !equals_to1(v, s); }
+{ return !(v == s); }
 
 template <class T1, class T2>
 Bool operator!=(const Mat3d<T1> &v, const T2 &s)
-{ return !equals_to1(v, s); }
-
-template <class T1, class T2>
-Bool shape_cmp(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return v1.size() == v2.size(); }
-
-template <class T1, class T2>
-Bool shape_cmp(const T1 &a1, const T2 &a2)
-{ return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
-
-template <class T1, class T2>
-Bool shape_cmp(const Mat3d<T1> &a1, const Mat3d<T2> &a2)
-{ return (a1.dim1() == a2.dim1()) && (a1.dim2() == a2.dim2()) && (a1.dim3() == a2.dim3()); }
+{ return !(v == s); }
 
 template <class T>
 inline const T sum(const Vbase<T> &v)
@@ -157,8 +157,9 @@ inline const T max(const Vbase<T> &v)
 	return val;
 }
 
-// for Comp, return max(abs(a(:))
-inline Doub max(const Vbase<Comp> &v)
+// return max(abs(a(:))
+template <class T>
+inline const typename Comp2Real<T>::type max_abs(const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -504,7 +505,7 @@ template <class T, class T1>
 void tan(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); tan0(v, v1); }
 
-// === matrix arithmatics ===
+// === matrix arithmetics ===
 
 // v += v
 template <class T, class T1>
@@ -1263,7 +1264,7 @@ inline const T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
 inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot0<Doub>(v1, v2);
 }
@@ -1271,7 +1272,7 @@ inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 inline const Comp operator*(VecComp_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot1<Comp>(v1, v2);
 }
@@ -1279,7 +1280,7 @@ inline const Comp operator*(VecComp_I v1, VecComp_I v2)
 inline const Comp operator*(VecDoub_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot0<Comp>(v1, v2);
 }
@@ -1287,7 +1288,7 @@ inline const Comp operator*(VecDoub_I v1, VecComp_I v2)
 inline const Comp operator*(VecComp_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot1<Comp>(v1, v2);
 }

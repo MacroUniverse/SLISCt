@@ -11,7 +11,7 @@ struct Mp256
 	Long N; // how many bytes of x used
 	Uchar &operator[](Long_I ind) { return x[ind]; } // read & write
 	Int operator()(Long_I ind) { return x[ind]; } // read only
-	// TODO: use only N digits when doing arithmatics
+	// TODO: use only N digits when doing arithmetics
 };
 
 typedef const Mp256 Mp256_I;

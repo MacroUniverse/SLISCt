@@ -1,5 +1,5 @@
 #include "../SLISC/disp.h"
-#include "../SLISC/arithmatic.h"
+#include "../SLISC/arithmetic.h"
 #include "../SLISC/time.h"
 
 void test_disp()

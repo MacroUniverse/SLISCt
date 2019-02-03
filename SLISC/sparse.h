@@ -1,7 +1,7 @@
 // sparse matrix classes
 #pragma once
 
-#include "arithmatic.h"
+#include "arithmetic.h"
 #ifndef NDEBUG_
 // make sure (i,j) element doesn't exist when using MatCoo<T>::push(s,i,j) 
 #define _CHECK_COO_REPEAT_
@@ -320,7 +320,7 @@ void MatCooH<T>::reshape(const MatCoo<T1> &a)
 	reshape(a.nrows());
 }
 
-// arithmatics
+// arithmetics
 
 // matrix vector multiplication
 // internal only: no bound checking!

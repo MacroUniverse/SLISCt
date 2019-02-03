@@ -3,7 +3,7 @@
 
 #include "test_time.h"
 #include "test_slisc.h"
-#include "test_arithmatic.h"
+#include "test_arithmetic.h"
 #include "test_sparse.h"
 #include "test_interp1.h"
 #include "test_fft.h"
