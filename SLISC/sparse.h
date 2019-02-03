@@ -374,15 +374,14 @@ void mul(Vector<T> &y, const MatCooH<T1> &a, const Vector<T2> &x)
 
 template <class T, class T1>
 inline void operator*=(MatCoo<T> &v, const T1 &s)
-{
-	times_equals1(v, s);
-}
+{ times_equals1(v.ptr(), s, v.size()); }
 
+// dense matrix - sparse matrix
 template <class T, class T1>
 inline void operator-=(T &v, const MatCoo<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	for (Long i = 0; i < v1.size(); ++i) {
 		v(v1.row(i), v1.col(i)) -= v1(i);
