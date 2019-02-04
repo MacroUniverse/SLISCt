@@ -54,11 +54,14 @@ inline void test_sparse()
 		a(1) = 2.2; b(1) = Comp(2.2, 2.2);
 		if (a(1) != 2.2 || b(1) != Comp(2.2,2.2)) error("failed!");
 
-		// double indexing (element must exist)
+		// double indexing (read-only)
 		if (a(0, 0) != 1. || b(0, 0) != Comp(1.,1.)) error("failed!");
 		if (a(1, 2) != 2.2 || b(1, 2) != Comp(2.2,2.2)) error("failed!");
 		if (a(1, 3) != 3. || b(1, 3) != Comp(3.,3.)) error("failed!");
-		a(1, 3) = 3.3;
+		if (a(2, 3) != 0. || b(2, 3) != 0.) error("failed!");
+
+		// ref()
+		a.ref(1, 3) = 3.3;
 		b.ref(1, 3) = Comp(3.3, 3.3);
 		if (a(1, 3) != 3.3 || b(1, 3) != Comp(3.3, 3.3)) error("failed!");
 

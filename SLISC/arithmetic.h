@@ -18,10 +18,6 @@ inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
-// check if a type is complex
-template<class T> struct is_complex : std::false_type {};
-template<class T> struct is_complex<std::complex<T>> : std::true_type {};
-
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
 // operators between Comp and Int
@@ -47,15 +43,31 @@ inline const Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
 // === get vec/mat properties ===
 
 template <class T1, class T2>
-Bool vec_shape_cmp(const T1 &v1, const T2 &v2)
+Bool shape_cmp(const Vector<T1> &v1, const Vector<T2> &v2)
 { return v1.size() == v2.size(); }
 
 template <class T1, class T2>
-Bool mat_shape_cmp(const T1 &a1, const T2 &a2)
+Bool shape_cmp(const Matrix<T1> &a1, const Matrix<T2> &a2)
 { return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
 
 template <class T1, class T2>
-Bool mat3_shape_cmp(const T1 &a1, const T2 &a2)
+Bool shape_cmp(const Matrix<T1> &a1, const MatCoo<T2> &a2)
+{ return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
+
+template <class T1, class T2>
+Bool shape_cmp(const MatCoo<T1> &a1, const Matrix<T2> &a2)
+{ return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
+
+template <class T1, class T2>
+Bool shape_cmp(const Matrix<T1> &a1, const MatCooH<T2> &a2)
+{ return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
+
+template <class T1, class T2>
+Bool shape_cmp(const MatCooH<T1> &a1, const Matrix<T2> &a2)
+{ return (a1.nrows() == a2.nrows()) && (a1.ncols() == a2.ncols()); }
+
+template <class T1, class T2>
+Bool shape_cmp(const Mat3d<T1> &a1, const Mat3d<T2> &a2)
 { return (a1.dim1() == a2.dim1()) && (a1.dim2() == a2.dim2()) && (a1.dim3() == a2.dim3()); }
 
 template <class T1, class T2>
@@ -71,15 +83,15 @@ Bool equals_to0(const T1 &v1, const T2 &v2)
 
 template <class T1, class T2>
 Bool operator==(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return vec_shape_cmp(v1, v2) && equals_to0(v1, v2); }
+{ return shape_cmp(v1, v2) && equals_to0(v1, v2); }
 
 template <class T1, class T2>
 Bool operator==(const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ return mat_shape_cmp(v1, v2) && equals_to0(v1, v2); }
+{ return shape_cmp(v1, v2) && equals_to0(v1, v2); }
 
 template <class T1, class T2>
 Bool operator==(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ return mat3_shape_cmp(v1, v2) && equals_to0(v1, v2); }
+{ return shape_cmp(v1, v2) && equals_to0(v1, v2); }
 
 template <class T1, class T2>
 Bool operator!=(const Vector<T1> &v1, const Vector<T2> &v2)
@@ -520,7 +532,7 @@ template <class T, class T1>
 inline void operator+=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -529,7 +541,7 @@ template <class T, class T1>
 inline void operator+=(Matrix<T> &v, const Matrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -538,7 +550,7 @@ template <class T, class T1>
 inline void operator+=(Cmat<T> &v, const Cmat<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -547,7 +559,7 @@ template <class T, class T1>
 inline void operator+=(Mat3d<T> &v, const Mat3d<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat3_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	plus_equals0(v, v1);
 }
@@ -564,7 +576,7 @@ template <class T, class T1>
 inline void operator-=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -573,7 +585,7 @@ template <class T, class T1>
 inline void operator-=(Matrix<T> &v, const Matrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -582,7 +594,7 @@ template <class T, class T1>
 inline void operator-=(Cmat<T> &v, const Cmat<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	minus_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -608,7 +620,7 @@ template <class T, class T1>
 inline void operator*=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -617,7 +629,7 @@ template <class T, class T1>
 inline void operator*=(Matrix<T> &v, const Matrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -626,7 +638,7 @@ template <class T, class T1>
 inline void operator*=(Cmat<T> &v, const Cmat<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	times_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -652,7 +664,7 @@ template <class T, class T1>
 inline void operator/=(Vector<T> &v, const Vector<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -661,7 +673,7 @@ template <class T, class T1>
 inline void operator/=(Matrix<T> &v, const Matrix<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -670,7 +682,7 @@ template <class T, class T1>
 inline void operator/=(Cmat<T> &v, const Cmat<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	divide_equals0(v.ptr(), v1.ptr(), v1.size());
 }
@@ -866,7 +878,7 @@ template <class T, class T1, class T2>
 inline void plus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); plus1(v, v1, v2);
 }
@@ -975,7 +987,7 @@ template <class T, class T1, class T2>
 inline void minus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); minus4(v, v1, v2);
 }
@@ -1045,7 +1057,7 @@ template <class T, class T1, class T2>
 inline void times(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); times1(v, v1, v2);
 }
@@ -1124,7 +1136,7 @@ template <class T, class T1, class T2>
 inline void divide(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); divide3(v, v1, v2);
 }
@@ -1294,7 +1306,7 @@ inline const T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
 inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot0<Doub>(v1, v2);
 }
@@ -1302,7 +1314,7 @@ inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 inline const Comp operator*(VecComp_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot1<Comp>(v1, v2);
 }
@@ -1310,7 +1322,7 @@ inline const Comp operator*(VecComp_I v1, VecComp_I v2)
 inline const Comp operator*(VecDoub_I v1, VecComp_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot0<Comp>(v1, v2);
 }
@@ -1318,7 +1330,7 @@ inline const Comp operator*(VecDoub_I v1, VecComp_I v2)
 inline const Comp operator*(VecComp_I v1, VecDoub_I v2)
 {
 #ifdef _CHECKBOUNDS_
-	if (!vec_shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	return dot1<Comp>(v1, v2);
 }

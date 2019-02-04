@@ -46,7 +46,7 @@ public:
 	template <class T1>
 	MatCoo & operator=(const MatCoo<T1> &rhs);	// copy assignment (do resize(rhs))
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
-	T& operator()(Long_I i, Long_I j);	// double indexing (element must exist)
+	T& ref(Long_I i, Long_I j);	// reference to an element
 	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
@@ -97,7 +97,7 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 }
 
 template <class T>
-inline T& MatCoo<T>::operator()(Long_I i, Long_I j)
+inline T& MatCoo<T>::ref(Long_I i, Long_I j)
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
@@ -113,7 +113,7 @@ inline T& MatCoo<T>::operator()(Long_I i, Long_I j)
 }
 
 template <class T>
-inline const T& MatCoo<T>::operator()(Long_I i, Long_I j) const
+inline const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
 {
 #ifdef _CHECKBOUNDS_
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
@@ -188,7 +188,7 @@ inline Long MatCoo<T>::row(Long_I ind) const
 	if (ind<0 || ind>=m_Nnz)
 		error("MatCoo::row() subscript out of bounds");
 #endif
-	return m_row(ind);
+	return m_row[ind];
 }
 
 template <class T>
@@ -198,7 +198,7 @@ inline Long MatCoo<T>::col(Long_I ind) const
 	if (ind < 0 || ind >= m_Nnz)
 		error("MatCoo::col() subscript out of bounds");
 #endif
-	return m_col(ind);
+	return m_col[ind];
 }
 
 template <class T>
@@ -239,9 +239,8 @@ public:
 	MatCooH(Long_I Nr, Long_I Nc);
 	MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz);
 	using Base::operator();
-	const T operator()(Long_I i, Long_I j);	// same as the const version, prevent inheritance
-	const T operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	T &ref(Long_I i, Long_I j); // reference to an element
+	const T &operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	void reshape(Long_I N) { Base::reshape(N, N); } // change matrix size
@@ -269,13 +268,7 @@ MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
 }
 
 template <class T>
-inline const T MatCooH<T>::operator()(Long_I i, Long_I j)
-{
-	return ((const MatCooH<T>*)this)->operator()(i, j);
-}
-
-template <class T>
-inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
+inline const T &MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
 	if (i > j)
 		return conj(Base::operator()(j, i));
@@ -378,10 +371,10 @@ inline void operator*=(MatCoo<T> &v, const T1 &s)
 
 // dense matrix - sparse matrix
 template <class T, class T1>
-inline void operator-=(T &v, const MatCoo<T1> &v1)
+inline void operator-=(Matrix<T> &v, const MatCoo<T1> &v1)
 {
 #ifdef _CHECKBOUNDS_
-	if (!mat_shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	for (Long i = 0; i < v1.size(); ++i) {
 		v(v1.row(i), v1.col(i)) -= v1(i);
