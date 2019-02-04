@@ -27,6 +27,57 @@ typedef MatCooH<Comp> McoohComp;
 typedef const McoohComp &McoohComp_I;
 typedef McoohComp &McoohComp_O, &McoohComp_IO;
 
+// square diagonal matrix
+// mostly a clone a Vector<T>
+template <class T>
+class Diag : public Vector<T>
+{
+private:
+	typedef Vector<T> Base;
+public:
+	using Base::operator();
+	using Base::operator=;
+	Diag() : Base() {}
+	Diag(Long_I N, const T &s) : Base(N, s) {}
+	Diag(const Vector<T> &v) { *this = v; }
+	Diag &operator=(const Diag &rhs)
+	{ Base::operator=(rhs); return *this; }
+	Diag &operator=(const Vector<T> &rhs)
+	{ Base::operator=(rhs); return *this; }
+	T &operator()(Long_I i, Long_I j)
+	{
+		if (i == j) return (*this)[i];
+		return T();
+	}
+	const T &operator()(Long_I i, Long_I j) const
+	{
+		if (i == j) return (*this)[i];
+		return T();
+	}
+};
+
+// convert vector to diagonal matrix
+template <class T>
+const Diag<T> &diag(const Vector<T> &v)
+{ return (Diag<T>&)v; }
+
+// Cmat times Diag
+template <class T, class T1, class T2>
+void mul(Cmat<T> &v, const Cmat<T1> &v1, const Diag<T2> &v2)
+{
+	Long Nr = v1.nrows(), Nc = v1.ncols();
+#ifdef _CHECKBOUNDS_
+	if (Nc != v2.size()) error("illegal shape!");
+#endif
+	v.resize(Nr, v2.size());
+	T * p = v.ptr();
+	const T1 *p1 = v1.ptr();
+	for (Long i = 0; i < Nc; ++i) {
+		times_vvs(p, p1, v2[i], Nr);
+		p += Nr; p1 += Nr;
+	}
+}
+
 template <class T>
 class MatCoo : public Vbase<T>
 {
@@ -36,11 +87,13 @@ private:
 	using Base::m_N;
 	Long m_Nr, m_Nc, m_Nnz;
 	Vector<Long> m_row, m_col;
+	T m_zero; // TODO: this could be static inline variable for c++17
 public:
-	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0) {}
-	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0) {}
+	enum { NDIMS = 2 };
+	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0), m_zero(T()) {}
+	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_zero(T()) {}
 	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
-		Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz) {}
+		Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz), m_zero(T()) {}
 	MatCoo(const MatCoo &rhs);		// Copy constructor
 	MatCoo & operator=(const MatCoo &rhs);
 	template <class T1>
@@ -123,7 +176,8 @@ inline const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
 	for (n = 0; n < m_Nnz; ++n)
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
-	return T();
+	// never return a (const) reference to a temporary
+	return m_zero;
 }
 
 template <class T>
@@ -235,12 +289,13 @@ class MatCooH : public MatCoo<T>
 private:
 	typedef MatCoo<T> Base;
 public:
+	enum { NDIMS = 2 };
 	MatCooH(): Base() {}
 	MatCooH(Long_I Nr, Long_I Nc);
 	MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz);
 	using Base::operator();
 	T &ref(Long_I i, Long_I j); // reference to an element
-	const T &operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
+	const T operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	void reshape(Long_I N) { Base::reshape(N, N); } // change matrix size
@@ -267,10 +322,12 @@ MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
 #endif
 }
 
+// cannot return a const reference since conj() might create a temporary
 template <class T>
-inline const T &MatCooH<T>::operator()(Long_I i, Long_I j) const
+inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
 	if (i > j)
+		// conj has no overhead for non-complex argument
 		return conj(Base::operator()(j, i));
 	else
 		return Base::operator()(i, j);
@@ -282,7 +339,7 @@ inline T &MatCooH<T>::ref(Long_I i, Long_I j)
 	if (i > j)
 		error("lower triangle is empty!");
 	else
-		return Base::operator()(i, j);
+		return Base::ref(i, j);
 }
 
 template <class T>

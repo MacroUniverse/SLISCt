@@ -226,36 +226,35 @@ inline Long FixCmat<T, Nr, Nc>::ncols() const
 // arithmetics
 
 template <class T, Long N, class T1, Long N1>
-Bool operator==(const FixVec<T, N> &lhs, const FixVec<T1, N1> &rhs)
-{ return vec_shape_cmp(lhs, rhs) && equals_to0(lhs, rhs); }
+Bool operator==(const FixVec<T, N> &v, const FixVec<T1, N1> &v1)
+{ equals_to_vv(v, v1); }
 
 template <class T, Long N, class T1, Long N1>
-Bool operator!=(const FixVec<T, N> &lhs, const FixVec<T1, N1> &rhs)
-{ return !(lhs==rhs); }
+Bool operator!=(const FixVec<T, N> &v, const FixVec<T1, N1> &v1)
+{ return !(v==v1); }
 
 template <class T, Long N, class T1>
-Bool operator==(const FixVec<T, N> &lhs, const T1 &rhs)
-{ return equals_to1(lhs, rhs); }
+Bool operator==(const FixVec<T, N> &v, const T1 &s)
+{ return equals_to_vs(v.ptr(), s, v.size()); }
 
 template <class T, Long N, class T1>
-Bool operator!=(const FixVec<T, N> &lhs, const T1 &rhs)
-{ return !(lhs==rhs); }
-
-
-template <class T, Long Nr, Long Nc, class T1, Long Nr1, Long Nc1>
-Bool operator==(const FixCmat<T, Nr, Nc> &lhs, const FixCmat<T1, Nr, Nc> &rhs)
-{ return mat_shape_cmp(lhs, rhs) && equals_to0(lhs, rhs); }
+Bool operator!=(const FixVec<T, N> &v, const T1 &s)
+{ return !(v==s); }
 
 template <class T, Long Nr, Long Nc, class T1, Long Nr1, Long Nc1>
-Bool operator!=(const FixCmat<T, Nr, Nc> &lhs, const FixCmat<T1, Nr, Nc> &rhs)
-{ return !(lhs==rhs); }
+Bool operator==(const FixCmat<T, Nr, Nc> &v, const FixCmat<T1, Nr, Nc> &v1)
+{ return equals_to_vv(v, v1); }
+
+template <class T, Long Nr, Long Nc, class T1, Long Nr1, Long Nc1>
+Bool operator!=(const FixCmat<T, Nr, Nc> &v, const FixCmat<T1, Nr, Nc> &v1)
+{ return !(v==v1); }
 
 template <class T, Long Nr, Long Nc, class T1>
-Bool operator==(const FixCmat<T, Nr, Nc> &lhs, const T1 &rhs)
-{ return equals_to1(lhs, rhs); }
+Bool operator==(const FixCmat<T, Nr, Nc> &v, const T1 &s)
+{ return equals_to_vs(v.ptr(), s, v.size()); }
 
 template <class T, Long Nr, Long Nc, class T1>
-Bool operator!=(const FixCmat<T, Nr, Nc> &lhs, const T1 &rhs)
-{ return !(lhs==rhs); }
+Bool operator!=(const FixCmat<T, Nr, Nc> &v, const T1 &s)
+{ return !(v==s); }
 
 }

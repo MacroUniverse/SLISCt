@@ -239,7 +239,7 @@ template <class T> struct Comp2Real { typedef T type; };
 template <class T> struct Comp2Real<std::complex<T>> { typedef T type; };
 
 template<class T>
-inline void vecset(T *dest, const T val, Long_I n)
+inline void vecset(T *dest, const T &val, Long_I n)
 {
 	for (Long i = 0; i < n; ++i)
 		dest[i] = val;
@@ -398,6 +398,7 @@ public:
 	using Base::m_N;
 	using Base::resize;
 	using Base::operator=;
+	enum { NDIMS = 1 };
 	Vector() {}
 	explicit Vector(Long_I N): Base(N) {}
 	Vector(Long_I N, const T &a) //initialize to constant value
@@ -487,6 +488,7 @@ public:
 	using Base::ptr;
 	using Base::operator();
 	using Base::operator=;
+	enum { NDIMS = 2, MAJOR = 'R' };
 	Matrix();
 	Matrix(Long_I Nr, Long_I Nc);
 	Matrix(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
@@ -645,6 +647,7 @@ private:
 public:
 	using Base::operator();
 	using Base::operator=;
+	enum { NDIMS = 2, MAJOR = 'C' };
 	Cmat();
 	Cmat(Long_I Nr, Long_I Nc);
 	Cmat(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
@@ -788,6 +791,7 @@ public:
 	using Base::operator();
 	using Base::ptr;
 	using Base::operator=;
+	enum { NDIMS = 3 };
 	Mat3d();
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
