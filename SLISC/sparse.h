@@ -326,9 +326,12 @@ MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
 template <class T>
 inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
-	if (i > j)
-		// conj has no overhead for non-complex argument
-		return conj(Base::operator()(j, i));
+	if (i > j) {
+		if constexpr (is_complex<T>::value)
+			return conj(Base::operator()(j, i));
+		else
+			return Base::operator()(j, i);
+	}		
 	else
 		return Base::operator()(i, j);
 }

@@ -49,7 +49,7 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
 
-* Only use up to c++11 features.
+* Using c++17 features.
 
 * Will not use any serious meta-programming, to keep the code readable and easy to modify (even this means creating blocks of similar code).
 
@@ -152,8 +152,7 @@ void idiagonals(Matrix<T> &a) // inverse of diagonals(), shift the i-th line i t
 
 ## element-wise math functions
 
-sin(), cos(), exp(), tan(), whenever make sense
-
+`sin(v, v1)`, `cos(v, v1)`, `exp(v, v1)`, `tan(v, v1)`, etc.
 
 ## matrix arithmatics
 
@@ -185,8 +184,9 @@ In gdb, things are a little more complicated, since gdb does not fully support f
 
 ## Calculus
 
+```cpp
 void integral(Vector<T> &F, const Vector<T> &f, Doub_I dx) // simple indefinite integration
-
+```
 
 ## FFT related
 ```cpp
@@ -196,8 +196,9 @@ void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub k
 ```
 
 ## String related
-
-template\<typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
+```cpp
+template<typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
+```
 
 ## OpenMP functions
 ```cpp
@@ -231,4 +232,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * test operator= for different types
 * test Comp2Real
 * test both dense and sparse arithmetic
-* 
+* `Cmat<T>` should be derived from `Matrix<T>`

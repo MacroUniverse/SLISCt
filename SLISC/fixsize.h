@@ -59,7 +59,8 @@ public:
 	FixVec(const T &s) { *this = s; }
 	T* ptr() { return m_data; } // get pointer
 	const T* ptr() const { return m_data; }
-	Long size() const { return N; }
+	static constexpr Int ndims() { return 1; }
+	static constexpr Long size() { return N; }
 	T & operator[](Long_I i);
 	const T & operator[](Long_I i) const;
 	T & operator()(Long_I i);
@@ -152,14 +153,16 @@ public:
 	FixCmat() {}
 	FixCmat(const T &s); //Initialize to constant
 	FixCmat(const FixCmat &rhs); // Copy constructor
+	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
+	static constexpr Char major() { return 'c'; } // row major memory
+	static constexpr Long nrows();
+	static constexpr Long ncols();
 	FixCmat & operator=(const T &rhs);
 	FixCmat & operator=(const FixCmat &rhs); // copy assignment
 	template <class T1, Long Nr1, Long Nc1>
 	FixCmat & operator=(const FixCmat<T1, Nr1, Nc1> &rhs);
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
-	Long nrows() const;
-	Long ncols() const;
 };
 
 template <class T, Long Nr, Long Nc>
@@ -216,11 +219,11 @@ inline const T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T, Long Nr, Long Nc>
-inline Long FixCmat<T, Nr, Nc>::nrows() const
+constexpr Long FixCmat<T, Nr, Nc>::nrows()
 { return Nr; }
 
 template <class T, Long Nr, Long Nc>
-inline Long FixCmat<T, Nr, Nc>::ncols() const
+constexpr Long FixCmat<T, Nr, Nc>::ncols()
 { return Nc; }
 
 // arithmetics

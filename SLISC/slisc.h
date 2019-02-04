@@ -232,12 +232,16 @@ const Comp I(0., 1.);
 
 // === meta programming utilities ===
 template <typename T> struct Char2Int { typedef T type; };
-template<> struct Char2Int<Char> { public: typedef Int type; };
-template<> struct Char2Int<Uchar> { public: typedef Int type; };
+template<> struct Char2Int<Char> { typedef Int type; };
+template<> struct Char2Int<Uchar> { typedef Int type; };
 
 template <class T> struct Comp2Real { typedef T type; };
 template <class T> struct Comp2Real<std::complex<T>> { typedef T type; };
 
+template <class T> struct is_complex : std::true_type {};
+template <class T> struct is_complex<std::complex<T>> : std::false_type {};
+
+// === value copying ===
 template<class T>
 inline void vecset(T *dest, const T &val, Long_I n)
 {
@@ -398,7 +402,6 @@ public:
 	using Base::m_N;
 	using Base::resize;
 	using Base::operator=;
-	enum { NDIMS = 1 };
 	Vector() {}
 	explicit Vector(Long_I N): Base(N) {}
 	Vector(Long_I N, const T &a) //initialize to constant value
@@ -406,6 +409,7 @@ public:
 	Vector(Long_I N, const T *a) // Initialize to array
 	: Vector(N) { veccpy(m_p, a, N); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
+	static constexpr Int ndims() { return 1; }
 	Vector &operator=(const Vector &rhs);
 	template <class T1>
 	Vector &operator=(const Vector<T1> &rhs);
@@ -488,12 +492,13 @@ public:
 	using Base::ptr;
 	using Base::operator();
 	using Base::operator=;
-	enum { NDIMS = 2, MAJOR = 'R' };
 	Matrix();
 	Matrix(Long_I Nr, Long_I Nc);
 	Matrix(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Matrix(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Matrix(const Matrix &rhs);		// Copy constructor
+	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
+	static constexpr Char major() { return 'r'; } // row major memory
 	Matrix & operator=(const Matrix &rhs);
 	template <class T1>
 	Matrix & operator=(const Matrix<T1> &rhs);	// copy assignment
@@ -647,12 +652,13 @@ private:
 public:
 	using Base::operator();
 	using Base::operator=;
-	enum { NDIMS = 2, MAJOR = 'C' };
 	Cmat();
 	Cmat(Long_I Nr, Long_I Nc);
 	Cmat(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Cmat(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Cmat(const Cmat &rhs);		// Copy constructor
+	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
+	static constexpr Char major() { return 'c'; } // row major memory
 	Cmat & operator=(const Cmat &rhs);	// copy assignment
 	template <class T1>
 	Cmat & operator=(const Cmat<T1> &rhs);
@@ -791,11 +797,12 @@ public:
 	using Base::operator();
 	using Base::ptr;
 	using Base::operator=;
-	enum { NDIMS = 3 };
 	Mat3d();
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
+	static constexpr Int ndims() { return 3; } // matrix is 2 dimensional
+	static constexpr Char major() { return 'r'; } // row major memory
 	Mat3d & operator=(const Mat3d &rhs);	// copy assignment
 	template <class T1>
 	Mat3d & operator=(const Mat3d<T1> &rhs);

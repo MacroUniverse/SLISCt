@@ -22,6 +22,14 @@ void test_slisc()
 	if (a3Doub.ptr() != nullptr) error("failed!");
 	}
 
+	// static or constexpr members
+	{
+		if (VecInt::ndims() != 1) error("failed!");
+		if (MatInt::ndims() != 2 || MatInt::major() != 'r') error("failed!");
+		if (CmatInt::ndims() != 2 || CmatInt::major() != 'c') error("failed!");
+		if (Mat3Doub::ndims() != 3 || Mat3Doub::major() != 'r') error("failed!");
+	}
+
 	// size initialize
 	{
 	VecDoub vDoub(3);

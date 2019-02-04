@@ -6,15 +6,15 @@ namespace slisc {
 
 // === scalar utilities ===
 
-// return 1 if n is odd, return 0 otherwise
-inline Int isodd(Int_I n) { return n & 1; }
-inline Long isodd(Long_I n) { return n & 1; }
+// check if an integer is odd
+inline Bool isodd(Int_I n) { return n & 1; }
+inline Bool isodd(Long_I n) { return n & 1; }
 
 // return true if n is power of 2 or 0
 inline Bool ispow2(Int_I n) { return (n&(n-1)) == 0; }
 inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 
-// return the positive mod (use "%" when i >= 0)
+// return the positive modulus (use "%" when i >= 0)
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long mod(Long_I i, Long_I n) { return (i % n + n) % n; }
 
@@ -28,41 +28,70 @@ inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
-// operators between Comp and Int
-inline const Comp operator+(Comp_I c, Int_I i) { return c + (Doub)i; }
-inline const Comp operator+(Int_I i, Comp_I c) { return c + (Doub)i; }
-inline const Comp operator-(Int_I i, Comp_I c) { return (Doub)i - c; }
-inline const Comp operator-(Comp_I c, Int_I i) { return c - (Doub)i; }
-inline const Comp operator*(Comp_I c, Int_I i) { return c*(Doub)i; }
-inline const Comp operator*(Int_I i, Comp_I c) { return c*(Doub)i; }
-inline const Comp operator/(Comp_I c, Int_I i) { return c / (Doub)i; }
-inline const Comp operator/(Int_I i, Comp_I c) { return (Doub)i / c; }
+// operators between Comp and Integral types
 
-// operators between Comp and Long
-inline const Comp operator+(Comp_I c, Long_I i) { return c + (Doub)i; }
-inline const Comp operator+(Long_I i, Comp_I c) { return c + (Doub)i; }
-inline const Comp operator-(Long_I i, Comp_I c) { return (Doub)i - c; }
-inline const Comp operator-(Comp_I c, Long_I i) { return c - (Doub)i; }
-inline const Comp operator*(Comp_I c, Long_I i) { return c*(Doub)i; }
-inline const Comp operator*(Long_I i, Comp_I c) { return c*(Doub)i; }
-inline const Comp operator/(Comp_I c, Long_I i) { return c / (Doub)i; }
-inline const Comp operator/(Long_I i, Comp_I c) { return (Doub)i / c; }
+template <class T1, class T2>
+typename std::common_type<T1, T2>::type operator+(const T1 &s1, const T2 &s2)
+{
+	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
+		return s1 + (typename T1::value_type)s2;
+	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
+		return (typename T2::value_type)s1 + s2;
+	else
+		return s1 + s2;
+}
+
+template <class T1, class T2>
+typename std::common_type<T1, T2>::type operator-(const T1 &s1, const T2 &s2)
+{
+	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
+		return s1 - (typename T1::value_type)s2;
+	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
+		return (typename T2::value_type)s1 - s2;
+	else
+		return s1 - s2;
+}
+
+template <class T1, class T2>
+typename std::common_type<T1, T2>::type operator*(const T1 &s1, const T2 &s2)
+{
+	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
+		return s1 * (typename T1::value_type)s2;
+	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
+		return (typename T2::value_type)s1 * s2;
+	else
+		return s1 * s2;
+}
+
+template <class T1, class T2>
+typename std::common_type<T1, T2>::type operator/(const T1 &s1, const T2 &s2)
+{
+	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
+		return s1 / (typename T1::value_type)s2;
+	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
+		return (typename T2::value_type)s1 + s2;
+	else
+		return s1 / s2;
+}
 
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
+
 template <class T1, class T2>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
-	if constexpr (T1::NDIMS == 1)
+	if constexpr (T1::ndims() == 1 && T2::ndims() == 1) {
 		return v1.size() == v2.size();
-	else if constexpr (T1::NDIMS == 2)
+	}
+	else if constexpr (T1::ndims() == 2 && T2::ndims() == 2) {
 		return v1.nrows() == v2.nrows() && v1.ncols() == v2.ncols();
-	else if constexpr (T1::NDIMS == 3)
+	}
+	else if constexpr (T1::ndims() == 3 && T2::ndims() == 3) {
 		return v1.dim1() == v2.dim1() && v1.dim2() == v2.dim2()
-		&& v1.dim3() == v2.dim3();
-	else
-		error("illegal argument types!");
+			&& v1.dim3() == v2.dim3();
+	}
+	return false;
 }
 
 template <class T1, class T2>
@@ -602,18 +631,19 @@ template <class T, class T1>
 inline void operator*=(Mat3d<T> &v, const T1 &s)
 { times_equals_vs(v.ptr(), s, v.size()); }
 
-// v /= s (only works for floating point types)
+// v /= s
+
 template <class T, class T1>
 inline void operator/=(Vector<T> &v, const T1 &s)
-{ v *= 1./s; }
+{ divide_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator/=(Matrix<T> &v, const T1 &s)
-{ v *= 1./s; }
+{ divide_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator/=(Mat3d<T> &v, const T1 &s)
-{ v *= 1./s; }
+{ divide_equals_vs(v.ptr(), s, v.size()); }
 
 // TODO: operator /= for integers
 
@@ -1045,13 +1075,15 @@ inline void conj(Vbase<std::complex<T>> &v)
 // dot products ( sum conj(v1[i])*v2[i] )
 // s = dot(v, v)
 
-template <class T, class T1>
-inline Doub operator*(const Vector<T> &v1, const Vector<T1> &v2)
+template <class T1, class T2>
+inline typename std::common_type<T1, T2>::type dot(const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
-	return dot_vv(v1.ptr(), v2.ptr(), v2.size());
+	typename std::common_type<T1, T2>::type s;
+	dot_svv(s, v1.ptr(), v2.ptr(), v2.size());
+	return s;
 }
 
 // outer product ( conj(v1[i})*v2[j] )

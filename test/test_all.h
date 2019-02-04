@@ -9,9 +9,9 @@
 #include "test_interp1.h"
 #include "test_fft.h"
 #include "test_random.h"
-#include "test_eigen_basics.h"
-#include "test_eigen_linsolve.h"
-#include "test_eigen_fft.h"
+//#include "test_eigen_basics.h"
+//#include "test_eigen_linsolve.h"
+//#include "test_eigen_fft.h"
 #include "test_coulomb.h"
 #include "test_input.h"
 #include "test_disp.h"
@@ -28,10 +28,8 @@ inline void test_all()
 	test_time();
 	cout << "test_slisc()" << endl;
 	test_slisc();
-	cout << "test_self_op()" << endl;
-	test_self_op();
-	cout << "test_plus_minus_times_devide()" << endl;
-	test_plus_minus_times_devide();
+	cout << "test_arithmetic()" << endl;
+	test_arithmetic();
 	cout << "test_fixsize()" << endl;
 	test_fixsize();
 	cout << "test_sparse()" << endl;
@@ -42,17 +40,20 @@ inline void test_all()
 	test_fft();
 	cout << "test_rand()" << endl;
 	test_random();
-	cout << "test_eigen_basics()" << endl;
+	cout << "test_coulomb()" << endl;
+	test_coulomb();
+	
+	// eigen
+	/*cout << "test_eigen_basics()" << endl;
 	test_eigen_basics();
 	cout << "test_eigen_linsolve()" << endl;
 	test_eigen_linsolve();
 	cout << "test_eigen_fft()" << endl;
-	test_eigen_fft();
-	cout << "test_coulomb()" << endl;
-	test_coulomb();
-	
+	test_eigen_fft();*/
+
 	cout << "auto test successful!" << endl;
 	Input inp;
+
 	if (inp.Bool("test_disp() ?")) {
 		test_disp();
 	}

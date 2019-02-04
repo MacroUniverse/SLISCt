@@ -76,6 +76,18 @@ inline void divide_equals_vv(T *v, const T1 *v1, Long_I N)
 		v[i] /= v1[i];
 }
 
+template <class T, class T1>
+inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
+{
+	if constexpr (std::is_floating_point<T>::value) {
+		times_equals_vs(v, 1./s, N);
+	}
+	else {
+		for (Long i = 0; i < N; ++i)
+			v[i] /= s;
+	}
+}
+
 // operator%
 template <class T>
 inline void rem_vvs(T *v, const T *v1, const T &s, Long_I N)
@@ -203,13 +215,15 @@ inline void doub2comp_vv(Comp *v, const Doub *v1, Long_I N)
 }
 
 template <class T, class T1, class T2>
-inline const T dot_vv(const T1 *v1, const T2 *v2, Long_I N)
+inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)
 {
-	T s();
-	for (Long i = 0; i < N; ++i)
-		// std::conj() does not have overhead for non-complex types
-		s += std::conj(v1[i]) * v2[i];
-	return s;
+	s = T();
+	for (Long i = 0; i < N; ++i) {
+		if constexpr (is_complex<T1>::value)
+			s += std::conj(v1[i]) * v2[i];
+		else
+			s += v1[i] * v2[i];
+	}
 }
 
 // sqrt(v)
