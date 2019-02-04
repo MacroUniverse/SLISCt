@@ -49,6 +49,10 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
 
+* Only use up to c++11 features.
+
+* Will not use any serious meta-programming, to keep the code readable and easy to modify (even this means creating blocks of similar code).
+
 ## "slisc.h"
 "slisc.h" includes some constants, type alias, and vector/matrix class template definitions.
 

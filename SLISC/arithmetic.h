@@ -1,5 +1,5 @@
 #pragma once
-#include "slisc.h"
+#include "arithmetic0.h"
 #include <type_traits>
 
 namespace slisc {
@@ -17,6 +17,14 @@ inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 // return the positive mod (use "%" when i >= 0)
 inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
 inline Long mod(Long_I i, Long_I n) { return (i % n + n) % n; }
+
+// matrix double index to single index conversion
+
+inline Long csub2ind(Long_I Nr, Long_I i, Long_I j)
+{ return i + Nr*j; } // column major
+
+inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
+{ return Nc*i + j; } // row major
 
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
@@ -71,27 +79,16 @@ Bool shape_cmp(const Mat3d<T1> &a1, const Mat3d<T2> &a2)
 { return (a1.dim1() == a2.dim1()) && (a1.dim2() == a2.dim2()) && (a1.dim3() == a2.dim3()); }
 
 template <class T1, class T2>
-Bool equals_to0(const T1 &v1, const T2 &v2)
-{
-	Long i, N{ v1.size() };
-	if (N != v2.size()) return false;
-	for (i = 0; i < N; ++i)
-		if (v1(i) != v2(i))
-			return false;
-	return true;
-}
-
-template <class T1, class T2>
 Bool operator==(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return shape_cmp(v1, v2) && equals_to0(v1, v2); }
+{ return shape_cmp(v1, v2) && equals_to0(v1.ptr(), v2.ptr(), v2.size()); }
 
 template <class T1, class T2>
 Bool operator==(const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ return shape_cmp(v1, v2) && equals_to0(v1, v2); }
+{ return shape_cmp(v1, v2) && equals_to0(v1.ptr(), v2.ptr(), v2.size()); }
 
 template <class T1, class T2>
 Bool operator==(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ return shape_cmp(v1, v2) && equals_to0(v1, v2); }
+{ return shape_cmp(v1, v2) && equals_to0(v1.ptr(), v2.ptr(), v2.size()); }
 
 template <class T1, class T2>
 Bool operator!=(const Vector<T1> &v1, const Vector<T2> &v2)
@@ -104,16 +101,6 @@ Bool operator!=(const Matrix<T1> &v1, const Matrix<T2> &v2)
 template <class T1, class T2>
 Bool operator!=(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
 { return !(v1 == v2); }
-
-template <class T1, class T2>
-Bool equals_to1(const T1 &v, const T2 &s)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		if (v(i) != s)
-			return false;
-	return true;
-}
 
 template <class T1, class T2>
 Bool operator==(const Vector<T1> &v, const T2 &s)
@@ -398,14 +385,6 @@ void idiagonals_par(Matrix<T> &a)
 // === vectorized math functions ===
 
 template <class T, class T1>
-inline void sqrt0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = std::sqrt(v1(i));
-}
-
-template <class T, class T1>
 void sqrt(Vector<T> &v, const Vector<T1> &v1)
 { v.resize(v1); sqrt0(v, v1); }
 
@@ -416,14 +395,6 @@ void sqrt(Matrix<T> &v, const Matrix<T1> &v1)
 template <class T, class T1>
 void sqrt(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); sqrt0(v, v1); }
-
-template <class T, class T1>
-inline void invSqrt0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = 1./std::sqrt(v1(i));
-}
 
 template <class T, class T1>
 void invSqrt(Vector<T> &v, const Vector<T1> &v1)
@@ -438,14 +409,6 @@ void invSqrt(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); invSqrt0(v, v1); }
 
 template <class T, class T1>
-inline void sin0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = std::sin(v1(i));
-}
-
-template <class T, class T1>
 void sin(Vector<T> &v, const Vector<T1> &v1)
 { v.resize(v1); sin0(v, v1); }
 
@@ -456,14 +419,6 @@ void sin(Matrix<T> &v, const Matrix<T1> &v1)
 template <class T, class T1>
 void sin(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); sin0(v, v1); }
-
-template <class T, class T1>
-inline void cos0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = cos(v1(i));
-}
 
 template <class T, class T1>
 void cos(Vector<T> &v, const Vector<T1> &v1)
@@ -478,14 +433,6 @@ void cos(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); cos0(v, v1); }
 
 template <class T, class T1>
-inline void exp0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = exp(v1(i));
-}
-
-template <class T, class T1>
 void exp(Vector<T> &v, const Vector<T1> &v1)
 { v.resize(v1); exp0(v, v1); }
 
@@ -496,14 +443,6 @@ void exp(Matrix<T> &v, const Matrix<T1> &v1)
 template <class T, class T1>
 void exp(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); exp0(v, v1); }
-
-template <class T, class T1>
-inline void tan0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = tan(v1(i));
-}
 
 template <class T, class T1>
 void tan(Vector<T> &v, const Vector<T1> &v1)
@@ -519,246 +458,156 @@ void tan(Mat3d<T> &v, const Mat3d<T1> &v1)
 
 // === matrix arithmetics ===
 
-// v += v
 template <class T, class T1>
-inline void plus_equals0(Vbase<T> &v, const Vbase<T1> &v1)
+inline void plus_equals_vv(T &v, const T1 &v1)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) += v1(i);
+#ifdef _CHECKBOUNDS_
+	if (!shape_cmp(v, v1)) error("wrong shape!");
+#endif
+	plus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 template <class T, class T1>
 inline void operator+=(Vector<T> &v, const Vector<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	plus_equals0(v, v1);
-}
+{ plus_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator+=(Matrix<T> &v, const Matrix<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	plus_equals0(v, v1);
-}
+{ plus_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator+=(Cmat<T> &v, const Cmat<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	plus_equals0(v, v1);
-}
+{ plus_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator+=(Mat3d<T> &v, const Mat3d<T1> &v1)
+{ plus_equals_vv(v, v1); }
+
+// v -= v
+
+template <class T, class T1>
+inline void minus_equals_vv(T &v, const T1 &v1)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
-	plus_equals0(v, v1);
-}
-
-// v -= v
-template <class T, class T1>
-inline void minus_equals0(T *v, const T1 *v1, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] -= v1[i];
+	minus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 template <class T, class T1>
 inline void operator-=(Vector<T> &v, const Vector<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	minus_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ minus_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator-=(Matrix<T> &v, const Matrix<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	minus_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ minus_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator-=(Cmat<T> &v, const Cmat<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	minus_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ minus_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator-=(Mat3d<T> &v, const Mat3d<T1> &v1)
+{ minus_equals_vv(v, v1); }
+
+// v *= v
+
+template <class T, class T1>
+inline void times_equals_vv(T &v, const T1 &v1)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
-	minus_equals0(v.ptr(), v1.ptr(), v1.size());
-}
-
-// v *= v
-template <class T, class T1>
-inline void times_equals0(T *v, const T1 *v1, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] *= v1[i];
+	times_equals(v.ptr(), v1.ptr(), v1.size());
 }
 
 template <class T, class T1>
 inline void operator*=(Vector<T> &v, const Vector<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	times_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ times_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator*=(Matrix<T> &v, const Matrix<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	times_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ times_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator*=(Cmat<T> &v, const Cmat<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	times_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ times_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator*=(Mat3d<T> &v, const Mat3d<T1> &v1)
+{ times_equals_vv(v, v1); }
+
+// v /= v
+
+template <class T, class T1>
+inline void devide_equals_vv(T &v, const T1 &v1)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
-	times_equals0(v.ptr(), v1.ptr(), v1.size());
-}
-
-// v /= v
-template <class T, class T1>
-inline void divide_equals0(T &v, const T1 *v1, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] /= v1[i];
+	divide_equals(v.ptr(), v1.ptr(), v1.size());
 }
 
 template <class T, class T1>
 inline void operator/=(Vector<T> &v, const Vector<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	divide_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ devide_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator/=(Matrix<T> &v, const Matrix<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	divide_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ devide_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator/=(Cmat<T> &v, const Cmat<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	divide_equals0(v.ptr(), v1.ptr(), v1.size());
-}
+{ devide_equals_vv(v, v1); }
 
 template <class T, class T1>
 inline void operator/=(Mat3d<T> &v, const Mat3d<T1> &v1)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	divide_equals0(v.ptr(), v1.ptr(), v1.size());
-}
-
-template <class T, class T1>
-inline void plus_equals1(T *v, const T1 &s, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] += s;
-}
+{ devide_equals_vv(v, v1); }
 
 // v += s
 template <class T, class T1>
 inline void operator+=(Vector<T> &v, const T1 &s)
-{ plus_equals1(v.ptr(), s, v.size()); }
+{ plus_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator+=(Matrix<T> &v, const T1 &s)
-{ plus_equals1(v.ptr(), s, v.size()); }
+{ plus_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator+=(Mat3d<T> &v, const T1 &s)
-{ plus_equals1(v.ptr(), s, v.size()); }
+{ plus_equals_vs(v.ptr(), s, v.size()); }
 
 // v -= s
-template <class T, class T1>
-inline void minus_equals1(T *v, const T1 &s, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] -= s;
-}
 
 template <class T, class T1>
 inline void operator-=(Vector<T> &v, const T1 &s)
-{ minus_equals1(v.ptr(), s, v.size()); }
+{ minus_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator-=(Matrix<T> &v, const T1 &s)
-{ minus_equals1(v.ptr(), s, v.size()); }
+{ minus_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator-=(Mat3d<T> &v, const T1 &s)
-{ minus_equals1(v.ptr(), s, v.size()); }
+{ minus_equals_vs(v.ptr(), s, v.size()); }
 
 // v *= s
-template <class T, class T1>
-inline void times_equals1(T *v, const T1 &s, Long N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] *= s;
-}
 
 template <class T, class T1>
 inline void operator*=(Vector<T> &v, const T1 &s)
-{ times_equals1(v.ptr(), s, v.size()); }
+{ times_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator*=(Matrix<T> &v, const T1 &s)
-{ times_equals1(v.ptr(), s, v.size()); }
+{ times_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator*=(Cmat<T> &v, const T1 &s)
-{ times_equals1(v.ptr(), s, v.size()); }
+{ times_equals_vs(v.ptr(), s, v.size()); }
 
 template <class T, class T1>
 inline void operator*=(Mat3d<T> &v, const T1 &s)
-{ times_equals1(v.ptr(), s, v.size()); }
+{ times_equals_vs(v.ptr(), s, v.size()); }
 
 // v /= s (only works for floating point types)
 template <class T, class T1>
@@ -785,121 +634,93 @@ inline void operator%=(Vbase<T> &v, const T &s)
 }
 
 // rem(v, s)
-template <class T>
-inline void rem0(Vbase<T> &v, const Vbase<T> &v1, const T &s)
-{
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) % s;
-}
 
 template <class T>
 inline void rem(Vector<T> &v, const Vector<T> &v1, const T &s)
-{ v.resize(v1); rem0(v, v1, s); }
+{ v.resize(v1); rem(v.ptr(), v1.ptr(), s, v1.size()); }
 
 template <class T>
 inline void rem(Matrix<T> &v, const Matrix<T> &v1, const T &s)
-{ v.resize(v1); rem0(v, v1, s); }
+{ v.resize(v1); rem(v.ptr(), v1.ptr(), s, v1.size()); }
 
 template <class T>
 inline void rem(Mat3d<T> &v, const Mat3d<T> &v1, const T &s)
-{ v.resize(v1); rem0(v, v1, s); }
+{ v.resize(v1); rem(v.ptr(), v1.ptr(), s, v1.size()); }
 
 // TODO : rem(v, s, v1)
 // TODO : rem(v, v1, v2)
 
 // mod(v, v, s)
-template <class T>
-inline void mod0(Vbase<T> &v, const Vbase<T> &v1, const T &s)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = mod(v1(i), s);
-}
 
 template <class T>
 inline void mod(Vector<T> &v, const Vector<T> &v1, const T &s)
-{ v.resize(v1); mod0(v, v1, s); }
+{ v.resize(v1); mod(v.ptr(), v1.ptr(), s, v1.size()); }
 
 template <class T>
 inline void mod(Matrix<T> &v, const Matrix<T> &v1, const T &s)
-{ v.resize(v1); mod0(v, v1, s); }
+{ v.resize(v1); mod(v.ptr(), v1.ptr(), s, v1.size()); }
 
 template <class T>
 inline void mod(Mat3d<T> &v, const Mat3d<T> &v1, const T &s)
-{ v.resize(v1); mod0(v, v1, s); }
+{ v.resize(v1); mod(v.ptr(), v1.ptr(), s, v1.size()); }
 
 // TODO : mod(v, s, v1)
 // TODO : mod(v, v1, v2)
 
 // plus(v, v, s)
+
 template <class T, class T1, class T2>
-inline void plus0(Vbase<T> &v, const Vbase<T1> &v1, const T2 &s)
+inline void plus_vvs(T &v, const T1 &v1, const T2 &s)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) + s;
+	v.resize(v1); plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 template <class T, class T1, class T2>
 inline void plus(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
-{ v.resize(v1); plus0(v, v1, s); }
+{ plus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void plus(Matrix<T> &v, const Matrix<T1> &v1, const T2 &s)
-{ v.resize(v1); plus0(v, v1, s); }
+{ plus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void plus(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
-{ v.resize(v1); plus0(v, v1, s); }
+{ plus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void plus(Vector<T> &v, const T1 &s, const Vector<T2> &v1)
-{ plus(v, v1, s); }
+{ plus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void plus(Matrix<T> &v, const T1 &s, const Matrix<T2> &v1)
-{ plus(v, v1, s); }
+{ plus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void plus(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
-{ plus(v, v1, s); }
+{ plus_vvs(v, v1, s); }
 
 // plus(v, v, v)
+
 template <class T, class T1, class T2>
-inline void plus1(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
+inline void plus_vvv(T &v, const T1 &v1, const T2 &v2)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) + v2(i);
+#ifdef _CHECKBOUNDS_
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
+#endif
+	v.resize(v1); plus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
 
 template <class T, class T1, class T2>
 inline void plus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); plus1(v, v1, v2);
-}
+{ plus_vvv(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void plus(Matrix<T> &v, const Matrix<T1> &v1, const Matrix<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); plus1(v, v1, v2);
-}
+{ plus_vvv(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void plus(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); plus1(v, v1, v2);
-}
+{ plus_vvv(v, v1, v2); }
 
 // minus(v)
 template <class T>
@@ -907,129 +728,111 @@ inline void minus(Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	for (i = 0; i < N; ++i)
-		v(i) *= -1;
+		v[i] *= -1;
 }
 
 // minus(v, v)
+
 template <class T, class T1>
-inline void minus1(Vbase<T> &v, const Vbase<T1> &v1)
+inline void minus_vv(T &v, const T1 &v1)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = -v1(i);
+	v.resize(v1); minus_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 template <class T, class T1>
 inline void minus(Vector<T> &v, const Vector<T1> &v1)
-{ v.resize(v1); minus1(v, v1); }
+{ minus_vv(v, v1); }
 
 template <class T, class T1>
 inline void minus(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); minus1(v, v1); }
+{ minus_vv(v, v1); }
 
 template <class T, class T1>
 inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ v.resize(v1); minus1(v, v1); }
+{ minus_vv(v, v1); }
 
 // minus(v, s, v)
-template <class T, class T1, class T2>
-inline void minus2(Vbase<T> &v, const T1 &s, const Vbase<T2> &v1)
+
+template <class T, class T1>
+inline void minus_vsv(T &v, const T1 &s, const T2 &v1)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = s - v1(i);
+	v.resize(v1); minus_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
 
 template <class T, class T1, class T2>
 inline void minus(Vector<T> &v, const T1 &s, const Vector<T2> &v1)
-{ v.resize(v1); minus2(v, s, v1); }
+{ minus_vsv(v, s, v1); }
 
 template <class T, class T1, class T2>
 inline void minus(Matrix<T> &v, const T1 &s, const Matrix<T2> &v1)
-{ v.resize(v1); minus2(v, s, v1); }
+{ minus_vsv(v, s, v1); }
 
 template <class T, class T1, class T2>
 inline void minus(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
-{ v.resize(v1); minus2(v, s, v1); }
+{ minus_vsv(v, s, v1); }
 
 // minus(v, v, s)
+
 template <class T, class T1, class T2>
-inline void minus3(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
+inline void minus_vvs(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
 {
-	Long i, N{ v1.size() };
-	v.resize(N);
-	for (i = 0; i < N; ++i)
-		v[i] = v1[i] - s;
+	v.resize(v1); minus3(v, v1, s);
 }
 
 template <class T, class T1, class T2>
 inline void minus(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
-{ v.resize(v1); minus3(v, v1, s); }
+{ minus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void minus(Matrix<T> &v, const Matrix<T1> &v1, const T2 &s)
-{ v.resize(v1); minus3(v, v1, s); }
+{ minus_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
-{ v.resize(v1); minus3(v, v1, s); }
+{ minus_vvs(v, v1, s); }
 
 // minus(v, v, v)
+
 template <class T, class T1, class T2>
-inline void minus4(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
+inline void minus_vvv(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) - v2(i);
+#ifdef _CHECKBOUNDS_
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
+#endif
+	v.resize(v1); minus_vvv(v, v1, v2);
 }
 
 template <class T, class T1, class T2>
 inline void minus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); minus4(v, v1, v2);
-}
+{ minus_vvv(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void minus(Matrix<T> &v, const Matrix<T1> &v1, const Matrix<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); minus4(v, v1, v2);
-}
+{ minus_vvv(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); minus4(v, v1, v2);
-}
+{ minus_vvv(v, v1, v2); }
 
 // times(v, v, s)
+
 template <class T, class T1, class T2>
-inline void times0(Vbase<T> &v, const Vbase<T1> &v1, const T2 &s)
+inline void times_vvs(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) * s;
+	v.resize(v1); times_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 template <class T, class T1, class T2>
 inline void times(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
-{ v.resize(v1); times0(v, v1, s); }
+{ times_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void times(Matrix<T> &v, const Matrix<T1> &v1, const T2 &s)
-{ v.resize(v1); times0(v, v1, s); }
+{ times_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void times(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
-{ v.resize(v1); times0(v, v1, s); }
+{ times_vvs(v, v1, s); }
 
 // times(v, s, v)
 template <class T, class T1, class T2>
@@ -1045,71 +848,47 @@ inline void times(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
 { times(v, v1, s); }
 
 // times(v, v, v)
+
 template <class T, class T1, class T2>
-inline void times1(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
+inline void times_vvv(T &v, const T1 &v1, const T2 &v2)
 {
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) * v2(i);
+#ifdef _CHECKBOUNDS_
+	if (!shape_cmp(v1, v2)) error("wrong shape!");
+#endif
+	v.resize(v1); times_vvv(v.ptr(), v1.ptr(), v2.ptr(), v1.size());
 }
 
 template <class T, class T1, class T2>
 inline void times(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); times1(v, v1, v2);
-}
+{ times_vvv(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void times(Matrix<T> &v, const Matrix<T1> &v1, const Matrix<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); times1(v, v1, v2);
-}
+{ times_vvv(v, v1, v2); }
 
 template <class T, class T1, class T2>
 inline void times(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{
-#ifdef _CHECKBOUNDS_
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
-#endif
-	v.resize(v1); times1(v, v1, v2);
-}
+{ times_vvv(v, v1, v2); }
 
-// times(v, v, s)
 template <class T, class T1, class T2>
-inline void divide0(Vbase<T> &v, const Vbase<T1> &v1, const T2 &s)
-{
-	Long i, N{ v1.size() };
-	T2 sInv{ 1/s };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) * sInv;
-}
+inline void divide_vvs(T &v, const T1 &v1, const T2 &s)
+{ v.resize(v1); divide_vvs(v.ptr(), v1.ptr(), s, v1.size(); }
 
 template <class T, class T1, class T2>
 inline void divide(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
-{ v.resize(v1); divide0(v, v1, s); }
+{ divide_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void divide(Matrix<T> &v, const Matrix<T1> &v1, const T2 &s)
-{ v.resize(v1); divide0(v, v1, s); }
+{ divide_vvs(v, v1, s); }
 
 template <class T, class T1, class T2>
 inline void divide(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
-{ v.resize(v1); divide0(v, v1, s); }
+{ divide_vvs(v, v1, s); }
 
 // divide(v, s, v)
-template <class T, class T1, class T2>
-inline void divide1(Vbase<T> &v, const T1 &s, const Vbase<T2> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = s / v1(i);
-}
+
+TODO #############################################################################
 
 template <class T, class T1, class T2>
 inline void divide(Vector<T> &v, const T1 &s, const Vector<T2> &v1)
@@ -1124,13 +903,6 @@ inline void divide(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
 { v.resize(v1); divide1(v, s, v1); }
 
 // divide(v, v, v)
-template <class T, class T1, class T2>
-inline void divide3(Vbase<T> &v, const Vbase<T1> &v1, const Vbase<T2> &v2)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i) / v2(i);
-}
 
 template <class T, class T1, class T2>
 inline void divide(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
@@ -1169,13 +941,6 @@ inline void real(Vbase<Comp> &v)
 }
 
 // resl(v, v)
-template <class T>
-inline void real0(Vbase<T> &v, const Vbase<Comp> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = real(v1(i));
-}
 
 template <class T>
 inline void real(Vector<T> &v, const Vector<Comp> &v1)
@@ -1199,13 +964,6 @@ inline void imag(Vbase<Comp> &v)
 }
 
 // imag(v, v)
-template <class T>
-inline void imag0(Vbase<T> &v, const Vbase<Comp> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = imag(v1(i));
-}
 
 template <class T>
 inline void imag(Vector<T> &v, const Vector<Comp> &v1)
@@ -1229,13 +987,6 @@ inline void abs(Vbase<T> &v)
 }
 
 // abs(v, v)
-template <class T, class T1>
-inline void abs0(Vbase<T> &v, const Vbase<T1> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = abs(v1(i));
-}
 
 template <class T, class T1>
 inline void abs(Vector<T> &v, const Vector<T1> &v1)
@@ -1250,12 +1001,6 @@ inline void abs(Mat3d<T> &v, const Mat3d<T1> &v1)
 { v.resize(v1); abs0(v, v1); }
 
 // doubl2comp(v, v)
-inline void doub2comp0(Vbase<Comp> &v, const Vbase<Doub> &v1)
-{
-	Long i, N{ v1.size() };
-	for (i = 0; i < N; ++i)
-		v(i) = v1(i);
-}
 
 inline void doub2comp(Vector<Comp> &v, const Vector<Doub> &v1)
 { v.resize(v1); doub2comp0(v, v1); }
@@ -1283,25 +1028,6 @@ inline void conj(Vbase<std::complex<T>> &v)
 
 // dot products ( sum conj(v1[i])*v2[i] )
 // s = dot(v, v)
-template <class T, class T1, class T2>
-inline const T dot0(const Vector<T1> &v1, const Vector<T2> &v2)
-{
-	Long i, N{ v1.size() };
-	T s{};
-	for (i = 0; i < N; ++i)
-		s += v1[i] * v2[i];
-	return s;
-}
-
-template <class T, class T1, class T2>
-inline const T dot1(const Vector<T1> &v1, const Vector<T2> &v2)
-{
-	Long i, N{ v1.size() };
-	T s{};
-	for (i = 0; i < N; ++i)
-		s += conj(v1[i]) * v2[i];
-	return s;
-}
 
 inline Doub operator*(VecDoub_I v1, VecDoub_I v2)
 {
@@ -1398,21 +1124,6 @@ inline void outprod_par(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
 	}
 }
 
-// matrix-vector multiplications (column vector assumed)
-template <class T, class T1, class T2>
-inline void mul1(T &y, const T1 &a, const T2 &x)
-{
-#ifdef _CHECKBOUNDS_
-	if (a.ncols() != x.size()) error("wrong shape!");
-#endif
-	Long i, k, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(m); y = T::value_type();
-	for (i = 0; i < m; ++i) {
-		for (k = 0; k < n; ++k)
-			y[i] += a(i, k) * x(k);
-	}
-}
-
 template <class T, class T1, class T2>
 inline void mul(Vector<T> &y, const Matrix<T1> &a, const Vector<T2> &x)
 { mul1(y, a, x); }
@@ -1422,19 +1133,6 @@ inline void mul(Vector<T> &y, const Cmat<T1> &a, const Vector<T2> &x)
 { mul1(y, a, x); }
 
 // vector-matrix multiplication (row vector assumed)
-template <class T, class T1, class T2>
-inline void mul(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
-{
-#ifdef _CHECKBOUNDS_
-	if (x.size() != a.nrows()) error("wrong size!");
-#endif
-	Long j, k, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(n); y = 0.;
-	for (j = 0; j < n; ++j) {
-		for (k = 0; k < m; ++k)
-			y[j] += x[k] * a(k, j);
-	}
-}
 
 // parallel version
 template <class T, class T1, class T2>
@@ -1455,22 +1153,6 @@ inline void mul_par(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
 
 // matrix-matrix multiplication
 // TODO: optimize
-
-template <class T, class T1, class T2>
-inline void mul0(T &c, const T1 &a, const T2 &b)
-{
-#ifdef _CHECKBOUNDS_
-	if (a.ncols() != b.nrows()) error("wrong size!");
-#endif
-	Long i, j, k, m{ a.nrows() }, n{ b.ncols() }, Nk{ a.ncols() };
-	c.resize(m, n); c = 0.;
-	for (i = 0; i < m; ++i) {
-		for (j = 0; j < n; ++j) {
-			for (k = 0; k < Nk; ++k)
-				c(i, j) += a(i, k) * b(k, j);
-		}
-	}
-}
 
 template <class T, class T1, class T2>
 inline void mul(Matrix<T> &c, const Matrix<T1> &a, const Matrix<T2> &b)
