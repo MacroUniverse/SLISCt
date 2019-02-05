@@ -53,7 +53,7 @@ template <class T>
 void disp(const T *ptr, Int_I n, Int_I precision)
 {
 	for (Int i = 0; i < n; ++i) {
-		std::cout << (typename Char2Int<T>::type)ptr[i] << "   ";
+		std::cout << to_num(ptr[i]) << "   ";
 	}
 }
 
@@ -68,7 +68,7 @@ inline void disp(const Vector<T> &v, Int_I precision)
 	if (v.size() == 0) std::cout << "empty";
 	else
 		for (i = 0; i < n; ++i) {
-			std::cout << (typename Char2Int<T>::type)v[i] << "   ";
+			std::cout << to_num(v[i]) << "   ";
 		}
 	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
@@ -84,7 +84,7 @@ inline void disp_mat(const T &a, Int_I precision)
 	else
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << (typename Char2Int<typename T::value_type>::type)a(i, j) << "   ";
+				std::cout << to_num(a(i, j)) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -120,7 +120,7 @@ inline void disp(const Mat3d<T> &a, Int_I precision)
 		std::cout << "(:, :, " << k << ")" << std::endl;
 		for (i = 0; i < m; ++i) {
 			for (j = 0; j < n; ++j) {
-				std::cout << (typename Char2Int<T>::type)a(i, j, k) << "   ";
+				std::cout << to_num(a(i, j, k)) << "   ";
 			}
 			std::cout << std::endl;
 		}
@@ -140,7 +140,7 @@ inline void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision)
 	if (v.size() == 0) std::cout << "empty";
 	else
 	for (i = start; i < start + n; ++i) {
-		std::cout << (typename Char2Int<T>::type)v[i] << "   ";
+		std::cout << to_num(v[i]) << "   ";
 	}
 	std::cout << std::endl << std::endl;
 	std::cout.precision(oldPrecision);
@@ -156,7 +156,7 @@ inline void disp_mat(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I
 	else
 	for (i = start1; i < start1 + n1; ++i) {
 		for (j = start2; j < start2 + n2; ++j) {
-			std::cout << (typename Char2Int<typename T::value_type>::type)a(i, j) << "   ";
+			std::cout << to_num(a(i, j)) << "   ";
 		}
 		std::cout << std::endl;
 	}

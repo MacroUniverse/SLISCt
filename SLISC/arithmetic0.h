@@ -2,6 +2,7 @@
 // use pointers for array input/output
 
 #include "slisc.h"
+#include "scalar_arith.h"
 
 namespace slisc {
 
@@ -219,7 +220,7 @@ inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)
 {
 	s = T();
 	for (Long i = 0; i < N; ++i) {
-		if constexpr (is_complex<T1>::value)
+		if constexpr (is_complex<T1>())
 			s += std::conj(v1[i]) * v2[i];
 		else
 			s += v1[i] * v2[i];

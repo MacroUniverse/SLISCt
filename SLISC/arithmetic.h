@@ -28,52 +28,6 @@ inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 
 inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
 
-// operators between Comp and Integral types
-
-template <class T1, class T2>
-typename std::common_type<T1, T2>::type operator+(const T1 &s1, const T2 &s2)
-{
-	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
-		return s1 + (typename T1::value_type)s2;
-	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
-		return (typename T2::value_type)s1 + s2;
-	else
-		return s1 + s2;
-}
-
-template <class T1, class T2>
-typename std::common_type<T1, T2>::type operator-(const T1 &s1, const T2 &s2)
-{
-	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
-		return s1 - (typename T1::value_type)s2;
-	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
-		return (typename T2::value_type)s1 - s2;
-	else
-		return s1 - s2;
-}
-
-template <class T1, class T2>
-typename std::common_type<T1, T2>::type operator*(const T1 &s1, const T2 &s2)
-{
-	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
-		return s1 * (typename T1::value_type)s2;
-	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
-		return (typename T2::value_type)s1 * s2;
-	else
-		return s1 * s2;
-}
-
-template <class T1, class T2>
-typename std::common_type<T1, T2>::type operator/(const T1 &s1, const T2 &s2)
-{
-	if constexpr (is_complex<T1>::value && std::is_integral<T2>::value)
-		return s1 / (typename T1::value_type)s2;
-	else if constexpr (is_integral<T1>::value && std::is_complex<T2>::value)
-		return (typename T2::value_type)s1 + s2;
-	else
-		return s1 / s2;
-}
-
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
@@ -180,7 +134,7 @@ inline const T max(const Vbase<T> &v)
 
 // return max(abs(a(:))
 template <class T>
-inline const typename Comp2Real<T>::type max_abs(const Vbase<T> &v)
+inline const typename rm_comp<T>::type max_abs(const Vbase<T> &v)
 {
 	Long i, N{ v.size() };
 	Doub val{ abs(v(0)) };
@@ -1076,7 +1030,7 @@ inline void conj(Vbase<std::complex<T>> &v)
 // s = dot(v, v)
 
 template <class T1, class T2>
-inline typename std::common_type<T1, T2>::type dot(const Vector<T1> &v1, const Vector<T2> &v2)
+inline auto dot(const Vector<T1> &v1, const Vector<T2> &v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
