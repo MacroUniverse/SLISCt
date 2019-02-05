@@ -6,6 +6,28 @@
 
 namespace slisc {
 
+// array copying
+template<class T>
+inline void vecset(T *dest, const T &val, Long_I n)
+{
+	for (Long i = 0; i < n; ++i)
+		dest[i] = val;
+}
+
+template<class T>
+inline void veccpy(T *dest, const T *src, Long_I n)
+{
+	memcpy(dest, src, n * sizeof(T));
+}
+
+template<class T, class T1>
+inline void veccpy(T *dest, const T1 *src, Long_I n)
+{
+	for (Long i = 0; i < n; ++i)
+		dest[i] = src[i];
+}
+
+// array comparison
 template <class T1, class T2>
 Bool equals_to_vv(const T1 *v1, const T2 *v2, Long_I N)
 {
@@ -98,7 +120,6 @@ inline void rem_vvs(T *v, const T *v1, const T &s, Long_I N)
 }
 
 // mod(v, v, s)
-
 Int mod(Int_I i, Int_I n);
 Long mod(Long_I i, Long_I n);
 

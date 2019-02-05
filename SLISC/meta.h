@@ -69,7 +69,7 @@ constexpr Int type_num()
 template <class T, class U>
 constexpr auto promo_type0()
 {
-	static_assert(type_num<T> != -1 && type_num<U> != -1, "unhandled type!");
+	static_assert(type_num<T>() != -1 && type_num<U>() != -1, "unhandled type!");
 	if constexpr (type_num<T>() > type_num<U>())
 		return T();
 	else

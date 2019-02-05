@@ -61,6 +61,7 @@ inline void test_meta()
 	if constexpr (type_num<Bool>() != 1) error("failed!");
 	if constexpr (type_num<Int>() != 4) error("failed!");
 	if constexpr (type_num<Doub>() != 12) error("failed!");
+	if constexpr (type_num<std::complex<Uchar>>() != -1) error("failed!");
 
 	// promo_type
 	if (!is_same<promo_type<Bool, Char>::type, Char>()) error("failed!");
@@ -81,4 +82,14 @@ inline void test_meta()
 	if (!is_same<to_num_t<float>::type, float>()) error("failed!");
 	if (!is_same<to_num_t<Doub>::type, Doub>()) error("failed!");
 	if (!is_same<to_num_t<Comp>::type, Comp>()) error("failed!");
+
+	// rm_comp
+	if (!is_same<rm_comp<Bool>::type, Bool>()) error("failed!");
+	if (!is_same<rm_comp<Int>::type, Int>()) error("failed!");
+	if (!is_same<rm_comp<Char>::type, Char>()) error("failed!");
+	if (!is_same<rm_comp<float>::type, float>()) error("failed!");
+	if (!is_same<rm_comp<Doub>::type, Doub>()) error("failed!");
+	if (!is_same<rm_comp<std::complex<float>>::type, float>()) error("failed!");
+	if (!is_same<rm_comp<Comp>::type, Doub>()) error("failed!");
+	if (!is_same<rm_comp<std::complex<Ldoub>>::type, Ldoub>()) error("failed!");
 }

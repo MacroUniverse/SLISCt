@@ -4,34 +4,9 @@
 
 namespace slisc {
 
-// === scalar utilities ===
-
-// check if an integer is odd
-inline Bool isodd(Int_I n) { return n & 1; }
-inline Bool isodd(Long_I n) { return n & 1; }
-
-// return true if n is power of 2 or 0
-inline Bool ispow2(Int_I n) { return (n&(n-1)) == 0; }
-inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
-
-// return the positive modulus (use "%" when i >= 0)
-inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
-inline Long mod(Long_I i, Long_I n) { return (i % n + n) % n; }
-
-// matrix double index to single index conversion
-
-inline Long csub2ind(Long_I Nr, Long_I i, Long_I j)
-{ return i + Nr*j; } // column major
-
-inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
-{ return Nc*i + j; } // row major
-
-inline Doub sinc(Doub_I x) { return x == 0 ? 1. : std::sin(x)/x; }
-
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
-
 template <class T1, class T2>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
