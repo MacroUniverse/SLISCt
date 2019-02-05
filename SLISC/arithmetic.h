@@ -1,5 +1,5 @@
 #pragma once
-#include "arithmetic0.h"
+#include "ptr_arith.h"
 #include <type_traits>
 
 namespace slisc {
@@ -7,7 +7,7 @@ namespace slisc {
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
-template <class T1, class T2>
+template <class T1, class T2, class Enable = typename is_slisc<T1, T2>::type>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
 	if constexpr (T1::ndims() == 1 && T2::ndims() == 1) {
@@ -109,14 +109,13 @@ inline const T max(const Vbase<T> &v)
 
 // return max(abs(a(:))
 template <class T>
-inline const typename rm_comp<T>::type max_abs(const Vbase<T> &v)
+inline const auto max_abs(const Vbase<T> &v)
 {
-	Long i, N{ v.size() };
-	Doub val{ abs(v(0)) };
-	for (i = 1; i < N; ++i)
-		if (abs(v(i)) > val)
-			val = abs(v(i));
-	return val;
+	typename rm_complex<T>::type s{ abs(v[0]) };
+	for (Long i = 1; i < v.size(); ++i)
+		if (s < abs(v[i]))
+			s = abs(v(i));
+	return s;
 }
 
 template <class T>
@@ -971,20 +970,20 @@ inline void abs(Mat3d<T> &v, const Mat3d<T1> &v1)
 // doubl2comp(v, v)
 
 template <class T, class T1>
-inline void doub2comp_vv(T &v, const T1 &v1)
+inline void to_comp_vv(T &v, const T1 &v1)
 {
 	v.resize(v1);
-	doub2comp_vv(v.ptr(), v1.ptr(), v1.size());
+	to_comp_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-inline void doub2comp(Vector<Comp> &v, const Vector<Doub> &v1)
-{ doub2comp_vv(v, v1); }
+inline void to_comp_vv(Vector<Comp> &v, const Vector<Doub> &v1)
+{ to_comp_vv(v, v1); }
 
-inline void doub2comp(Matrix<Comp> &v, const Matrix<Doub> &v1)
-{ doub2comp_vv(v, v1); }
+inline void to_comp_vv(Matrix<Comp> &v, const Matrix<Doub> &v1)
+{ to_comp_vv(v, v1); }
 
-inline void doub2comp(Mat3d<Comp> &v, const Mat3d<Doub> &v1)
-{ doub2comp_vv(v, v1); }
+inline void to_comp_vv(Mat3d<Comp> &v, const Mat3d<Doub> &v1)
+{ to_comp_vv(v, v1); }
 
 // conj(v)
 

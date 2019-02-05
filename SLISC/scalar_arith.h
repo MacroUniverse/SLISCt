@@ -45,21 +45,31 @@ Bool is_equiv(const T1 &s1, const T2 &s2)
 template <class T>
 auto to_num(const T &s)
 {
-	return (const typename to_num_t<T>::type)s;
+	return (const typename num_type<T>::type)s;
 }
 
 // basic functions
-using std::swap; using std::abs; using std::sqrt;
-using std::sin; using std::cos; using std::tan;
+using std::swap; using std::abs; using std::real; using std::imag;
+using std::sqrt; using std::sin; using std::cos; using std::tan;
 using std::exp; using std::log; using std::log10;
 using std::expm1; using std::log1p; using std::hypot;
 using std::sinh; using std::cosh; using std::tanh;
 
 template <class T>
 inline auto cot(const T &x)
-{ return rm_comp<T>::type(1) / tan(x); }
+{
+	typedef typename rm_complex<T>::type Tr;
+	constexpr Tr one = Tr(1);
+	return one / tan(x);
+}
 
-inline Doub sinc(Doub_I x) { return x == 0 ? 1. : sin(x) / x; }
+template <class T>
+inline T sinc(const T &x)
+{
+	typedef typename rm_complex<T>::type Tr;
+	constexpr Tr one = Tr(1);
+	return x == 0 ? one : sin(x) / x;
+}
 
 // check if an integer is odd
 inline Bool isodd(Int_I n) { return n & 1; }

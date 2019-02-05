@@ -4,15 +4,6 @@
 
 namespace slisc {
 
-// === class declarations ===
-template <class T> class Vector;
-template <class T> class Matrix;
-template <class T> class Cmat;
-template <class T> class Mat3d;
-template <class T> class MatCoo;
-template <class T> class MatCooH;
-
-
 // Scalar types
 
 typedef const int Int_I; // 32 bit integer
@@ -75,7 +66,24 @@ typedef std::string Str;
 typedef const Str &Str_I;
 typedef Str &Str_O, &Str_IO;
 
-// Matric and vector types
+// === class declarations ===
+template <class T> class Vector;
+template <class T> class Matrix;
+template <class T> class Cmat;
+template <class T, Long Nr, Long Nc> class FixVec;
+template <class T, Long Nr, Long Nc> class FixCmat;
+template <class T> class Mat3d;
+template <class T> class Diag;
+template <class T> class MatCoo;
+template <class T> class MatCooH;
+// For cuSLISC project
+#ifdef _CUSLISC_
+template <class T> class Gvector;
+template <class T> class Gmatrix;
+template <class T> class Gmat3d;
+#endif
+
+// vector and matrix types
 typedef const Vector<Int> &VecInt_I;
 typedef Vector<Int> VecInt;
 typedef Vector<Int> &VecInt_O, &VecInt_IO;

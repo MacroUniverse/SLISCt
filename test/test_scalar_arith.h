@@ -49,6 +49,7 @@ void test_scalar_arith()
 	if (!is_equiv(6 / Comp(1, 1), Comp(3, -3))) error("failed!");
 	if (!is_equiv(float(6) / Comp(1, 1), Comp(3, -3))) error("failed!");
 	if (!is_equiv(6. / Comp(1, 1), Comp(3, -3))) error("failed!");
+	if (!is_equiv(6. / std::complex<float>(1, 1), Comp(3, -3))) error("failed!");
 
 	// operator+,-,*,/ between two floatig point std::complex<>	
 	if (!is_equiv(std::complex<float>(1, 1) + std::complex<float>(1, 1), std::complex<float>(2, 2)))

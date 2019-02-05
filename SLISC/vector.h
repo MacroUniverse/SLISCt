@@ -1,6 +1,29 @@
 #pragma once
+#include "typedef.h"
 
 namespace slisc {
+
+// array copying
+template<class T>
+inline void vecset(T *dest, const T &val, Long_I n)
+{
+	for (Long i = 0; i < n; ++i)
+		dest[i] = val;
+}
+
+template<class T>
+inline void veccpy(T *dest, const T *src, Long_I n)
+{
+	memcpy(dest, src, n * sizeof(T));
+}
+
+template<class T, class T1>
+inline void veccpy(T *dest, const T1 *src, Long_I n)
+{
+	for (Long i = 0; i < n; ++i)
+		dest[i] = src[i];
+}
+
 // Base Class for vector/matrix
 template <class T>
 class Vbase

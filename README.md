@@ -233,3 +233,5 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * test Comp2Real
 * test both dense and sparse arithmetic
 * `Cmat<T>` should be derived from `Matrix<T>`
+* test `inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)`
+* test `is_slisc<>`;

@@ -57,6 +57,20 @@ inline void test_meta()
 	if (is_complex<Doub>()) error("failed!");
 	if (is_complex<Ldoub>()) error("failed!");
 
+	// is_slisc
+	if (!is_slisc<Vector<Int>>()) error("failed!");
+	if (!is_slisc<Matrix<float>>()) error("failed!");
+	if (!is_slisc<Cmat<Doub>>()) error("failed!");
+	if (!is_slisc<FixVec<Comp, 2, 2>>()) error("failed!");
+	if (!is_slisc<FixCmat<std::complex<float>, 2, 2>>()) error("failed!");
+	if (!is_slisc<Diag<Uchar>>()) error("failed!");
+	if (!is_slisc<MatCoo<Char>>()) error("failed!");
+	if (!is_slisc<MatCooH<Bool>>()) error("failed!");
+	if (is_slisc<Bool>()) error("failed!");
+	if (is_slisc<Int>()) error("failed!");
+	if (is_slisc<Comp>()) error("failed!");
+	if (is_slisc<std::vector<Long>>()) error("failed!");
+
 	// typenum
 	if constexpr (type_num<Bool>() != 1) error("failed!");
 	if constexpr (type_num<Int>() != 4) error("failed!");
@@ -74,22 +88,22 @@ inline void test_meta()
 	if (!is_same<promo_type<std::complex<float>, Comp>::type, Comp>()) error("failed!");
 
 	// to_num_t
-	if (!is_same<to_num_t<Bool>::type, Int>()) error("failed!");
-	if (!is_same<to_num_t<Char>::type, Int>()) error("failed!");
-	if (!is_same<to_num_t<Uchar>::type, Int>()) error("failed!");
-	if (!is_same<to_num_t<Int>::type, Int>()) error("failed!");
-	if (!is_same<to_num_t<Long>::type, Long>()) error("failed!");
-	if (!is_same<to_num_t<float>::type, float>()) error("failed!");
-	if (!is_same<to_num_t<Doub>::type, Doub>()) error("failed!");
-	if (!is_same<to_num_t<Comp>::type, Comp>()) error("failed!");
+	if (!is_same<num_type<Bool>::type, Int>()) error("failed!");
+	if (!is_same<num_type<Char>::type, Int>()) error("failed!");
+	if (!is_same<num_type<Uchar>::type, Int>()) error("failed!");
+	if (!is_same<num_type<Int>::type, Int>()) error("failed!");
+	if (!is_same<num_type<Long>::type, Long>()) error("failed!");
+	if (!is_same<num_type<float>::type, float>()) error("failed!");
+	if (!is_same<num_type<Doub>::type, Doub>()) error("failed!");
+	if (!is_same<num_type<Comp>::type, Comp>()) error("failed!");
 
 	// rm_comp
-	if (!is_same<rm_comp<Bool>::type, Bool>()) error("failed!");
-	if (!is_same<rm_comp<Int>::type, Int>()) error("failed!");
-	if (!is_same<rm_comp<Char>::type, Char>()) error("failed!");
-	if (!is_same<rm_comp<float>::type, float>()) error("failed!");
-	if (!is_same<rm_comp<Doub>::type, Doub>()) error("failed!");
-	if (!is_same<rm_comp<std::complex<float>>::type, float>()) error("failed!");
-	if (!is_same<rm_comp<Comp>::type, Doub>()) error("failed!");
-	if (!is_same<rm_comp<std::complex<Ldoub>>::type, Ldoub>()) error("failed!");
+	if (!is_same<rm_complex<Bool>::type, Bool>()) error("failed!");
+	if (!is_same<rm_complex<Int>::type, Int>()) error("failed!");
+	if (!is_same<rm_complex<Char>::type, Char>()) error("failed!");
+	if (!is_same<rm_complex<float>::type, float>()) error("failed!");
+	if (!is_same<rm_complex<Doub>::type, Doub>()) error("failed!");
+	if (!is_same<rm_complex<std::complex<float>>::type, float>()) error("failed!");
+	if (!is_same<rm_complex<Comp>::type, Doub>()) error("failed!");
+	if (!is_same<rm_complex<std::complex<Ldoub>>::type, Ldoub>()) error("failed!");
 }

@@ -7,7 +7,8 @@
 //#include "SLISC/disp.h"
 
 #include "test/test_meta.h"
-#include "test/test_scalar_arith.h"
+//#include "test/test_scalar_arith.h"
+//#include "test/test_arithmetic.h"
 using namespace slisc;
 using namespace std;
 
@@ -35,5 +36,6 @@ int main()
 {
 	// test_all();
 	test_meta();
-	test_scalar_arith();
+	// test_scalar_arith();
+	// test_arithmetic();
 }

@@ -5,5 +5,4 @@
 inline void test_expokit()
 {
 	using namespace slisc;
-	
 }

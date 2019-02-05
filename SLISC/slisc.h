@@ -34,15 +34,6 @@ const Comp I(0., 1.);
 
 #define warning(str) do{std::cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl;} while(0)
 
-// === value copying ===
-
-
-// For cuSLISC project
-#ifdef _CUSLISC_
-template <class T> class Gvector;
-template <class T> class Gmatrix;
-template <class T> class Gmat3d;
-#endif
 }
 
 #include "vector.h"

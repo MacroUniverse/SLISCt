@@ -1,31 +1,9 @@
 // low-level arithmetic
 // use pointers for array input/output
 
-#include "slisc.h"
 #include "scalar_arith.h"
 
 namespace slisc {
-
-// array copying
-template<class T>
-inline void vecset(T *dest, const T &val, Long_I n)
-{
-	for (Long i = 0; i < n; ++i)
-		dest[i] = val;
-}
-
-template<class T>
-inline void veccpy(T *dest, const T *src, Long_I n)
-{
-	memcpy(dest, src, n * sizeof(T));
-}
-
-template<class T, class T1>
-inline void veccpy(T *dest, const T1 *src, Long_I n)
-{
-	for (Long i = 0; i < n; ++i)
-		dest[i] = src[i];
-}
 
 // array comparison
 template <class T1, class T2>
@@ -112,19 +90,15 @@ inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
 }
 
 // operator%
-template <class T>
-inline void rem_vvs(T *v, const T *v1, const T &s, Long_I N)
+template <class T, class T1, class T2>
+inline void rem_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] % s;
 }
 
-// mod(v, v, s)
-Int mod(Int_I i, Int_I n);
-Long mod(Long_I i, Long_I n);
-
-template <class T>
-inline void mod_vvs(T *v, const T *v1, const T &s, Long_I N)
+template <class T, class T1, class T2>
+inline void mod_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = mod(v1[i], s);
@@ -211,16 +185,18 @@ inline void divide_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
 		v[i] = v1[i] / v2[i];
 }
 
-inline void real_vv(Doub *v, const Comp *v1, Long_I N)
+template <class T, class Tc>
+inline void real_vv(T *v, const std::complex<Tc> *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
-		v[i] = std::real(v1[i]);
+		v[i] = real(v1[i]); 
 }
 
-inline void imag_vv(Doub *v, const Comp *v1, Long_I N)
+template <class T, class Tc>
+inline void imag_vv(T *v, const std::complex<Tc> *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
-		v[i] = std::imag(v1[i]);
+		v[i] = imag(v1[i]);
 }
 
 template <class T, class T1>
@@ -230,13 +206,14 @@ inline void abs_vv(T *v, const T1 *v1, Long_I N)
 		v[i] = abs(v1[i]);
 }
 
-inline void doub2comp_vv(Comp *v, const Doub *v1, Long_I N)
+template <class Tc, class T>
+inline void to_comp_vv(std::complex<Tc> *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i];
 }
 
-template <class T, class T1, class T2>
+template <class T1, class T2, class T = typename promo_type<T1, T2>::type>
 inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)
 {
 	s = T();
@@ -250,45 +227,88 @@ inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)
 
 // sqrt(v)
 template <class T, class T1>
-inline void sqrt_vv(Vbase<T> &v, const Vbase<T1> &v1, Long_I N)
+inline void sqrt_vv(T *v, const T1 *v1, Long_I N)
 {
-	for (Long i = 0; i < N; ++i)
-		v[i] = std::sqrt(v1[i]);
+	if constexpr (type_num<T>() < type_num<T1>()) {
+		for (Long i = 0; i < N; ++i)
+			v[i] = sqrt(T(v1[i]));
+	}
+	else {
+		for (Long i = 0; i < N; ++i)
+			v[i] = sqrt(v1[i]);
+	}
 }
 
 template <class T, class T1>
 inline void invSqrt_vv(T *v, const T1 *v1, Long_I N)
 {
-	for (Long i = 0; i < N; ++i)
-		v[i] = 1./std::sqrt(v1[i]);
+	if constexpr (type_num<T>() < type_num<T1>()) {
+		// if T is the smaller type
+		// convert v1[i] to T before sqrt()
+		typedef typename rm_complex<T>::type Tr;
+		constexpr Tr one = Tr(1);
+		for (Long i = 0; i < N; ++i)
+			v[i] = one / sqrt(T(v1[i]));
+	}
+	else {
+		// if T is the larger type
+		typedef typename rm_complex<T1>::type Tr;
+		constexpr Tr one = Tr(1);
+		for (Long i = 0; i < N; ++i)
+			v[i] = one / sqrt(v1[i]);
+	}
 }
 
 template <class T, class T1>
 inline void sin_vv(T *v, const T1 *v1, Long_I N)
 {
-	for (Long i = 0; i < N; ++i)
-		v[i] = std::sin(v1[i]);
+	if constexpr (type_num<T>() < type_num<T1>()) {
+		for (Long i = 0; i < N; ++i)
+			v[i] = sin(T(v1[i]));
+	}
+	else {
+		for (Long i = 0; i < N; ++i)
+			v[i] = sin(v1[i]);
+	}
 }
 
 template <class T, class T1>
 inline void cos_vv(T *v, const T1 *v1, Long_I N)
 {
-	for (Long i = 0; i < N; ++i)
-		v[i] = std::cos(v1[i]);
+	if constexpr (type_num<T>() < type_num<T1>()) {
+		for (Long i = 0; i < N; ++i)
+			v[i] = cos(T(v1[i]));
+	}
+	else {
+		for (Long i = 0; i < N; ++i)
+			v[i] = cos(v1[i]);
+	}
 }
 
 template <class T, class T1>
 inline void exp_vv(T *v, const T1 *v1, Long_I N)
 {
-	for (Long i = 0; i < N; ++i)
-		v[i] = std::exp(v1[i]);
+	if constexpr (type_num<T>() < type_num<T1>()) {
+		for (Long i = 0; i < N; ++i)
+			v[i] = exp(T(v1[i]));
+	}
+	else {
+		for (Long i = 0; i < N; ++i)
+			v[i] = exp(v1[i]);
+	}
 }
 
 template <class T, class T1>
 inline void tan_vv(T *v, const T1 *v1, Long_I N)
 {
-	for (Long i = 0; i < N; ++i)
-		v[i] = std::tan(v1[i]);
+	if constexpr (type_num<T>() < type_num<T1>()) {
+		for (Long i = 0; i < N; ++i)
+			v[i] = tan(T(v1[i]));
+	}
+	else {
+		for (Long i = 0; i < N; ++i)
+			v[i] = tan(v1[i]);
+	}
 }
 
 } // nemaspace slisc

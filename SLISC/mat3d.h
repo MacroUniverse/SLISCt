@@ -1,4 +1,5 @@
 #pragma once
+#include "vector.h"
 
 namespace slisc {
 // 3D Matrix Class

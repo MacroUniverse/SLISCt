@@ -1,8 +1,10 @@
 #pragma once
+#include "vector.h"
 
 namespace slisc {
 
 // Column major Matrix Class
+// don't derive from Matrix<T>
 
 template <class T>
 class Cmat : public Vbase<T>
