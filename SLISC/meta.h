@@ -10,6 +10,7 @@ namespace slisc {
 
 // declarations
 template <class T, class U> struct promo_type;
+template <class T> struct rm_complex;
 
 // true_type() or true_type::value is true
 // false_type() or false_type::value is false
@@ -40,11 +41,22 @@ using std::is_arithmetic;
 // otherwise returns false
 using std::is_fundamental;
 
-// for T = std::complex<T1>
+// for T = arithmetic std::complex<>
 // is_complex<T>() or is_complex<T>::value returns true
 // otherwise returns false
-template <class T> struct is_complex : false_type {};
-template <class T> struct is_complex<std::complex<T>> : true_type {};
+template<class T> struct is_complex : false_type {};
+
+template<class T>
+struct is_complex<std::complex<T>> :
+	integral_constant<bool, is_arithmetic<T>::value> {};
+
+// for T = arithmetic type, complex<> type
+// is_scalar<T>() or is_scalar<T>::value returns true
+// otherwise returns false
+template< class T >
+struct is_scalar : std::integral_constant<bool,
+	is_arithmetic<T>() || is_complex<T>()
+> {};
 
 // is_slisc<>
 template <class T> struct is_slisc : false_type {};
@@ -76,6 +88,33 @@ struct is_slisc2<T1, T2,
 	typedef typename
 		promo_type<typename T1::value_type, typename T2::value_type>::type
 		type;
+};
+
+// === get static constexpr values ===
+
+// Sconst<T, val>::value is a constexpr variable of arithmetic type or complex<>
+template <class T, Int val>
+struct Sconst
+{
+	static constexpr T value = val;
+};
+
+// Aconst<T, val>::value is a constexpr variable of arithmetic type
+// when T is complex<value_type>, CONST<T, val>::value is value_type
+// will not instanciate if T is illegal
+template <class T, Int val, class Enable =
+	typename enable_if<is_arithmetic<typename rm_complex<T>::type>()>::type>
+struct Aconst
+{
+	static constexpr typename rm_complex<T>::type value = val;
+};
+
+// Cconst<T, real, imag>::value, where T must be std::complex<>, is a constexpr variable of complex<>
+// will not instanciate if T is illegal
+template <class T, Int real, Int imag = 0, class Enable = typename std::enable_if<is_complex<T>()>::type>
+struct Cconst
+{
+	static constexpr T value = T(real, imag);
 };
 
 // === type mapping ===

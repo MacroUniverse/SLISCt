@@ -6,25 +6,6 @@
 
 namespace slisc {
 
-// constant value of a type
-
-// CONST<T, s>() will generate a non-complex constexpr value even if T is complex
-template <class T, Int val>
-constexpr const auto CONST()
-{
-	typedef typename rm_complex<T>::type Real;
-	constexpr Real ret(val);
-	return ret;
-}
-
-// CONST<T, real, imag>(), where T must be std::complex<>, will generate a constexpr complex value
-template <class T, Int real, Int imag, class Enable = typename std::enable_if<is_complex<T>()>::type>
-constexpr const T CONSTC()
-{
-	constexpr T ret(real, imag);
-	return ret;
-}
-
 // these are slightly different from Numerical Recipes
 template<class T1, class T2>
 constexpr const auto &MIN(const T1 &a, const T2 &b)
@@ -40,8 +21,8 @@ constexpr const T SQR(const T &a) { return a * a; }
 template<class T>
 constexpr const T SIGN(const T &s)
 {
-	constexpr T one = T(1), neg_one = T(-1), zero = T();
-	return 0 < s ? one : (s < 0 ? neg_one : zero);
+	static_assert(is_arithmetic<T>(), "illegal type!");
+	return s > T(0) ? T(1) : (s < T(0) ? T(-1) : T(0));
 }
 
 template<class T1, class T2>
@@ -79,19 +60,11 @@ using std::sinh; using std::cosh; using std::tanh;
 
 template <class T>
 inline auto cot(const T &x)
-{
-	typedef typename rm_complex<T>::type Tr;
-	constexpr Tr one = Tr(1);
-	return one / tan(x);
-}
+{ return Aconst<T, 1>::value / tan(x); }
 
 template <class T>
 inline T sinc(const T &x)
-{
-	typedef typename rm_complex<T>::type Tr;
-	constexpr Tr one = Tr(1);
-	return x == 0 ? one : sin(x) / x;
-}
+{ return x == 0 ? Sconst<T, 1>::value : sin(x) / x; }
 
 // check if an integer is odd
 inline Bool isodd(Int_I n) { return n & 1; }
@@ -190,12 +163,24 @@ template <class Tx, class Ty>
 const auto operator*(const std::complex<Tx> &x, const std::complex<Ty> &y)
 {
 	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
-	typedef std::complex<typename promo_type<Tx, Ty>::type> T;
-	return T(x) * T(y);
+	typedef typename promo_type<Tx, Ty>::type Tp;
+	typedef std::complex<Tp> Tpc;
+	if constexpr (type_num<Tx>() < type_num<Tp>) {
+		if constexpr (type_num<Ty>() < type_num<Tp>)
+			return Tpc(x) * Tpc(y);
+		else
+			return Tpc(x) * y;
+	}
+	else {
+		if constexpr (type_num<Ty>() < type_num<Tp>)
+			return x * Tpc(y);
+		else
+			error("should not happen!");
+	}
 }
 
 template <class Tx, class Ty>
 const auto operator/(const std::complex<Tx> &x, const std::complex<Ty> &y)
-{ return x * (Ty(1) / y); }
+{ return x * (Aconst<Ty, 1>::value / y); }
 
 }
