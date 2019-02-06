@@ -216,6 +216,13 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * See cuSLISC project for a GPU version of SLISC using CUDA.
 * See MatFile project for saving and reading "Vector" or "Matrix" to/from Matlab data file ".mat", or text based file ".matt".
 
+## Implementation Philosophy
+* Easy for users to understand and modify.
+* Don't use template unless absolutely necessary.
+* Use meta-programming even more carefully.
+* Implement functions for mostly used types, implement others when needed, never try to implement for all types.
+* Never try to unify the format of everything unless there's nothing else to do.
+
 ## TODO
 * I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
 * replace `error()` macro with `throw()`

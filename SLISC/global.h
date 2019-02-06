@@ -1,32 +1,35 @@
 #pragma once
 #include <complex>
-#include <string.h>
+#include <string>
 
 namespace slisc {
 
 // Scalar types
 
-typedef const int Int_I; // 32 bit integer
 typedef int Int;
-typedef int &Int_O, &Int_IO;
+typedef const Int Int_I; // 32 bit integer
+typedef Int &Int_O, &Int_IO;
+
 typedef const unsigned int Uint_I;
 typedef unsigned int Uint;
 typedef unsigned int &Uint_O, &Uint_IO;
 
 #ifdef _MSC_VER
-typedef const __int64 Llong_I; // 64 bit integer
 typedef __int64 Llong;
-typedef __int64 &Llong_O, &Llong_IO;
+typedef const Llong Llong_I; // 64 bit integer
+typedef Llong &Llong_O, &Llong_IO;
+
 typedef const unsigned __int64 Ullong_I;
 typedef unsigned __int64 Ullong;
 typedef unsigned __int64 &Ullong_O, &Ullong_IO;
 #else
-typedef const long long int Llong_I; // 64 bit integer
 typedef long long int Llong;
-typedef long long int &Llong_O, &Llong_IO;
-typedef const unsigned long long int Ullong_I;
-typedef unsigned long long int Ullong;
-typedef unsigned long long int &Ullong_O, &Ullong_IO;
+typedef const Llong Llong_I; // 64 bit integer
+typedef Llong &Llong_O, &Llong_IO;
+
+typedef unsigned Llong Ullong;
+typedef const Ullong Ullong_I;
+typedef Ullong &Ullong_O, &Ullong_IO;
 #endif
 
 #ifndef _USE_Int_AS_LONG
@@ -35,31 +38,43 @@ typedef Llong Long;
 typedef Int Long;
 #endif
 typedef const Long Long_I;
-typedef Long;
 typedef Long &Long_O, &Long_IO;
 
-typedef const char Char_I; // 8 bit integer
 typedef char Char;
-typedef char &Char_O, &Char_IO;
-typedef const unsigned char Uchar_I;
+typedef const Char Char_I; // 8 bit integer
+typedef Char &Char_O, &Char_IO;
+
 typedef unsigned char Uchar;
-typedef unsigned char &Uchar_O, &Uchar_IO;
+typedef const Uchar Uchar_I;
+typedef Uchar &Uchar_O, &Uchar_IO;
 
-typedef const double Doub_I; // default floating type
+typedef float Float;
+typedef const Float Float_I; // default floating type
+typedef Float &Float_O, &Float_IO;
+
 typedef double Doub;
-typedef double &Doub_O, &Doub_IO;
+typedef const Doub Doub_I; // default floating type
+typedef Doub &Doub_O, &Doub_IO;
 
-typedef const long double &Ldoub_I;
 typedef long double Ldoub;
-typedef long double &Ldoub_O, &Ldoub_IO;
+typedef const Ldoub &Ldoub_I;
+typedef Ldoub &Ldoub_O, &Ldoub_IO;
 
-typedef const std::complex<double> &Comp_I;
-typedef std::complex<double> Comp;
-typedef std::complex<double> &Comp_O, &Comp_IO;
+typedef std::complex<Float> Fcomp;
+typedef const Fcomp &Fcomp_I;
+typedef Fcomp &Fcomp_O, &Fcomp_IO;
 
-typedef const bool Bool_I;
+typedef std::complex<Doub> Comp;
+typedef const Comp &Comp_I;
+typedef Comp &Comp_O, &Comp_IO;
+
+typedef std::complex<Ldoub> Lcomp;
+typedef const Lcomp &Lcomp_I;
+typedef Lcomp &Lcomp_O, &Lcomp_IO;
+
 typedef bool Bool;
-typedef bool &Bool_O, &Bool_IO;
+typedef const Bool Bool_I;
+typedef Bool &Bool_O, &Bool_IO;
 
 // string type
 typedef std::string Str;
@@ -271,5 +286,19 @@ typedef McoohDoub &McoohDoub_O, &McoohDoub_IO;
 typedef MatCooH<Comp> McoohComp;
 typedef const McoohComp &McoohComp_I;
 typedef McoohComp &McoohComp_O, &McoohComp_IO;
+
+// NaN definition
+static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
+
+// === constants ===
+
+const Doub PI = 3.14159265358979323;
+const Doub E = 2.71828182845904524;
+const Comp I(0., 1.);
+
+// report error and pause execution
+#define error(str) do{std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();} while(0)
+
+#define warning(str) do{std::cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl;} while(0)
 
 }

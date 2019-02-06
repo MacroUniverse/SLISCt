@@ -2,7 +2,8 @@
 #pragma once
 #include <cmath>
 #include <algorithm>
-#include "meta.h"
+#include "global.h"
+#include "complex_arith.h"
 
 namespace slisc {
 
@@ -18,16 +19,23 @@ constexpr const auto &MAX(const T1 &a, const T2 &b)
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
-template<class T>
-constexpr const T SIGN(const T &s)
-{
-	static_assert(is_arithmetic<T>(), "illegal type!");
-	return s > T(0) ? T(1) : (s < T(0) ? T(-1) : T(0));
-}
+constexpr Float SIGN(Float_I s)
+{ return s > 0.f ? 1.f : (s < 0.f ? -1.f : 0.f); }
 
-template<class T1, class T2>
-constexpr const T1 SIGN(const T1 &a, const T2 &b)
-{ return 0 <= b ? (0 <= a ? a : -a) : (0 <= a ? -a : a); }
+constexpr Doub SIGN(Doub_I s)
+{ return s > 0. ? 1. : (s < 0. ? -1. : 0.); }
+
+constexpr Float SIGN(Float_I &a, Float_I &b)
+{ return 0.f <= b ? (0.f <= a ? a : -a) : (0.f <= a ? -a : a); }
+
+constexpr Doub SIGN(Doub_I &a, Doub_I &b)
+{ return 0. <= b ? (0. <= a ? a : -a) : (0. <= a ? -a : a); }
+
+constexpr Doub SIGN(Doub_I &a, Float_I &b)
+{ return 0.f <= b ? (0. <= a ? a : -a) : (0. <= a ? -a : a); }
+
+constexpr Float SIGN(Float_I &a, Doub_I &b)
+{ return 0. <= b ? (0.f <= a ? a : -a) : (0.f <= a ? -a : a); }
 
 template<class T>
 inline void SWAP(T &a, T &b)
@@ -44,12 +52,12 @@ constexpr Bool is_equiv(const T1 &s1, const T2 &s2)
 	return false;
 }
 
-// convert false to 0, true to 1, character to Int
+// convert bool and character to Int, others unchanged
+inline Int to_num(Bool_I x) { return (Int)x; }
+inline Int to_num(Char_I x) { return (Int)x; }
+inline Int to_num(Uchar_I x) { return (Int)x; }
 template <class T>
-auto to_num(const T &s)
-{
-	return (const typename num_type<T>::type)s;
-}
+inline const T &to_num(const T &x) { return x; }
 
 // basic functions
 using std::swap; using std::abs; using std::real; using std::imag;
@@ -58,13 +66,11 @@ using std::exp; using std::log; using std::log10;
 using std::expm1; using std::log1p; using std::hypot;
 using std::sinh; using std::cosh; using std::tanh;
 
-template <class T>
-inline auto cot(const T &x)
-{ return Aconst<T, 1>::value / tan(x); }
+inline Float cot(Float_I x) { return 1.f / tan(x); }
+inline Doub cot(Doub_I x) { return 1. / tan(x); }
 
-template <class T>
-inline T sinc(const T &x)
-{ return x == 0 ? Sconst<T, 1>::value : sin(x) / x; }
+inline Float sinc(Float_I x) { return x == 0.f ? 1.f : sin(x) / x; }
+inline Doub sinc(Doub_I x) { return x == 0. ? 1. : sin(x) / x; }
 
 // check if an integer is odd
 inline Bool isodd(Int_I n) { return n & 1; }
@@ -85,102 +91,4 @@ inline Long csub2ind(Long_I Nr, Long_I i, Long_I j)
 
 inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 { return Nc*i + j; } // row major
-
-
-// operator+,-,*,/ between floating point std::complex<> and all arithmetic types
-// return promo_type<>
-
-template <class T, class Tc>
-const auto operator+(const std::complex<Tc> &z, const T &x)
-{
-	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
-	return std::complex<typename promo_type<T, Tc>::type>(real(z) + x, imag(z));
-}
-
-template <class T, class Tc>
-const auto operator+(const T &x, const std::complex<Tc> &z)
-{ return z + x; }
-
-template <class T, class Tc>
-const auto operator-(const std::complex<Tc> &z, const T &x)
-{
-	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
-	return std::complex<typename promo_type<T, Tc>::type>(real(z) - x, imag(z));
-}
-
-template <class T, class Tc>
-const auto operator-(const T &x, const std::complex<Tc> &z)
-{
-	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
-	return std::complex<typename promo_type<T, Tc>::type>(x - real(z), -imag(z));
-}
-
-template <class T, class Tc>
-const auto operator*(const std::complex<Tc> &z, const T &x)
-{
-	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
-	return std::complex<typename promo_type<T, Tc>::type>(real(z)*x, imag(z)*x);
-}
-
-template <class T, class Tc>
-const auto operator*(const T &x, const std::complex<Tc> &z)
-{ return z * x; }
-
-template <class T, class Tc>
-const auto operator/(const std::complex<Tc> &z, const T &x)
-{
-	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
-	typedef typename promo_type<T, Tc>::type Tp;
-	Tp inv_x; // Tp is floating point
-	inv_x = Tp(1) / x; // T is integral
-	return z * inv_x;
-}
-
-template <class T, class Tc>
-const auto operator/(const T &x, const std::complex<Tc> &z)
-{ return x * (Tc(1)/z); }
-
-// operator+,-,*,/ between two different std::complex<> types
-// return promo type
-
-template <class Tx, class Ty>
-const auto operator+(const std::complex<Tx> &x, const std::complex<Ty> &y)
-{
-	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
-	return std::complex<typename promo_type<Tx, Ty>::type>
-		(real(x) + real(y), imag(x) + imag(y));
-}
-
-template <class Tx, class Ty>
-const auto operator-(const std::complex<Tx> &x, const std::complex<Ty> &y)
-{
-	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
-	return std::complex<typename promo_type<Tx, Ty>::type>
-		(real(x) - real(y), imag(x) - imag(y));
-}
-
-template <class Tx, class Ty>
-const auto operator*(const std::complex<Tx> &x, const std::complex<Ty> &y)
-{
-	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
-	typedef typename promo_type<Tx, Ty>::type Tp;
-	typedef std::complex<Tp> Tpc;
-	if constexpr (type_num<Tx>() < type_num<Tp>) {
-		if constexpr (type_num<Ty>() < type_num<Tp>)
-			return Tpc(x) * Tpc(y);
-		else
-			return Tpc(x) * y;
-	}
-	else {
-		if constexpr (type_num<Ty>() < type_num<Tp>)
-			return x * Tpc(y);
-		else
-			error("should not happen!");
-	}
-}
-
-template <class Tx, class Ty>
-const auto operator/(const std::complex<Tx> &x, const std::complex<Ty> &y)
-{ return x * (Aconst<Ty, 1>::value / y); }
-
 }

@@ -131,11 +131,8 @@ constexpr Int type_num()
 	if (is_integral<T>()) {
 		if (is_same<T, Bool>()) return 0;
 		if (is_same<T, Char>()) return 1;
-		if (is_same<T, Uchar>()) return 2;
-		if (is_same<T, Int>()) return 3;
-		if (is_same<T, Uint>()) return 4;
-		if (is_same<T, Llong>()) return 5;
-		if (is_same<T, Ullong>()) return 6;
+		if (is_same<T, Int>()) return 2;
+		if (is_same<T, Llong>()) return 3;
 	}
 	else if (is_floating_point<T>()) {
 		if (is_same<T, float>()) return 20;
@@ -147,7 +144,7 @@ constexpr Int type_num()
 		if (is_same<T, Comp>()) return 41;
 		if (is_same<T, std::complex<Ldoub>>()) return 42;
 	}
-	return -1;
+	error("unsupported type!");
 }
 
 // implementation of promo_type<T,U>

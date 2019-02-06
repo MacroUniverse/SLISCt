@@ -24,95 +24,208 @@ Bool equals_to_vs(const T1 *v, const T2 &s, Long_I N)
 	return true;
 }
 
-// +=
-template <class T, class T1>
-inline void plus_equals_vv(T *v, const T1 *v1, Long_I N)
+// v += v
+inline void plus_equals_vv(Float *v, const Float *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] += v1[i];
 }
 
-template <class T, class T1>
-inline void plus_equals_vs(T *v, const T1 &s, Long_I N)
+inline void plus_equals_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] += v1[i];
+}
+
+inline void plus_equals_vv(Comp *v, const Comp *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] += v1[i];
+}
+
+inline void plus_equals_vv(Comp *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] += v1[i];
+}
+
+// v += s
+inline void plus_equals_vs(Float *v, Float_I s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] += s;
 }
 
-// -=
-template <class T, class T1>
-inline void minus_equals_vv(T *v, const T1 *v1, Long_I N)
+inline void plus_equals_vs(Doub *v, Doub_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] += s;
+}
+
+inline void plus_equals_vs(Comp *v, Doub_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] += s;
+}
+
+// v -= v
+
+inline void minus_equals_vv(Float *v, Float *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] -= v1[i];
 }
 
-template <class T, class T1>
-inline void minus_equals_vs(T *v, const T1 &s, Long_I N)
+inline void minus_equals_vv(Doub *v, Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] -= v1[i];
+}
+
+inline void minus_equals_vv(Comp *v, Comp *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] -= v1[i];
+}
+
+inline void minus_equals_vv(Comp *v, Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] -= v1[i];
+}
+
+// v -= s
+
+inline void minus_equals_vs(Doub *v, Doub_I s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] -= s;
 }
 
-// *=
-template <class T, class T1>
-inline void times_equals_vv(T *v, const T1 *v1, Long_I N)
+inline void minus_equals_vs(Comp *v, Doub_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] -= s;
+}
+
+inline void minus_equals_vs(Comp *v, Comp_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] -= s;
+}
+
+// v *= v
+inline void times_equals_vv(Float *v, Float *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] *= v1[i];
 }
 
-template <class T, class T1>
-inline void times_equals_vs(T *v, const T1 &s, Long N)
+inline void times_equals_vv(Doub *v, Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] *= v1[i];
+}
+
+inline void times_equals_vv(Comp *v, Comp *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] *= v1[i];
+}
+
+inline void times_equals_vv(Comp *v, Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] *= v1[i];
+}
+
+// v *= s
+inline void times_equals_vs(Float *v, Float_I s, Long N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] *= s;
+}
+
+inline void times_equals_vs(Doub *v, Doub_I s, Long N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] *= s;
+}
+
+inline void times_equals_vs(Comp *v, Doub_I s, Long N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] *= s;
+}
+
+inline void times_equals_vs(Comp *v, Comp_I s, Long N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] *= s;
 }
 
 // v /= v
-template <class T, class T1>
 inline void divide_equals_vv(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] /= v1[i];
 }
 
-template <class T, class T1>
-inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
+// v /= s
+inline void divide_equals_vs(Float *v, const Float &s, Long_I N)
+{ times_equals_vs(v, 1.f/s, N); }
+
+inline void divide_equals_vs(Doub *v, const Doub &s, Long_I N)
+{ times_equals_vs(v, 1./s, N); }
+
+inline void divide_equals_vs(Comp *v, const Doub &s, Long_I N)
+{ times_equals_vs(v, 1./s, N); }
+
+inline void divide_equals_vs(Char *v, const Char &s, Long_I N)
 {
-	if constexpr (std::is_floating_point<T>::value) {
-		times_equals_vs(v, 1./s, N);
-	}
-	else {
-		for (Long i = 0; i < N; ++i)
-			v[i] /= s;
-	}
+	for (Long i = 0; i < N; ++i)
+		v[i] /= s;
+}
+
+inline void divide_equals_vs(Int *v, const Int &s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] /= s;
+}
+
+inline void divide_equals_vs(Llong *v, const Llong &s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] /= s;
 }
 
 // operator%
-template <class T, class T1, class T2>
-inline void rem_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] = v1[i] % s;
-}
 
-template <class T, class T1, class T2>
-inline void mod_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
+inline void mod_vvs(Char *v, const Char *v1, Char_I s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = mod(v1[i], s);
 }
 
-template <class T, class T1, class T2>
-inline void plus_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
+inline void rem_vvs(Int *v, const Int *v1, Int_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = v1[i] % s;
+}
+
+inline void rem_vvs(Long *v, const Long *v1, Long_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = v1[i] % s;
+}
+
+inline void plus_vvs(Doub *v, const Doub *v1, Doub_I s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] + s;
 }
 
-template <class T, class T1, class T2>
-inline void plus_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
+inline void plus_vvv(Doub *v, const Doub *v1, const Doub *v2, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] + v2[i];
@@ -120,195 +233,225 @@ inline void plus_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
 
 // minus
 
-template <class T, class T1>
-inline void minus_vv(T *v, const T1 *v1, Long_I N)
+inline void minus_vv(Int *v, const Int *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = -v1[i];
 }
 
-template <class T, class T1, class T2>
-inline void minus_vsv(T *v, const T1 &s, const T2 *v1, Long_I N)
+inline void minus_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = -v1[i];
+}
+
+inline void minus_vv(Comp *v, const Comp *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = -v1[i];
+}
+
+inline void minus_vsv(Int *v, Int_I s, const Doub *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = s - v1[i];
 }
 
-template <class T, class T1, class T2>
-inline void minus_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
+inline void minus_vsv(Doub *v, Doub_I s, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = s - v1[i];
+}
+
+inline void minus_vsv(Comp *v, Comp_I s, const Comp *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = s - v1[i];
+}
+
+// v = v - s
+
+inline void minus_vvs(Doub *v, const Doub *v1, Doub_I s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] - s;
 }
 
-template <class T, class T1, class T2>
-inline void minus_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
+inline void minus_vvv(Doub *v, const Doub *v1, const Doub *v2, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] - v2[i];
 }
 
-template <class T, class T1, class T2>
-void times_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
+// v = v * s
+void times_vvs(Doub *v, const Doub *v1, Doub_I s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i) {
 		v[i] = v1[i] * s;
 	}
 }
 
-template <class T, class T1, class T2>
-inline void times_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
+// v = v * v
+inline void times_vvv(Doub *v, const Doub *v1, const Doub *v2, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] * v2[i];
 }
 
-template <class T, class T1, class T2>
-inline void divide_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
+// v = v / s
+inline void divide_vvs(Doub *v, const Doub *v1, Doub_I s, Long_I N)
 {
 	T2 sInv{ 1 / s };
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] * sInv;
 }
 
-template <class T, class T1, class T2>
-inline void divide_vsv(T *v, const T1 &s, const T2 *v1, Long_I N)
+// v = s / v
+inline void divide_vsv(Doub *v, Doub_I s, const Doub *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = s / v1[i];
 }
 
-template <class T, class T1, class T2>
-inline void divide_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
+// v = v / v
+inline void divide_vvv(Doub *v, const Doub *v1, const Doub *v2, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i] / v2[i];
 }
 
-template <class T, class Tc>
-inline void real_vv(T *v, const std::complex<Tc> *v1, Long_I N)
+// v = real(v)
+
+inline void real_vv(Doub *v, const Comp *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = real(v1[i]); 
 }
 
-template <class T, class Tc>
-inline void imag_vv(T *v, const std::complex<Tc> *v1, Long_I N)
+// v = imag(v)
+
+inline void imag_vv(Doub *v, const Comp *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = imag(v1[i]);
 }
 
-template <class T, class T1>
-inline void abs_vv(T *v, const T1 *v1, Long_I N)
+inline void abs_vv(Doub *v, const Comp *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = abs(v1[i]);
 }
 
-template <class Tc, class T>
-inline void to_comp_vv(std::complex<Tc> *v, const T *v1, Long_I N)
+inline void to_comp_vv(Comp *v, const Doub *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[i];
 }
 
-template <class T1, class T2, class T = typename promo_type<T1, T2>::type>
-inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)
+inline void dot_svv(Doub_O s, const Doub *v1, const Doub *v2, Long_I N)
 {
-	s = T();
+	s = 0.;
 	for (Long i = 0; i < N; ++i) {
-		if constexpr (is_complex<T1>())
-			s += std::conj(v1[i]) * v2[i];
-		else
-			s += v1[i] * v2[i];
+		s += v1[i] * v2[i];
 	}
 }
 
-// sqrt(v)
-template <class T, class T1>
-inline void sqrt_vv(T *v, const T1 *v1, Long_I N)
+inline void dot_svv(Comp_O s, const Comp *v1, const Comp *v2, Long_I N)
 {
-	if constexpr (type_num<T>() < type_num<T1>()) {
-		for (Long i = 0; i < N; ++i)
-			v[i] = sqrt(T(v1[i]));
-	}
-	else {
-		for (Long i = 0; i < N; ++i)
-			v[i] = sqrt(v1[i]);
+	s = 0.;
+	for (Long i = 0; i < N; ++i) {
+		s += conj(v1[i]) * v2[i];
 	}
 }
 
-template <class T, class T1>
-inline void invSqrt_vv(T *v, const T1 *v1, Long_I N)
+inline void dot_svv(Comp_O s, const Comp *v1, const Doub *v2, Long_I N)
 {
-	if constexpr (type_num<T>() < type_num<T1>()) {
-		// if T is the smaller type
-		// convert v1[i] to T before sqrt()
-		typedef typename rm_complex<T>::type Tr;
-		constexpr Tr one = Tr(1);
-		for (Long i = 0; i < N; ++i)
-			v[i] = one / sqrt(T(v1[i]));
-	}
-	else {
-		// if T is the larger type
-		typedef typename rm_complex<T1>::type Tr;
-		constexpr Tr one = Tr(1);
-		for (Long i = 0; i < N; ++i)
-			v[i] = one / sqrt(v1[i]);
+	s = 0.;
+	for (Long i = 0; i < N; ++i) {
+		s += conj(v1[i]) * v2[i];
 	}
 }
 
-template <class T, class T1>
-inline void sin_vv(T *v, const T1 *v1, Long_I N)
+inline void dot_svv(Comp_O s, const Doub *v1, const Comp *v2, Long_I N)
 {
-	if constexpr (type_num<T>() < type_num<T1>()) {
-		for (Long i = 0; i < N; ++i)
-			v[i] = sin(T(v1[i]));
-	}
-	else {
-		for (Long i = 0; i < N; ++i)
-			v[i] = sin(v1[i]);
+	s = 0.;
+	for (Long i = 0; i < N; ++i) {
+		s += v1[i] * v2[i];
 	}
 }
 
-template <class T, class T1>
-inline void cos_vv(T *v, const T1 *v1, Long_I N)
+// v = sqrt(v)
+
+inline void sqrt_vv(Float *v, const Float *v1, Long_I N)
 {
-	if constexpr (type_num<T>() < type_num<T1>()) {
-		for (Long i = 0; i < N; ++i)
-			v[i] = cos(T(v1[i]));
-	}
-	else {
-		for (Long i = 0; i < N; ++i)
-			v[i] = cos(v1[i]);
-	}
+	for (Long i = 0; i < N; ++i)
+		v[i] = sqrt(v1[i]);
 }
 
-template <class T, class T1>
-inline void exp_vv(T *v, const T1 *v1, Long_I N)
+inline void sqrt_vv(Doub *v, const Doub *v1, Long_I N)
 {
-	if constexpr (type_num<T>() < type_num<T1>()) {
-		for (Long i = 0; i < N; ++i)
-			v[i] = exp(T(v1[i]));
-	}
-	else {
-		for (Long i = 0; i < N; ++i)
-			v[i] = exp(v1[i]);
-	}
+	for (Long i = 0; i < N; ++i)
+		v[i] = sqrt(v1[i]);
 }
 
-template <class T, class T1>
-inline void tan_vv(T *v, const T1 *v1, Long_I N)
+inline void invSqrt_vv(Float *v, const Float *v1, Long_I N)
 {
-	if constexpr (type_num<T>() < type_num<T1>()) {
-		for (Long i = 0; i < N; ++i)
-			v[i] = tan(T(v1[i]));
-	}
-	else {
-		for (Long i = 0; i < N; ++i)
-			v[i] = tan(v1[i]);
-	}
+	for (Long i = 0; i < N; ++i)
+		v[i] = 1.f / sqrt(v1[i]);
+}
+
+inline void invSqrt_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = 1. / sqrt(v1[i]);
+}
+
+inline void sin_vv(Float *v, const Float *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = sin(v1[i]);
+}
+
+inline void sin_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = sin(v1[i]);
+}
+
+inline void cos_vv(Float *v, const Float *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = cos(v1[i]);
+}
+
+inline void cos_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = cos(v1[i]);
+}
+
+inline void exp_vv(Float *v, const Float *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = exp(v1[i]);
+}
+
+inline void exp_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = exp(v1[i]);
+}
+
+inline void tan_vv(Float *v, const Float *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = tan(v1[i]);
+}
+
+inline void tan_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = tan(v1[i]);
 }
 
 } // nemaspace slisc
