@@ -9,24 +9,6 @@
 
 namespace slisc {
 
-template <class T> class MatCoo;
-typedef MatCoo<Doub> McooDoub;
-typedef const McooDoub &McooDoub_I;
-typedef McooDoub &McooDoub_O, &McooDoub_IO;
-
-typedef MatCoo<Comp> McooComp;
-typedef const McooComp &McooComp_I;
-typedef McooComp &McooComp_O, &McooComp_IO;
-
-template <class T> class MatCooH;
-typedef MatCooH<Doub> McoohDoub;
-typedef const McoohDoub &McoohDoub_I;
-typedef McoohDoub &McoohDoub_O, &McoohDoub_IO;
-
-typedef MatCooH<Comp> McoohComp;
-typedef const McoohComp &McoohComp_I;
-typedef McoohComp &McoohComp_O, &McoohComp_IO;
-
 // square diagonal matrix
 // mostly a clone a Vector<T>
 template <class T>

@@ -6,6 +6,25 @@
 
 namespace slisc {
 
+// constant value of a type
+
+// CONST<T, s>() will generate a non-complex constexpr value even if T is complex
+template <class T, Int val>
+constexpr const auto CONST()
+{
+	typedef typename rm_complex<T>::type Real;
+	constexpr Real ret(val);
+	return ret;
+}
+
+// CONST<T, real, imag>(), where T must be std::complex<>, will generate a constexpr complex value
+template <class T, Int real, Int imag, class Enable = typename std::enable_if<is_complex<T>()>::type>
+constexpr const T CONSTC()
+{
+	constexpr T ret(real, imag);
+	return ret;
+}
+
 // these are slightly different from Numerical Recipes
 template<class T1, class T2>
 constexpr const auto &MIN(const T1 &a, const T2 &b)
@@ -16,11 +35,14 @@ constexpr const auto &MAX(const T1 &a, const T2 &b)
 { return a < b ? b : a; }
 
 template<class T>
-constexpr const T SQR(const T &a) { return a*a; }
+constexpr const T SQR(const T &a) { return a * a; }
 
 template<class T>
 constexpr const T SIGN(const T &s)
-{ return 0 < s ? T(1) : (s < 0 ? T(-1) : T()); }
+{
+	constexpr T one = T(1), neg_one = T(-1), zero = T();
+	return 0 < s ? one : (s < 0 ? neg_one : zero);
+}
 
 template<class T1, class T2>
 constexpr const T1 SIGN(const T1 &a, const T2 &b)
@@ -28,12 +50,12 @@ constexpr const T1 SIGN(const T1 &a, const T2 &b)
 
 template<class T>
 inline void SWAP(T &a, T &b)
-{ error("use std::swap instead!"); }
+{ error("use std::swap() instead!"); }
 
 // check if two scalars have the same types and values
 // const-ness and reference are ignored
 template <class T1, class T2>
-Bool is_equiv(const T1 &s1, const T2 &s2)
+constexpr Bool is_equiv(const T1 &s1, const T2 &s2)
 {
 	if constexpr (is_same<T1, T2>()) {
 		return s1 == s2;
@@ -92,59 +114,64 @@ inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 { return Nc*i + j; } // row major
 
 
-// operator+,-,*,/ between floating point std::complex<> and intrinsic types
+// operator+,-,*,/ between floating point std::complex<> and all arithmetic types
+// return promo_type<>
 
 template <class T, class Tc>
-auto operator+(const std::complex<Tc> &z, const T &x)
+const auto operator+(const std::complex<Tc> &z, const T &x)
 {
-	static_assert(is_fundamental<T>() && is_floating_point<Tc>(), "type error!");
+	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
 	return std::complex<typename promo_type<T, Tc>::type>(real(z) + x, imag(z));
 }
 
 template <class T, class Tc>
-auto operator+(const T &x, const std::complex<Tc> &z)
+const auto operator+(const T &x, const std::complex<Tc> &z)
 { return z + x; }
 
 template <class T, class Tc>
-auto operator-(const std::complex<Tc> &z, const T &x)
+const auto operator-(const std::complex<Tc> &z, const T &x)
 {
-	static_assert(is_fundamental<T>() && is_floating_point<Tc>(), "type error!");
+	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
 	return std::complex<typename promo_type<T, Tc>::type>(real(z) - x, imag(z));
 }
 
 template <class T, class Tc>
-auto operator-(const T &x, const std::complex<Tc> &z)
+const auto operator-(const T &x, const std::complex<Tc> &z)
 {
-	static_assert(is_fundamental<T>() && is_floating_point<Tc>(), "type error!");
+	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
 	return std::complex<typename promo_type<T, Tc>::type>(x - real(z), -imag(z));
 }
 
 template <class T, class Tc>
-auto operator*(const std::complex<Tc> &z, const T &x)
+const auto operator*(const std::complex<Tc> &z, const T &x)
 {
-	static_assert(is_fundamental<T>() && is_floating_point<Tc>(), "type error!");
+	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
 	return std::complex<typename promo_type<T, Tc>::type>(real(z)*x, imag(z)*x);
 }
 
 template <class T, class Tc>
-auto operator*(const T &x, const std::complex<Tc> &z)
+const auto operator*(const T &x, const std::complex<Tc> &z)
 { return z * x; }
 
 template <class T, class Tc>
-auto operator/(const std::complex<Tc> &z, const T &x)
+const auto operator/(const std::complex<Tc> &z, const T &x)
 {
-	static_assert(is_fundamental<T>() && is_floating_point<Tc>(), "type error!");
-	return std::complex<typename promo_type<T, Tc>::type>(real(z)/x, imag(z)/x);
+	static_assert(is_arithmetic<T>() && is_floating_point<Tc>(), "type error!");
+	typedef typename promo_type<T, Tc>::type Tp;
+	Tp inv_x; // Tp is floating point
+	inv_x = Tp(1) / x; // T is integral
+	return z * inv_x;
 }
 
 template <class T, class Tc>
-auto operator/(const T &x, const std::complex<Tc> &z)
-{ return x * (Tc(1)/z); }  // TODO: slow
+const auto operator/(const T &x, const std::complex<Tc> &z)
+{ return x * (Tc(1)/z); }
 
 // operator+,-,*,/ between two different std::complex<> types
+// return promo type
 
 template <class Tx, class Ty>
-auto operator+(const std::complex<Tx> &x, const std::complex<Ty> &y)
+const auto operator+(const std::complex<Tx> &x, const std::complex<Ty> &y)
 {
 	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
 	return std::complex<typename promo_type<Tx, Ty>::type>
@@ -152,25 +179,23 @@ auto operator+(const std::complex<Tx> &x, const std::complex<Ty> &y)
 }
 
 template <class Tx, class Ty>
-auto operator-(const std::complex<Tx> &x, const std::complex<Ty> &y)
+const auto operator-(const std::complex<Tx> &x, const std::complex<Ty> &y)
 {
 	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
 	return std::complex<typename promo_type<Tx, Ty>::type>
 		(real(x) - real(y), imag(x) - imag(y));
 }
 
-// TODO: slow
 template <class Tx, class Ty>
-auto operator*(const std::complex<Tx> &x, const std::complex<Ty> &y)
+const auto operator*(const std::complex<Tx> &x, const std::complex<Ty> &y)
 {
 	static_assert(is_floating_point<Tx>() && is_floating_point<Ty>(), "type error!");
-	return std::complex<typename promo_type<Tx, Ty>::type> 
-		(real(x)*real(y) - imag(x)*imag(y), real(x)*imag(y) + imag(x)*real(y));
+	typedef std::complex<typename promo_type<Tx, Ty>::type> T;
+	return T(x) * T(y);
 }
 
-// TODO: slow
 template <class Tx, class Ty>
-auto operator/(const std::complex<Tx> &x, const std::complex<Ty> &y)
+const auto operator/(const std::complex<Tx> &x, const std::complex<Ty> &y)
 { return x * (Ty(1) / y); }
 
 }

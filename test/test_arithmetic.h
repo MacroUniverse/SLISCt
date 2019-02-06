@@ -4,17 +4,6 @@ inline void test_arithmetic()
 {
 	using namespace slisc;
 
-	// test scalar functions
-	{
-		if (!isodd(3) || !isodd(-3) || isodd(4) || isodd(-4) )
-			error("failed!");
-		if (!ispow2(4) || !ispow2(32) || !ispow2(1024) || !ispow2(65536)
-			|| ispow2(12) || ispow2(48))
-			error("failed!");
-		if (mod(-1, 4) != 3 || mod(-2, 4) != 2 || mod(-3, 4) != 1 || mod(-4, 4) != 0)
-			error("failed!");
-	}
-
 	// test shape_cmp
 	{
 		if (shape_cmp(MatComp(3,4), VecInt(12))

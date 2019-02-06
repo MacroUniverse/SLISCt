@@ -38,4 +38,5 @@ const Comp I(0., 1.);
 
 #include "vector.h"
 #include "matrix.h"
+#include "cmat.h"
 #include "mat3d.h"

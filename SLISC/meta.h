@@ -20,20 +20,25 @@ using std::true_type; using std::false_type;
 // otherwise returns false
 using std::is_same;
 
-// for T = c++ primitive types
-// is_fundamental<T>() or is_fundamental<T>::value returns true
-// otherwise returns false
-using std::is_fundamental;
-
-// for T = float, double or long double,
-// is_floating_point<T>() or is_floating_point<T>::value returns true
-// otherwise returns false
-using std::is_floating_point;
-
 // for T = bool, character types, integer types
 // is_integral<T>() or is_integral<T>::value returns true
 // otherwise returns false
 using std::is_integral;
+
+// for T = float, double, long double,
+// is_floating_point<T>() or is_floating_point<T>::value returns true
+// otherwise returns false
+using std::is_floating_point;
+
+// for T = integral type, floating point type
+// is_arithmetic<T>() or is_arithmetic<T>::value returns true
+// otherwise returns false
+using std::is_arithmetic;
+
+// for T = arithmetic type, void, null pointer
+// is_fundamental<T>() or is_fundamental<T>::value returns true
+// otherwise returns false
+using std::is_fundamental;
 
 // for T = std::complex<T1>
 // is_complex<T>() or is_complex<T>::value returns true
@@ -42,7 +47,7 @@ template <class T> struct is_complex : false_type {};
 template <class T> struct is_complex<std::complex<T>> : true_type {};
 
 // is_slisc<>
-template <class T1, class T2 = void, class Enable = void> struct is_slisc : false_type {};
+template <class T> struct is_slisc : false_type {};
 
 // single type param
 // for T = FixVec<>, FixCmat<>, Vector<>, Matrix<>, Cmat<>, Diag<>, MatCoo<>, MatCooH<>
@@ -51,7 +56,7 @@ template <class T1, class T2 = void, class Enable = void> struct is_slisc : fals
 template <class T> struct is_slisc<Vector<T>> : true_type { typedef T type; };
 template <class T> struct is_slisc<Matrix<T>> : true_type { typedef T type; };
 template <class T> struct is_slisc<Cmat<T>> : true_type { typedef T type; };
-template <class T, Long Nr, Long Nc> struct is_slisc<FixVec<T, Nr, Nc>> : true_type { typedef T type; };
+template <class T, Long N> struct is_slisc<FixVec<T, N>> : true_type { typedef T type; };
 template <class T, Long Nr, Long Nc> struct is_slisc<FixCmat<T, Nr, Nc>> : true_type { typedef T type; };
 template <class T> struct is_slisc<Mat3d<T>> : true_type { typedef T type; };
 template <class T> struct is_slisc<Diag<T>> : true_type { typedef T type; };
@@ -59,10 +64,19 @@ template <class T> struct is_slisc<MatCoo<T>> : true_type { typedef T type; };
 template <class T> struct is_slisc<MatCooH<T>> : true_type { typedef T type; };
 
 // double type param
-// equivalent to is_slisc<T1>() && is_slisc<T2>()
-//template <class T1, class T2>
-//struct is_slisc<T1, T2, typename std::conjunction<is_slisc<T1>, is_slisc<T2>>::type> : true_type
-//{ typedef typename promo_type<T1, T2>::type type; };
+// if (is_slisc<T1>() && is_slisc<T2>())
+template <class T1, class T2, class Enable = void> struct is_slisc2 : false_type {};
+
+template <class T1, class T2>
+struct is_slisc2<T1, T2,
+	typename std::enable_if<
+		std::conjunction<is_slisc<T1>, is_slisc<T2>>()
+	>::type
+> : true_type {
+	typedef typename
+		promo_type<typename T1::value_type, typename T2::value_type>::type
+		type;
+};
 
 // === type mapping ===
 
@@ -116,14 +130,14 @@ constexpr auto promo_type0()
 		if constexpr (Tnum < Unum) {
 			// U is complex
 			if constexpr (Unum - Tnum >= 20)
-				return U(); // U is compatible
+				return U(); // U is lossless
 			else
 				return std::complex<T>(); // need a larger complex
 		}
 		else {
 			// T is complex
 			if constexpr (Tnum - Unum >= 20)
-				return T(); // T is compatible
+				return T(); // T is lossless
 			else
 				return std::complex<U>(); // need a larger complex
 		}

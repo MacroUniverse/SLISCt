@@ -61,7 +61,7 @@ inline void test_meta()
 	if (!is_slisc<Vector<Int>>()) error("failed!");
 	if (!is_slisc<Matrix<float>>()) error("failed!");
 	if (!is_slisc<Cmat<Doub>>()) error("failed!");
-	if (!is_slisc<FixVec<Comp, 2, 2>>()) error("failed!");
+	if (!is_slisc<FixVec<Comp, 2>>()) error("failed!");
 	if (!is_slisc<FixCmat<std::complex<float>, 2, 2>>()) error("failed!");
 	if (!is_slisc<Diag<Uchar>>()) error("failed!");
 	if (!is_slisc<MatCoo<Char>>()) error("failed!");
@@ -71,10 +71,17 @@ inline void test_meta()
 	if (is_slisc<Comp>()) error("failed!");
 	if (is_slisc<std::vector<Long>>()) error("failed!");
 
+	// is_slisc2
+	if (!is_slisc2<Vector<Int>, Matrix<float>>()) error("failed!");
+	if (is_slisc2<Vector<Int>, Comp>()) error("failed!");
+	if (is_slisc2<Comp, Vector<Int>>()) error("failed!");
+	if (is_slisc2<Doub, Comp>()) error("failed!");
+
 	// typenum
-	if constexpr (type_num<Bool>() != 1) error("failed!");
-	if constexpr (type_num<Int>() != 4) error("failed!");
-	if constexpr (type_num<Doub>() != 12) error("failed!");
+	if constexpr (type_num<Bool>() != 0) error("failed!");
+	if constexpr (type_num<Int>() != 3) error("failed!");
+	if constexpr (type_num<Doub>() != 21) error("failed!");
+	if constexpr (type_num<Comp>() != 41) error("failed!");
 	if constexpr (type_num<std::complex<Uchar>>() != -1) error("failed!");
 
 	// promo_type

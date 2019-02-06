@@ -70,7 +70,7 @@ typedef Str &Str_O, &Str_IO;
 template <class T> class Vector;
 template <class T> class Matrix;
 template <class T> class Cmat;
-template <class T, Long Nr, Long Nc> class FixVec;
+template <class T, Long Nr> class FixVec;
 template <class T, Long Nr, Long Nc> class FixCmat;
 template <class T> class Mat3d;
 template <class T> class Diag;
@@ -211,5 +211,65 @@ typedef Mat3d<Doub> &Mat3Doub_O, &Mat3Doub_IO;
 typedef const Mat3d<Comp> &Mat3Comp_I;
 typedef Mat3d<Comp> Mat3Comp;
 typedef Mat3d<Comp> &Mat3Comp_O, &Mat3Comp_IO;
+
+// fixed-size containers
+
+template <Long N> using FvecChar = FixVec<Char, N>;
+template <Long N> using FvecChar_I = const FixVec<Char, N> &;
+template <Long N> using FvecChar_O = FixVec<Char, N> &;
+template <Long N> using FvecChar_IO = FixVec<Char, N> &;
+
+template <Long N> using FvecInt = FixVec<Int, N>;
+template <Long N> using FvecInt_I = const FixVec<Int, N> &;
+template <Long N> using FvecInt_O = FixVec<Int, N> &;
+template <Long N> using FvecInt_IO = FixVec<Int, N> &;
+
+template <Long N> using FvecDoub = FixVec<Doub, N>;
+template <Long N> using FvecDoub_I = const FixVec<Doub, N> &;
+template <Long N> using FvecDoub_O = FixVec<Doub, N> &;
+template <Long N> using FvecDoub_IO = FixVec<Doub, N> &;
+
+template <Long N> using FvecComp = FixVec<Comp, N>;
+template <Long N> using FvecComp_I = const FixVec<Comp, N> &;
+template <Long N> using FvecComp_O = FixVec<Comp, N> &;
+template <Long N> using FvecComp_IO = FixVec<Comp, N> &;
+
+template <Long Nr, Long Nc> using FcmatChar = FixCmat<Char, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatChar_I = const FixCmat<Char, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatChar_O = FixCmat<Char, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatChar_IO = FixCmat<Char, Nr, Nc> &;
+
+template <Long Nr, Long Nc> using FcmatInt = FixCmat<Int, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatInt_I = const FixCmat<Int, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatInt_O = FixCmat<Int, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatInt_IO = FixCmat<Int, Nr, Nc> &;
+
+template <Long Nr, Long Nc> using FcmatDoub = FixCmat<Doub, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatDoub_I = const FixCmat<Doub, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatDoub_O = FixCmat<Doub, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatDoub_IO = FixCmat<Doub, Nr, Nc> &;
+
+template <Long Nr, Long Nc> using FcmatComp = FixCmat<Comp, Nr, Nc>;
+template <Long Nr, Long Nc> using FcmatComp_I = const FixCmat<Comp, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatComp_O = FixCmat<Comp, Nr, Nc> &;
+template <Long Nr, Long Nc> using FcmatComp_IO = FixCmat<Comp, Nr, Nc> &;
+
+// sparse containers
+
+typedef MatCoo<Doub> McooDoub;
+typedef const McooDoub &McooDoub_I;
+typedef McooDoub &McooDoub_O, &McooDoub_IO;
+
+typedef MatCoo<Comp> McooComp;
+typedef const McooComp &McooComp_I;
+typedef McooComp &McooComp_O, &McooComp_IO;
+
+typedef MatCooH<Doub> McoohDoub;
+typedef const McoohDoub &McoohDoub_I;
+typedef McoohDoub &McoohDoub_O, &McoohDoub_IO;
+
+typedef MatCooH<Comp> McoohComp;
+typedef const McoohComp &McoohComp_I;
+typedef McoohComp &McoohComp_O, &McoohComp_IO;
 
 }

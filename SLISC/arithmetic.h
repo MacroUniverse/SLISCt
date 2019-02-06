@@ -1,13 +1,14 @@
 #pragma once
+#include "slisc.h"
+#include "fixsize.h"
 #include "ptr_arith.h"
-#include <type_traits>
 
 namespace slisc {
 
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
-template <class T1, class T2, class Enable = typename is_slisc<T1, T2>::type>
+template <class T1, class T2, class Enable = typename is_slisc2<T1, T2>::type>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
 	if constexpr (T1::ndims() == 1 && T2::ndims() == 1) {
