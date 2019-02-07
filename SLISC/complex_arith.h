@@ -24,6 +24,15 @@ inline const Fcomp operator*(Long_I x, Fcomp_I z) { return (Float)x * z; }
 inline const Fcomp operator/(Fcomp_I z, Long_I x) { return z / (Float)x; }
 inline const Fcomp operator/(Long_I x, Fcomp_I z) { return (Float)x / z; }
 
+inline const Comp operator+(Fcomp_I z, Doub_I x) { return (Comp)z + x; }
+inline const Comp operator+(Doub_I x, Fcomp_I z) { return x + (Comp)z; }
+inline const Comp operator-(Fcomp_I z, Doub_I x) { return (Comp)z - x; }
+inline const Comp operator-(Doub_I x, Fcomp_I z) { return x - (Comp)z; }
+inline const Comp operator*(Fcomp_I z, Doub_I x) { return (Comp)z * x; }
+inline const Comp operator*(Doub_I x, Fcomp_I z) { return x * (Comp)z; }
+inline const Comp operator/(Fcomp_I z, Doub_I x) { return (Comp)z / x; }
+inline const Comp operator/(Doub_I x, Fcomp_I z) { return x / (Comp)z; }
+
 // for Comp
 inline const Comp operator+(Comp_I z, Int_I x) { return z + (Doub)x; }
 inline const Comp operator+(Int_I x, Comp_I z) { return z + (Doub)x; }
@@ -81,22 +90,22 @@ inline const Lcomp operator/(Lcomp_I z, Long_I x) { return z / (Ldoub)x; }
 inline const Lcomp operator/(Long_I x, Lcomp_I z) { return (Ldoub)x / z; }
 
 inline const Lcomp operator+(Lcomp_I z, Float_I x) { return z + (Ldoub)x; }
-inline const Lcomp operator+(Float_I x, Lcomp_I z) { (Ldoub)x + return z; }
+inline const Lcomp operator+(Float_I x, Lcomp_I z) { return (Ldoub)x + z; }
 inline const Lcomp operator-(Lcomp_I z, Float_I x) { return z - (Ldoub)x; }
-inline const Lcomp operator-(Float_I x, Lcomp_I z) { (Ldoub)x - return z; }
+inline const Lcomp operator-(Float_I x, Lcomp_I z) { return (Ldoub)x - z; }
 inline const Lcomp operator*(Lcomp_I z, Float_I x) { return z * (Ldoub)x; }
-inline const Lcomp operator*(Float_I x, Lcomp_I z) { (Ldoub)x * return z; }
+inline const Lcomp operator*(Float_I x, Lcomp_I z) { return(Ldoub)x * z; }
 inline const Lcomp operator/(Lcomp_I z, Float_I x) { return z / (Ldoub)x; }
-inline const Lcomp operator/(Float_I x, Lcomp_I z) { (Ldoub)x / return z; }
+inline const Lcomp operator/(Float_I x, Lcomp_I z) { return (Ldoub)x / z; }
 
 inline const Lcomp operator+(Lcomp_I z, Doub_I x) { return z + (Ldoub)x; }
-inline const Lcomp operator+(Doub_I x, Lcomp_I z) { (Ldoub)x + return z; }
+inline const Lcomp operator+(Doub_I x, Lcomp_I z) { return (Ldoub)x + z; }
 inline const Lcomp operator-(Lcomp_I z, Doub_I x) { return z - (Ldoub)x; }
-inline const Lcomp operator-(Doub_I x, Lcomp_I z) { (Ldoub)x - return z; }
+inline const Lcomp operator-(Doub_I x, Lcomp_I z) { return (Ldoub)x - z; }
 inline const Lcomp operator*(Lcomp_I z, Doub_I x) { return z * (Ldoub)x; }
-inline const Lcomp operator*(Doub_I x, Lcomp_I z) { (Ldoub)x * return z; }
+inline const Lcomp operator*(Doub_I x, Lcomp_I z) { return (Ldoub)x * z; }
 inline const Lcomp operator/(Lcomp_I z, Doub_I x) { return z / (Ldoub)x; }
-inline const Lcomp operator/(Doub_I x, Lcomp_I z) { (Ldoub)x / return z; }
+inline const Lcomp operator/(Doub_I x, Lcomp_I z) { return (Ldoub)x / z; }
 
 inline const Lcomp operator+(Lcomp_I zl, Fcomp_I zf) { return zl + (Lcomp)zf; }
 inline const Lcomp operator+(Fcomp_I zf, Lcomp_I zl) { return (Lcomp)zf + zl; }

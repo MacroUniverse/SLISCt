@@ -3,27 +3,23 @@
 
 #pragma once
 
-#ifndef NDEBUG
-// this will not check the last index
-#define _CHECKBOUNDS_
-#endif
-
 // all the system #include's we'll ever need
 #include <stdio.h>
-#include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <vector>
 #include <limits>
-#include "typedef.h"
 
-namespace slisc
-{
-
-
-}
+#include "global.h"
+#include "meta.h"
 
 #include "vector.h"
 #include "matrix.h"
 #include "cmat.h"
 #include "mat3d.h"
+
+#include "fixsize.h"
+#include "sparse.h"
+
+#include "scalar_arith.h"
+#include "ptr_arith.h"

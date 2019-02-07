@@ -1,8 +1,22 @@
+// what every slisc header should include
 #pragma once
+#include <iostream>
 #include <complex>
+#include <vector>
 #include <string>
 
+#ifndef NDEBUG
+// this will not check the last index
+#define _CHECKBOUNDS_
+#endif
+
 namespace slisc {
+
+// using std
+
+using std::complex;
+using std::vector; using std::string;
+using std::cout; using std::endl;
 
 // Scalar types
 
@@ -60,15 +74,15 @@ typedef long double Ldoub;
 typedef const Ldoub &Ldoub_I;
 typedef Ldoub &Ldoub_O, &Ldoub_IO;
 
-typedef std::complex<Float> Fcomp;
+typedef complex<Float> Fcomp;
 typedef const Fcomp &Fcomp_I;
 typedef Fcomp &Fcomp_O, &Fcomp_IO;
 
-typedef std::complex<Doub> Comp;
+typedef complex<Doub> Comp;
 typedef const Comp &Comp_I;
 typedef Comp &Comp_O, &Comp_IO;
 
-typedef std::complex<Ldoub> Lcomp;
+typedef complex<Ldoub> Lcomp;
 typedef const Lcomp &Lcomp_I;
 typedef Lcomp &Lcomp_O, &Lcomp_IO;
 
@@ -77,7 +91,7 @@ typedef const Bool Bool_I;
 typedef Bool &Bool_O, &Bool_IO;
 
 // string type
-typedef std::string Str;
+typedef string Str;
 typedef const Str &Str_I;
 typedef Str &Str_O, &Str_IO;
 
@@ -297,8 +311,8 @@ const Doub E = 2.71828182845904524;
 const Comp I(0., 1.);
 
 // report error and pause execution
-#define error(str) do{std::cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl; getchar();} while(0)
+#define error(str) do{cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl; getchar();} while(0)
 
-#define warning(str) do{std::cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << std::endl;} while(0)
+#define warning(str) do{cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl;} while(0)
 
 }

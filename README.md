@@ -49,9 +49,7 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
 
-* Using c++17 features.
 
-* Will not use any serious meta-programming, to keep the code readable and easy to modify (even this means creating blocks of similar code).
 
 ## "slisc.h"
 "slisc.h" includes some constants, type alias, and vector/matrix class template definitions.
@@ -218,9 +216,10 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 
 ## Implementation Philosophy
 * Easy for users to understand and modify.
-* Don't use template unless absolutely necessary.
-* Use meta-programming even more carefully.
-* Implement functions for mostly used types, implement others when needed, never try to implement for all types.
+* Using c++17 features.
+* If template is used, it must work for all possible instanciations.
+* use SFINAE macro `SLISC_IF(bool)` to limit template instanciation.
+* If not using template, implement functions for mostly used types, implement others when needed, never try to implement for all types.
 * Never try to unify the format of everything unless there's nothing else to do.
 
 ## TODO

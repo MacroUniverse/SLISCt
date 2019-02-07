@@ -1,6 +1,7 @@
 #pragma once
+#include "../SLISC/global.h"
 #include "../SLISC/meta.h"
-#include "../SLISC/slisc.h"
+// #include "../SLISC/slisc.h"
 
 inline void test_meta()
 {
@@ -45,41 +46,34 @@ inline void test_meta()
 	if (is_integral<Doub>()) error("failed!");
 	if (is_integral<Ldoub>()) error("failed!");
 
-	// is_complex
-	if (!is_complex<std::complex<Int>>()) error("failed!");
-	if (!is_complex<std::complex<float>>()) error("failed!");
-	if (!is_complex<Comp>()) error("failed!");
-	if (!is_complex<std::complex<Ldoub>>()) error("failed!");
-	if (is_complex<Char>()) error("failed!");
-	if (is_complex<Int>()) error("failed!");
-	if (is_complex<Long>()) error("failed!");
-	if (is_complex<float>()) error("failed!");
-	if (is_complex<Doub>()) error("failed!");
-	if (is_complex<Ldoub>()) error("failed!");
+	// is_fp_complex
+	if (!is_fp_comp<std::complex<float>>()) error("failed!");
+	if (!is_fp_comp<Comp>()) error("failed!");
+	if (!is_fp_comp<std::complex<Ldoub>>()) error("failed!");
+	if (is_fp_comp<std::complex<Int>>()) error("failed!");
+	if (is_fp_comp<Char>()) error("failed!");
+	if (is_fp_comp<Int>()) error("failed!");
+	if (is_fp_comp<Long>()) error("failed!");
+	if (is_fp_comp<float>()) error("failed!");
+	if (is_fp_comp<Doub>()) error("failed!");
+	if (is_fp_comp<Ldoub>()) error("failed!");
 
-	// is_slisc
-	if (!is_slisc<Vector<Int>>()) error("failed!");
-	if (!is_slisc<Matrix<float>>()) error("failed!");
-	if (!is_slisc<Cmat<Doub>>()) error("failed!");
-	if (!is_slisc<FixVec<Comp, 2>>()) error("failed!");
-	if (!is_slisc<FixCmat<std::complex<float>, 2, 2>>()) error("failed!");
-	if (!is_slisc<Diag<Uchar>>()) error("failed!");
-	if (!is_slisc<MatCoo<Char>>()) error("failed!");
-	if (!is_slisc<MatCooH<Bool>>()) error("failed!");
-	if (is_slisc<Bool>()) error("failed!");
-	if (is_slisc<Int>()) error("failed!");
-	if (is_slisc<Comp>()) error("failed!");
-	if (is_slisc<std::vector<Long>>()) error("failed!");
-
-	// is_slisc2
-	if (!is_slisc2<Vector<Int>, Matrix<float>>()) error("failed!");
-	if (is_slisc2<Vector<Int>, Comp>()) error("failed!");
-	if (is_slisc2<Comp, Vector<Int>>()) error("failed!");
-	if (is_slisc2<Doub, Comp>()) error("failed!");
+	// is_contain
+	if (!is_contain<Vector<Int>>()) error("failed!");
+	if (!is_contain<Matrix<float>>()) error("failed!");
+	if (!is_contain<Cmat<Doub>>()) error("failed!");
+	if (!is_contain<FixVec<Comp, 2>>()) error("failed!");
+	if (!is_contain<FixCmat<std::complex<float>, 2, 2>>()) error("failed!");
+	if (!is_contain<MatCoo<Char>>()) error("failed!");
+	if (!is_contain<MatCooH<Bool>>()) error("failed!");
+	if (is_contain<Bool>()) error("failed!");
+	if (is_contain<Int>()) error("failed!");
+	if (is_contain<Comp>()) error("failed!");
+	if (is_contain<std::vector<Long>>()) error("failed!");
 
 	// typenum
 	if constexpr (type_num<Bool>() != 0) error("failed!");
-	if constexpr (type_num<Int>() != 3) error("failed!");
+	if constexpr (type_num<Int>() != 2) error("failed!");
 	if constexpr (type_num<Doub>() != 21) error("failed!");
 	if constexpr (type_num<Comp>() != 41) error("failed!");
 	if constexpr (type_num<std::complex<Uchar>>() != -1) error("failed!");
@@ -113,4 +107,7 @@ inline void test_meta()
 	if (!is_same<rm_complex<std::complex<float>>::type, float>()) error("failed!");
 	if (!is_same<rm_complex<Comp>::type, Doub>()) error("failed!");
 	if (!is_same<rm_complex<std::complex<Ldoub>>::type, Ldoub>()) error("failed!");
+
+	// is_same_contain
+	if (!is_same_contain<VecComp, VecDoub>()) error("failed!");
 }

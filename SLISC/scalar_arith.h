@@ -19,6 +19,11 @@ constexpr const auto &MAX(const T1 &a, const T2 &b)
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
+template<class T>
+constexpr const T ABS2(const T &a) { return a * a; }
+template<class T>
+constexpr const T ABS2(const complex<T> &a) { return SQR(abs(a)); }
+
 constexpr Float SIGN(Float_I s)
 { return s > 0.f ? 1.f : (s < 0.f ? -1.f : 0.f); }
 
@@ -93,5 +98,4 @@ inline Doub cot(Doub_I x) { return 1. / tan(x); }
 
 inline Float sinc(Float_I x) { return x == 0.f ? 1.f : sin(x) / x; }
 inline Doub sinc(Doub_I x) { return x == 0. ? 1. : sin(x) / x; }
-
 }

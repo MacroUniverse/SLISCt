@@ -1,6 +1,10 @@
 #pragma once
-#include "slisc.h"
-#include "fixsize.h"
+#include "global.h"
+#include "meta.h"
+#include "vector.h"
+#include "matrix.h"
+#include "cmat.h"
+#include "mat3d.h"
 #include "ptr_arith.h"
 
 namespace slisc {
@@ -8,7 +12,7 @@ namespace slisc {
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
-template <class T1, class T2, class Enable = typename is_slisc2<T1, T2>::type>
+template <class T1, class T2, SLISC_IF(is_contain<T1>() && is_contain<T2>())>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
 	if constexpr (T1::ndims() == 1 && T2::ndims() == 1) {
@@ -26,24 +30,24 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 
 // operator== for slisc containers
 
-template <class T1, class T2, class Enable = typename is_slisc2<T1, T2>::type>
+template <class T1, class T2, SLISC_IF(is_contain<T1>() && is_contain<T2>())>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
 	return shape_cmp(v1, v2) && equals_to_vv(v1.ptr(), v2.ptr(), v2.size());
 }
 
-template <class Tv, class Ts, class Enable = typename is_slisc_other<Tv, Ts>::type>
+template <class Tv, class Ts, SLISC_IF(is_contain<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Tv &v, const Ts &s)
 {
 	equals_to_vs(v.ptr(), s, v.size());
 }
 
-template <class Tv, class Ts, class Enable = typename is_slisc_other<Tv, Ts>::type>
+template <class Tv, class Ts, SLISC_IF(is_contain<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Ts &s, const Tv &v)
 { return v == s; }
 
 // operator!= for slisc containers
-template <class T1, class T2, class Enable = typename has_1_slisc2<T1, T2>::type>
+template <class T1, class T2, SLISC_IF(is_contain<T1>() || is_contain<T2>())>
 Bool operator!=(const T1 &v1, const T2 &v2)
 {
 	return !(v1 == v2);
@@ -51,9 +55,7 @@ Bool operator!=(const T1 &v1, const T2 &v2)
 
 // sum of container elements
 
-TODO: disable for MatCooH
-
-template <class T>
+template <class T, SLISC_IF(is_dense<T>())>
 inline const T sum(const Vbase<T> &v)
 {
 	Long i, n{ v.size() };
@@ -72,8 +74,8 @@ inline Long count(VecBool_I v)
 	return count;
 }
 
-template <class T>
-inline const T max(const Vbase<T> &v)
+template <class T, SLISC_IF(is_dense<T>())>
+inline const typename T::value_type max(const T &v)
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -85,17 +87,19 @@ inline const T max(const Vbase<T> &v)
 
 // return max(abs(a(:))
 template <class T>
-inline const auto max_abs(const Vbase<T> &v)
+inline const auto max_abs(const T &v, SLISC_IF(is_dense<T>()))
 {
-	typename rm_complex<T>::type s{ abs(v[0]) };
-	for (Long i = 1; i < v.size(); ++i)
-		if (s < abs(v[i]))
-			s = abs(v(i));
+	auto s = abs(v[0]);
+	for (Long i = 1; i < v.size(); ++i) {
+		auto val = abs(v[i]);
+		if (s < val)
+			s = val;
+	}
 	return s;
 }
 
 template <class T>
-inline const T max(Long_O ind, const Vbase<T> &v)
+inline const T max(Long_O ind, const T &v, SLISC_IF(is_dense<T>()))
 {
 	Long i, N{ v.size() };
 	T val{ v(0) };
@@ -106,68 +110,31 @@ inline const T max(Long_O ind, const Vbase<T> &v)
 	return val;
 }
 
-inline Doub max(Long_O ind, const Vbase<Comp> &v)
-{
-	Long i, N{ v.size() };
-	Doub val{ abs(v[0]) };
-	for (i = 1; i < N; ++i)
-		if (abs(v[i]) > val) {
-			val = abs(v[i]); ind = i;
-		}
-	return val;
-}
-
 // sum(v(:).^2) for real numbers
 template <class T>
-const T norm2(Vbase<T> &v)
+const auto norm2(T &v, SLISC_IF(is_dense<T>()))
 {
 	Long i, N{ v.size() };
-	T s2{};
-	for (i = 0; i < N; ++i)
-		s2 += SQR(v[i]);
+	auto s2 = ABS2(v[0]);
+	for (i = 1; i < N; ++i)
+		s2 += ABS2(v[i]);
 	return s2;
 }
 
 template <class T>
-const T norm(Vbase<T> &v)
-{ return std::sqrt(norm2(v)); }
-
-//sum(abs(v(:)). ^ 2) for complex numbers
-inline Doub norm2(Vbase<Comp> &v)
-{
-	Long i, N{ v.size() };
-	Doub s2{};
-	for (i = 0; i < N; ++i)
-		s2 += SQR(abs(v[i]));
-	return s2;
-}
-
-inline Doub norm(Vbase<Comp> &v)
-{ return std::sqrt(norm2(v)); }
+const auto norm(T &v, SLISC_IF(is_dense<T>()))
+{ return sqrt(norm2(v)); }
 
 // === matrix manipulation ===
 
 // does not work for integers
-template <class T, class T1, class T2>
-inline void linspace(Vbase<T> &v, const T1 &first, const T2 &last)
+
+template <class T, class T1, class T2, SLISC_IF(is_dense<T>() && is_scalar<T1>() && is_scalar<T2>())>
+inline void linspace(T &v, const T1 &first, const T2 &last, Llong_I n)
 {
-	Long i, N{ v.size() };
-	T delta = (last - first) / T(N - 1);
-	for (i = 0; i < N; ++i)
-		v[i] = first + delta * T(i);
+	typedef typename T::value_type Ts;
+	v.resize(n); linspace_vss(v.ptr(), (Ts)first, (Ts)last, v.size());
 }
-
-template <class T, class T1, class T2>
-inline void linspace(Vector<T> &v, const T1 &first, const T2 &last, Llong_I n)
-{ v.resize(n); linspace(v, first, last); }
-
-template <class T, class T1, class T2>
-inline void linspace(Matrix<T> &v, const T1 &first, const T2 &last, Llong_I rows, Llong_I cols)
-{ v.resize(rows, cols); linspace(v, first, last); }
-
-template <class T, class T1, class T2>
-inline void linspace(Mat3d<T> &v, const T first, const T last, Llong_I dim1, Llong_I dim2, Llong_I dim3)
-{ v.resize(dim1, dim2, dim3); linspace(v, first, last); }
 
 // element-wise operators for vectors and matrices
 
@@ -184,23 +151,16 @@ inline void her(MatComp_O h, MatComp_I a)
 }
 
 template <class T>
-inline void flip(Vector<T> &v)
-{
-	Long i, n{ v.size() }, ind;
-	T temp;
-	for (i = 0; i < n / 2; ++i) {
-		ind = n - i - 1;
-		temp = v[i]; v[i] = v[ind]; v[ind] = temp;
-	}
-}
+inline void flip(T &v, SLISC_IF(is_dense<T>()))
+{ flip(v.ptr(), v.size()); }
 
-template <class T>
-inline void flip(Vector<T> &v, const Vector<T> &v0)
+template <class T, class T1, SLISC_IF(is_dense<T>() && is_dense<T1>())>
+inline void flip(T &v, const T1 &v1)
 {
-	Long i, n{ v0.size() };
-	v.resize(n);
-	for (i = 0; i < n; ++i)
-		v[i] = v0[n - i - 1];
+#ifdef _CHECKBOUNDS_
+	shape_cmp(v, v1);
+#endif
+	flip(v.ptr(), v1.ptr(), v1.size());
 }
 
 // default: shift columns to the right n times (n < 0 shift to left)
@@ -594,42 +554,24 @@ inline void mod(Mat3d<T> &v, const Mat3d<T> &v1, const T &s)
 // TODO : mod(v, s, v1)
 // TODO : mod(v, v1, v2)
 
-// plus(v, v, s)
+// v = v + s
 
-template <class T, class T1, class T2>
-inline void plus_vvs(T &v, const T1 &v1, const T2 &s)
+template <class T, class T1, class Ts, SLISC_IF(is_dense<T>() && is_dense<T1>() && is_scalar<Ts>())>
+inline void Plus(T &v, const T1 &v1, const Ts &s)
 {
 	v.resize(v1); plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
-template <class T, class T1, class T2>
-inline void plus(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
-{ plus_vvs(v, v1, s); }
+template <class T, class T1, class Ts, SLISC_IF(is_dense<T>() && is_dense<T1>() && is_scalar<Ts>())>
+inline void Plus(T &v, const Ts &s, const T1 &v1)
+{
+	v.resize(v1); plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
+}
 
-template <class T, class T1, class T2>
-inline void plus(Matrix<T> &v, const Matrix<T1> &v1, const T2 &s)
-{ plus_vvs(v, v1, s); }
+// v = v + v
 
-template <class T, class T1, class T2>
-inline void plus(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
-{ plus_vvs(v, v1, s); }
-
-template <class T, class T1, class T2>
-inline void plus(Vector<T> &v, const T1 &s, const Vector<T2> &v1)
-{ plus_vvs(v, v1, s); }
-
-template <class T, class T1, class T2>
-inline void plus(Matrix<T> &v, const T1 &s, const Matrix<T2> &v1)
-{ plus_vvs(v, v1, s); }
-
-template <class T, class T1, class T2>
-inline void plus(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
-{ plus_vvs(v, v1, s); }
-
-// plus(v, v, v)
-
-template <class T, class T1, class T2>
-inline void plus_vvv(T &v, const T1 &v1, const T2 &v2)
+template <class T, class T1, class T2, SLISC_IF(is_dense<T>() && is_dense<T1>() && is_dense<T2>())>
+inline void Plus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
@@ -637,109 +579,47 @@ inline void plus_vvv(T &v, const T1 &v1, const T2 &v2)
 	v.resize(v1); plus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
 
-template <class T, class T1, class T2>
-inline void plus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
-{ plus_vvv(v, v1, v2); }
-
-template <class T, class T1, class T2>
-inline void plus(Matrix<T> &v, const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ plus_vvv(v, v1, v2); }
-
-template <class T, class T1, class T2>
-inline void plus(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ plus_vvv(v, v1, v2); }
-
-// minus(v)
-template <class T>
-inline void minus(Vbase<T> &v)
+// -v inplace
+template <class T, SLISC_IF(is_dense<T>())>
+inline void Minus(T &v)
 {
-	Long i, N{ v.size() };
-	for (i = 0; i < N; ++i)
-		v[i] *= -1;
+	minus_v(v.ptr(), v.size());
 }
 
-// minus(v, v)
+// v = -v
 
-template <class T, class T1>
-inline void minus_vv(T &v, const T1 &v1)
+template <class T, class T1, SLISC_IF(is_dense<T>() && is_dense<T1>())>
+inline void Minus(T &v, const T1 &v1)
 {
 	v.resize(v1); minus_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T, class T1>
-inline void minus(Vector<T> &v, const Vector<T1> &v1)
-{ minus_vv(v, v1); }
+// v = s - v
 
-template <class T, class T1>
-inline void minus(Matrix<T> &v, const Matrix<T1> &v1)
-{ minus_vv(v, v1); }
-
-template <class T, class T1>
-inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ minus_vv(v, v1); }
-
-// minus(v, s, v)
-
-template <class T, class T1, class T2>
-inline void minus_vsv(T &v, const T1 &s, const T2 &v1)
+template <class T, class T1, class Ts, SLISC_IF(is_dense<T>() && is_dense<T1>() && is_scalar<Ts>())>
+inline void Minus(T &v, const Ts &s, const T1 &v1)
 {
 	v.resize(v1); minus_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
 
-template <class T, class T1, class T2>
-inline void minus(Vector<T> &v, const T1 &s, const Vector<T2> &v1)
-{ minus_vsv(v, s, v1); }
+// v = v - s
 
-template <class T, class T1, class T2>
-inline void minus(Matrix<T> &v, const T1 &s, const Matrix<T2> &v1)
-{ minus_vsv(v, s, v1); }
-
-template <class T, class T1, class T2>
-inline void minus(Mat3d<T> &v, const T1 &s, const Mat3d<T2> &v1)
-{ minus_vsv(v, s, v1); }
-
-// minus(v, v, s)
-
-template <class T, class T1, class T2>
-inline void minus_vvs(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
+template <class T, class T1, class Ts, SLISC_IF(is_dense<T>() && is_dense<T1>() && is_scalar<Ts>())>
+inline void Minus(T &v, const T1 &v1, const Ts &s)
 {
 	v.resize(v1); minus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
-template <class T, class T1, class T2>
-inline void minus(Vector<T> &v, const Vector<T1> &v1, const T2 &s)
-{ minus_vvs(v, v1, s); }
+// v = v - v
 
-template <class T, class T1, class T2>
-inline void minus(Matrix<T> &v, const Matrix<T1> &v1, const T2 &s)
-{ minus_vvs(v, v1, s); }
-
-template <class T, class T1, class T2>
-inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1, const T2 &s)
-{ minus_vvs(v, v1, s); }
-
-// minus(v, v, v)
-
-template <class T, class T1, class T2>
-inline void minus_vvv(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
+template <class T, class T1, class T2, SLISC_IF(is_dense<T>() && is_dense<T1>() && is_dense<T2>())>
+inline void Minus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
 	v.resize(v1); minus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v1.size());
 }
-
-template <class T, class T1, class T2>
-inline void minus(Vector<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
-{ minus_vvv(v, v1, v2); }
-
-template <class T, class T1, class T2>
-inline void minus(Matrix<T> &v, const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ minus_vvv(v, v1, v2); }
-
-template <class T, class T1, class T2>
-inline void minus(Mat3d<T> &v, const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ minus_vvv(v, v1, v2); }
 
 // times(v, v, s)
 
@@ -985,7 +865,7 @@ inline auto dot(const Vector<T1> &v1, const Vector<T2> &v2)
 #ifdef _CHECKBOUNDS_
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
-	typename std::common_type<T1, T2>::type s;
+	typename promo_type<T1, T2>::type s;
 	dot_svv(s, v1.ptr(), v2.ptr(), v2.size());
 	return s;
 }

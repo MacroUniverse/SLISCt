@@ -6,12 +6,12 @@
 //#include "SLISC/arithmetic.h"
 //#include "SLISC/disp.h"
 
-//#include "test/test_meta.h"
-//#include "test/test_scalar_arith.h"
-//#include "test/test_arithmetic.h"
+#include "test/test_meta.h"
+#include "test/test_scalar_arith.h"
+#include "test/test_arithmetic.h"
 // using namespace slisc;
 
-#include <complex>
+// #include <complex>
 using namespace std;
 
 //void test_eig()
@@ -37,7 +37,7 @@ using namespace std;
 int main()
 {
 	// test_all();
-	/*test_meta();
+	test_meta();
 	test_scalar_arith();
-	test_arithmetic();*/
+	test_arithmetic();
 }

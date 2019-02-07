@@ -97,9 +97,9 @@ inline void test_arithmetic()
 
 		// TODO: Llong version
 		vDoub1 = 1.;
-		plus(vDoub, vDoub1, 1.);
+		Plus(vDoub, vDoub1, 1.);
 		if (vDoub != 2.) error("failed!");
-		minus(vDoub, vDoub1, 1.);
+		Minus(vDoub, vDoub1, 1.);
 		if (vDoub != 0.) error("failed!");
 		times(vDoub, vDoub1, 2.);
 		if (vDoub != 2.) error("failed!");
@@ -107,16 +107,16 @@ inline void test_arithmetic()
 		if (vDoub != 0.5) error("failed!");
 		// TODO: Comp version
 		vDoub = 1.;
-		plus(vComp, vDoub1, Comp(1., 1.));
+		Plus(vComp, vDoub1, Comp(1., 1.));
 		if (vComp != Comp(2., 1.)) error("failed!");
 
 		// op(v, s, v)
 
 		// TODO: Llong version
 		vDoub1 = 1.;
-		plus(vDoub, 1., vDoub1);
+		Plus(vDoub, 1., vDoub1);
 		if (vDoub != 2.) error("failed!");
-		minus(vDoub, 1., vDoub1);
+		Minus(vDoub, 1., vDoub1);
 		if (vDoub != 0.) error("failed!");
 		times(vDoub, 2., vDoub1);
 		if (vDoub != 2.) error("failed!");
@@ -125,15 +125,15 @@ inline void test_arithmetic()
 		if (vDoub != 1.) error("failed!");
 		// TODO: Comp version
 		vDoub1 = 1.;
-		plus(vComp, vDoub1, Comp(1., 1.));
+		Plus(vComp, vDoub1, Comp(1., 1.));
 		if (vComp != Comp(2., 1.)) error("failed!");
 
 		// op(v, v, v)
 
 		vLlong1 = 4; vLlong2 = 2;
-		plus(vLlong, vLlong1, vLlong2);
+		Plus(vLlong, vLlong1, vLlong2);
 		if (vLlong != 6) error("failed!");
-		minus(vLlong, vLlong1, vLlong2);
+		Minus(vLlong, vLlong1, vLlong2);
 		if (vLlong != 2) error("failed!");
 		times(vLlong, vLlong1, vLlong2);
 		if (vLlong != 8) error("failed!");
@@ -141,9 +141,9 @@ inline void test_arithmetic()
 		if (vLlong != 2) error("failed!");
 
 		vDoub1 = 1.; vDoub2 = 2.;
-		plus(vDoub, vDoub1, vDoub2);
+		Plus(vDoub, vDoub1, vDoub2);
 		if (vDoub != 3.) error("failed!");
-		minus(vDoub, vDoub2, vDoub1);
+		Minus(vDoub, vDoub2, vDoub1);
 		if (vDoub != 1.) error("failed!");
 		times(vDoub, vDoub1, vDoub2);
 		if (vDoub != 2.) error("failed!");
@@ -151,9 +151,9 @@ inline void test_arithmetic()
 		if (vDoub != 0.5) error("failed!");
 
 		vComp1 = Comp(1., 1.); vComp2 = Comp(2., 2.);
-		plus(vComp, vComp1, vComp2);
+		Plus(vComp, vComp1, vComp2);
 		if (vComp != Comp(3., 3.)) error("failed!");
-		minus(vComp, vComp2, vComp1);
+		Minus(vComp, vComp2, vComp1);
 		if (vComp != Comp(1., 1.)) error("failed!");
 		vComp2 = 2.;
 		times(vComp, vComp1, vComp2);
@@ -164,19 +164,11 @@ inline void test_arithmetic()
 
 	// dot product
 	{
-		VecComp x; VecChar y;
+		VecComp x; VecDoub y;
 		linspace(x, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
-		linspace(y, 1, 3, 3);
+		linspace(y, 1., 3., 3);
 		auto s = dot(x, y);
 		if (abs(s - Comp(15.4, -15.4)) > 1e-14) error("failed!");
-	}
-
-	{
-		using namespace slisc;
-		using namespace std;
-		Comp s1(1.1, 2.2); Comp s2 = 2;
-		Comp s = s1 + s2;
-		Comp s3;
 	}
 
 	{
@@ -184,7 +176,7 @@ inline void test_arithmetic()
 		linspace(x, 1.1, 3.3, 3);
 		linspace(y, 1, 3, 3);
 		auto s = dot(x, y);
-		if (abs(s - Comp(15.4, -15.4)) > 1e-14) error("failed!");
+		if (abs(s -15.4) > 1e-14) error("failed!");
 	}
 
 	// matrix-vector multiplication
