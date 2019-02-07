@@ -24,59 +24,34 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 	return false;
 }
 
-template <class T1, class T2>
-Bool equals_to_vv(const T1 &v1, const T2 &v2)
+// operator== for slisc containers
+
+template <class T1, class T2, class Enable = typename is_slisc2<T1, T2>::type>
+Bool operator==(const T1 &v1, const T2 &v2)
 {
 	return shape_cmp(v1, v2) && equals_to_vv(v1.ptr(), v2.ptr(), v2.size());
 }
 
-template <class T1, class T2>
-Bool operator==(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return equals_to_vv(v1, v2); }
+template <class Tv, class Ts, class Enable = typename is_slisc_other<Tv, Ts>::type>
+Bool operator==(const Tv &v, const Ts &s)
+{
+	equals_to_vs(v.ptr(), s, v.size());
+}
 
-template <class T1, class T2>
-Bool operator==(const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ return equals_to_vv(v1, v2); }
+template <class Tv, class Ts, class Enable = typename is_slisc_other<Tv, Ts>::type>
+Bool operator==(const Ts &s, const Tv &v)
+{ return v == s; }
 
-template <class T1, class T2>
-Bool operator==(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ return equals_to_vv(v1, v2); }
+// operator!= for slisc containers
+template <class T1, class T2, class Enable = typename has_1_slisc2<T1, T2>::type>
+Bool operator!=(const T1 &v1, const T2 &v2)
+{
+	return !(v1 == v2);
+}
 
-template <class T1, class T2>
-Bool operator!=(const Vector<T1> &v1, const Vector<T2> &v2)
-{ return !(v1 == v2); }
+// sum of container elements
 
-template <class T1, class T2>
-Bool operator!=(const Matrix<T1> &v1, const Matrix<T2> &v2)
-{ return !(v1 == v2); }
-
-template <class T1, class T2>
-Bool operator!=(const Mat3d<T1> &v1, const Mat3d<T2> &v2)
-{ return !(v1 == v2); }
-
-template <class T1, class T2>
-Bool operator==(const Vector<T1> &v, const T2 &s)
-{ return equals_to_vs(v.ptr(), s, v.size()); }
-
-template <class T1, class T2>
-Bool operator==(const Matrix<T1> &v, const T2 &s)
-{ return equals_to_vs(v.ptr(), s, v.size()); }
-
-template <class T1, class T2>
-Bool operator==(const Mat3d<T1> &v, const T2 &s)
-{ return equals_to_vs(v.ptr(), s, v.size()); }
-
-template <class T1, class T2>
-Bool operator!=(const Vector<T1> &v, const T2 &s)
-{ return !(v == s); }
-
-template <class T1, class T2>
-Bool operator!=(const Matrix<T1> &v, const T2 &s)
-{ return !(v == s); }
-
-template <class T1, class T2>
-Bool operator!=(const Mat3d<T1> &v, const T2 &s)
-{ return !(v == s); }
+TODO: disable for MatCooH
 
 template <class T>
 inline const T sum(const Vbase<T> &v)

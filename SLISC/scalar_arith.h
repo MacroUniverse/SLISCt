@@ -59,19 +59,7 @@ inline Int to_num(Uchar_I x) { return (Int)x; }
 template <class T>
 inline const T &to_num(const T &x) { return x; }
 
-// basic functions
-using std::swap; using std::abs; using std::real; using std::imag;
-using std::sqrt; using std::sin; using std::cos; using std::tan;
-using std::exp; using std::log; using std::log10;
-using std::expm1; using std::log1p; using std::hypot;
-using std::sinh; using std::cosh; using std::tanh;
-
-inline Float cot(Float_I x) { return 1.f / tan(x); }
-inline Doub cot(Doub_I x) { return 1. / tan(x); }
-
-inline Float sinc(Float_I x) { return x == 0.f ? 1.f : sin(x) / x; }
-inline Doub sinc(Doub_I x) { return x == 0. ? 1. : sin(x) / x; }
-
+// integer functions
 // check if an integer is odd
 inline Bool isodd(Int_I n) { return n & 1; }
 inline Bool isodd(Long_I n) { return n & 1; }
@@ -91,4 +79,19 @@ inline Long csub2ind(Long_I Nr, Long_I i, Long_I j)
 
 inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 { return Nc*i + j; } // row major
+
+// floating point functions
+
+using std::swap; using std::abs; using std::real; using std::imag;
+using std::sqrt; using std::sin; using std::cos; using std::tan;
+using std::exp; using std::log; using std::log10;
+using std::expm1; using std::log1p; using std::hypot;
+using std::sinh; using std::cosh; using std::tanh;
+
+inline Float cot(Float_I x) { return 1.f / tan(x); }
+inline Doub cot(Doub_I x) { return 1. / tan(x); }
+
+inline Float sinc(Float_I x) { return x == 0.f ? 1.f : sin(x) / x; }
+inline Doub sinc(Doub_I x) { return x == 0. ? 1. : sin(x) / x; }
+
 }
