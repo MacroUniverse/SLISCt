@@ -223,21 +223,19 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * Never try to unify the format of everything unless there's nothing else to do.
 
 ## TODO
-* I should define "I" as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
-* replace `error()` macro with `throw()`
+* consider define pure imaginary number as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
+* consider replacing `error()` macro with `throw()`
+* `warning()` macro is already defined!
 * incorporate "arb" library for evaluation of some special functions, and for multi-precision arithmetic (does not work for windows yet)
-* use BLAS/LAPACK to enhance performance (optionally), and time different implementations (mine, Eigen, MKL)
-* implement column major matrix classes
-* Add the "a(i,j)" format of matrix indexing for row majored matrix (and maybe consider abandoning "a[i][j]" format later).
+* use MKL to enhance performance (optionally), and time different implementations (mine, Eigen, MKL)
 * put all internal names into "slisc::internal" namespace
 * test `randInt()`
-* test single indexing operator() for matrix and mat3d
 * update from Go-Solver project
-* test McooH and arithmetic
 * test "expokit.h"
-* test operator= for different types
-* test Comp2Real
-* test both dense and sparse arithmetic
-* `Cmat<T>` should be derived from `Matrix<T>`
-* test `inline void dot_svv(T &s, const T1 *v1, const T2 *v2, Long_I N)`
-* test `is_slisc<>`;
+* test sparse arithmetic
+* ptr_arith.h functions must support N = 0
+* complete test of containers
+* complete test of "meta.h"
+* complete test of "ptr_arith.h"
+* complete test of "arithmetic.h"
+* check all compiler warnings

@@ -733,6 +733,15 @@ inline void divide_vvv(Comp *v, const Comp *v1, const Comp *v2, Long_I N)
 		v[i] = v1[i] / v2[i];
 }
 
+// real(v)
+
+inline void real_v(Comp *v, Long_I N)
+{
+	Doub *pd = (Doub *)v;
+	for (Long i = 1; i < N; i += 2)
+		pd[i] = 0.;
+}
+
 // v = real(v)
 
 inline void real_vv(Doub *v, const Comp *v1, Long_I N)
@@ -741,12 +750,41 @@ inline void real_vv(Doub *v, const Comp *v1, Long_I N)
 		v[i] = real(v1[i]); 
 }
 
+// real(v)
+
+inline void imag_v(Comp *v, Long_I N)
+{
+	Doub *pd = (Doub *)v;
+	for (Long i = 0; i < N; i += 2)
+		pd[i] = 0.;
+}
+
 // v = imag(v)
 
 inline void imag_vv(Doub *v, const Comp *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = imag(v1[i]);
+}
+
+// abs(v)
+
+inline void abs_v(Int *v, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = abs(v[i]);
+}
+
+inline void abs_v(Doub *v, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = abs(v[i]);
+}
+
+inline void abs_v(Comp *v, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = abs(v[i]);
 }
 
 // v = abs(v)
@@ -883,46 +921,60 @@ inline Doub max_abs_v(const Comp *v, Long_I N)
 	return s;
 }
 
+// conj(v)
+
+inline void conj(Comp *v, Long_I N)
+{
+	Doub *p = (Doub *)v;
+	for (Long i = 1; i < N; i += 2)
+		p[i] = -p[i];
+}
+
 // s = dot(v, v)
 
-inline void dot_svv(Doub_O s, const Doub *v1, const Char *v2, Long_I N)
+inline Doub dot_vv(const Doub *v1, const Char *v2, Long_I N)
 {
-	s = 0.;
-	for (Long i = 0; i < N; ++i) {
+	Doub s = v1[0] * v2[0];
+	for (Long i = 1; i < N; ++i) {
 		s += v1[i] * v2[i];
 	}
+	return s;
 }
 
-inline void dot_svv(Doub_O s, const Doub *v1, const Doub *v2, Long_I N)
+inline Doub dot_vv(const Doub *v1, const Doub *v2, Long_I N)
 {
-	s = 0.;
-	for (Long i = 0; i < N; ++i) {
+	Doub s = v1[0] * v2[0];
+	for (Long i = 1; i < N; ++i) {
 		s += v1[i] * v2[i];
 	}
+	return s;
 }
 
-inline void dot_svv(Comp_O s, const Comp *v1, const Comp *v2, Long_I N)
+inline Comp dot_vv(const Doub *v1, const Comp *v2, Long_I N)
 {
-	s = 0.;
-	for (Long i = 0; i < N; ++i) {
+	Comp s = v1[0] * v2[0];
+	for (Long i = 1; i < N; ++i) {
+		s += v1[i] * v2[i];
+	}
+	return s;
+}
+
+inline Comp dot_vv(const Comp *v1, const Doub *v2, Long_I N)
+{
+	Comp s = conj(v1[0]) * v2[0];
+	for (Long i = 1; i < N; ++i) {
 		s += conj(v1[i]) * v2[i];
 	}
+	return s;
 }
 
-inline void dot_svv(Comp_O s, const Comp *v1, const Doub *v2, Long_I N)
+inline Comp dot_vv(const Comp *v1, const Comp *v2, Long_I N)
 {
-	s = 0.;
-	for (Long i = 0; i < N; ++i) {
+	Comp s = conj(v1[0]) * v2[0];
+	for (Long i = 1; i < N; ++i) {
 		s += conj(v1[i]) * v2[i];
 	}
-}
-
-inline void dot_svv(Comp_O s, const Doub *v1, const Comp *v2, Long_I N)
-{
-	s = 0.;
-	for (Long i = 0; i < N; ++i) {
-		s += v1[i] * v2[i];
-	}
+	return s;
 }
 
 template <class T>
@@ -1029,6 +1081,14 @@ inline void tan_vv(Doub *v, const Doub *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = tan(v1[i]);
+}
+
+// v = cumsum(v)
+inline void cumsum_vv(Doub *v, const Doub *v1, Long_I N)
+{
+	v[0] = v1[0];
+	for (Long i = 1; i < N; ++i)
+		v[i] = v[i - 1] + v1[i];
 }
 
 } // nemaspace slisc

@@ -113,12 +113,13 @@ inline void linspace(T &v, const T1 &first, const T2 &last, Llong_I n)
 // TODO: transpose
 
 // hermitian conjugate
+// TODO: template <class T, class T1, SLS_IF(is_matrix<T>() && is_same_contain<T,T1>)
 inline void her(MatComp_O h, MatComp_I a)
 {
-	Long i, j, m = a.nrows(), n = a.ncols();
-	h.resize(n, m);
-	for (i = 0; i < m; ++i)
-		for (j = 0; j < n; ++j)
+	Long i, j, Nr = a.nrows(), Nc = a.ncols();
+	h.resize(Nr, Nc);
+	for (i = 0; i < Nr; ++i)
+		for (j = 0; j < Nc; ++j)
 			h(j, i) = conj(a(i, j));
 }
 
@@ -135,186 +136,36 @@ inline void flip(T &v, const T1 &v1)
 	flip(v.ptr(), v1.ptr(), v1.size());
 }
 
-// default: shift columns to the right n times (n < 0 shift to left)
-// column at the end shifts to the other end
-// dim = 2: shift rows down (n < 0 shift up)
-template <class T>
-void shift(Matrix<T> &a, Llong nshift, Int_I dim = 1)
-{
-	Long Nr = a.nrows(), Nc = a.ncols(), n;
-	if (dim == 2) {
-		// I actually want n to be shift to the left
-		if (nshift < 0)
-			n = (-nshift) % Nc;
-		else if (nshift > 0)
-			n = Nc - (nshift%Nc);
-		else
-			return;
-		if (n == 0 || n == Nc) return;
-		Long i;
-		Long sz = n*sizeof(T), sz_ = (Nc-n)*sizeof(T);
-		T *temp = new T[n];
-		for (i = 0; i < Nr; ++i) {
-			memcpy(temp, a[i], sz);
-			memcpy(a[i], a[i] + n, sz_);
-			memcpy(a[i] + Nc-n, temp, sz);
-		}
-		delete temp;
-	}
-	else {
-		// I actually want n to be shift up
-		if (nshift < 0)
-			n = (-nshift) % Nr;
-		else if (nshift > 0)
-			n = Nr - (nshift%Nr);
-		else
-			return;
-		if (n == 0 || n == Nr) return;
-		Long sz = n*Nc*sizeof(T);
-		Long sz_ = (Nr-n)*Nc*sizeof(T);
-		T *temp = new T[n];
-		memcpy(temp, a.ptr(), sz);
-		memcpy(a.ptr(), a[n], sz_);
-		memcpy(a[Nr-n], temp, sz);
-		delete temp;
-	}
-}
-
-// shift the i-th line i times to the left, moving the diagonal to the first column
-template <class T>
-void diagonals(Matrix<T> &a)
-{
-	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
-	T *temp = new T[Nc];
-	Long szT = sizeof(T);
-	for (i = 1; i < Nr; ++i) {
-		memcpy(temp, a[i], i*szT);
-		memcpy(a[i], a[i] + i, (Nc-i)*szT);
-		memcpy(a[i] + Nc-i, temp, i*szT);
-	}
-	delete temp;
-}
-
-// parallel version
-template <class T>
-void diagonals_par(Matrix<T> &a)
-{
-	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
-	Long szT = sizeof(T);
-	#pragma omp parallel for
-	for (i = 1; i < Nr; ++i) {
-		T *temp = new T[Nc];
-		memcpy(temp, a[i], i*szT);
-		memcpy(a[i], a[i] + i, (Nc-i)*szT);
-		memcpy(a[i] + Nc-i, temp, i*szT);
-		delete temp;
-	}
-}
-
-template <class T>
-void idiagonals(Matrix<T> &a)
-{
-	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
-	T *temp = new T[Nc];
-	Long szT = sizeof(T);
-	for (i = 1; i < Nr; ++i) {
-		memcpy(temp, a[i], (Nc-i)*szT);
-		memcpy(a[i], a[i] + (Nc-i), i*szT);
-		memcpy(a[i] + i, temp, (Nc-i)*szT);
-	}
-	delete temp;
-}
-
-template <class T>
-void idiagonals_par(Matrix<T> &a)
-{
-	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
-	Long szT = sizeof(T);
-	#pragma omp parallel for
-	for (i = 1; i < Nr; ++i) {
-		T *temp = new T[Nc];
-		memcpy(temp, a[i], (Nc-i)*szT);
-		memcpy(a[i], a[i] + (Nc-i), i*szT);
-		memcpy(a[i] + i, temp, (Nc-i)*szT);
-		delete temp;
-	}
-}
-
 // === vectorized math functions ===
 
-template <class T, class T1>
-void sqrt(Vector<T> &v, const Vector<T1> &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
+void sqrt(T &v, const T1 &v1)
 { v.resize(v1); sqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
 
-template <class T, class T1>
-void sqrt(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); sqrt_vv(v, v1); }
 
-template <class T, class T1>
-void sqrt(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ v.resize(v1); sqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void invSqrt(Vector<T> &v, const Vector<T1> &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void invSqrt(T &v, const T1 &v1)
 { v.resize(v1); invSqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
 
-template <class T, class T1>
-void invSqrt(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); invSqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void invSqrt(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ v.resize(v1); invSqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void sin(Vector<T> &v, const Vector<T1> &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void sin(T &v, const T1 &v1)
 { v.resize(v1); sin_vv(v.ptr(), v1.ptr(), v1.size()); }
 
-template <class T, class T1>
-void sin(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); sin_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void sin(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ v.resize(v1); sin_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void cos(Vector<T> &v, const Vector<T1> &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void cos(T &v, const T1 &v1)
 { v.resize(v1); cos_vv(v.ptr(), v1.ptr(), v1.size()); }
 
-template <class T, class T1>
-void cos(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); cos_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void cos(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ v.resize(v1); cos_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void exp(Vector<T> &v, const Vector<T1> &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void exp(T &v, const T1 &v1)
 { v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size()); }
 
-template <class T, class T1>
-void exp(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void exp(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void tan(Vector<T> &v, const Vector<T1> &v1)
-{ v.resize(v1); tan_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void tan(Matrix<T> &v, const Matrix<T1> &v1)
-{ v.resize(v1); tan_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1>
-void tan(Mat3d<T> &v, const Mat3d<T1> &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void tan(T &v, const T1 &v1)
 { v.resize(v1); tan_vv(v.ptr(), v1.ptr(), v1.size()); }
 
 // === matrix arithmetics ===
+
+// v += v
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 inline void operator+=(T &v, const T1 &v1)
@@ -327,8 +178,8 @@ inline void operator+=(T &v, const T1 &v1)
 
 // v -= v
 
-template <class T, class T1>
-inline void minus_equals_vv(T &v, const T1 &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+inline void operator-=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (!shape_cmp(v, v1)) error("wrong shape!");
@@ -336,26 +187,10 @@ inline void minus_equals_vv(T &v, const T1 &v1)
 	minus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T, class T1>
-inline void operator-=(Vector<T> &v, const Vector<T1> &v1)
-{ minus_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator-=(Matrix<T> &v, const Matrix<T1> &v1)
-{ minus_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator-=(Cmat<T> &v, const Cmat<T1> &v1)
-{ minus_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator-=(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ minus_equals_vv(v, v1); }
-
 // v *= v
 
-template <class T, class T1>
-inline void times_equals_vv(T &v, const T1 &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+inline void operator*=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (!shape_cmp(v, v1)) error("wrong shape!");
@@ -363,26 +198,10 @@ inline void times_equals_vv(T &v, const T1 &v1)
 	times_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T, class T1>
-inline void operator*=(Vector<T> &v, const Vector<T1> &v1)
-{ times_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator*=(Matrix<T> &v, const Matrix<T1> &v1)
-{ times_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator*=(Cmat<T> &v, const Cmat<T1> &v1)
-{ times_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator*=(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ times_equals_vv(v, v1); }
-
 // v /= v
 
-template <class T, class T1>
-inline void devide_equals_vv(T &v, const T1 &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+inline void operator/=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (!shape_cmp(v, v1)) error("wrong shape!");
@@ -390,23 +209,8 @@ inline void devide_equals_vv(T &v, const T1 &v1)
 	divide_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T, class T1>
-inline void operator/=(Vector<T> &v, const Vector<T1> &v1)
-{ devide_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator/=(Matrix<T> &v, const Matrix<T1> &v1)
-{ devide_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator/=(Cmat<T> &v, const Cmat<T1> &v1)
-{ devide_equals_vv(v, v1); }
-
-template <class T, class T1>
-inline void operator/=(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ devide_equals_vv(v, v1); }
-
 // v += s
+
 template <class T, class Ts, SLS_IF(is_dense<T>() && is_scalar<Ts>())>
 inline void operator+=(T &v, const Ts &s)
 {
@@ -575,7 +379,7 @@ inline void Divide(T &v, const Ts &s, const T1 &v1)
 	v.resize(v1); divide_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
 
-// divide(v, v, v)
+// v = v / v
 
 template <class T, class T1, class T2, SLS_IF(is_dense<T>() && is_same_contain<T,T1>() && is_same_contain<T,T2>())>
 inline void Divide(T &v, const T1 &v1, const T2 &v2)
@@ -587,145 +391,88 @@ inline void Divide(T &v, const T1 &v1, const T2 &v2)
 }
 
 // real(v)
-inline void real(Vbase<Comp> &v)
+
+template <class T, SLS_IF(is_comp_dense<T>())>
+inline void real(T &v)
 {
-	Long i, N{ 2 * v.size() };
-	Doub *pd = (Doub *)v.ptr();
-	for (i = 1; i < N; i += 2)
-		pd[i] = 0.;
+	real_v(v.ptr(), v.size());
 }
 
-// resl(v, v)
+// v = real(v)
 
-template <class T>
-inline void real_vv(T &v, const Vector<Comp> &v1)
+template <class T, class T1,
+	SLS_IF(is_same_contain<T, T1>(), is_comp_dense<T1>())>
+inline void real(T &v, const T1 &v1)
 {
 	v.resize(v1); real_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T>
-inline void real(Vector<T> &v, const Vector<Comp> &v1)
-{ real_vv(v, v1); }
-
-template <class T>
-inline void real(Matrix<T> &v, const Matrix<Comp> &v1)
-{ real_vv(v, v1); }
-
-template <class T>
-inline void real(Mat3d<T> &v, const Mat3d<Comp> &v1)
-{ real_vv(v, v1); }
-
 // imag(v)
-inline void imag(Vbase<Comp> &v)
+template <class T, SLS_IF(is_comp_dense<T>())>
+inline void imag(T &v)
 {
-	Long i, N{ 2 * v.size() };
-	Doub *pd = (Doub *)v.ptr();
-	for (i = 0; i < N; i += 2)
-		pd[i] = 0.;
+	imag_v(v.ptr(), v.size());
 }
 
-// imag(v, v)
+// v = imag(v)
 
-template <class T>
-inline void imag_vv(T &v, const Vector<Comp> &v1)
+template <class T, class T1,
+	SLS_IF(is_same_contain<T, T1>() && is_comp_dense<T1>())>
+	inline void imag(T &v, const T1 &v1)
 {
 	v.resize(v1); imag_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T>
-inline void imag(Vector<T> &v, const Vector<Comp> &v1)
-{ imag_vv(v, v1); }
-
-template <class T>
-inline void imag(Matrix<T> &v, const Matrix<Comp> &v1)
-{ imag_vv(v, v1); }
-
-template <class T>
-inline void imag(Mat3d<T> &v, const Mat3d<Comp> &v1)
-{ imag_vv(v, v1); }
-
 // abs(v)
-template <class T>
-inline void abs(Vbase<T> &v)
+template <class T, SLS_IF(is_dense<T>())>
+inline void abs(T &v)
 {
-	Long i, N{ v.size() };
-	for (i = 0; i < N; i += 2)
-		v[i] = std::abs(v[i]);
+	abs_v(v.ptr(), v.size());
 }
 
-// abs(v, v)
+// v = abs(v)
 
-template <class T, class T1>
-inline void abs_vv(T &v, const T1 &v1)
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+inline void abs(T &v, const T1 &v1)
 {
 	v.resize(v1); abs_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T, class T1>
-inline void abs(Vector<T> &v, const Vector<T1> &v1)
-{ abs_vv(v, v1); }
+// v = to_comp(v)
 
-template <class T, class T1>
-inline void abs(Matrix<T> &v, const Matrix<T1> &v1)
-{ abs_vv(v, v1); }
-
-template <class T, class T1>
-inline void abs(Mat3d<T> &v, const Mat3d<T1> &v1)
-{ abs_vv(v, v1); }
-
-// doubl2comp(v, v)
-
-template <class T, class T1>
-inline void to_comp_vv(T &v, const T1 &v1)
+template <class T, class T1,
+	SLS_IF(is_same_contain<T,T1>() && is_comp_dense<T>() && is_real_dense<T1>())>
+inline void to_comp(T &v, const T1 &v1)
 {
 	v.resize(v1);
 	to_comp_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-inline void to_comp_vv(Vector<Comp> &v, const Vector<Doub> &v1)
-{ to_comp_vv(v, v1); }
-
-inline void to_comp_vv(Matrix<Comp> &v, const Matrix<Doub> &v1)
-{ to_comp_vv(v, v1); }
-
-inline void to_comp_vv(Mat3d<Comp> &v, const Mat3d<Doub> &v1)
-{ to_comp_vv(v, v1); }
-
 // conj(v)
 
-template <class T>
+template <class T, SLS_IF(is_comp_dense<T>())>
 inline void conj(Vbase<T> &v)
-{ return; }
-
-template <class T>
-inline void conj(Vbase<std::complex<T>> &v)
-{
-	Long i, N{ 2 * v.size() };
-	Doub *p = (Doub *)v.ptr();
-	for (i = 1; i < N; i += 2)
-		p[i] = -p[i];
-}
+{ conj_v(v.ptr(), v.size()); }
 
 // dot products ( sum conj(v1[i])*v2[i] )
 // s = dot(v, v)
 
-template <class T1, class T2>
-inline auto dot(const Vector<T1> &v1, const Vector<T2> &v2)
+template <class T1, class T2, SLS_IF(is_Vector<T1>() && is_Vector<T2>())>
+inline auto dot(const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (!shape_cmp(v1, v2)) error("wrong shape!");
 #endif
-	typename promo_type<T1, T2>::type s;
-	dot_svv(s, v1.ptr(), v2.ptr(), v2.size());
-	return s;
+	return dot_vv(v1.ptr(), v2.ptr(), v2.size());
 }
 
 // outer product ( conj(v1[i})*v2[j] )
 // outprod(v, v, v)
-template <class T, class T1, class T2>
-inline void outprod(Matrix<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
+template <class T, class T1, class T2, SLS_IF(is_dense_mat<T>() && is_Vector<T1>() && is_Vector<T2>())>
+inline void outprod(T &v, const T1 &v1, const T2 &v2)
 {
-	Long i, j, N1{ v1.size() }, N2{ v2.size() };
+	error("TODO");
+	/*Long i, j, N1{ v1.size() }, N2{ v2.size() };
 	Comp *pc, v1_i;
 	v.resize(N1, N2);
 	for (i = 0; i < N1; ++i) {
@@ -733,14 +480,15 @@ inline void outprod(Matrix<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
 		v1_i = v1[i];
 		for (j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
-	}
+	}*/
 }
 
 // parallel version
-template <class T, class T1, class T2>
-inline void outprod_par(Matrix<T> &v, const Vector<T1> &v1, const Vector<T2> &v2)
+template <class T, class T1, class T2, SLS_IF(is_dense_mat<T>() && is_Vector<T1>() && is_Vector<T2>())>
+inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 {
-	Long i, N1{ v1.size() }, N2{ v2.size() };
+	error("TODO");
+	/*Long i, N1{ v1.size() }, N2{ v2.size() };
 	v.resize(N1, N2);
 	#pragma omp parallel for
 	for (i = 0; i < N1; ++i) {
@@ -750,41 +498,11 @@ inline void outprod_par(Matrix<T> &v, const Vector<T1> &v1, const Vector<T2> &v2
 		v1_i = v1[i];
 		for (j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
-	}
+	}*/
 }
 
-template<class T, class T2>
-inline void outprod(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
-{
-	Long i, j, N1{ v1.size() }, N2{ v2.size() };
-	Comp *pc, v1_i;
-	v.resize(N1, N2);
-	for (i = 0; i < N1; ++i) {
-		pc = v[i];
-		v1_i = conj(v1[i]);
-		for (j = 0; j < N2; ++j)
-			pc[j] = v1_i*v2[j];
-	}
-}
-
-template<class T, class T2>
-inline void outprod_par(Matrix<T> &v, VecComp_I v1, const Vector<T2> &v2)
-{
-	Long i, N1{ v1.size() }, N2{ v2.size() };
-	v.resize(N1, N2);
-	#pragma omp parallel for
-	for (i = 0; i < N1; ++i) {
-		Long j;
-		Comp *pc, v1_i;
-		pc = v[i];
-		v1_i = conj(v1[i]);
-		for (j = 0; j < N2; ++j)
-			pc[j] = v1_i*v2[j];
-	}
-}
-
-template <class T, class T1, class T2>
-inline void mul_vmv(T &y, const T1 &a, const T2 &x)
+template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>())>
+inline void mul(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (a.ncols() != x.size())
@@ -799,35 +517,28 @@ inline void mul_vmv(T &y, const T1 &a, const T2 &x)
 	}
 }
 
-template <class T, class T1, class T2>
-inline void mul(Vector<T> &y, const Matrix<T1> &a, const Vector<T2> &x)
-{ mul_vmv(y, a, x); }
-
-template <class T, class T1, class T2>
-inline void mul(Vector<T> &y, const Cmat<T1> &a, const Vector<T2> &x)
-{ mul_vmv(y, a, x); }
-
 // vector-matrix multiplication (row vector assumed)
 
 // parallel version
-template <class T, class T1, class T2>
-inline void mul_par(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
+template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>())>
+inline void mul_par(T &y, const T1 &x, const T2 &a)
 {
-#ifdef SLS_CHECK_BOUNDS
-	if (x.size() != a.nrows()) error("wrong size!");
-#endif
-	Long j, m{ a.nrows() }, n{ a.ncols() };
-	y.resize(n); y = 0.;
-	#pragma omp parallel for
-	for (j = 0; j < n; ++j) {
-		Long k;
-		for (k = 0; k < m; ++k)
-			y[j] += x[k] * a[k][j];
-	}
+	error("TODO");
+//#ifdef SLS_CHECK_BOUNDS
+//	if (x.size() != a.nrows()) error("wrong size!");
+//#endif
+//	Long j, m{ a.nrows() }, n{ a.ncols() };
+//	y.resize(n); y = 0.;
+//	#pragma omp parallel for
+//	for (j = 0; j < n; ++j) {
+//		Long k;
+//		for (k = 0; k < m; ++k)
+//			y[j] += x[k] * a[k][j];
+//	}
 }
 
-template <class T, class T1, class T2>
-inline void mul_vvm(T &y, const T1 &x, const T2 &a)
+template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>())>
+inline void mul(T &y, const T1 &x, const T2 &a)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (x.size() != a.nrows())
@@ -836,26 +547,18 @@ inline void mul_vvm(T &y, const T1 &x, const T2 &a)
 	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 	Long i, j, k;
 	y.resize(Nc_a);
-	vecset(y, T(), Nc_a);
+	vecset(y, T::value_type(), Nc_a);
 	for (j = 0; j < Nc_a; ++j) {
 		for (i = 0; i < Nr_a; ++i)
 			y[j] += x[i] * a(i, j);
 	}
 }
 
-template <class T, class T1, class T2>
-inline void mul(Vector<T> &y, const Vector<T1> &x, const Matrix<T> &a)
-{ mul_vvm(y, x, a); }
-
-template <class T, class T1, class T2>
-inline void mul(Vector<T> &y, const Vector<T1> &x, const Cmat<T> &a)
-{ mul_vvm(y, x, a); }
-
 // matrix-matrix multiplication
 // TODO: optimize
 
-template <class T, class T1, class T2>
-inline void mul_mmm(T &y, const T1 &a, const T2 &x)
+template <class T, class T1, class T2, SLS_IF(is_dense_mat<T>() && is_dense_mat<T1>() && is_dense_mat<T2>())>
+inline void mul(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (a.ncols() != x.nrows())
@@ -873,36 +576,14 @@ inline void mul_mmm(T &y, const T1 &a, const T2 &x)
 	}
 }
 
-template <class T, class T1, class T2>
-inline void mul(Matrix<T> &c, const Matrix<T1> &a, const Matrix<T2> &b)
-{ mul_mmm(c, a, b); }
-
-template <class T, class T1, class T2>
-inline void mul(Cmat<T> &c, const Cmat<T1> &a, const Cmat<T2> &b)
-{ mul_mmm(c, a, b); }
-
 // === numerical integration ===
 
 // indefinite integral;
 // use cumsum(y)*dx instead
-template <class T, class T1>
-void cumsum(Vbase<T> &F, const Vbase<T1> &f)
+template <class T, class T1, SLS_IF(is_Vector<T>() && is_Vector<T1>())>
+void cumsum(T &v, const T1 &v1)
 {
-	Long i, N{ f.size() };
-	F.resize(N); F(0) = f(0);
-	for (i = 1; i < N - 1; ++i)
-		F(i) = F(i-1) + f(i);
-}
-
-// string utilities
-
-template <typename T>
-inline std::string num2str(T s)
-{
-	std::string str = std::to_string(s);
-	if (str.find('.') != std::string::npos)
-		str.erase(str.find_last_not_of('0') + 1);
-	return str;
+	v.resize(v1); cumsum_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 } // namespace slisc

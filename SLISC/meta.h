@@ -131,10 +131,19 @@ template <class T> struct is_MatCooH<MatCooH<T>> : integral_constant<Bool, is_sc
 template <class T> struct is_fixed : integral_constant<Bool,
 	is_FixVec<T>() || is_FixCmat<T>()>{};
 
+template <class T> struct is_dense_mat : integral_constant<Bool,
+	is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>()
+	|| is_Mat3d<T>()> {};
+
 // check if is dense container (including fixed-size)
 template <class T> struct is_dense : integral_constant<Bool,
-	is_Vector<T>() || is_Matrix<T>() || is_Cmat<T>() || is_fixed<T>()
-	|| is_Mat3d<T>()>{};
+	is_Vector<T>() || is_FixVec<T>() || is_dense_mat<T>()>{};
+
+template <class T> struct is_real_dense : integral_constant<Bool,
+	is_dense<T>() && is_real<typename T::value_type>()> {};
+
+template <class T> struct is_comp_dense : integral_constant<Bool,
+	is_dense<T>() && is_fp_comp<typename T::value_type>()> {};
 
 // check if is sparse vector/matrix
 template <class T> struct is_sparse : integral_constant<Bool,
@@ -143,6 +152,12 @@ template <class T> struct is_sparse : integral_constant<Bool,
 // check if is any slisc container
 template <class T> struct is_contain : integral_constant<Bool,
 	is_dense<T>() || is_sparse<T>()> {};
+
+template <class T> struct is_real_contain : integral_constant<Bool,
+	is_contain<T>() && is_real<typename T::value_type>()> {};
+
+template <class T> struct is_comp_contain : integral_constant<Bool,
+	is_contain<T>() && is_fp_comp<typename T::value_type>()> {};
 
 template <class T>
 constexpr Int contain_num()
