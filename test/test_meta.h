@@ -109,5 +109,8 @@ inline void test_meta()
 	if (!is_same<rm_complex<std::complex<Ldoub>>::type, Ldoub>()) error("failed!");
 
 	// is_same_contain
-	if (!is_same_contain<VecComp, VecDoub>()) error("failed!");
+	if constexpr (!is_same_contain<VecComp, VecDoub>()) error("failed!");
+	if constexpr (is_same_contain<Comp, VecDoub>()) error("failed!");
+	if constexpr (is_same_contain<VecDoub, Float>()) error("failed!");
+	if constexpr (is_same_contain<Doub, Float>()) error("failed!");
 }

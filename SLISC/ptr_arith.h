@@ -336,6 +336,20 @@ inline void mod_vvs(Long *v, const Long *v1, Long_I s, Long_I N)
 		v[i] = mod(v1[i], s);
 }
 
+// v %= s
+
+inline void rem_vs(Int *v, Int_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] %= s;
+}
+
+inline void rem_vs(Long *v, Long_I s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] %= s;
+}
+
 // v = v % s
 
 inline void rem_vvs(Int *v, const Int *v1, Int_I s, Long_I N)
@@ -769,6 +783,106 @@ inline void to_comp_vv(Comp *v, const Doub *v1, Long_I N)
 		v[i] = v1[i];
 }
 
+// s = sum(v)
+
+inline Long sum_v(const Bool *v, Long_I N)
+{
+	Long s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += v[i];
+}
+
+inline Int sum_v(const Int *v, Long_I N)
+{
+	Int s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += v[i];
+}
+
+inline Long sum_v(const Long *v, Long_I N)
+{
+	Long s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += v[i];
+}
+
+inline Float sum_v(const Float *v, Long_I N)
+{
+	Float s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += v[i];
+}
+
+inline Doub sum_v(const Doub *v, Long_I N)
+{
+	Doub s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += v[i];
+}
+
+inline Comp sum_v(const Comp *v, Long_I N)
+{
+	Comp s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += v[i];
+}
+
+// s = max(v)
+
+inline Int max_v(const Int *v, Long_I N)
+{
+	Int s = v[0], val;
+	for (Long i = 1; i < N; ++i) {
+		if (s < v[i])
+			s = v[i];
+	}
+	return s;
+}
+
+inline Float max_v(const Float *v, Long_I N)
+{
+	Float s = v[0], val;
+	for (Long i = 1; i < N; ++i) {
+		if (s < v[i])
+			s = v[i];
+	}
+	return s;
+}
+
+inline Doub max_v(const Doub *v, Long_I N)
+{
+	Doub s = v[0], val;
+	for (Long i = 1; i < N; ++i) {
+		if (s < v[i])
+			s = v[i];
+	}
+	return s;
+}
+
+// s = max_abs(v)
+
+inline Doub max_abs(const Doub *v, Long_I N)
+{
+	Doub s = abs(v[0]), val;
+	for (Long i = 1; i < N; ++i) {
+		val = abs(v[i]);
+		if (s < val)
+			s = val;
+	}
+	return s;
+}
+
+inline Doub max_abs_v(const Comp *v, Long_I N)
+{
+	Doub s = abs(v[0]), val;
+	for (Long i = 1; i < N; ++i) {
+		val = abs(v[i]);
+		if (s < val)
+			s = val;
+	}
+	return s;
+}
+
 // s = dot(v, v)
 
 inline void dot_svv(Doub_O s, const Doub *v1, const Char *v2, Long_I N)
@@ -818,14 +932,14 @@ inline void flip(T *v, Long_I N)
 		swap(v[i], v[N - i - 1]);
 }
 
-template <class T, class T1, SLISC_IF(is_scalar<T>() && is_scalar<T1>())>
+template <class T, class T1, SLISC_IF((is_scalar<T>() && is_scalar<T1>()))>
 inline void flip(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[N - i - 1];
 }
 
-template <class T, SLISC_IF(is_scalar<T>())>
+template <class T, SLISC_IF((is_scalar<T>::value))>
 inline void linspace_vss(T *v, const T &first, const T &last, Long N)
 {
 	T delta = (last - first) / (N - 1);

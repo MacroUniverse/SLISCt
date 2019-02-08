@@ -4,7 +4,8 @@
 #include <type_traits>
 #include "global.h"
 
-#define SLISC_IF(condition) typename enable_if<condition>::type* = 0
+// must use SLISC_IF(()) 
+#define SLISC_IF(cond) typename std::enable_if<cond>::type* = 0
 
 namespace slisc {
 
@@ -50,9 +51,6 @@ using std::is_fundamental;
 
 using std::is_signed;
 
-// enable template instanciation when enable_if<true>
-using std::enable_if;
-
 // for T = floating point std::complex<>
 // is_fp_complex<T>() or is_fp_complex<T>::value returns true
 // otherwise returns false
@@ -60,7 +58,7 @@ template<class T> struct is_fp_comp : false_type {};
 
 template<class T>
 struct is_fp_comp<std::complex<T>> :
-	integral_constant<bool, is_floating_point<T>()> {};
+	integral_constant<bool, is_floating_point<T>::value> {};
 
 // map each scalr type to a unique number
 // 0-19: integral types
@@ -90,38 +88,42 @@ constexpr Int type_num()
 	return -1;
 }
 
-// check if is arithmetic type or floating point complex<>
+// check if is listed scalar
 template<class T>
 struct is_scalar : integral_constant<bool,
-	type_num<T>() >= 0 || is_fp_comp<T>()> {};
+	type_num<T>() >= 0> {};
+
+template<class T>
+struct is_real : integral_constant<bool,
+	type_num<T>() >= 0 && !is_fp_comp<T>()> {};
 
 // check if is specific container type
 template <class T> struct is_Vector : false_type {};
-template <class T> struct is_Vector<Vector<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_Vector<Vector<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_Matrix : false_type {};
-template <class T> struct is_Matrix<Matrix<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_Matrix<Matrix<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_Cmat : false_type {};
-template <class T> struct is_Cmat<Cmat<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_Cmat<Cmat<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_FixVec : false_type {};
-template <class T, Long N> struct is_FixVec<FixVec<T, N>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T, Long N> struct is_FixVec<FixVec<T, N>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_FixCmat : false_type {};
-template <class T, Long Nr, Long Nc> struct is_FixCmat<FixCmat<T, Nr, Nc>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T, Long Nr, Long Nc> struct is_FixCmat<FixCmat<T, Nr, Nc>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_Mat3d : false_type {};
-template <class T> struct is_Mat3d<Mat3d<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_Mat3d<Mat3d<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_Diag : false_type {};
-template <class T> struct is_Diag<Diag<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_Diag<Diag<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_MatCoo : false_type {};
-template <class T> struct is_MatCoo<MatCoo<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_MatCoo<MatCoo<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 template <class T> struct is_MatCooH : false_type {};
-template <class T> struct is_MatCooH<MatCooH<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template <class T> struct is_MatCooH<MatCooH<T>> : integral_constant<Bool, is_scalar<T>::value> {};
 
 // check if is fixed-size container
 template <class T> struct is_fixed : integral_constant<Bool,
@@ -155,7 +157,7 @@ constexpr Int contain_num()
 	else if constexpr (is_MatCoo<T>()) return 32;
 	else if constexpr (is_MatCooH<T>()) return 33;
 
-	else return -1;
+	return -1;
 }
 
 // check if two containers are the same (value_type can be different)
@@ -174,8 +176,7 @@ struct Sconst
 // Aconst<T, val>::value is a constexpr variable of arithmetic type
 // when T is complex<value_type>, CONST<T, val>::value is value_type
 // will not instanciate if T is illegal
-template <class T, Int val, class Enable =
-	typename enable_if<is_arithmetic<typename rm_complex<T>::type>()>::type>
+template <class T, Int val, SLISC_IF((is_arithmetic<typename rm_complex<T>::type>::value))>
 struct Aconst
 {
 	static constexpr typename rm_complex<T>::type value = val;
@@ -183,7 +184,7 @@ struct Aconst
 
 // Cconst<T, real, imag>::value, where T must be std::complex<>, is a constexpr variable of complex<>
 // will not instanciate if T is illegal
-template <class T, Int real, Int imag = 0, class Enable = typename std::enable_if<is_fp_comp<T>()>::type>
+template <class T, Int real, Int imag = 0, SLISC_IF((is_fp_comp<T>::value))>
 struct Cconst
 {
 	static constexpr T value = T(real, imag);

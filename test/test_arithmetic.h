@@ -87,7 +87,7 @@ inline void test_arithmetic()
 		if (vComp != Comp(1., 1.)) error("failed!");
 	}
 
-	// test plus(), minus(), times(), devide()
+	// test plus(), minus(), Times(), devide()
 	{
 		VecInt vLlong(3), vLlong1(3), vLlong2(3), vLlong3(3);
 		VecDoub vDoub(3), vDoub1(3), vDoub2(3), vDoub3(3);
@@ -101,9 +101,9 @@ inline void test_arithmetic()
 		if (vDoub != 2.) error("failed!");
 		Minus(vDoub, vDoub1, 1.);
 		if (vDoub != 0.) error("failed!");
-		times(vDoub, vDoub1, 2.);
+		Times(vDoub, vDoub1, 2.);
 		if (vDoub != 2.) error("failed!");
-		divide(vDoub, vDoub1, 2.);
+		Divide(vDoub, vDoub1, 2.);
 		if (vDoub != 0.5) error("failed!");
 		// TODO: Comp version
 		vDoub = 1.;
@@ -118,10 +118,10 @@ inline void test_arithmetic()
 		if (vDoub != 2.) error("failed!");
 		Minus(vDoub, 1., vDoub1);
 		if (vDoub != 0.) error("failed!");
-		times(vDoub, 2., vDoub1);
+		Times(vDoub, 2., vDoub1);
 		if (vDoub != 2.) error("failed!");
 		vDoub1 = 2.;
-		divide(vDoub, 2., vDoub1);
+		Divide(vDoub, 2., vDoub1);
 		if (vDoub != 1.) error("failed!");
 		// TODO: Comp version
 		vDoub1 = 1.;
@@ -135,9 +135,9 @@ inline void test_arithmetic()
 		if (vLlong != 6) error("failed!");
 		Minus(vLlong, vLlong1, vLlong2);
 		if (vLlong != 2) error("failed!");
-		times(vLlong, vLlong1, vLlong2);
+		Times(vLlong, vLlong1, vLlong2);
 		if (vLlong != 8) error("failed!");
-		divide(vLlong, vLlong1, vLlong2);
+		Divide(vLlong, vLlong1, vLlong2);
 		if (vLlong != 2) error("failed!");
 
 		vDoub1 = 1.; vDoub2 = 2.;
@@ -145,9 +145,9 @@ inline void test_arithmetic()
 		if (vDoub != 3.) error("failed!");
 		Minus(vDoub, vDoub2, vDoub1);
 		if (vDoub != 1.) error("failed!");
-		times(vDoub, vDoub1, vDoub2);
+		Times(vDoub, vDoub1, vDoub2);
 		if (vDoub != 2.) error("failed!");
-		divide(vDoub, vDoub1, vDoub2);
+		Divide(vDoub, vDoub1, vDoub2);
 		if (vDoub != 0.5) error("failed!");
 
 		vComp1 = Comp(1., 1.); vComp2 = Comp(2., 2.);
@@ -156,9 +156,9 @@ inline void test_arithmetic()
 		Minus(vComp, vComp2, vComp1);
 		if (vComp != Comp(1., 1.)) error("failed!");
 		vComp2 = 2.;
-		times(vComp, vComp1, vComp2);
+		Times(vComp, vComp1, vComp2);
 		if (vComp != Comp(2., 2.)) error("failed!");
-		divide(vComp, vComp1, vComp2);
+		Divide(vComp, vComp1, vComp2);
 		if (vComp != Comp(0.5, 0.5)) error("failed!");
 	}
 
