@@ -22,7 +22,7 @@ typedef Eigen::Matrix<Comp, Eigen::Dynamic, Eigen::Dynamic, Eigen::AutoAlign | E
 inline void mul(MatDoub_O &v, MatDoub_I &v1, MatDoub_I &v2)
 {
 	using Eigen::Map;
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (v1.ncols() != v2.nrows()) error("wrong size!");
 #endif
 	v.resize(v1);
@@ -34,7 +34,7 @@ inline void mul(MatDoub_O &v, MatDoub_I &v1, MatDoub_I &v2)
 inline void mul(MatComp_O &v, MatComp_I &v1, MatComp_I &v2)
 {
 	using Eigen::Map;
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (v1.ncols() != v2.nrows()) error("wrong size!");
 #endif
 	v.resize(v1);

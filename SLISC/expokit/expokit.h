@@ -8,7 +8,7 @@ template <class T>
 inline void expGv(VecComp_O v_out, const MatCoo<T> &G, VecComp_I v_in, Doub_I t, Int_I Nbase)
 {
 	const tol = 0.; // set tolerance here
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (G.nrows() != G.ncols() || G.ncols() != v_in.size())
 		error("wrong shape!");
 #endif
@@ -25,7 +25,7 @@ template <class T>
 inline void expHv(VecComp_O v_out, const MatCooH<T> &H, VecComp_I v_in, Doub_I t, Int_I Nbase)
 {
 	const tol = 0.; // set tolerance here
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (H.nrows() != H.ncols() || H.ncols() != v_in.size())
 		error("wrong shape!");
 #endif

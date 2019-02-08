@@ -80,7 +80,7 @@ inline void Vbase<T>::operator<<(Vbase &rhs)
 template <class T>
 inline T & Vbase<T>::operator[](Long_I i)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 if (i<0 || i>=m_N)
 	error("Vbase subscript out of bounds");
 #endif
@@ -90,7 +90,7 @@ if (i<0 || i>=m_N)
 template <class T>
 inline const T & Vbase<T>::operator[](Long_I i) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_N)
 		error("Vbase subscript out of bounds");
 #endif
@@ -127,7 +127,7 @@ inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
 template <class T>
 inline T & Vbase<T>::end(Long_I i)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > m_N)
 		error("index out of bound");
 #endif
@@ -137,7 +137,7 @@ inline T & Vbase<T>::end(Long_I i)
 template <class T>
 inline const T & Vbase<T>::end(Long_I i) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > m_N)
 		error("index out of bound");
 #endif

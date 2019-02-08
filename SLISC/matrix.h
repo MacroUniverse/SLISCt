@@ -134,7 +134,7 @@ inline void Matrix<T>::operator<<(Matrix<T> &rhs)
 template <class T>
 inline T& Matrix<T>::operator()(Long_I i, Long_I j)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
 		error("Matrix subscript out of bounds");
 #endif
@@ -144,7 +144,7 @@ inline T& Matrix<T>::operator()(Long_I i, Long_I j)
 template <class T>
 inline const T & Matrix<T>::operator()(Long_I i, Long_I j) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
 		error("Matrix subscript out of bounds");
 #endif
@@ -154,7 +154,7 @@ inline const T & Matrix<T>::operator()(Long_I i, Long_I j) const
 template <class T>
 inline const T * Matrix<T>::ptr(Long_I i) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr)
 		error("Matrix subscript out of bounds");
 #endif
@@ -164,7 +164,7 @@ inline const T * Matrix<T>::ptr(Long_I i) const
 template <class T>
 inline T * Matrix<T>::ptr(Long_I i)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr)
 		error("Matrix subscript out of bounds");
 #endif

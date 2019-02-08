@@ -98,7 +98,7 @@ inline void Mat3d<T>::resize(const Mat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.
 template <class T>
 inline T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		error("Matrix subscript out of bounds");
 #endif
@@ -108,7 +108,7 @@ inline T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
 template <class T>
 inline const T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		error("Matrix subscript out of bounds");
 #endif
@@ -118,7 +118,7 @@ inline const T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 template <class T>
 inline const T * Mat3d<T>::ptr(Long_I i, Long_I j) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
 		error("Matrix subscript out of bounds");
 #endif
@@ -128,7 +128,7 @@ inline const T * Mat3d<T>::ptr(Long_I i, Long_I j) const
 template <class T>
 inline T *Mat3d<T>::ptr(Long_I i, Long_I j)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
 		error("Matrix subscript out of bounds");
 #endif

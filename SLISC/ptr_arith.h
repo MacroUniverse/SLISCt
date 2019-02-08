@@ -932,14 +932,14 @@ inline void flip(T *v, Long_I N)
 		swap(v[i], v[N - i - 1]);
 }
 
-template <class T, class T1, SLISC_IF((is_scalar<T>() && is_scalar<T1>()))>
+template <class T, class T1, SLS_IF(is_scalar<T>() && is_scalar<T1>())>
 inline void flip(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] = v1[N - i - 1];
 }
 
-template <class T, SLISC_IF((is_scalar<T>::value))>
+template <class T, SLS_IF(is_scalar<T>())>
 inline void linspace_vss(T *v, const T &first, const T &last, Long N)
 {
 	T delta = (last - first) / (N - 1);

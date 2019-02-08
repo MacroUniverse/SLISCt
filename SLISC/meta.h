@@ -4,8 +4,10 @@
 #include <type_traits>
 #include "global.h"
 
-// must use SLISC_IF(()) 
-#define SLISC_IF(cond) typename std::enable_if<cond>::type* = 0
+// using variable argument macro to allow parsing of ",".
+// otherwise, "," will separate a single argument into multiple arguments
+#define SLS_IF_HELPER(cond) typename std::enable_if<(bool)(cond)>::type* = 0
+#define SLS_IF(...) SLS_IF_HELPER(__VA_ARGS__)
 
 namespace slisc {
 
@@ -176,7 +178,7 @@ struct Sconst
 // Aconst<T, val>::value is a constexpr variable of arithmetic type
 // when T is complex<value_type>, CONST<T, val>::value is value_type
 // will not instanciate if T is illegal
-template <class T, Int val, SLISC_IF((is_arithmetic<typename rm_complex<T>::type>::value))>
+template <class T, Int val, SLS_IF(is_arithmetic<typename rm_complex<T>::type>())>
 struct Aconst
 {
 	static constexpr typename rm_complex<T>::type value = val;
@@ -184,7 +186,7 @@ struct Aconst
 
 // Cconst<T, real, imag>::value, where T must be std::complex<>, is a constexpr variable of complex<>
 // will not instanciate if T is illegal
-template <class T, Int real, Int imag = 0, SLISC_IF((is_fp_comp<T>::value))>
+template <class T, Int real, Int imag = 0, SLS_IF(is_fp_comp<T>())>
 struct Cconst
 {
 	static constexpr T value = T(real, imag);

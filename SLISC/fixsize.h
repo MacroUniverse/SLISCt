@@ -33,7 +33,7 @@ public:
 template <class T, Long N>
 inline T & FixVec<T, N>::operator[](Long_I i)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=N)
 		error("FixVec subscript out of bounds");
 #endif
@@ -43,7 +43,7 @@ inline T & FixVec<T, N>::operator[](Long_I i)
 template <class T, Long N>
 inline const T & FixVec<T, N>::operator[](Long_I i) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=N)
 		error("FixVec subscript out of bounds");
 #endif
@@ -79,7 +79,7 @@ inline FixVec<T, N> & FixVec<T, N>::operator=(const FixVec<T1, N> &rhs)
 template <class T, Long N>
 inline T & FixVec<T, N>::end(Long_I i)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > N)
 		error("index out of bound");
 #endif
@@ -89,7 +89,7 @@ inline T & FixVec<T, N>::end(Long_I i)
 template <class T, Long N>
 inline const T & FixVec<T, N>::end(Long_I i) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > N)
 		error("index out of bound");
 #endif
@@ -158,7 +158,7 @@ inline FixCmat<T, Nr, Nc> & FixCmat<T, Nr, Nc>::operator=(const T &rhs)
 template <class T, Long Nr, Long Nc>
 inline T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= Nr || j < 0 || j >= Nc)
 		error("Matrix subscript out of bounds");
 #endif
@@ -168,7 +168,7 @@ inline T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j)
 template <class T, Long Nr, Long Nc>
 inline const T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= Nr || j < 0 || j >= Nc)
 		error("Matrix subscript out of bounds");
 #endif

@@ -107,7 +107,7 @@ inline void Cmat<T>::operator<<(Cmat<T> &rhs)
 template <class T>
 inline T & Cmat<T>::operator()(Long_I i, Long_I j)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
 		error("Matrix subscript out of bounds");
 #endif
@@ -117,7 +117,7 @@ inline T & Cmat<T>::operator()(Long_I i, Long_I j)
 template <class T>
 inline const T & Cmat<T>::operator()(Long_I i, Long_I j) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
 		error("Matrix subscript out of bounds");
 #endif

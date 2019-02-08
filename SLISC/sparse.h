@@ -48,7 +48,7 @@ template <class T, class T1, class T2>
 void mul(Cmat<T> &v, const Cmat<T1> &v1, const Diag<T2> &v2)
 {
 	Long Nr = v1.nrows(), Nc = v1.ncols();
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (Nc != v2.size()) error("illegal shape!");
 #endif
 	v.resize(Nr, v2.size());
@@ -134,7 +134,7 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 template <class T>
 inline T& MatCoo<T>::ref(Long_I i, Long_I j)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
 		error("MatCoo::operator()(i,j): index out of bounds!");
 #endif
@@ -150,7 +150,7 @@ inline T& MatCoo<T>::ref(Long_I i, Long_I j)
 template <class T>
 inline const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
 		error("MatCoo::operator()(i,j): index out of bounds!");
 #endif
@@ -165,7 +165,7 @@ inline const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
 template <class T>
 inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
 		error("MatCoo::push(): index out of bounds!");
 #endif
@@ -200,7 +200,7 @@ inline void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
 template <class T>
 inline T & MatCoo<T>::operator()(Long_I ind)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
 		error("MatCoo::operator(): subscript out of bounds!");
 #endif
@@ -210,7 +210,7 @@ inline T & MatCoo<T>::operator()(Long_I ind)
 template <class T>
 inline const T & MatCoo<T>::operator()(Long_I ind) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
 		error("MatCoo::operator() const: subscript out of bounds!");
 #endif
@@ -220,7 +220,7 @@ inline const T & MatCoo<T>::operator()(Long_I ind) const
 template <class T>
 inline Long MatCoo<T>::row(Long_I ind) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
 		error("MatCoo::row() subscript out of bounds");
 #endif
@@ -230,7 +230,7 @@ inline Long MatCoo<T>::row(Long_I ind) const
 template <class T>
 inline Long MatCoo<T>::col(Long_I ind) const
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (ind < 0 || ind >= m_Nnz)
 		error("MatCoo::col() subscript out of bounds");
 #endif
@@ -240,7 +240,7 @@ inline Long MatCoo<T>::col(Long_I ind) const
 template <class T>
 inline void MatCoo<T>::trim(Long_I Nnz)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (Nnz < 0)
 		error("MatCoo::trim() negative input!");
 #endif
@@ -291,7 +291,7 @@ public:
 template <class T>
 MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc) : Base(Nr, Nc)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (Nr != Nc) error("must be square matrix!");
 #endif
 }
@@ -299,7 +299,7 @@ MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc) : Base(Nr, Nc)
 template <class T>
 MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (Nr != Nc) error("must be square matrix!");
 #endif
 }
@@ -348,7 +348,7 @@ void MatCooH<T>::set(const T &s, Long_I i, Long_I j)
 template <class T> template <class T1>
 void MatCooH<T>::reshape(const MatCoo<T1> &a)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (a.nrows() != a.ncols())
 		error("a is not square matrix!");
 #endif
@@ -373,7 +373,7 @@ void coo_mul(T *y, const MatCoo<T> &a, const T *x)
 template <class T, class T1, class T2>
 void mul(Vector<T> &y, const MatCoo<T1> &a, const Vector<T2> &x)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	y.resize(a.nrows());
@@ -400,7 +400,7 @@ void cooh_mul(T *y, const MatCooH<T1> &a, const T2 *x)
 template <class T, class T1, class T2>
 void mul(Vector<T> &y, const MatCooH<T1> &a, const Vector<T2> &x)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	y.resize(a.nrows());
@@ -415,7 +415,7 @@ inline void operator*=(MatCoo<T> &v, const T1 &s)
 template <class T, class T1>
 inline void operator-=(Matrix<T> &v, const MatCoo<T1> &v1)
 {
-#ifdef _CHECKBOUNDS_
+#ifdef SLS_CHECK_BOUNDS
 	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	for (Long i = 0; i < v1.size(); ++i) {

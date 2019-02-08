@@ -19,7 +19,7 @@ constexpr const auto &MAX(const T1 &a, const T2 &b)
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
-template<class T, SLISC_IF((is_arithmetic<T>::value))>
+template<class T, SLS_IF(is_arithmetic<T>::value)>
 constexpr const T ABS2(const T &a) { return a * a; }
 
 template<class T>
