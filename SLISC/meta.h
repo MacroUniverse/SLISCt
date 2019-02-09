@@ -59,7 +59,7 @@ using std::is_signed;
 template<class T> struct is_fp_comp : false_type {};
 
 template<class T>
-struct is_fp_comp<std::complex<T>> :
+struct is_fp_comp<complex<T>> :
 	integral_constant<bool, is_floating_point<T>::value> {};
 
 // map each scalr type to a unique number
@@ -71,18 +71,18 @@ struct is_fp_comp<std::complex<T>> :
 template <class T>
 constexpr Int type_num()
 {
-	if constexpr (is_integral<T>()) {
+	if (is_integral<T>()) {
 		if (is_same<T, Bool>()) return 0;
 		if (is_same<T, Char>()) return 1;
 		if (is_same<T, Int>()) return 2;
 		if (is_same<T, Llong>()) return 3;
 	}
-	else if constexpr (is_floating_point<T>()) {
+	else if (is_floating_point<T>()) {
 		if (is_same<T, float>()) return 20;
 		if (is_same<T, Doub>()) return 21;
 		if (is_same<T, Ldoub>()) return 22;
 	}
-	else if constexpr (is_fp_comp<T>()) {
+	else if (is_fp_comp<T>()) {
 		if (is_same<T, std::complex<float>>()) return 40;
 		if (is_same<T, Comp>()) return 41;
 		if (is_same<T, std::complex<Ldoub>>()) return 42;
@@ -210,45 +210,45 @@ struct Cconst
 // === type mapping ===
 
 // implementation of promo_type<T,U>
-template <class T, class U>
-constexpr auto promo_type0()
-{
-	static_assert(type_num<T>() != -1 && type_num<U>() != -1, "unhandled type!");
+template <class T1, class T2,
+	SLS_IF(is_real<T1>() && is_real<T2>() && type_num<T1>() >= type_num<T2>())>
+auto promo_type_fun() { return T1(); }
 
-	constexpr Int Tnum = type_num<T>(), Unum = type_num<U>();
-	if constexpr (Tnum < 40 && Unum < 40 || Tnum >= 40 && Unum >= 40) {
-		// none are complex or both are complex, choose the larger type
-		if constexpr (Tnum > Unum)
-			return T();
-		else
-			return U();
-	}
-	else {
-		// one complex one not
-		if constexpr (Tnum < Unum) {
-			// U is complex
-			if constexpr (Unum - Tnum >= 20)
-				return U(); // U is lossless
-			else
-				return std::complex<T>(); // need a larger complex
-		}
-		else {
-			// T is complex
-			if constexpr (Tnum - Unum >= 20)
-				return T(); // T is lossless
-			else
-				return std::complex<U>(); // need a larger complex
-		}
-	}
-}
+template <class T1, class T2,
+	SLS_IF(is_real<T1>() && is_real<T2>() && type_num<T1>() < type_num<T2>())>
+auto promo_type_fun() { return T2(); }
+
+template <class T1, class T2,
+	SLS_IF(is_fp_comp<T1>() && is_fp_comp<T2>() && type_num<T1>() >= type_num<T2>())>
+auto promo_type_fun() { return T1(); }
+
+template <class T1, class T2,
+	SLS_IF(is_fp_comp<T1>() && is_fp_comp<T2>() && type_num<T1>() < type_num<T2>())>
+auto promo_type_fun() { return T2(); }
+
+template <class Tr, class Tc,
+	SLS_IF(is_real<Tr>() && is_fp_comp<Tc>() && type_num<Tc>() - type_num<Tr>() >= 20)>
+auto promo_type_fun() { return Tc(); }
+
+template <class Tc, class Tr,
+	SLS_IF(is_real<Tr>() && is_fp_comp<Tc>() && type_num<Tc>() - type_num<Tr>() >= 20)>
+auto promo_type_fun() { return Tc(); }
+
+template <class Tr, class Tc,
+	SLS_IF(is_real<Tr>() && is_fp_comp<Tc>() && type_num<Tc>() - type_num<Tr>() < 20)>
+auto promo_type_fun() { return complex<Tr>(); }
+
+template <class Tc, class Tr,
+	SLS_IF(is_real<Tr>() && is_fp_comp<Tc>() && type_num<Tc>() - type_num<Tr>() < 20)>
+auto promo_type_fun() { return complex<Tr>(); }
 
 // promo_type<T,U>::type is the smallest type that T, U can losslessly converted to
 // (including from integer to floating point conversion)
 // will be used as the return type of operator+-*/(T t, U u), etc.
 // e.g. Bool + Doub = Doub; Int + Comp = Comp; Doub + complex<float> = Comp;
 // see promo_type0() for detail
-template <class T, class U> struct promo_type
-{ using type = decltype(promo_type0<T, U>()); };
+template <class T1, class T2> struct promo_type
+{ using type = decltype(promo_type_fun<T1, T2>()); };
 
 // for T = bool, character types
 // to_num_t<T>::type is Int

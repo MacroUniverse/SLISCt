@@ -80,13 +80,27 @@ inline void test_meta()
 
 	// promo_type
 	if (!is_same<promo_type<Bool, Char>::type, Char>()) error("failed!");
+	if (!is_same<promo_type<Char, Bool>::type, Char>()) error("failed!");
 	if (!is_same<promo_type<Char, Int>::type, Int>()) error("failed!");
+	if (!is_same<promo_type<Int, Char>::type, Int>()) error("failed!");
 	if (!is_same<promo_type<Int, Long>::type, Long>()) error("failed!");
-	if (!is_same<promo_type<Long, float>::type, float>()) error("failed!");
-	if (!is_same<promo_type<float, Doub>::type, Doub>()) error("failed!");
+	if (!is_same<promo_type<Long, Int>::type, Long>()) error("failed!");
+	if (!is_same<promo_type<Long, Float>::type, Float>()) error("failed!");
+	if (!is_same<promo_type<Float, Long>::type, Float>()) error("failed!");
+	if (!is_same<promo_type<Float, Doub>::type, Doub>()) error("failed!");
+	if (!is_same<promo_type<Doub, Float>::type, Doub>()) error("failed!");
 	if (!is_same<promo_type<Doub, Ldoub>::type, Ldoub>()) error("failed!");
+	if (!is_same<promo_type<Ldoub, Doub>::type, Ldoub>()) error("failed!");
 	if (!is_same<promo_type<Doub, Comp>::type, Comp>()) error("failed!");
-	if (!is_same<promo_type<std::complex<float>, Comp>::type, Comp>()) error("failed!");
+	if (!is_same<promo_type<Comp, Doub>::type, Comp>()) error("failed!");
+	if (!is_same<promo_type<Fcomp, Comp>::type, Comp>()) error("failed!");
+	if (!is_same<promo_type<Comp, Fcomp>::type, Comp>()) error("failed!");
+	if (!is_same<promo_type<Doub, Fcomp>::type, Comp>()) error("failed!");
+	if (!is_same<promo_type<Fcomp, Doub>::type, Comp>()) error("failed!");
+	if (!is_same<promo_type<Ldoub, Comp>::type, Lcomp>()) error("failed!");
+	if (!is_same<promo_type<Comp, Ldoub>::type, Lcomp>()) error("failed!");
+	if (!is_same<promo_type<Ldoub, Fcomp>::type, Lcomp>()) error("failed!");
+	if (!is_same<promo_type<Fcomp, Ldoub>::type, Lcomp>()) error("failed!");
 
 	// to_num_t
 	if (!is_same<num_type<Bool>::type, Int>()) error("failed!");

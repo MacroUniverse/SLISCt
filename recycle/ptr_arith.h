@@ -828,6 +828,7 @@ inline Long sum_v(const Bool *v, Long_I N)
 	Long s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
+	return s;
 }
 
 inline Int sum_v(const Int *v, Long_I N)
@@ -835,6 +836,7 @@ inline Int sum_v(const Int *v, Long_I N)
 	Int s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
+	return s;
 }
 
 inline Long sum_v(const Long *v, Long_I N)
@@ -842,6 +844,7 @@ inline Long sum_v(const Long *v, Long_I N)
 	Long s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
+	return s;
 }
 
 inline Float sum_v(const Float *v, Long_I N)
@@ -849,6 +852,7 @@ inline Float sum_v(const Float *v, Long_I N)
 	Float s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
+	return s;
 }
 
 inline Doub sum_v(const Doub *v, Long_I N)
@@ -856,6 +860,7 @@ inline Doub sum_v(const Doub *v, Long_I N)
 	Doub s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
+	return s;
 }
 
 inline Comp sum_v(const Comp *v, Long_I N)
@@ -863,6 +868,7 @@ inline Comp sum_v(const Comp *v, Long_I N)
 	Comp s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
+	return s;
 }
 
 // s = max(v)
