@@ -43,9 +43,20 @@ constexpr Doub SIGN(Doub_I &a, Float_I &b)
 constexpr Float SIGN(Float_I &a, Doub_I &b)
 { return 0. <= b ? (0.f <= a ? a : -a) : (0.f <= a ? -a : a); }
 
-template<class T>
-inline void SWAP(T &a, T &b)
-{ error("use std::swap() instead!"); }
+// for SWAP, use std::swap instead
+
+template <class T, SLS_IF(is_floating_point<T>())>
+inline T INV(const T &x)
+{ return 1 / x; }
+
+inline Fcomp INV(Fcomp_I x)
+{ return 1.f/x; }
+
+inline Comp INV(Comp_I x)
+{ return 1./x; }
+
+inline Lcomp INV(Lcomp_I x)
+{ return 1.l/x; }
 
 // check if two scalars have the same types and values
 // const-ness and reference are ignored

@@ -62,6 +62,37 @@ template<class T>
 struct is_fp_comp<complex<T>> :
 	integral_constant<bool, is_floating_point<T>::value> {};
 
+template<class T>
+struct is_Bool : integral_constant<Bool, is_same<T, Bool>()> {};
+
+template<class T>
+struct is_Char : integral_constant<Bool, is_same<T, Char>()> {};
+
+
+template<class T>
+struct is_Int : integral_constant<Bool, is_same<T, Int>()> {};
+
+template<class T>
+struct is_Llong : integral_constant<Bool, is_same<T, Llong>()> {};
+
+template<class T>
+struct is_Float : integral_constant<Bool, is_same<T, Float>()> {};
+
+template<class T>
+struct is_Doub : integral_constant<Bool, is_same<T, Doub>()> {};
+
+template<class T>
+struct is_Ldoub : integral_constant<Bool, is_same<T, Ldoub>()> {};
+
+template<class T>
+struct is_Fcomp : integral_constant<Bool, is_same<T, Fcomp>()> {};
+
+template<class T>
+struct is_Comp : integral_constant<Bool, is_same<T, Comp>()> {};
+
+template<class T>
+struct is_Lcomp : integral_constant<Bool, is_same<T, Lcomp>()> {};
+
 // map each scalr type to a unique number
 // 0-19: integral types
 // 20-39: floating point types
@@ -72,20 +103,20 @@ template <class T>
 constexpr Int type_num()
 {
 	if (is_integral<T>()) {
-		if (is_same<T, Bool>()) return 0;
-		if (is_same<T, Char>()) return 1;
-		if (is_same<T, Int>()) return 2;
-		if (is_same<T, Llong>()) return 3;
+		if (is_Bool<T>()) return 0;
+		if (is_Char<T>()) return 1;
+		if (is_Int<T>()) return 2;
+		if (is_Llong<T>()) return 3;
 	}
 	else if (is_floating_point<T>()) {
-		if (is_same<T, float>()) return 20;
-		if (is_same<T, Doub>()) return 21;
-		if (is_same<T, Ldoub>()) return 22;
+		if (is_Float<T>()) return 20;
+		if (is_Doub<T>()) return 21;
+		if (is_Ldoub<T>()) return 22;
 	}
 	else if (is_fp_comp<T>()) {
-		if (is_same<T, std::complex<float>>()) return 40;
-		if (is_same<T, Comp>()) return 41;
-		if (is_same<T, std::complex<Ldoub>>()) return 42;
+		if (is_Fcomp<T>()) return 40;
+		if (is_Comp<T>()) return 41;
+		if (is_Lcomp<T>()) return 42;
 	}
 	return -1;
 }
