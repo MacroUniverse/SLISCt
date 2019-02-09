@@ -309,7 +309,7 @@ template <class T>
 inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
 	if (i > j) {
-		if constexpr (is_fp_comp<T>())
+		if constexpr (is_comp<T>())
 			return conj(Base::operator()(j, i));
 		else
 			return Base::operator()(j, i);

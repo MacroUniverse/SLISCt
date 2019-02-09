@@ -14,14 +14,6 @@ void test_scalar_arith()
 	if (is_equiv(3., 3)) error("failed!");
 	if (is_equiv(float(3.1), 3.1)) error("failed!");
 
-	// CONST<T>() CONSTC<T>()
-	if (!is_equiv(Aconst<Int, 0>::value, 0)) error("failed!");
-	if (!is_equiv(Aconst<Llong, 1>::value, Llong(1))) error("failed!");
-	if (!is_equiv(Aconst<float, -9>::value, float(-9))) error("failed!");
-	if (!is_equiv(Aconst<Doub, -1>::value, -1.)) error("failed!");
-	if (!is_equiv(Aconst<Comp, 3>::value, 3.)) error("failed!");
-	if (!is_equiv(Cconst<Comp, -2, -3>::value, Comp(-2,-3))) error("failed!");
-
 	// to_num(s)
 	if (!is_equiv(to_num(false), 0)) error("failed!");
 	if (!is_equiv(to_num(true), 1)) error("failed!");

@@ -149,10 +149,11 @@ inline const T & Vbase<T>::end(Long_I i) const
 template <class T>
 class Vector : public Vbase<T>
 {
-public:
+protected:
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;
+public:
 	using Base::resize;
 	using Base::operator=;
 	Vector() {}

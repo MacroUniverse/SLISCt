@@ -66,9 +66,9 @@ inline const auto max(const T &v)
 { return max_v(v.ptr(), v.size()); }
 
 // return max(abs(a(:))
-template <class T>
-inline const auto max_abs(const T &v, SLS_IF(is_dense<T>()))
-{ max_abs_v(v.ptr(), v.size()); }
+template <class T, SLS_IF(is_dense<T>())>
+inline const auto max_abs(const T &v)
+{ return max_abs_v(v.ptr(), v.size()); }
 
 template <class T, SLS_IF(is_dense<T>())>
 inline const auto max(Long_O ind, const T &v)

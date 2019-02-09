@@ -179,6 +179,14 @@ inline void test_arithmetic()
 		if (abs(s -15.4) > 1e-14) error("failed!");
 	}
 
+	// max_abs
+	{
+		Vector<Fcomp> x(4); x[0] = Fcomp(3, 3); x[1] = Fcomp(5, 12); x[2] = Fcomp(-1, -1);
+		if (!is_equiv(max_abs(x), 13.f)) error("failed!");
+		VecComp y(4); y[0] = Comp(3, 3); y[1] = Comp(5, 12); y[2] = Comp(-1, -1);
+		if (!is_equiv(max_abs(y), 13.)) error("failed!");
+	}
+
 	// matrix-vector multiplication
 	{
 		// MatComp 

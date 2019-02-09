@@ -490,11 +490,10 @@ inline T max_abs(const T *v, Long_I N)
 	return s;
 }
 
-TODO
-
-inline Doub max_abs_v(const Comp *v, Long_I N)
+template <class Tc, SLS_IF(is_comp<Tc>())>
+inline rm_comp<Tc> max_abs_v(const Tc *v, Long_I N)
 {
-	Doub s = abs(v[0]), val;
+	rm_comp<Tc> s = abs(v[0]), val;
 	for (Long i = 1; i < N; ++i) {
 		val = abs(v[i]);
 		if (s < val)
