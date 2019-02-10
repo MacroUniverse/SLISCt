@@ -28,7 +28,13 @@ void test_scalar_arith()
 	if (!ispow2(4) || !ispow2(32) || !ispow2(1024) || !ispow2(65536)
 		|| ispow2(12) || ispow2(48))
 		error("failed!");
+	if (mod(7, 4) != 3 || mod(6, 4) != 2 || mod(5, 4) != 1 || mod(4, 4) != 0)
+		error("failed!");
+	if (mod(3, 4) != 3 || mod(2, 4) != 2 || mod(1, 4) != 1 || mod(0, 4) != 0)
+		error("failed!");
 	if (mod(-1, 4) != 3 || mod(-2, 4) != 2 || mod(-3, 4) != 1 || mod(-4, 4) != 0)
+		error("failed!");
+	if (mod(-5, 4) != 3 || mod(-6, 4) != 2 || mod(-7, 4) != 1 || mod(-8, 4) != 0)
 		error("failed!");
 
 	// operator+,-,*,/ between floatig point std::complex<> and intrinsic types

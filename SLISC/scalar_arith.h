@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include "global.h"
+#include "meta.h"
 #include "complex_arith.h"
 
 namespace slisc {
@@ -19,11 +20,11 @@ constexpr const auto &MAX(const T1 &a, const T2 &b)
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
-template<class T, SLS_IF(is_arithmetic<T>::value)>
+template<class T, SLS_IF(is_floating_point<T>())>
 constexpr const T ABS2(const T &a) { return a * a; }
 
-template<class T>
-constexpr const T ABS2(const complex<T> &a) { return SQR(abs(a)); }
+template<class T, SLS_IF(is_comp<T>())>
+constexpr const rm_comp<T> ABS2(const T &a) { return SQR(real(a)) + SQR(imag(a)); }
 
 constexpr Float SIGN(Float_I s)
 { return s > 0.f ? 1.f : (s < 0.f ? -1.f : 0.f); }
@@ -100,6 +101,7 @@ inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 // floating point functions
 
 using std::swap; using std::abs; using std::real; using std::imag;
+using std::conj;
 using std::sqrt; using std::sin; using std::cos; using std::tan;
 using std::exp; using std::log; using std::log10;
 using std::expm1; using std::log1p; using std::hypot;

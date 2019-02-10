@@ -1,6 +1,6 @@
 // low-level arithmetic
 // use pointers for array input/output
-
+#pragma once
 #include "scalar_arith.h"
 
 namespace slisc {
@@ -160,8 +160,19 @@ inline void divide_equals_vv(T *v, const T1 *v1, Long_I N)
 		v[i] /= v1[i];
 }
 
-// v = mod(v, s)
+// mod(v, s)
+template <class T, class T1, SLS_IF(
+	is_Char<T>() && is_Char<T1>() ||
+	is_Int<T>() && is_Int<T1>() ||
+	is_Llong<T>() && is_Llong<T1>()
+)>
+inline void mod_vs(T *v, const T1 &s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = mod(v[i], s);
+}
 
+// v = mod(v, s)
 template <class T, class T1, class T2, SLS_IF(
 	is_Char<T>() && is_Char<T1>() && is_Char<T2>() ||
 	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
@@ -179,7 +190,7 @@ template <class T, class T1, SLS_IF(
 	is_Int<T>() && is_Int<T1>() ||
 	is_Llong<T>() && is_Llong<T1>()
 )>
-inline void rem_vs(T *v, const T &s, Long_I N)
+inline void rem_vs(T *v, const T1 &s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] %= s;
@@ -332,11 +343,23 @@ inline void times_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
 }
 
 // v = v / s
+
+template <class T, class T1, class T2, SLS_IF(
+	is_Char<T>() && is_Char<T1>() && is_Char<T2>() ||
+	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
+	is_Llong<T>() && is_Llong<T1>() && is_Llong<T2>()
+)>
+inline void divide_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = v1[i] / s;
+}
+
 template <class T, class T1, class T2, SLS_IF(
 	is_Float<T>() && is_Float<T1>() && is_Float<T2>() ||
 	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
 	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>() ||
+	is_Comp<T>() && is_Comp<T1>() && is_Doub<T2>() ||
 	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>()
 )>
 inline void divide_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
@@ -346,6 +369,8 @@ inline void divide_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 
 // v = s / v
 template <class T, class T1, class T2, SLS_IF(
+	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
+	is_Llong<T>() && is_Llong<T1>() && is_Llong<T2>() ||
 	is_Float<T>() && is_Float<T1>() && is_Float<T2>() ||
 	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
 	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
@@ -449,9 +474,8 @@ inline void to_comp_vv(T *v, const T1 *v1, Long_I N)
 
 // s = sum(v)
 
-template <class T, class T1, SLS_IF(
-	is_Llong<Long>() &&
-	(is_Bool<T>() || is_Int<T>() || is_Llong<T>())
+template <class T, SLS_IF(
+	is_Llong<Long>() && is_integral<T>()
 )>
 inline Long sum_v(const T *v, Long_I N)
 {
@@ -462,7 +486,7 @@ inline Long sum_v(const T *v, Long_I N)
 }
 
 template <class T, SLS_IF(
-	is_Float<T>() || is_Doub<T>() || is_Comp<T>()
+	is_floating_point<T>() || is_comp<T>()
 )>
 inline T sum_v(const T *v, Long_I N)
 {
@@ -474,7 +498,7 @@ inline T sum_v(const T *v, Long_I N)
 
 // s = max(v)
 
-template <class T, SLS_IF(is_real<T>())>
+template <class T, SLS_IF(is_real<T>() && !is_Bool<T>())>
 inline T max_v(const T *v, Long_I N)
 {
 	T s = v[0], val;
@@ -487,7 +511,7 @@ inline T max_v(const T *v, Long_I N)
 
 // s = max_abs(v)
 
-template <class T, SLS_IF(is_scalar<T>())>
+template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
 inline rm_comp<T> max_abs_v(const T *v, Long_I N)
 {
 	rm_comp<T> s = abs(v[0]), val;
@@ -502,7 +526,7 @@ inline rm_comp<T> max_abs_v(const T *v, Long_I N)
 // conj(v)
 
 template <class T, SLS_IF(is_comp<T>())>
-inline void conj(T *v, Long_I N)
+inline void conj_v(T *v, Long_I N)
 {
 	rm_comp<T> *p = (rm_comp<T> *)v;
 	for (Long i = 1; i < 2*N; i += 2)
@@ -516,9 +540,9 @@ template <class T1, class T2, SLS_IF(
 inline auto dot_vv(const T1 *v1, const T2 *v2, Long_I N)
 {
 	if (N <= 0) error("illegal length!");
-	auto s = v1[0] * v2[0];
+	auto s = conj(v1[0]) * v2[0];
 	for (Long i = 1; i < N; ++i) {
-		s += v1[i] * v2[i];
+			s += conj(v1[i]) * v2[i];
 	}
 	return s;
 }

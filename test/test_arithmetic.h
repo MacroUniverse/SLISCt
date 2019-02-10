@@ -1,4 +1,5 @@
 #include "../SLISC/arithmetic.h"
+#include "../SLISC/disp.h"
 
 inline void test_arithmetic()
 {
@@ -6,21 +7,82 @@ inline void test_arithmetic()
 
 	// test shape_cmp
 	{
-		if (shape_cmp(MatComp(3,4), VecInt(12))
-			|| !shape_cmp(Mat3Doub(7, 3, 5), Mat3Comp(7, 3, 5))
-			|| !shape_cmp(MatDoub(3, 4), CmatDoub(3, 4))
-			|| !shape_cmp(CmatInt(3, 4), MatChar(3, 4)))
-			error("failed!");
+		if (shape_cmp(MatComp(3,4), VecInt(12))) error("failed!");
+		if (!shape_cmp(Mat3Doub(7, 3, 5), Mat3Comp(7, 3, 5))) error("failed!");
+		if (!shape_cmp(MatDoub(3, 4), CmatDoub(3, 4))) error("failed!");
+		if (!shape_cmp(CmatInt(3, 4), MatChar(3, 4))) error("failed!");
+		if (!shape_cmp(CmatInt(3, 4), FixCmat<Char, 3, 4>())) error("failed!");
 	}
 
-	// test +=, -=, *=, /=
+	// sum, max, max_abs, norm2
+	{
+		Long ind;
+		VecBool a(4); a[0] = 1; a[1] = 0; a[2] = 1; a[3] = 1;
+		if (!is_equiv(sum(a), Long(3))) error("failed!");
+
+		VecInt b(4); b[0] = 2; b[1] = 3; b[2] = -1; b[3] = 5;
+		if (!is_equiv(sum(b), Long(9))) error("failed!");
+		if (!is_equiv(max(b), 5)) error("failed!");
+		max(ind, b); if (ind != 3) error("failed!");
+		if (!is_equiv(max_abs(b), 5)) error("failed!");
+
+		VecDoub c; linspace(c, 1., 10., 10);
+		if (!is_equiv(sum(c), 55.)) error("failed!");
+		if (!is_equiv(max(c), 10.)) error("failed!");
+		max(ind, c); if (ind != 9) error("failed!");
+		if (!is_equiv(max_abs(c), 10.)) error("failed!");
+		if (!is_equiv(norm2(c), 385.)) error("failed!");
+
+		MatComp d(3, 3); linspace(d, Comp(1., -1.), Comp(9., -9.));
+		if (!is_equiv(sum(d), Comp(45.,-45.))) error("failed!");
+		if (!is_equiv(max_abs(d), abs(Comp(9,9)))) error("failed!");
+		if (!is_equiv(norm2(d), 285.*2)) error("failed!");
+	}
+
+	// flip
+	{
+		VecInt v, v1, v2;
+		linspace(v, -2, 3, 6); v2 = v;
+		linspace(v1, 3, -2, 6);
+		flip(v);
+		if (v != v1) error("failed!");
+		flip(v, v1);
+		if (v != v2) error("failed!");
+	}
+
+	// trans
+	{
+		CmatComp a; linspace(a, Comp(0, 0), Comp(8, 8), 3, 3);
+		MatComp b; linspace(b, Comp(0, 0), Comp(8, 8), 3, 3);
+		trans(a);
+		if (a != b) error("failed!");
+
+		linspace(a, Comp(0, 0), Comp(5, 5), 2, 3);
+		linspace(b, Comp(0, 0), Comp(5, 5), 3, 2);
+		MatComp c; trans(c, a);
+		if (c != b)  error("failed!");
+	}
+
+	// her
+	{
+		CmatComp a; linspace(a, Comp(0, 0), Comp(8, 8), 3, 3);
+		MatComp b; linspace(b, Comp(0, 0), Comp(8, -8), 3, 3);
+		her(a);
+		if (a != b) error("failed!");
+
+		linspace(a, Comp(0, 0), Comp(5, 5), 2, 3);
+		linspace(b, Comp(0, 0), Comp(5, -5), 3, 2);
+		MatComp c; her(c, a);
+		if (c != b)  error("failed!");
+	}
+
+	// +=, -=, *=, /=
 	{
 		VecInt vLlong(3), vLlong1(3), vLlong2(3), vLlong3(3);
 		VecDoub vDoub(3), vDoub1(3), vDoub2(3), vDoub3(3);
 		VecComp vComp(3), vComp1(3), vComp2(3), vComp3(3);
 
-		// vector ?= scalar
-
+		// v ?= s
 		vLlong = 1;
 		vLlong += 1;
 		if (vLlong != 2) error("failed!");
@@ -51,7 +113,7 @@ inline void test_arithmetic()
 		vComp /= 2.;
 		if (vComp != Comp(1., 1.)) error("failed!");
 
-		// vector ?= vector
+		// v ?= v
 
 		vLlong = 1; vLlong1 = 1;
 		vLlong += vLlong1;
@@ -87,15 +149,38 @@ inline void test_arithmetic()
 		if (vComp != Comp(1., 1.)) error("failed!");
 	}
 
-	// test plus(), minus(), Times(), devide()
+	// rem(), mod()
+	{
+		VecInt v, v1;
+		linspace(v, -20, 19, 40); linspace(v1, 0, 39, 40);
+		mod(v, 5); rem(v1, 5);
+		if (v != v1) error("failed!");
+	}
+
+	{
+		VecLlong v, v1;
+		linspace(v, -20, 19, 40); linspace(v1, 0, 39, 40);
+		mod(v, 5LL); rem(v1, 5LL);
+		if (v != v1) error("failed!");
+	}
+
+	// Plus(), Minus(), Times(), Devide()
 	{
 		VecInt vLlong(3), vLlong1(3), vLlong2(3), vLlong3(3);
 		VecDoub vDoub(3), vDoub1(3), vDoub2(3), vDoub3(3);
 		VecComp vComp(3), vComp1(3), vComp2(3), vComp3(3);
 
-		// op(v, v, s)
+		// v = v ? s
+		vLlong1 = 1;
+		Plus(vLlong, vLlong1, 1);
+		if (vLlong != 2) error("failed!");
+		Minus(vLlong, vLlong1, 1);
+		if (vLlong != 0) error("failed!");
+		Times(vLlong, vLlong1, 2);
+		if (vLlong != 2) error("failed!");
+		Divide(vLlong, vLlong1, 2);
+		if (vLlong != 0) error("failed!");
 
-		// TODO: Llong version
 		vDoub1 = 1.;
 		Plus(vDoub, vDoub1, 1.);
 		if (vDoub != 2.) error("failed!");
@@ -105,14 +190,30 @@ inline void test_arithmetic()
 		if (vDoub != 2.) error("failed!");
 		Divide(vDoub, vDoub1, 2.);
 		if (vDoub != 0.5) error("failed!");
-		// TODO: Comp version
-		vDoub = 1.;
-		Plus(vComp, vDoub1, Comp(1., 1.));
-		if (vComp != Comp(2., 1.)) error("failed!");
+		
+		vComp1 = 1.;
+		Plus(vComp, vComp1, 1.);
+		if (vComp != 2.) error("failed!");
+		Minus(vComp, vComp1, 1.);
+		if (vComp != 0.) error("failed!");
+		Times(vComp, vComp1, 2.);
+		if (vComp != 2.) error("failed!");
+		Divide(vComp, vComp1, 2.);
+		if (vComp != 0.5) error("failed!");
 
-		// op(v, s, v)
+		// v = s ? v
 
-		// TODO: Llong version
+		vLlong1 = 1;
+		Plus(vLlong, 1, vLlong1);
+		if (vLlong != 2) error("failed!");
+		Minus(vLlong, 1, vLlong1);
+		if (vLlong != 0) error("failed!");
+		Times(vLlong, 2, vLlong1);
+		if (vLlong != 2) error("failed!");
+		vLlong1 = 2;
+		Divide(vLlong, 2, vLlong1);
+		if (vLlong != 1) error("failed!");
+
 		vDoub1 = 1.;
 		Plus(vDoub, 1., vDoub1);
 		if (vDoub != 2.) error("failed!");
@@ -123,12 +224,19 @@ inline void test_arithmetic()
 		vDoub1 = 2.;
 		Divide(vDoub, 2., vDoub1);
 		if (vDoub != 1.) error("failed!");
-		// TODO: Comp version
-		vDoub1 = 1.;
-		Plus(vComp, vDoub1, Comp(1., 1.));
-		if (vComp != Comp(2., 1.)) error("failed!");
 
-		// op(v, v, v)
+		vComp1 = Comp(1.,1.);
+		Plus(vComp, Comp(1., 1.), vComp1);
+		if (vComp != Comp(2.,2.)) error("failed!");
+		Minus(vComp, Comp(1.,1.), vComp1);
+		if (vComp != 0.) error("failed!");
+		Times(vComp, 2., vComp1);
+		if (vComp != Comp(2.,2.)) error("failed!");
+		vComp1 = 2.;
+		Divide(vComp, Comp(2.,2.), vComp1);
+		if (vComp != Comp(1.,1.)) error("failed!");
+
+		// v = v ? v
 
 		vLlong1 = 4; vLlong2 = 2;
 		Plus(vLlong, vLlong1, vLlong2);
@@ -162,7 +270,28 @@ inline void test_arithmetic()
 		if (vComp != Comp(0.5, 0.5)) error("failed!");
 	}
 
-	// dot product
+	TODO: v = real(v), v = imag(v)
+
+	// real(v)
+	{
+		VecComp v; linspace(v, Comp(1.1,1.1), Comp(3.3,3.3), 3);
+		VecComp v1; linspace(v1, 1.1, 3.3, 3);
+		disp(v);
+		real(v);
+		disp(v);
+		if (v != v1) error("failed!");	
+	}
+
+	// imag(v)
+	{
+		VecComp v; linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		VecComp v1; linspace(v1, 1.1, 3.3, 3);
+		real(v);
+		if (v != v1) error("failed!");
+	}
+
+	// s = dot(v, v)
+
 	{
 		VecComp x; VecDoub y;
 		linspace(x, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
@@ -177,14 +306,6 @@ inline void test_arithmetic()
 		linspace(y, 1, 3, 3);
 		auto s = dot(x, y);
 		if (abs(s -15.4) > 1e-14) error("failed!");
-	}
-
-	// max_abs
-	{
-		Vector<Fcomp> x(4); x[0] = Fcomp(3, 3); x[1] = Fcomp(5, 12); x[2] = Fcomp(-1, -1);
-		if (!is_equiv(max_abs(x), 13.f)) error("failed!");
-		VecComp y(4); y[0] = Comp(3, 3); y[1] = Comp(5, 12); y[2] = Comp(-1, -1);
-		if (!is_equiv(max_abs(y), 13.)) error("failed!");
 	}
 
 	// matrix-vector multiplication

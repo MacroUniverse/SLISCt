@@ -5,6 +5,7 @@
 #include "matrix.h"
 #include "cmat.h"
 #include "mat3d.h"
+#include "fixsize.h"
 #include "ptr_arith.h"
 
 namespace slisc {
@@ -30,24 +31,37 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 
 // operator== for slisc containers
 
-template <class T1, class T2, SLS_IF(is_contain<T1>() && is_contain<T2>())>
+template <class T1, class T2, SLS_IF(is_dense<T1>() && is_same_contain<T1,T2>())>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
 	return shape_cmp(v1, v2) && equals_to_vv(v1.ptr(), v2.ptr(), v2.size());
 }
 
-template <class Tv, class Ts, SLS_IF(is_contain<Tv>() && !is_contain<Ts>())>
+template <class T1, class T2, SLS_IF(
+	is_dense_mat<T1>() && is_dense_mat<T2>() && !is_same_contain<T1, T2>()
+)>
+Bool operator==(const T1 &v1, const T2 &v2)
+{
+	if (!shape_cmp(v1, v2)) return false;
+	for (Long i = 0; i < v1.nrows(); ++i)
+		for (Long j = 0; j < v1.ncols(); ++j)
+			if (v1(i, j) != v2(i, j))
+				return false;
+	return true;
+}
+
+template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Tv &v, const Ts &s)
 {
 	return equals_to_vs(v.ptr(), s, v.size());
 }
 
-template <class Tv, class Ts, SLS_IF(is_contain<Tv>() && !is_contain<Ts>())>
+template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Ts &s, const Tv &v)
 { return v == s; }
 
 // operator!= for slisc containers
-template <class T1, class T2, SLS_IF(is_contain<T1>() || is_contain<T2>())>
+template <class T1, class T2, SLS_IF(is_dense<T1>() || is_dense<T2>())>
 Bool operator!=(const T1 &v1, const T2 &v2)
 {
 	return !(v1 == v2);
@@ -63,7 +77,9 @@ inline const auto sum(const T &v)
 
 template <class T, SLS_IF(is_dense<T>())>
 inline const auto max(const T &v)
-{ return max_v(v.ptr(), v.size()); }
+{
+	return max_v(v.ptr(), v.size());
+}
 
 // return max(abs(a(:))
 template <class T, SLS_IF(is_dense<T>())>
@@ -102,22 +118,65 @@ const auto norm(T &v, SLS_IF(is_dense<T>()))
 
 // does not work for integers
 
-template <class T, SLS_IF(is_scalar<T>())>
-inline void linspace(Vector<T> &v, const T &first, const T &last, Llong_I N = -1)
+template <class T, class T1, class T2, SLS_IF(is_scalar<T>())>
+inline void linspace(Vector<T> &v, const T1 &first, const T2 &last, Llong_I N = -1)
 {
 	if (N >= 0) v.resize(N);
-	linspace_vss(v.ptr(), first, last, v.size());
+	linspace_vss(v.ptr(), (T)first, (T)last, v.size());
 }
 
-template <class T, SLS_IF(is_dense_mat<T>())>
-inline void linspace(T &v, const contain_type<T> &first, const contain_type<T> &last,
+template <class T, class T1, class T2, SLS_IF(is_dense_mat<T>())>
+inline void linspace(T &v, const T1 &first, const T2 &last,
 	Llong_I Nr = -1, Long_I Nc = -1)
 {
 	if (Nr >= 0 && Nc >= 0) v.resize(Nr, Nc);
-	linspace_vss(v.ptr(), first, last, v.size());
+	linspace_vss(v.ptr(), (contain_type<T>)first, (contain_type<T>)last, v.size());
 }
 
-// element-wise operators for vectors and matrices
+// === vectorized math functions ===
+
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
+void sqrt(T &v, const T1 &v1)
+{ v.resize(v1); sqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void invSqrt(T &v, const T1 &v1)
+{ v.resize(v1); invSqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void sin(T &v, const T1 &v1)
+{ v.resize(v1); sin_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void cos(T &v, const T1 &v1)
+{ v.resize(v1); cos_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void exp(T &v, const T1 &v1)
+{ v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+void tan(T &v, const T1 &v1)
+{ v.resize(v1); tan_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+// === vector/matrix arithmetics ===
+
+// flip(v)
+template <class T, SLS_IF(is_Vector<T>())>
+inline void flip(T &v)
+{
+	flip_v(v.ptr(), v.size());
+}
+
+// v = flip(v)
+template <class T, class T1, SLS_IF(
+	is_Vector<T>() && is_Vector<T1>()
+)>
+inline void flip(T &v, const T1 &v1)
+{
+	v.resize(v1);
+	flip(v.ptr(), v1.ptr(), v1.size());
+}
 
 // matrix transpose
 
@@ -154,10 +213,13 @@ inline void her(T &v)
 #ifdef SLS_CHECK_SHAPE
 	if (v.nrows() != v.ncols()) error("illegal shape!");
 #endif
-	contain_type<T> temp;
+	// diagonal
+	for (Long i = 0; i < v.nrows(); ++i)
+		v(i, i) = conj(v(i, i));
+	// off-diagonal
 	for (Long i = 0; i < v.nrows(); ++i) {
 		for (Long j = 0; j < i; ++j) {
-			temp = v(i, j);
+			contain_type<T> temp = v(i, j);
 			v(i, j) = conj(v(j, i));
 			v(j, i) = conj(temp);
 		}
@@ -166,8 +228,9 @@ inline void her(T &v)
 
 // v = her(v)
 template <class T, class T1, SLS_IF(
-	is_dense_mat<T>() && is_comp_dense<T>() &&
-	is_same_contain<T, T1>()
+	is_dense_mat<T>() && is_dense_mat<T1>() &&
+	is_comp_dense<T1>() &&
+	type_num<contain_type<T>>() >= type_num<contain_type<T1>>()
 )>
 inline void her(T &v, const T1 &v1)
 {
@@ -177,49 +240,6 @@ inline void her(T &v, const T1 &v1)
 			v(i, j) = conj(v1(j, i));
 	}
 }
-
-// flip(v)
-template <class T, SLS_IF(is_Vector<T>())>
-inline void flip(T &v)
-{ flip_v(v.ptr(), v.size()); }
-
-// v = flip(v)
-template <class T, class T1, SLS_IF(
-	is_Vector<T>() && is_Vector<T1>()
-)>
-inline void flip(T &v, const T1 &v1)
-{
-	v.resize(v1);
-	flip(v.ptr(), v1.ptr(), v1.size());
-}
-
-// === vectorized math functions ===
-
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
-void sqrt(T &v, const T1 &v1)
-{ v.resize(v1); sqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void invSqrt(T &v, const T1 &v1)
-{ v.resize(v1); invSqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void sin(T &v, const T1 &v1)
-{ v.resize(v1); sin_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void cos(T &v, const T1 &v1)
-{ v.resize(v1); cos_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void exp(T &v, const T1 &v1)
-{ v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void tan(T &v, const T1 &v1)
-{ v.resize(v1); tan_vv(v.ptr(), v1.ptr(), v1.size()); }
-
-// === matrix arithmetics ===
 
 // v += v
 
@@ -315,10 +335,18 @@ inline void rem(T &v, const T1 &v1, const Ts &s)
 	rem_vvs(v.ptr(), v1.ptr(), s, v.size());
 }
 
-// v = mod(v, s)
+// mod(v, s)
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_scalar<T1>()
+)>
+inline void mod(T &v, const T1 &s)
+{
+	mod_vs(v.ptr(), s, v.size());
+}
 
+// v = mod(v, s)
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T, T1>() && is_scalar<Ts>()
+	is_dense<T>() && is_same_contain<T, T1>()
 )>
 inline void mod(T &v, const T1 &v1, const Ts &s)
 {

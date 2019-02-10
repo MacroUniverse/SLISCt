@@ -1,5 +1,5 @@
 // fixed-size vector/matrix classes
-
+#pragma once
 #include "arithmetic.h"
 
 namespace slisc {
@@ -187,7 +187,7 @@ constexpr Long FixCmat<T, Nr, Nc>::ncols()
 
 template <class T, Long N, class T1, Long N1>
 Bool operator==(const FixVec<T, N> &v, const FixVec<T1, N1> &v1)
-{ equals_to_vv(v, v1); }
+{ return equals_to_vv(v, v1); }
 
 template <class T, Long N, class T1, Long N1>
 Bool operator!=(const FixVec<T, N> &v, const FixVec<T1, N1> &v1)
