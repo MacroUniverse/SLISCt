@@ -34,7 +34,7 @@ template <class T, Long N>
 inline T & FixVec<T, N>::operator[](Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i<0 || i>=N)
+	if (i < 0 || i >= N)
 		error("FixVec subscript out of bounds");
 #endif
 	return m_data[i];
@@ -44,7 +44,7 @@ template <class T, Long N>
 inline const T & FixVec<T, N>::operator[](Long_I i) const
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i<0 || i>=N)
+	if (i < 0 || i >= N)
 		error("FixVec subscript out of bounds");
 #endif
 	return m_data[i];

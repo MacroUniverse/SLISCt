@@ -8,6 +8,7 @@
 #ifndef NDEBUG
 // this will not check the last index
 #define SLS_CHECK_BOUNDS
+#define SLS_CHECK_SHAPE
 #endif
 
 namespace slisc {
