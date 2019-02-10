@@ -37,7 +37,13 @@ void test_scalar_arith()
 	if (mod(-5, 4) != 3 || mod(-6, 4) != 2 || mod(-7, 4) != 1 || mod(-8, 4) != 0)
 		error("failed!");
 
-	// operator+,-,*,/ between floatig point std::complex<> and intrinsic types
+	// operator== involving floating point complex<>
+	if (Fcomp(3, 4) != Comp(3, 4)) error("failed!");
+
+	// if (Comp(1,0) == 1.f) error("failed!");
+
+
+	// operator+,-,*,/ between floatig point complex<> and intrinsic types
 	if (!is_equiv(Comp(1.1,2.2) + 3, Comp(4.1, 2.2))) error("failed!");
 	if (!is_equiv(Comp(1.1, 2.2) + Uchar(3), Comp(4.1, 2.2))) error("failed!");
 	if (!is_equiv(Comp(1.1, 2.2) + float(3), Comp(4.1, 2.2))) error("failed!");

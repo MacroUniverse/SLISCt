@@ -550,19 +550,24 @@ inline void abs(T &v, const T1 &v1)
 	v.resize(v1); abs_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-// v = to_comp(v)
-template <class T, class T1,
-	SLS_IF(is_same_contain<T,T1>() && is_comp_dense<T>() && is_real_dense<T1>())>
-inline void to_comp(T &v, const T1 &v1)
-{
-	v.resize(v1);
-	to_comp_vv(v.ptr(), v1.ptr(), v1.size());
-}
+// to_comp() deleted, use operator= instead
 
 // conj(v)
 template <class T, SLS_IF(is_comp_dense<T>())>
-inline void conj(Vbase<T> &v)
-{ conj_v(v.ptr(), v.size()); }
+inline void conj(T &v)
+{
+	conj_v(v.ptr(), v.size());
+}
+
+template <class T, class T1, SLS_IF(
+	is_comp_dense<T>() && is_comp_dense<T1>() &&
+	is_same_contain<T,T1>()
+)>
+inline void conj(T &v, const T1 &v1)
+{
+	v.resize(v1);
+	conj_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 // dot products ( sum conj(v1[i])*v2[i] )
 
@@ -626,7 +631,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 #endif
 	Long i, j, Nr_a = a.nrows(), Nc_a = a.ncols();
 	y.resize(a.nrows());
-	vecset(y.ptr(), T::value_type(), Nr_a);
+	vecset(y.ptr(), contain_type<T>(), Nr_a);
 	for (i = 0; i < Nr_a; ++i) {
 		for (j = 0; j < Nc_a; ++j)
 			y[i] += a(i, j) * x[j];
@@ -667,7 +672,7 @@ inline void mul(T &y, const T1 &x, const T2 &a)
 	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 	Long i, j, k;
 	y.resize(Nc_a);
-	vecset(y, T::value_type(), Nc_a);
+	vecset(y.ptr(), contain_type<T>(), Nc_a);
 	for (j = 0; j < Nc_a; ++j) {
 		for (i = 0; i < Nr_a; ++i)
 			y[j] += x[i] * a(i, j);

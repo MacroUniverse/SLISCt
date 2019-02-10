@@ -21,6 +21,8 @@ template <class T>
 void disp(const Matrix<T> &a, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const Cmat<T> &a, Int_I precision = def_disp_prec);
+template <class T, Long Nr, Long Nc>
+void disp(const FixCmat<T, Nr, Nc> &a, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const MatCoo<T> &a, Int_I precision = def_disp_prec);
 template <class T>
@@ -98,6 +100,10 @@ void disp(const Matrix<T> &a, Int_I precision)
 
 template <class T>
 void disp(const Cmat<T> &a, Int_I precision)
+{ disp_mat(a, precision); }
+
+template <class T, Long Nr, Long Nc>
+void disp(const FixCmat<T, Nr, Nc> &a, Int_I precision)
 { disp_mat(a, precision); }
 
 template <class T>

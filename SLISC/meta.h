@@ -6,7 +6,7 @@
 
 // using variable argument macro to allow parsing of ",".
 // otherwise, "," will separate a single argument into multiple arguments
-#define SLS_IF_HELPER(cond) typename std::enable_if<(bool)(cond)>::type* = 0
+#define SLS_IF_HELPER(cond) typename std::enable_if<(bool)(cond), Int>::type = 0
 #define SLS_IF(...) SLS_IF_HELPER(__VA_ARGS__)
 
 namespace slisc {
@@ -239,8 +239,37 @@ struct Cconst
 
 // === type mapping ===
 
+// is_promo<T1,T2> checks if T2 can be lesslessly converted to T1
+// (including T1 = T2)
+// (including from integer to floating point conversions)
+// might be used to enable operator=,+=,-=,*=,/= etc.
+template <class T1, class T2>
+constexpr Bool is_promo_fun()
+{
+	if (is_real<T2>()) {
+		if (is_real<T1>()) {
+			if (type_num<T1>() >= type_num<T2>())
+				return true;
+		}
+		else { // is_comp<T1>()
+			if (type_num<T1>() - type_num<T2>() >= 20)
+				return true;
+		}
+	}
+	else { // is_comp<T2>()
+		if (is_comp<T1>()) {
+			if (type_num<T1>() >= type_num<T2>())
+				return true;
+		}
+	}
+	return false;
+}
+
+template <class T1, class T2>
+struct is_promo : integral_constant<Bool, is_promo_fun<T1, T2>()> {};
+
 // promo_type<T1,T2> is the smallest type that both T1, T2 can losslessly converted to
-// (including from integer to floating point conversion)
+// (including from integer to floating point conversions)
 // might be used as the return type of operator+-*/(T1 t1, T2 t2), etc.
 // e.g. Bool + Doub = Doub; Int + Comp = Comp; Doub + Fcomp = Comp;
 

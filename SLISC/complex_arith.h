@@ -2,8 +2,129 @@
 
 #pragma once
 #include "global.h"
+#include "meta.h"
 
 namespace slisc {
+
+// operator ==
+template <class T1, class T2, SLS_IF(
+	is_comp<T1>() && is_comp<T2>() && !is_same<T1, T2>()
+)>
+constexpr Bool operator==(const T1 &z1, const T2 &z2)
+{
+	return real(z1) == real(z2) && imag(z1) == imag(z2);
+}
+
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && !is_same<rm_comp<T>, Tr>()
+)>
+constexpr Bool operator==(const T &z, const Tr &x)
+{
+	return real(z) == x && imag(z) == 0;
+}
+
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && !is_same<rm_comp<T>, Tr>()
+)>
+constexpr Bool operator==(const Tr &x, const T &z)
+{
+	return real(z) == x && imag(z) == 0;
+}
+
+// operator!=
+template <class T1, class T2, SLS_IF(
+	is_comp<T1>() && is_comp<T2>() && !is_same<T1, T2>()
+)>
+constexpr Bool operator!=(const T1 &z1, const T2 &z2)
+{
+	return !(z1 == z2);
+}
+
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && !is_same<rm_comp<T>, Tr>()
+)>
+constexpr Bool operator!=(const T &z, const Tr &x)
+{
+	return !(z == x);
+}
+
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && !is_same<rm_comp<T>, Tr>()
+)>
+constexpr Bool operator!=(const Tr &x, const T &z)
+{
+	return !(z == x);
+}
+
+// operator+=
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && is_promo<T, Tr>()
+)>
+constexpr void operator+=(T &z, const Tr &x)
+{
+	z.real() += x;
+}
+
+template <class T, class T1, SLS_IF(
+	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+)>
+constexpr void operator+=(T &z, const T1 &z1)
+{
+	z += (T)z1;
+}
+
+// operator-=
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && is_promo<T, Tr>()
+)>
+constexpr void operator-=(T &z, const Tr &x)
+{
+	z.real() -= x;
+}
+
+template <class T, class T1, SLS_IF(
+	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+)>
+constexpr void operator-=(T &z, const T1 &z1)
+{
+	z -= (T)z1;
+}
+
+// operator*=
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && is_promo<T, Tr>()
+)>
+constexpr void operator*=(T &z, const Tr &x)
+{
+	z *= (rm_comp<T>)x;
+}
+
+template <class T, class T1, SLS_IF(
+	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+)>
+constexpr void operator*=(T &z, const T1 &z1)
+{
+	z *= (T)z1;
+}
+
+// operator/=
+template <class T, class Tr, SLS_IF(
+	is_comp<T>() && is_real<Tr>() && is_promo<T, Tr>()
+)>
+constexpr void operator/=(T &z, const Tr &x)
+{
+	z /= (rm_comp<T>)x;
+}
+
+template <class T, class T1, SLS_IF(
+	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+)>
+constexpr void operator/=(T &z, const T1 &z1)
+{
+	z /= (T)z1;
+}
+
+// TODO: use template for operator+-*/
 
 // for Fcomp
 inline const Fcomp operator+(Fcomp_I z, Int_I x) { return z + (Float)x; }

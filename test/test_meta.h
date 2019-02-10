@@ -155,6 +155,33 @@ inline void test_meta()
 	if (!is_equiv(Cconst<Comp, -1>::value, Comp(-1))) error("failed!");
 	if (!is_equiv(Cconst<Lcomp, 3, 4>::value, Lcomp(3, 4))) error("failed!");
 
+	// is_promo
+	if (!is_promo<Char, Char>()) error("failed!");
+	if (!is_promo<Int, Int>()) error("failed!");
+	if (!is_promo<Long, Long>()) error("failed!");
+	if (!is_promo<Float, Float>()) error("failed!");
+	if (!is_promo<Doub, Doub>()) error("failed!");
+	if (!is_promo<Comp, Comp>()) error("failed!");
+	if (!is_promo<Lcomp, Lcomp>()) error("failed!");
+
+	if (!is_promo<Int, Char>()) error("failed!");
+	if (!is_promo<Llong, Int>()) error("failed!");
+	if (!is_promo<Float, Llong>()) error("failed!");
+	if (!is_promo<Doub, Float>()) error("failed!");
+	if (!is_promo<Ldoub, Doub>()) error("failed!");
+	if (!is_promo<Comp, Fcomp>()) error("failed!");
+	if (!is_promo<Lcomp, Comp>()) error("failed!");
+
+	if (!is_promo<Fcomp, Float>()) error("failed!");
+	if (!is_promo<Comp, Float>()) error("failed!");
+	if (!is_promo<Lcomp, Float>()) error("failed!");
+	if (is_promo<Fcomp, Doub>()) error("failed!");
+	if (!is_promo<Comp, Doub>()) error("failed!");
+	if (!is_promo<Lcomp, Doub>()) error("failed!");
+	if (is_promo<Fcomp, Ldoub>()) error("failed!");
+	if (is_promo<Comp, Ldoub>()) error("failed!");
+	if (!is_promo<Lcomp, Ldoub>()) error("failed!");
+
 	// promo_type
 	if (!is_same<promo_type<Bool, Char>, Char>()) error("failed!");
 	if (!is_same<promo_type<Char, Bool>, Char>()) error("failed!");

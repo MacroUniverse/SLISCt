@@ -28,6 +28,7 @@ public:
 	template <class T1>
 	FixVec & operator=(const FixVec<T1, N> &rhs);
 	FixVec & operator=(const T &rhs); // for scalar
+	void resize(Long_I n) const; // dummy function, only allow n = N
 };
 
 template <class T, Long N>
@@ -67,6 +68,14 @@ inline FixVec<T, N> & FixVec<T, N>::operator=(const T &rhs)
 {
 	vecset(m_data, rhs, N);
 	return *this;
+}
+
+template <class T, Long N>
+inline void FixVec<T, N>::resize(Long_I n) const
+{
+#ifdef SLS_CHECK_SHAPE
+	if (n != N) error("cannot resize fixed vector!");
+#endif
 }
 
 template <class T, Long N> template <class T1>
@@ -120,6 +129,7 @@ public:
 	FixCmat & operator=(const FixCmat<T1, Nr1, Nc1> &rhs);
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
+	void resize(Long nr, Long nc) const; // dummy: only for nr = Nr, nc = Nc
 };
 
 template <class T, Long Nr, Long Nc>
@@ -182,6 +192,15 @@ constexpr Long FixCmat<T, Nr, Nc>::nrows()
 template <class T, Long Nr, Long Nc>
 constexpr Long FixCmat<T, Nr, Nc>::ncols()
 { return Nc; }
+
+template <class T, Long Nr, Long Nc>
+inline void FixCmat<T, Nr, Nc>::resize(Long nr, Long nc) const
+{
+#ifdef SLS_CHECK_SHAPE
+	if (nr != Nr || nc != Nc)
+		error("cannot resize fixed matrix!");
+#endif
+}
 
 // arithmetics
 

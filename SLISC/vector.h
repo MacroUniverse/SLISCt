@@ -1,5 +1,6 @@
 #pragma once
 #include "global.h"
+#include "meta.h"
 
 namespace slisc {
 
@@ -17,7 +18,7 @@ inline void veccpy(T *dest, const T *src, Long_I n)
 	memcpy(dest, src, n * sizeof(T));
 }
 
-template<class T, class T1>
+template<class T, class T1, SLS_IF(is_promo<T,T1>())>
 inline void veccpy(T *dest, const T1 *src, Long_I n)
 {
 	for (Long i = 0; i < n; ++i)

@@ -270,46 +270,128 @@ inline void test_arithmetic()
 		if (vComp != Comp(0.5, 0.5)) error("failed!");
 	}
 
-	TODO: v = real(v), v = imag(v)
-
-	// real(v)
+	// real(v), v = real(v)
 	{
 		VecComp v; linspace(v, Comp(1.1,1.1), Comp(3.3,3.3), 3);
 		VecComp v1; linspace(v1, 1.1, 3.3, 3);
-		disp(v);
 		real(v);
-		disp(v);
-		if (v != v1) error("failed!");	
+		if (v != v1) error("failed!");
+		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		VecDoub v2;
+		real(v2, v);
+		if(v2 != v1) error("failed!");
 	}
 
-	// imag(v)
+	// imag(v), v = imag(v)
 	{
 		VecComp v; linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
 		VecComp v1; linspace(v1, 1.1, 3.3, 3);
-		real(v);
+		imag(v);
 		if (v != v1) error("failed!");
+		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		VecDoub v2;
+		imag(v2, v);
+		if (v2 != v1) error("failed!");
+	}
+
+	// abs(v), v = abs(v)
+	{
+		// doub
+		{
+			VecDoub v; linspace(v, -2, 2, 5);
+			VecComp v1(5); v1[0] = 2; v1[1] = 1; v1[2] = 0; v1[3] = 1; v1[4] = 2;
+			abs(v);
+			if (v != v1) error("failed!");
+			linspace(v, -2, 2, 5);
+			VecDoub v2;
+			abs(v2, v);
+			if (v2 != v1) error("failed!");
+		}
+		
+		// comp
+		{
+			VecComp v; linspace(v, Comp(3, 4), Comp(9, 12), 3);
+			VecComp v1; linspace(v1, 5, 15, 3);
+			abs(v);
+			if (v != v1) error("failed!");
+			linspace(v, Comp(3, 4), Comp(9, 12), 3);
+			VecDoub v2;
+			abs(v2, v);
+			if (v2 != v1) error("failed!");
+		}
+	}
+
+	// conj(v), v = conj(v)
+	{
+		VecComp v; linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		VecComp v1; linspace(v1, Comp(1.1, -1.1), Comp(3.3, -3.3), 3);
+		conj(v);
+		if (v != v1) error("failed!");
+		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		Vector<Lcomp> v2;
+		conj(v2, v);
+		if (v2 != v1) error("failed!");
 	}
 
 	// s = dot(v, v)
-
 	{
-		VecComp x; VecDoub y;
-		linspace(x, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
-		linspace(y, 1., 3., 3);
-		auto s = dot(x, y);
-		if (abs(s - Comp(15.4, -15.4)) > 1e-14) error("failed!");
-	}
+		{
+			VecComp x; VecDoub y;
+			linspace(x, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+			linspace(y, 1., 3., 3);
+			auto s = dot(x, y);
+			if (abs(s - Comp(15.4, -15.4)) > 1e-14) error("failed!");
+		}
 
-	{
-		VecDoub x; VecChar y;
-		linspace(x, 1.1, 3.3, 3);
-		linspace(y, 1, 3, 3);
-		auto s = dot(x, y);
-		if (abs(s -15.4) > 1e-14) error("failed!");
+		{
+			VecDoub x; VecChar y;
+			linspace(x, 1.1, 3.3, 3);
+			linspace(y, 1, 3, 3);
+			auto s = dot(x, y);
+			if (abs(s - 15.4) > 1e-14) error("failed!");
+		}
 	}
 
 	// matrix-vector multiplication
 	{
-		// MatComp 
+		CmatComp a; linspace(a, Comp(1, -1), Comp(28, -28), 4, 7);
+		VecChar v; linspace(v, 1, 7, 7);
+		Vector<Lcomp> v1(4), v2;
+		v1[0] = Comp(476, -476); v1[1] = Comp(504, -504);
+		v1[2] = Comp(532, -532); v1[3] = Comp(560, -560);
+		mul(v2, a, v);
+		if (v2 != v1) error("failed!");
+	}
+
+	// vector-matrix multiplication
+	{
+		MatComp a; linspace(a, Comp(1, -1), Comp(28, -28), 7, 4);
+		VecChar v; linspace(v, 1, 7, 7);
+		Vector<Lcomp> v1(4), v2;
+		v1[0] = Comp(476, -476); v1[1] = Comp(504, -504);
+		v1[2] = Comp(532, -532); v1[3] = Comp(560, -560);
+		mul(v2, v, a);
+		if (v2 != v1) error("failed!");
+	}
+
+	// matrix-matrix multiplication
+	{
+		MatComp a; linspace(a, Comp(1, -1), Comp(28, -28), 7, 4);
+		FixCmat<Comp, 4, 7> b; her(b, a);
+		CmatComp c;
+		mul(c, b, a);
+		if (c(0, 0) != 3262 || c(0, 2) != 3626 || c(1, 1) != 3640 || c(1, 3) != 4032 ||
+			c(2, 2) != 4046 || c(2, 3) != 4256 || c(3, 3) != 4480)
+			error("failed!");
+	}
+
+	// v = cumsum(v)
+	{
+		VecInt v; linspace(v, 1, 4, 4);
+		VecLlong v1;
+		cumsum(v1, v);
+		disp(v); disp(v1);
+		if (v1[0] != 1 || v1[1] != 3 || v1[2] != 6 || v1[3] != 10)
+			error("failed!");
 	}
 }

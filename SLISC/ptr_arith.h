@@ -143,7 +143,9 @@ template <class T, class T1, SLS_IF(
 	is_Comp<T>() && is_Comp<T1>()
 )>
 inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
-{ times_equals_vs(v, INV(s), N); }
+{
+	times_equals_vs(v, INV(s), N);
+}
 
 // v /= v
 
@@ -250,7 +252,7 @@ template <class T, SLS_IF(
 inline void minus_v(T *v, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
-		v[i] *= -1;
+		v[i] = -v[i];
 }
 
 // v = -v
@@ -422,9 +424,8 @@ inline void real_vv(Tr *v, const Tc *v1, Long_I N)
 template <class T, SLS_IF(is_comp<T>())>
 inline void imag_v(T *v, Long_I N)
 {
-	rm_comp<T> *pr = (rm_comp<T> *)v;
-	for (Long i = 0; i < 2 * N; i += 2)
-		pr[i] = 0;
+	for (Long i = 0; i < N; ++i)
+		v[i] = imag(v[i]);
 }
 
 // v = imag(v)
@@ -460,18 +461,6 @@ inline void abs_vv(T *v, const T1 *v1, Long_I N)
 		v[i] = abs(v1[i]);
 }
 
-// v = comp(v)
-
-template <class T, class T1, SLS_IF(
-	is_Comp<T>() && is_Float<T1>() ||
-	is_Comp<T>() && is_Doub<T1>()
-)>
-inline void to_comp_vv(T *v, const T1 *v1, Long_I N)
-{
-	for (Long i = 0; i < N; ++i)
-		v[i] = v1[i];
-}
-
 // s = sum(v)
 
 template <class T, SLS_IF(
@@ -479,6 +468,9 @@ template <class T, SLS_IF(
 )>
 inline Long sum_v(const T *v, Long_I N)
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) error("illegal length!");
+#endif
 	Long s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
@@ -490,6 +482,9 @@ template <class T, SLS_IF(
 )>
 inline T sum_v(const T *v, Long_I N)
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) error("illegal length!");
+#endif
 	T s = v[0];
 	for (Long i = 1; i < N; ++i)
 		s += v[i];
@@ -501,6 +496,9 @@ inline T sum_v(const T *v, Long_I N)
 template <class T, SLS_IF(is_real<T>() && !is_Bool<T>())>
 inline T max_v(const T *v, Long_I N)
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) error("illegal length!");
+#endif
 	T s = v[0], val;
 	for (Long i = 1; i < N; ++i) {
 		if (s < v[i])
@@ -514,6 +512,9 @@ inline T max_v(const T *v, Long_I N)
 template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
 inline rm_comp<T> max_abs_v(const T *v, Long_I N)
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) error("illegal length!");
+#endif
 	rm_comp<T> s = abs(v[0]), val;
 	for (Long i = 1; i < N; ++i) {
 		val = abs(v[i]);
@@ -533,13 +534,26 @@ inline void conj_v(T *v, Long_I N)
 		p[i] = -p[i];
 }
 
+// v = conj(v)
+
+template <class T, class T1, SLS_IF(
+	is_comp<T1>() && is_promo<T, T1>()
+)>
+inline void conj_vv(T *v, const T1 *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = conj(v1[i]);
+}
+
 // s = dot(v, v)
 template <class T1, class T2, SLS_IF(
 	is_scalar<T1>() && is_scalar<T2>()
 )>
 inline auto dot_vv(const T1 *v1, const T2 *v2, Long_I N)
 {
+#ifdef SLS_CHECK_BOUNDS
 	if (N <= 0) error("illegal length!");
+#endif
 	auto s = conj(v1[0]) * v2[0];
 	for (Long i = 1; i < N; ++i) {
 			s += conj(v1[i]) * v2[i];
@@ -626,9 +640,12 @@ inline void tan_vv(T *v, const T *v1, Long_I N)
 
 // v = cumsum(v)
 
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
-inline void cumsum_vv(T *v, const T *v1, Long_I N)
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void cumsum_vv(T *v, const T1 *v1, Long_I N)
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) error("illegal length!");
+#endif
 	v[0] = v1[0];
 	for (Long i = 1; i < N; ++i)
 		v[i] = v[i - 1] + v1[i];
