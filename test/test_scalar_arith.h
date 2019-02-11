@@ -12,7 +12,7 @@ void test_scalar_arith()
 	{ Doub s = 3.1; const Doub &s1 = s;
 	if (!is_equiv(s, s1)) error("failed!"); }
 	if (is_equiv(3., 3)) error("failed!");
-	if (is_equiv(float(3.1), 3.1)) error("failed!");
+	if (is_equiv(3.1f, 3.1)) error("failed!");
 
 	// to_num(s)
 	if (!is_equiv(to_num(false), 0)) error("failed!");
@@ -42,42 +42,40 @@ void test_scalar_arith()
 
 	// if (Comp(1,0) == 1.f) error("failed!");
 
-
 	// operator+,-,*,/ between floatig point complex<> and intrinsic types
 	if (!is_equiv(Comp(1.1,2.2) + 3, Comp(4.1, 2.2))) error("failed!");
-	if (!is_equiv(Comp(1.1, 2.2) + Uchar(3), Comp(4.1, 2.2))) error("failed!");
-	if (!is_equiv(Comp(1.1, 2.2) + float(3), Comp(4.1, 2.2))) error("failed!");
+	if (!is_equiv(Comp(1.1, 2.2) + Char(3), Comp(4.1, 2.2))) error("failed!");
+	if (!is_equiv(Comp(1.1, 2.2) + 3.f, Comp(4.1, 2.2))) error("failed!");
 	if (!is_equiv(Comp(1.1, 2.2) + 3., Comp(4.1, 2.2))) error("failed!");
 	if (!is_equiv(-2 + Comp(1., 2.2), Comp(-1, 2.2))) error("failed!");
 	if (!is_equiv(Char(-2) + Comp(1., 2.2), Comp(-1, 2.2))) error("failed!");
 
 	if (!is_equiv(Comp(1.1, 2.2) - 3, Comp(-1.9, 2.2))) error("failed!");
-	if (!is_equiv(Comp(1.1, 2.2) - float(3), Comp(-1.9, 2.2))) error("failed!");
+	if (!is_equiv(Comp(1.1, 2.2) - 3.f, Comp(-1.9, 2.2))) error("failed!");
 	if (!is_equiv(Comp(1.1, 2.2) - 3., Comp(-1.9, 2.2))) error("failed!");
 	if (!is_equiv(1 - Comp(1.5, 2.2), Comp(-0.5, -2.2))) error("failed!");
 	if (!is_equiv(true - Comp(1.5, 2.2), Comp(-0.5, -2.2))) error("failed!");
-	if (!is_equiv(float(1) - Comp(1.5, 2.2), Comp(-0.5, -2.2))) error("failed!");
+	if (!is_equiv(1.f - Comp(1.5, 2.2), Comp(-0.5, -2.2))) error("failed!");
 	if (!is_equiv(1. - Comp(1.5, 2.2), Comp(-0.5, -2.2))) error("failed!");
 
-	if (!is_equiv(Comp(1.5, 2.5) * Uchar(3), Comp(4.5, 7.5))) error("failed!");
-	if (!is_equiv(Comp(1.5, 2.5) * float(3), Comp(4.5, 7.5))) error("failed!");
+	if (!is_equiv(Comp(1.5, 2.5) * Char(3), Comp(4.5, 7.5))) error("failed!");
+	if (!is_equiv(Comp(1.5, 2.5) * 3.f, Comp(4.5, 7.5))) error("failed!");
 	if (!is_equiv(Comp(1.5, 2.5) * 3., Comp(4.5, 7.5))) error("failed!");
 	if (!is_equiv(Char(3) * Comp(1.5, 2.5), Comp(4.5, 7.5))) error("failed!");
 
 	if (!is_equiv(Comp(4.5, 7.5) / 3, Comp(1.5, 2.5))) error("failed!");
-	if (!is_equiv(Comp(1.5, 4.5) / float(3), Comp(0.5, 1.5))) error("failed!");
+	if (!is_equiv(Comp(1.5, 4.5) / 3.f, Comp(0.5, 1.5))) error("failed!");
 	if (!is_equiv(Comp(1.5, 4.5) / 3., Comp(0.5, 1.5))) error("failed!");
 	if (!is_equiv(6 / Comp(1, 1), Comp(3, -3))) error("failed!");
-	if (!is_equiv(float(6) / Comp(1, 1), Comp(3, -3))) error("failed!");
+	if (!is_equiv(6.f / Comp(1, 1), Comp(3, -3))) error("failed!");
 	if (!is_equiv(6. / Comp(1, 1), Comp(3, -3))) error("failed!");
-	if (!is_equiv(6. / std::complex<float>(1, 1), Comp(3, -3))) error("failed!");
+	if (!is_equiv(6. / Fcomp(1, 1), Comp(3, -3))) error("failed!");
 
 	// operator+,-,*,/ between two floatig point std::complex<>	
-	if (!is_equiv(std::complex<float>(1.25, 3.75) + std::complex<float>(0.75, -1.75), std::complex<float>(2, 2)))
+	if (!is_equiv(Fcomp(1.25, 3.75) + Fcomp(0.75, -1.75), std::complex<float>(2, 2)))
 		error("failed!");
-	if (!is_equiv(std::complex<float>(1.25, 3.75) - Comp(-0.75, 0.75), Comp(2, 3)))
+	if (!is_equiv(Fcomp(1.25, 3.75) - Comp(-0.75, 0.75), Comp(2, 3)))
 		error("failed!");
-	auto z = std::complex<float>(101.5, -205.5) / Comp(101.5, -205.5);
-	if (!is_equiv(std::complex<float>(1., 2.) / Comp(1., 2.), Comp(1, 0)))
+	if (!is_equiv(Fcomp(1., 2.) / Comp(1., 2.), Comp(1, 0)))
 		error("failed!");
 }

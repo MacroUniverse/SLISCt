@@ -1,18 +1,10 @@
-// type and class definitions and dependencies
-// this header file can be used alone
-
+// all containers and basic utilities
 #pragma once
-
-// all the system #include's we'll ever need
-#include <stdio.h>
-#include <fstream>
-#include <iomanip>
-#include <vector>
-#include <limits>
 
 #include "global.h"
 #include "meta.h"
 
+// containers
 #include "vector.h"
 #include "matrix.h"
 #include "cmat.h"
@@ -23,3 +15,4 @@
 
 #include "scalar_arith.h"
 #include "ptr_arith.h"
+#include "arithmetic.h"

@@ -4,6 +4,7 @@
 #include <complex>
 #include <vector>
 #include <string>
+#include <limits>
 
 #ifndef NDEBUG
 // this will not check the last index
