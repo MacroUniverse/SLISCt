@@ -91,13 +91,28 @@ inline void operator-=(T &v, const T1 &v1)
 
 // infinite norm
 template <class T, SLS_IF(
-	type_num<contain_num<T>>() >= 20
+	type_num<T>() >= 20
 )>
 inline rm_comp<T> norm_inf(const MatCoo<T> &A)
 {
-	Vector<rm_comp<T>> abs_sum(A.nrows(), 0);
+	Vector<rm_comp<T>> abs_sum(A.nrows(), rm_comp<T>(0));
 	for (Long i = 0; i < A.nnz(); ++i) {
 		abs_sum(A.row(i)) += abs(A[i]);
+	}
+	return max(abs_sum);
+}
+
+template <class T, SLS_IF(
+	type_num<T>() >= 20
+)>
+inline rm_comp<T> norm_inf(const MatCooH<T> &A)
+{
+	Vector<rm_comp<T>> abs_sum(A.nrows(), 0);
+	for (Long i = 0; i < A.nnz(); ++i) {
+		Long r = A.row(i), c = A.col(i);
+		abs_sum(r) += abs(A[i]);
+		if (r != c)
+			abs_sum(c) += abs(A[i]);
 	}
 	return max(abs_sum);
 }

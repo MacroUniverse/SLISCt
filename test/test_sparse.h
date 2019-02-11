@@ -168,6 +168,18 @@ inline void test_sparse()
 		if (v != v1) error("failed!");
 	}
 
+	// inf_norm
+	{
+		McooDoub a(3, 3);
+		a.push(1., 0, 0); a.push(-2., 1, 1); a.push(3., 2, 2);
+		a.push(4., 0, 1); a.push(4., 1, 0);
+		a.push(5., 1, 2); a.push(-5., 2, 1);
+		disp(a);
+		auto x = norm_inf(a);
+
+		McoohDoub b(3, 3);
+	}
+
 	// mul(cmat, cmat, diag)
 	{
 		CmatInt c, a(4, 5, 1);

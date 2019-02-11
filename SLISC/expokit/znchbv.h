@@ -1,5 +1,6 @@
 #pragma once
-#include "../slisc.h"
+#include <mkl.h>
+#include "../global.h"
 
 namespace slisc {
 

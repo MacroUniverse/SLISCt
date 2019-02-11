@@ -1,5 +1,7 @@
 #pragma once
-#include "../slisc.h"
+#include <mkl.h>
+#include "../global.h"
+#include "../scalar_arith.h"
 
 namespace slisc {
 

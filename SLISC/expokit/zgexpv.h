@@ -1,16 +1,19 @@
 #pragma once
 #include "zgpadm.h"
 #include "znchbv.h"
-#include "../sparse.h"
+#include "../sparse_arith.h"
 
 namespace slisc {
 
 // ======== translation details ============
 // variables that subtracted 1 comparing to F77 version
 // internal variables: i, j, ifree, ih, j1v, iv, iexph
+// `T` can be any user defined matrix class
+// mul(Comp *y, const T &mat, Comp *x) must be defined to perform matrix-vector multiplication (y = mat * x)
 
+template <class T>
 void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I anorm,
-	Comp *wsp, Int_I lwsp, Int *iwsp, Int_I liwsp, McooComp_I matvec, Int_I itrace, Int_O iflag)
+	Comp *wsp, Int_I lwsp, Int *iwsp, Int_I liwsp, const T &mat, Int_I itrace, Int_O iflag)
 {
 	const Int mxstep = 500, mxreject = 0, ideg = 6;
 	Doub delta = 1.2, gamma = 0.9;
@@ -103,7 +106,7 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I
 		Bool break_flag = false;
 		for (j = 0; j < m; ++j) {
 			nmult = nmult + 1;
-			mul(wsp + j1v, matvec, wsp + j1v - n);
+			mul(wsp + j1v, mat, wsp + j1v - n);
 			for (i = 0; i < j + 1; ++i) {
 				cblas_zdotc_sub(n, wsp + iv + i*n, 1, wsp + j1v, 1, &hij);
 				Comp temp = -hij;
@@ -129,15 +132,13 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I
 
 		if (!break_flag) {
 			nmult = nmult + 1;
-			mul(wsp + j1v, matvec, wsp + j1v - n);
+			mul(wsp + j1v, mat, wsp + j1v - n);
 			avnorm = cblas_dznrm2(n, wsp + j1v, 1);
 		}
 
-		/*300*/
 		wsp[ih + m*mh + m + 1] = one;
-
 		ireject = 0;
-		/*401*/
+
 		while (true) {
 			nexph = nexph + 1;
 			mx = mbrkdwn + k1;
@@ -154,7 +155,6 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I
 				wsp[iexph] = one;
 				ZNCHBV(mx, sgn*t_step, wsp + ih, mh, wsp + iexph, wsp + ifree + mx);
 			}
-			/*402*/
 
 			if (k1 == 0) {
 				err_loc = tol;
@@ -232,8 +232,6 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I
 	} while (mxstep == 0 || nstep < mxstep);
 
 	iflag = 1;
-
-	/*500*/
 
 	iwsp[0] = nmult;
 	iwsp[1] = nexph;
