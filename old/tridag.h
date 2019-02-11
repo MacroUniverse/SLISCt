@@ -1,10 +1,9 @@
 // object for solving complex tridiagonal linear systems for mutiple times
 // off diagonals are constants
 // algorithm from Numerical Recipes 3ed
-// writen by Hongyu Shi
 
-#ifndef _TRIDAG_H_
-#define _TRIDAG_H_
+#pragma once
+
 #include "nr3.h"
 
 void Tri2Mul(VecComp_O y, VecComp_I &diag, Comp_I upper, Comp_I lower, VecComp_I x);
@@ -33,5 +32,3 @@ struct TridagC3
 	TridagC3(Comp_I diag, Comp_I upper, Comp_I lower, Int_I n0); // constructor
 	void solve(VecComp_O &x, VecComp_I &b);
 };
-
-#endif

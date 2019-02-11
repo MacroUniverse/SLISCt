@@ -45,7 +45,7 @@ typedef const Ullong Ullong_I;
 typedef Ullong &Ullong_O, &Ullong_IO;
 #endif
 
-#ifndef _USE_Int_AS_LONG
+#ifndef SLS_USE_INT_AS_LONG
 typedef Llong Long;
 #else
 typedef Int Long;

@@ -2,7 +2,7 @@ Scientific Library In Simple C++ (SLISC)
 
 ## Introduction
 
-SLISC is a header-only library mostly based on Numerical Recipes 3ed, using simple C++ 11 gramars so that it is easy to read, use and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix and 3D matrix. Algorithms from Numerical Recipes are slowly added. The library also provides some utilities frequently used, such as timers and debug utilities. The library can optionally use some algorithms in Eigen (another header-only library).
+SLISC is a header-only library mostly based on Numerical Recipes 3ed, using simple C++ features so that it is easy to read, use and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse) and 3D matrix. Algorithms from Numerical Recipes are slowly added. The library also provides some utilities frequently used, such as timers and IO utilities. The library can optionally use some algorithms in Eigen (another header-only library) or use Intel MKL subroutines.
 
 A simple example :
 
@@ -12,18 +12,17 @@ A simple example :
 int main()
 {
 	using namespace slisc;
-	using std::cout; using std::endl;
 	VecDoub u(3), v(3); // vectors, double type
 	linspace(u, 0, 2); // elements linearly spaced from 0 to 2
-	cout << "u = \n"; disp(u); // display (print) vector/matrix
+	cout << "u = \n"; disp(u); // display vector/matrix
 	v = 3.14; // set all elements to 3.14
 	u += v; // vector plus vector
 	v += 2; // vector plus scalar
-	MatDoub a, b(1, 1); // matrices, double  type, always row major
+	MatDoub a, b(1, 1); // row major matrices of double precision
 	b.resize(2, 3); // resize b to 2 columns and 3 rows
 	a.resize(b); // resize a to have the size of b
 	a(0, 0) = 1.1; // access element by row and column indices
-	a(3) = 9.9; // access element by a single index
+	a[3] = 9.9; // access element by a single index
 	a.end() = 5.5; // last element
 	cout << "a has " << a.nrows() << " rows and " << a.ncols()
 	<< " columns, and a total of " << a.size() << " elements." << endl;
@@ -31,29 +30,37 @@ int main()
 }
 ```
 
-SLISC has a modular design like the Standard Template Library. Just include any header file in SLISC folder. All definitions has namespace "slisc".
+SLISC has a modular design like the Standard Template Library. Just include any header file in the `SLISC/` folder. All definitions has namespace `slisc`.
 
-## programming style
+## Programming Style
 
-* Class object temporary is inefficient (even with move constructor/assignment), using copy/move constructor or move assignment operator for vector/matrix types will create an error. Vector/Matrix type arguments should be passed by reference and should not be returned (use reference for output).
-
-* Avoid using unsigned integer types as much as possible (this is also the google c++ style).
-
-* Place a dot after Doub literals is prefered.
-
+* All containers types are returned by reference.
+* Avoid using unsigned integer types when possible. They are not supported by SLISC for now.
 * Generally, functions output arguments can not be any of the input arguments (this is called aliasing).
 
-* Intrinsic types are aliased inside the library. "Int" is 32-bit integer; "Uint" is "unsigned Int"; "Llong" is 64-bit integer; "Doub" is double (64-bit); "Comp" is "std::complex\<Doub>"; "Char" is "char"; "Uchar" is "unsigned char"; "Ldoub" is "long double"; "Long" is "Llong" by default, define "_USE_Int_AS_LONG" macro to use "Int" instead. Use "Long" for vector/matrix index or loop variable etc.
+* Intrinsic types are aliased inside the library. For example, `Bool` is `bool`, `Int` is 32-bit integer, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`. `Long` is used as vector/matrix index and variable. `Long` is `Llong` by default, define `SLS_USE_INT_AS_LONG` macro to use "Int" instead. 
 
-* A type ending with "_I" is the const (or reference to const) version of that type, used in function argument declarations to indicate input argument. Similarly, "_O" means output (reference type), "_IO" means both input and output (reference type), both of them are just the non-const version of the type. Note that a reference to "_O" or "_IO" types is still a reference type.
+* A type with `_I` suffix is the `const` or `reference to const` version of that type, used in function parameter declarations to indicate an input argument. Similarly, `_O` means output (reference type), `_IO` means both input and output (reference type). Note that a reference to `_O` or `_I` types is still a reference type.
 
-* Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
+## Headers Introduction
+* `slisc.h` includes all type definitions and constants, and basic arithmetics.
+* `global.h` has all the container declaration and type definitions etc.
+* `meta.h` has all the meta-programming utilities.
+* `complex_arith.h` defines extra operators involving std::complex<>, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=`.
+* `scalar_arith.h` defines scalar utilities such as `MIN()`, `MAX()`, `SQR()`, `isodd()`, `mod()`.
+* `vector.h` defines the base type `Vbase<T>` and vector container `Vector<T>`.
+* `matrix.h` defines the row-major matrix container `Matrix<T>`.
+* `cmat.h` defines the col-major matrix container `Cmat<T>`.
+* `fixsize.h` defines the fixed-size vector `FixVec<T,N>`, and col-major matrix `FixCmat<T,Nr,Nc>`.
+* `mat3d.h` defines the row-major 3D array `Mat3d<T>`.
+* `sparse.h` defines the sparse square diagonal matrix `Diag<T>`, COO sparse matrix `MatCoo<T>`, COO sparse Hermitian matrix `MatCooH<T>`.
+* TODO...
 
+## Scalar Types
+TODO...
+For example, `Bool` is `bool`, `Char` is `char`, `Int` is 32-bit integer, `Llong` is 64-bit integer; `Float` is `float`, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`; `Ldoub` is `long double`; `Long` is `Llong` by default, define "SLS_USE_INT_AS_LONG" macro to use "Int" instead. Use "Long" for vector/matrix index or loop variable etc.
 
-
-## "slisc.h"
-"slisc.h" includes some constants, type alias, and vector/matrix class template definitions.
-
+## Constants
 ```cpp
 const Doub PI = 3.14159265358979323;
 const Doub E  = 2.71828182845904524;
@@ -61,13 +68,13 @@ const Comp I(0., 1.);
 ```
 
 ### Common Members for Vector, Matrix, Mat3d Templates
-
-Operator () : get a reference for the i-th element, in row-major order.
-Operator << : move data; empty vector/matrix can not be moved.
-
-end() : get a reference for the last element.
-
-size() : get the number of elements
+* `size()`: return total number of elements.
+* `nrows(), ncols()`: return number of rows or columns.
+* `operator[][i], operator()(i)` : return a reference for the i-th element.
+* `operator()(i,j), (i,j,k)` : return a reference for an element.
+* `end()` : return a reference for the last element.
+* `operator<<` : transfer data to another container.
+* TODO...
 
 ### Vector Class Template
 
@@ -96,7 +103,8 @@ TODO.
 The typedefs for vector/matrix classes are (each type also comes with "_I", "_O", and "_IO" versions) :  VecInt, VecUint, VecLlong, VecUllong, VecChar, VecUchar, VecDoub, VecComp, VecBool, MatInt, MatUint, MatLlong, MatUllong, MatChar, MatUchar, MatDoub, MatComp, MatBool, Mat3Doub, Mat3Comp.
 
 ## algorithm.h
-includes basic arithmatics like "==", "+=", "*=", plus(), minus(), etc.
+* includes basic arithmatics like "==", "+=", "*=", plus(), minus(), etc.
+* Operators `+, -, *, /, +=, -=, *=, /=` are only for container types element-wise operations.
 
 ## disp.h
 includes various overloaded "disp()" functions.
@@ -150,7 +158,7 @@ void idiagonals(Matrix<T> &a) // inverse of diagonals(), shift the i-th line i t
 
 ## element-wise math functions
 
-`sin(v, v1)`, `cos(v, v1)`, `exp(v, v1)`, `tan(v, v1)`, etc.
+* `sin(v, v1)`, `cos(v, v1)`, `exp(v, v1)`, `tan(v, v1)`, etc.
 
 ## matrix arithmatics
 
@@ -158,11 +166,11 @@ void idiagonals(Matrix<T> &a) // inverse of diagonals(), shift the i-th line i t
 operator ==, != // compare size and each element, right hand side can also be a scalar.
 operators +,-,*,/ scalar/vec/mat, whenever make sense (inefficient!).
 operators +=,-=,*=,/= scalar/vec/mat, whenever make sense
-void plus(out, in, in) //for scalar/vec/mat, whenever make sense.
-void minus(out, in, in) // binary "-" operator
-void minus(in_out) // unary "-" operator
-void minus(out, in)
-void emul(out, in, in) // element-wise multiplication
+void Plus(out, in, in) //for scalar/vec/mat, whenever make sense.
+void Minus(out, in, in) // binary "-" operator
+void Minus(in_out) // unary "-" operator
+void Minus(out, in)
+Times, Divide
 void real(MatDoub_O &rc, MatComplex_I &c)
 void imag(MatDoub_O &ic, MatComplex_I &c)
 void abs(out, in), whenever make sense
@@ -195,7 +203,7 @@ void idft(MatComplex_O &X, Doub xmin, Doub xmax, Int Nx, MatComplex_I &Y, Doub k
 
 ## String related
 ```cpp
-template<typename T> inline std::string num2str(T s) // mainly std::to_string(), but no trailing zeros.
+template<typename T> inline Str num2str(T s) // mainly std::to_string(), but no trailing zeros.
 ```
 
 ## OpenMP functions
@@ -214,13 +222,13 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * See cuSLISC project for a GPU version of SLISC using CUDA.
 * See MatFile project for saving and reading "Vector" or "Matrix" to/from Matlab data file ".mat", or text based file ".matt".
 
-## Implementation Philosophy
-* Easy for users to understand and modify.
-* Using c++17 features.
-* If template is used, it must work for all possible instanciations.
-* use SFINAE macro `SLISC_IF(bool)` to limit template instanciation.
-* If not using template, implement functions for mostly used types, implement others when needed, never try to implement for all types.
-* Never try to unify the format of everything unless there's nothing else to do.
+## Internal Coding Rules
+* C++14/17 features used: `if constexpr`
+* Code should be easy to understand and modify.
+* Interface and implementation should separated.
+* Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
+* Use SFINAE macro `SLISC_IF(bool)` to limit template instanciation.
+* Templates must work for all possible instanciations.
 
 ## TODO
 * consider define pure imaginary number as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
@@ -239,3 +247,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * complete test of "ptr_arith.h"
 * complete test of "arithmetic.h"
 * check all compiler warnings
+* use `SLS_FOTBID_COPY_CONSTRUCTOR` to forbit copy constructor of containers, default should be undefined.
