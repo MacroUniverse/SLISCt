@@ -6,9 +6,11 @@
 //#include "SLISC/arithmetic.h"
 //#include "SLISC/disp.h"
 
-#include "test/test_meta.h"
-#include "test/test_scalar_arith.h"
-#include "test/test_arithmetic.h"
+//#include "test/test_meta.h"
+//#include "test/test_scalar_arith.h"
+//#include "test/test_arithmetic.h"
+// #include "test/test_fixsize.h"
+#include "test/test_sparse.h"
 // using namespace slisc;
 
 // #include <complex>
@@ -37,7 +39,9 @@ using namespace std;
 int main()
 {
 	// test_all();
-	test_meta();
+	/*test_meta();
 	test_scalar_arith();
-	test_arithmetic();
+	test_arithmetic();*/
+	//test_fixsize();
+	test_sparse();
 }

@@ -13,6 +13,16 @@ inline void test_sparse()
 		McoohComp b;
 		if (b.size() != 0 || b.nrows() != 0 || b.ncols() != 0 || b.nnz() != 0)
 			error("failed!");
+		DiagInt c;
+		if (c.size() != 0 || c.nrows() != 0 || c.ncols() != 0)
+			error("failed!");
+	}
+
+	// 1 arg constructor
+	{
+		DiagInt c(4);
+		if (c.size() != 4 || c.nrows() != 4 || c.ncols() != 4)
+			error("failed!");
 	}
 
 	// 2 arg constructor
@@ -23,6 +33,14 @@ inline void test_sparse()
 		McoohComp b(4, 4);
 		if (b.nrows() != 4 || b.ncols() != 4 || b.size() != 0 || b.nnz() != 0)
 			error("failed!");
+		DiagComp c(4, 4);
+		if (c.nrows() != 4 || c.ncols() != 4 || c.size() != 4)
+			error("failed!");
+		DiagComp d(4, Comp(1,-3));
+		if (d.nrows() != 4 || d.ncols() != 4 || d.size() != 4)
+			error("failed!");
+		if ((VecComp&)d != Comp(1, -3))
+			error("failed!");
 	}
 
 	// 3 arg constructor
@@ -32,6 +50,11 @@ inline void test_sparse()
 			error("failed!");
 		McoohComp b(3, 3, 5);
 		if (b.nrows() != 3 || b.ncols() != 3 || b.size() != 5 || b.nnz() != 0)
+			error("failed!");
+		DiagInt c(5, 5, 1);
+		if (c.nrows() != 5 || c.ncols() != 5 || c.size() != 5)
+			error("failed!");
+		if ((VecInt&)c != 1)
 			error("failed!");
 	}
 
@@ -81,6 +104,8 @@ inline void test_sparse()
 		if (a.nnz() != 0 || b.nnz() != 0) error("failed!");
 	}
 	
+	// TODO: Diag
+
 	{
 		// copy assignment
 		Long i, j, k = 0;
@@ -141,5 +166,18 @@ inline void test_sparse()
 		VecComp v, v1;
 		mul(v, b, x); mul(v1, d, x);
 		if (v != v1) error("failed!");
+	}
+
+	// mul(cmat, cmat, diag)
+	{
+		CmatInt c, a(4, 5, 1);
+		VecInt b; linspace(b, 1, 5, 5);
+		mul(c, a, (DiagInt)b);
+		if (!shape_cmp(c, a))  error("failed!");
+		if (!equals_to_vs(&c(0,0), 1, c.nrows())) error("failed!");
+		if (!equals_to_vs(&c(0,1), 2, c.nrows())) error("failed!");
+		if (!equals_to_vs(&c(0,2), 3, c.nrows())) error("failed!");
+		if (!equals_to_vs(&c(0,3), 4, c.nrows())) error("failed!");
+		if (!equals_to_vs(&c(0,4), 5, c.nrows())) error("failed!");
 	}
 }

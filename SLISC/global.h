@@ -287,6 +287,18 @@ template <Long Nr, Long Nc> using FcmatComp_IO = FixCmat<Comp, Nr, Nc> &;
 
 // sparse containers
 
+typedef Diag<Int> DiagInt;
+typedef const DiagInt &DiagInt_I;
+typedef DiagInt &DiagInt_O, &DiagInt_IO;
+
+typedef Diag<Doub> DiagDoub;
+typedef const DiagDoub &DiagDoub_I;
+typedef DiagDoub &DiagDoub_O, &DiagDoub_IO;
+
+typedef Diag<Comp> DiagComp;
+typedef const DiagComp &DiagComp_I;
+typedef DiagComp &DiagComp_O, &DiagComp_IO;
+
 typedef MatCoo<Doub> McooDoub;
 typedef const McooDoub &McooDoub_I;
 typedef McooDoub &McooDoub_O, &McooDoub_IO;

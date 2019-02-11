@@ -17,11 +17,23 @@ class Diag : public Vector<T>
 private:
 	typedef Vector<T> Base;
 public:
+	using Base::size;
 	using Base::operator();
 	using Base::operator=;
 	Diag() : Base() {}
+	Diag(Long_I N) : Base(N) {}
 	Diag(Long_I N, const T &s) : Base(N, s) {}
+	Diag(Long_I Nr, Long_I Nc) : Base(Nr)
+	{
+#ifdef SLS_CHECK_SHAPE
+		if (Nr != Nc) error("must be a square matrix!");
+#endif
+	}
+	Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
+	{ *this = s; }
 	Diag(const Vector<T> &v) { *this = v; }
+	Long nrows() const { return size(); }
+	Long ncols() const { return size(); }
 	Diag &operator=(const Diag &rhs)
 	{ Base::operator=(rhs); return *this; }
 	Diag &operator=(const Vector<T> &rhs)
@@ -43,23 +55,7 @@ template <class T>
 const Diag<T> &diag(const Vector<T> &v)
 { return (Diag<T>&)v; }
 
-// Cmat times Diag
-template <class T, class T1, class T2>
-void mul(Cmat<T> &v, const Cmat<T1> &v1, const Diag<T2> &v2)
-{
-	Long Nr = v1.nrows(), Nc = v1.ncols();
-#ifdef SLS_CHECK_SHAPE
-	if (Nc != v2.size()) error("illegal shape!");
-#endif
-	v.resize(Nr, v2.size());
-	T * p = v.ptr();
-	const T1 *p1 = v1.ptr();
-	for (Long i = 0; i < Nc; ++i) {
-		times_vvs(p, p1, v2[i], Nr);
-		p += Nr; p1 += Nr;
-	}
-}
-
+// COO sparse matrix
 template <class T>
 class MatCoo : public Vbase<T>
 {
@@ -71,12 +67,13 @@ private:
 	Vector<Long> m_row, m_col;
 	T m_zero; // TODO: this could be static inline variable for c++17
 public:
-	enum { NDIMS = 2 };
 	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0), m_zero(T()) {}
 	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_zero(T()) {}
 	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
 		Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz), m_zero(T()) {}
 	MatCoo(const MatCoo &rhs);		// Copy constructor
+	const Long *row_ptr() const { return m_row.ptr(); }
+	const Long *col_ptr() const { return m_col.ptr(); }
 	MatCoo & operator=(const MatCoo &rhs);
 	template <class T1>
 	MatCoo & operator=(const MatCoo<T1> &rhs);	// copy assignment (do resize(rhs))
@@ -271,7 +268,6 @@ class MatCooH : public MatCoo<T>
 private:
 	typedef MatCoo<T> Base;
 public:
-	enum { NDIMS = 2 };
 	MatCooH(): Base() {}
 	MatCooH(Long_I Nr, Long_I Nc);
 	MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz);
@@ -355,81 +351,141 @@ void MatCooH<T>::reshape(const MatCoo<T1> &a)
 	reshape(a.nrows());
 }
 
-// arithmetics
+// ptr arithmetics
 
-// matrix vector multiplication
-// internal only: no bound checking!
-template <class T>
-void coo_mul(T *y, const MatCoo<T> &a, const T *x)
+template <class T, class T1, class T2, SLS_IF(
+	is_scalar<T1>() && is_scalar<T2>() &&
+	is_same<T, promo_type<T1, T2>>()
+)>
+void mul_cmat_cmat_diag(T *c, const T1 *a, Long_I Nr, Long_I Nc, const T2 *b)
 {
-	Long i;
-	vecset(y, T(), a.nrows());
-	for (i = 0; i < a.nnz(); ++i) {
-		y[a.row(i)] += a(i) * x[a.col(i)];
+	for (Long i = 0; i < Nc; ++i) {
+		times_vvs(c, a, b[i], Nr);
+		c += Nr; a += Nr;
 	}
 }
 
-// matrix vector multiplication
-template <class T, class T1, class T2>
-void mul(Vector<T> &y, const MatCoo<T1> &a, const Vector<T2> &x)
+template <class T, class Tx, class Ty, SLS_IF(
+	is_scalar<T>() && is_scalar<Tx>() &&
+	is_same<Ty, promo_type<T,Tx>>()
+)>
+void mul_v_coo_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I N)
 {
-#ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size()) error("wrong shape!");
-#endif
-	y.resize(a.nrows());
-	coo_mul(y.ptr(), a, x.ptr());
+	vecset(y, Ty(), Nr);
+	for (Long k = 0; k < N; ++k)
+		y[i[k]] += a_ij[k] * x[j[k]];
 }
 
-// internal only: no bound checking!
-template <class T, class T1, class T2>
-void cooh_mul(T *y, const MatCooH<T1> &a, const T2 *x)
+template <class T, class Tx, class Ty, SLS_IF(
+	is_scalar<T>() && is_scalar<Tx>() &&
+	is_same<Ty, promo_type<T, Tx>>()
+)>
+void mul_v_cooh_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I N)
 {
-	Long i;
-	vecset(y, T(), a.nrows());
-	for (i = 0; i < a.nnz(); ++i) {
-		Long r = a.row(i), c = a.col(i);
+	vecset(y, Ty(), Nr);
+	for (Long k = 0; k < N; ++k) {
+		Long r = i[k], c = j[k];
 		if (r == c)
-			y[r] += a(i) * x[c];
+			y[r] += a_ij[k] * x[c];
 		else {
-			y[r] += a(i) * x[c];
-			y[c] += conj(a(i)) * x[r];
+			y[r] += a_ij[k] * x[c];
+			y[c] += conj(a_ij[k]) * x[r];
 		}
 	}
 }
 
-template <class T, class T1, class T2>
-void mul(Vector<T> &y, const MatCooH<T1> &a, const Vector<T2> &x)
+// arithmetics
+
+template <class T, class Ts, SLS_IF(
+	is_MatCoo<T>() && is_scalar<Ts>()
+)>
+inline void operator*=(T &v, const Ts &s)
 {
-#ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size()) error("wrong shape!");
-#endif
-	y.resize(a.nrows());
-	cooh_mul(y.ptr(), a, x.ptr());
+	times_equals_vs(v.ptr(), s, v.size());
 }
 
-template <class T, class T1>
-inline void operator*=(MatCoo<T> &v, const T1 &s)
-{ times_equals1(v.ptr(), s, v.size()); }
+// dense matrix +=,-= MatCoo<>
 
-// dense matrix - sparse matrix
-template <class T, class T1>
-inline void operator-=(Matrix<T> &v, const MatCoo<T1> &v1)
+template <class T, class T1, SLS_IF(
+	is_dense_mat<T>() && is_MatCoo<T1>() &&
+	is_promo<contain_type<T>, contain_type<T1>>()
+)>
+inline void operator+=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1)) error("wrong shape!");
 #endif
 	for (Long i = 0; i < v1.size(); ++i) {
-		v(v1.row(i), v1.col(i)) -= v1(i);
+		v(v1.row(i), v1.col(i)) += v1[i];
 	}
 }
 
-inline Doub norm_inf(McooComp_I A)
+template <class T, class T1, SLS_IF(
+	is_dense_mat<T>() && is_MatCoo<T1>() &&
+	is_promo<contain_type<T>, contain_type<T1>>()
+)>
+inline void operator-=(T &v, const T1 &v1)
 {
-	VecDoub abs_sum(A.nrows(), 0.);
-	for (Int i = 1; i < A.nnz(); ++i) {
-		abs_sum(A.row(i)) += std::abs(A(i));
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1)) error("wrong shape!");
+#endif
+	for (Long i = 0; i < v1.size(); ++i) {
+		v(v1.row(i), v1.col(i)) -= v1[i];
+	}
+}
+
+// infinite norm
+template <class T, SLS_IF(
+	type_num<contain_num<T>>() >= 20
+)>
+inline rm_comp<T> norm_inf(const MatCoo<T> &A)
+{
+	Vector<rm_comp<T>> abs_sum(A.nrows(), 0);
+	for (Long i = 0; i < A.nnz(); ++i) {
+		abs_sum(A.row(i)) += abs(A[i]);
 	}
 	return max(abs_sum);
+}
+
+// matrix vector multiplication
+
+template <class Ta, class Tx, class Ty, SLS_IF(
+	is_Vector<Ty>() && is_MatCoo<Ta>() && is_Vector<Tx>()
+)>
+void mul(Ty &y, const Ta &a, const Tx &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.ncols() != x.size()) error("wrong shape!");
+#endif
+	y.resize(a.nrows());
+	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.size());
+}
+
+template <class Ta, class Tx, class Ty, SLS_IF(
+	is_Vector<Ty>() && is_MatCooH<Ta>() && is_Vector<Tx>()
+)>
+void mul(Ty &y, const Ta &a, const Tx &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.ncols() != x.size()) error("wrong shape!");
+#endif
+	y.resize(a.nrows());
+	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.size());
+}
+
+// matrix matrix multiplication
+
+// mul(Cmat, Cmat, Diag)
+template <class T, class T1, class T2, SLS_IF(
+	is_scalar<T>() && is_scalar<T1>() && is_scalar<T2>()
+)>
+void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.ncols() != b.nrows()) error("illegal shape!");
+#endif
+	c.resize(a);
+	mul_cmat_cmat_diag(c.ptr(), a.ptr(), a.nrows(), a.ncols(), b.ptr());
 }
 
 } // namespace slisc

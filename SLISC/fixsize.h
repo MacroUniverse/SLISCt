@@ -1,6 +1,6 @@
 // fixed-size vector/matrix classes
 #pragma once
-#include "arithmetic.h"
+#include "global.h"
 
 namespace slisc {
 
@@ -202,38 +202,4 @@ inline void FixCmat<T, Nr, Nc>::resize(Long nr, Long nc) const
 #endif
 }
 
-// arithmetics
-
-template <class T, Long N, class T1, Long N1>
-Bool operator==(const FixVec<T, N> &v, const FixVec<T1, N1> &v1)
-{ return equals_to_vv(v, v1); }
-
-template <class T, Long N, class T1, Long N1>
-Bool operator!=(const FixVec<T, N> &v, const FixVec<T1, N1> &v1)
-{ return !(v==v1); }
-
-template <class T, Long N, class T1>
-Bool operator==(const FixVec<T, N> &v, const T1 &s)
-{ return equals_to_vs(v.ptr(), s, v.size()); }
-
-template <class T, Long N, class T1>
-Bool operator!=(const FixVec<T, N> &v, const T1 &s)
-{ return !(v==s); }
-
-template <class T, Long Nr, Long Nc, class T1, Long Nr1, Long Nc1>
-Bool operator==(const FixCmat<T, Nr, Nc> &v, const FixCmat<T1, Nr, Nc> &v1)
-{ return equals_to_vv(v, v1); }
-
-template <class T, Long Nr, Long Nc, class T1, Long Nr1, Long Nc1>
-Bool operator!=(const FixCmat<T, Nr, Nc> &v, const FixCmat<T1, Nr, Nc> &v1)
-{ return !(v==v1); }
-
-template <class T, Long Nr, Long Nc, class T1>
-Bool operator==(const FixCmat<T, Nr, Nc> &v, const T1 &s)
-{ return equals_to_vs(v.ptr(), s, v.size()); }
-
-template <class T, Long Nr, Long Nc, class T1>
-Bool operator!=(const FixCmat<T, Nr, Nc> &v, const T1 &s)
-{ return !(v==s); }
-
-}
+} // namespace slisc

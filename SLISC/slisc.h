@@ -3,6 +3,8 @@
 
 #include "global.h"
 #include "meta.h"
+#include "complex_arith.h"
+#include "scalar_arith.h"
 
 // containers
 #include "vector.h"
@@ -13,6 +15,6 @@
 #include "fixsize.h"
 #include "sparse.h"
 
-#include "scalar_arith.h"
+
 #include "ptr_arith.h"
 #include "arithmetic.h"

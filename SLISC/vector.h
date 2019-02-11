@@ -159,8 +159,8 @@ public:
 	using Base::operator=;
 	Vector() {}
 	explicit Vector(Long_I N): Base(N) {}
-	Vector(Long_I N, const T &a) //initialize to constant value
-	: Vector(N) { *this = a; }
+	Vector(Long_I N, const T &s) //initialize to constant value
+	: Vector(N) { *this = s; }
 	Vector(Long_I N, const T *a) // Initialize to array
 	: Vector(N) { veccpy(m_p, a, N); }
 	Vector(const Vector &rhs);	// Copy constructor forbidden
