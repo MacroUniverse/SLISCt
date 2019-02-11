@@ -1,6 +1,6 @@
 // solve eigen problem
 
-#include "slisc.h"
+#include "cmat.h"
 #include <mkl.h>
 
 namespace slisc {

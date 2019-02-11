@@ -1,7 +1,7 @@
 // auto save input history to file and repeat input when needed
 
 #pragma once
-#include "slisc.h"
+#include "global.h"
 #include "time.h"
 
 namespace slisc {
@@ -15,9 +15,9 @@ private:
 	// 2: writing to file
 	enum class Stat: Char { NO_IO, WRITE, READ };
 	Stat m_status;
-	std::string m_fname;
-	std::ofstream m_fout;
-	std::ifstream m_fin;
+	Str m_fname;
+	ofstream m_fout;
+	ifstream m_fin;
 
 public:
 
@@ -27,7 +27,7 @@ public:
 
 	// create new output file
 	// overwrite if exists
-	void newfile(const std::string & fname)
+	void newfile(Str_I fname)
 	{
 		if (m_status == Stat::READ) {
 			m_fin.close();
@@ -43,7 +43,7 @@ public:
 	// open existing file for read
 	// create new if not exist
 	// will continue writing if more input required
-	void openfile(const std::string & fname)
+	void openfile(Str_I fname)
 	{
 		if (m_status == Stat::READ) {
 			m_fin.close();
@@ -57,7 +57,7 @@ public:
 	}
 
 
-	void Bool_cin(Bool_O out, const std::string &prompt) {
+	void Bool_cin(Bool_O out, Str_I prompt) {
 		using namespace std;
 		string str;
 		Int i;
@@ -82,7 +82,7 @@ public:
 
 	// return 0 if successful
 	// return -1 reached empty line, m_fin position unchanged
-	Int Bool_fin(Bool_O out, const std::string &prompt) {
+	Int Bool_fin(Bool_O out, Str_I prompt) {
 		using namespace std;
 		string str;
 		Int i;
@@ -105,17 +105,17 @@ public:
 		return -1;
 	}
 
-	void Bool_fout(Bool_O out, const std::string &prompt) {
+	void Bool_fout(Bool_O out, Str_I prompt) {
 		Bool_cin(out, prompt);
 		if (out)
-			m_fout << 'y' << std::endl;
+			m_fout << 'y' << endl;
 		else
-			m_fout << 'n' << std::endl;
+			m_fout << 'n' << endl;
 	}
 
 	// input a bool
 	// " (y/n) " will be appended to prompt
-	Bool Bool(const std::string &prompt) {
+	Bool Bool(Str_I prompt) {
 		slisc::Bool out;
 		if (m_status == Stat::NO_IO) {
 			// no IO
@@ -139,7 +139,7 @@ public:
 	}
 
 	template <class T1, class T2>
-	void num2_cin(T1 &out1, T2 &out2, const std::string &prompt) {
+	void num2_cin(T1 &out1, T2 &out2, Str_I prompt) {
 		using namespace std;
 		string str;
 		stringstream ss;
@@ -162,7 +162,7 @@ public:
 	// return 0 if successful
 	// return -1 if fail
 	template <class T1, class T2>
-	Int num2_fin(T1 &out1, T2 &out2, const std::string &prompt) {
+	Int num2_fin(T1 &out1, T2 &out2, Str_I prompt) {
 		using namespace std;
 		string str;
 		stringstream ss;
@@ -182,13 +182,13 @@ public:
 	// return 0 if successful
 	// return -1 if fail
 	template <class T1, class T2>
-	void num2_fout(T1 &out1, T2 &out2, const std::string &prompt) {
+	void num2_fout(T1 &out1, T2 &out2, Str_I prompt) {
 		num2_cin(out1, out2, prompt);
-		m_fout << out1 << " " << out2 << std::endl;
+		m_fout << out1 << " " << out2 << endl;
 	}
 
 	template <class T1, class T2>
-	void num2(T1 &out1, T2 &out2, const std::string &prompt) {
+	void num2(T1 &out1, T2 &out2, Str_I prompt) {
 		if (m_status == Stat::NO_IO) {
 			// no IO
 			num2_cin(out1, out2, prompt);

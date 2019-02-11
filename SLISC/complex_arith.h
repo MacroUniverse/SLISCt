@@ -1,7 +1,6 @@
 // complex related functions
 
 #pragma once
-#include "global.h"
 #include "meta.h"
 
 namespace slisc {
@@ -23,6 +22,7 @@ constexpr Bool operator==(const T1 &z1, const T2 &z2)
 	else { // c == c
 		return real(z1) == real(z2) && imag(z1) == imag(z2);
 	}
+	return false; // supress compiler warning
 }
 
 // operator ==

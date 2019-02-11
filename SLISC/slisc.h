@@ -1,4 +1,5 @@
 // all containers and basic utilities
+// also list all dependencies in order
 #pragma once
 
 #include "global.h"
@@ -11,10 +12,11 @@
 #include "matrix.h"
 #include "cmat.h"
 #include "mat3d.h"
-
 #include "fixsize.h"
-#include "sparse.h"
-
-
 #include "ptr_arith.h"
 #include "arithmetic.h"
+
+#include "sparse.h"
+#include "sparse_arith.h"
+
+#include "disp.h"

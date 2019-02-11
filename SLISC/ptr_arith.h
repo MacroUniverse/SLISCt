@@ -586,7 +586,7 @@ inline void linspace_vss(T *v, const T &first, const T &last, Long N)
 }
 
 // v = sqrt(v)
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
+template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
 inline void sqrt_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -595,7 +595,7 @@ inline void sqrt_vv(T *v, const T *v1, Long_I N)
 
 // v = 1/sqrt(v)
 
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
+template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
 inline void invSqrt_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -604,7 +604,7 @@ inline void invSqrt_vv(T *v, const T *v1, Long_I N)
 
 // v = sin(v)
 
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
+template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
 inline void sin_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -613,7 +613,7 @@ inline void sin_vv(T *v, const T *v1, Long_I N)
 
 // v = cos(v)
 
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
+template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
 inline void cos_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -622,7 +622,7 @@ inline void cos_vv(T *v, const T *v1, Long_I N)
 
 // v = exp(v)
 
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
+template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
 inline void exp_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -631,7 +631,7 @@ inline void exp_vv(T *v, const T *v1, Long_I N)
 
 // v = tan(v)
 
-template <class T, SLS_IF(is_floating_point<T>() && is_comp<T>())>
+template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
 inline void tan_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)

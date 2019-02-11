@@ -10,7 +10,7 @@ namespace slisc {
 template <typename T>
 inline Str num2str(T s)
 {
-	Str str = std::to_string(s);
+	Str str = to_string(s);
 	if (str.find('.') != Str::npos)
 		str.erase(str.find_last_not_of('0') + 1);
 	return str;

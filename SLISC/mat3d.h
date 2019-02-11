@@ -1,3 +1,4 @@
+// row-major 3D container
 #pragma once
 #include "vector.h"
 

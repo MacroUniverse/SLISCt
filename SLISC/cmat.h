@@ -1,3 +1,4 @@
+// column-major matrix container
 #pragma once
 #include "vector.h"
 

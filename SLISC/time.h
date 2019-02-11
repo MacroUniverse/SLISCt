@@ -1,7 +1,7 @@
 // === time utilities ===
 
 #pragma once
-#include "slisc.h"
+#include "global.h"
 #include <chrono>
 #include <ctime>
 
@@ -36,10 +36,12 @@ public:
 	{ return (clock() - start) / (Doub)CLOCKS_PER_SEC; }
 };
 
-inline void pause() // pause untill key press
+// pause untill key press
+inline void pause()
 { printf("\nPress return to continue.\n"); getchar(); }
 
-inline void pause(Doub_I t) // pause a certain time
+// pause a certain time
+inline void pause(Doub_I t)
 { Timer time; time.tic(); while (time.toc() < t); }
 
 } // namespace slisc

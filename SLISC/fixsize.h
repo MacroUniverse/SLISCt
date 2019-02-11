@@ -1,4 +1,4 @@
-// fixed-size vector/matrix classes
+// fixed-size vector/matrix containers
 #pragma once
 #include "global.h"
 

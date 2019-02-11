@@ -10,7 +10,7 @@ inline void bit_inv(Comp *v, Int_I n)
 	j = 0;
 	for (i=0; i < n; ++i) {
 		if (j > i)
-			SWAP(v[j],v[i]);
+			swap(v[j],v[i]);
 		m = nn;
 		while (m >= 2 && j >= m) {
 			j -= m;
@@ -154,9 +154,9 @@ inline void four1(Doub *data, Int_I n, Int_I isign) {
 	while (nn > mmax) {
 		istep=mmax << 1;
 		theta=isign*(6.28318530717959/mmax);
-		wtemp=std::sin(0.5*theta);
+		wtemp=sin(0.5*theta);
 		wpr = -2.0*wtemp*wtemp;
-		wpi=std::sin(theta);
+		wpi=sin(theta);
 		wr=1.0;
 		wi=0.0;
 		for (m=1;m<mmax;m+=2) {
@@ -226,9 +226,9 @@ inline void realft(VecDoub_IO data, Int_I isign)
 		c2=0.5;
 		theta = -theta;
 	}
-	wtemp=std::sin(0.5*theta);
+	wtemp=sin(0.5*theta);
 	wpr = -2.0*wtemp*wtemp;
-	wpi=std::sin(theta);
+	wpi=sin(theta);
 	wr=1.0+wpr;
 	wi=wpi;
 	for (i=1;i<(n>>2);i++) {
@@ -259,9 +259,9 @@ inline void sinft(VecDoub_IO y) {
 	Int j,n=y.size();
 	Doub sum,y1,y2,theta,wi=0.0,wr=1.0,wpi,wpr,wtemp;
 	theta=3.141592653589793238/Doub(n);
-	wtemp=std::sin(0.5*theta);
+	wtemp=sin(0.5*theta);
 	wpr= -2.0*wtemp*wtemp;
-	wpi=std::sin(theta);
+	wpi=sin(theta);
 	y[0]=0.0;
 	for (j=1;j<(n>>1)+1;j++) {
 		wr=(wtemp=wr)*wpr-wi*wpi+wr;
@@ -287,9 +287,9 @@ inline void cosft1(VecDoub_IO y) {
 	Doub sum,y1,y2,theta,wi=0.0,wpi,wpr,wr=1.0,wtemp;
 	VecDoub yy(n);
 	theta=PI/n;
-	wtemp=std::sin(0.5*theta);
+	wtemp=sin(0.5*theta);
 	wpr = -2.0*wtemp*wtemp;
-	wpi=std::sin(theta);
+	wpi=sin(theta);
 	sum=0.5*(y[0]-y[n]);
 	yy[0]=0.5*(y[0]+y[n]);
 	for (j=1;j<n/2;j++) {
@@ -317,10 +317,10 @@ inline void cosft2(VecDoub_IO y, Int_I isign) {
 	Int i,n=y.size();
 	Doub sum,sum1,y1,y2,ytemp,theta,wi=0.0,wi1,wpi,wpr,wr=1.0,wr1,wtemp;
 	theta=0.5*PI/n;
-	wr1=std::cos(theta);
-	wi1=std::sin(theta);
+	wr1=cos(theta);
+	wi1=sin(theta);
 	wpr = -2.0*wi1*wi1;
-	wpi=std::sin(2.0*theta);
+	wpi=sin(2.0*theta);
 	if (isign == 1) {
 		for (i=0;i<n/2;i++) {
 			y1=0.5*(y[i]+y[n-1-i]);
@@ -419,9 +419,9 @@ inline void four2x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 	while (nn > mmax) {
 		istep=mmax << 1;
 		theta=isign*(6.28318530717959/mmax);
-		wtemp=std::sin(0.5*theta);
+		wtemp=sin(0.5*theta);
 		wpr = -2.0*wtemp*wtemp;
-		wpi=std::sin(theta);
+		wpi=sin(theta);
 		wr=1.0;
 		wi=0.0;
 		for (m=1;m<mmax;m+=2) {
@@ -488,9 +488,9 @@ inline void four4x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 	while (nn > mmax) {
 		istep=mmax << 1;
 		theta=isign*(6.28318530717959/mmax);
-		wtemp=std::sin(0.5*theta);
+		wtemp=sin(0.5*theta);
 		wpr = -2.0*wtemp*wtemp;
-		wpi=std::sin(theta);
+		wpi=sin(theta);
 		wr=1.0;
 		wi=0.0;
 		for (m=1;m<mmax;m+=2) {

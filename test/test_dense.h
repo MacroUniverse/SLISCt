@@ -1,25 +1,26 @@
+// test dense containers here
 #pragma once
 #include "../SLISC/arithmetic.h"
 
-void test_slisc()
+void test_dense()
 {
 	using namespace slisc;
 	// default initialize
 	{
-	VecDoub vDoub;
-	if (vDoub.size() != 0) error("failed!");
-	if (vDoub.ptr() != nullptr) error("failed!");
-	MatDoub aDoub;
-	if (aDoub.size() != 0) error("failed!");
-	if (aDoub.nrows() != 0) error("failed!");
-	if (aDoub.ncols() != 0) error("failed!");
-	if (aDoub.ptr() != nullptr) error("failed!");
-	Mat3Doub a3Doub;
-	if (a3Doub.size() != 0) error("failed!");
-	if (a3Doub.dim1() != 0) error("failed!");
-	if (a3Doub.dim2() != 0) error("failed!");
-	if (a3Doub.dim3() != 0) error("failed!");
-	if (a3Doub.ptr() != nullptr) error("failed!");
+		VecDoub vDoub;
+		if (vDoub.size() != 0) error("failed!");
+		if (vDoub.ptr() != nullptr) error("failed!");
+		MatDoub aDoub;
+		if (aDoub.size() != 0) error("failed!");
+		if (aDoub.nrows() != 0) error("failed!");
+		if (aDoub.ncols() != 0) error("failed!");
+		if (aDoub.ptr() != nullptr) error("failed!");
+		Mat3Doub a3Doub;
+		if (a3Doub.size() != 0) error("failed!");
+		if (a3Doub.dim1() != 0) error("failed!");
+		if (a3Doub.dim2() != 0) error("failed!");
+		if (a3Doub.dim3() != 0) error("failed!");
+		if (a3Doub.ptr() != nullptr) error("failed!");
 	}
 
 	// static or constexpr members

@@ -137,7 +137,7 @@ namespace slisc {
 	}
 
 	template<class T, class U>
-	void sort2(std::vector<T> &arr, std::vector<U> &brr)
+	void sort2(vector<T> &arr, vector<U> &brr)
 	{
 		const Int M = 7, NSTACK = 64;
 		Int i, ir, j, k, jstack = -1, l = 0, n = arr.size();

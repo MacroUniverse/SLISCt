@@ -1,6 +1,6 @@
 #pragma once
 #include "../SLISC/disp.h"
-#include "../SLISC/sparse.h"
+#include "../SLISC/sparse_arith.h"
 
 inline void test_sparse()
 {

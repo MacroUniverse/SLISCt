@@ -2,8 +2,6 @@
 #pragma once
 #include <cmath>
 #include <algorithm>
-#include "global.h"
-#include "meta.h"
 #include "complex_arith.h"
 
 namespace slisc {

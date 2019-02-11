@@ -87,7 +87,7 @@ inline Int Base_interp::locate(Doub_I x)
 		else
 			ju = jm;
 	}
-	cor = std::abs(jl - jsav) > dj ? 0 : 1;
+	cor = abs(jl - jsav) > dj ? 0 : 1;
 	jsav = jl;
 	return MAX(0, MIN(n - mm, jl - ((mm - 2) >> 1)));
 }
@@ -133,7 +133,7 @@ inline Int Base_interp::hunt(Doub_I x)
 		else
 			ju = jm;
 	}
-	cor = std::abs(jl - jsav) > dj ? 0 : 1;
+	cor = abs(jl - jsav) > dj ? 0 : 1;
 	jsav = jl;
 	return MAX(0, MIN(n - mm, jl - ((mm - 2) >> 1)));
 }
@@ -146,9 +146,9 @@ inline Doub Poly_interp::rawinterp(Int jl, Doub x)
 	Doub y, den, dif, dift, ho, hp, w;
 	const Doub *xa = &xx[jl], *ya = &yy[jl];
 	VecDoub c(mm), d(mm);
-	dif = std::abs(x - xa[0]);
+	dif = abs(x - xa[0]);
 	for (i = 0; i<mm; i++) {
-		if ((dift = std::abs(x - xa[i])) < dif) {
+		if ((dift = abs(x - xa[i])) < dif) {
 			ns = i;
 			dif = dift;
 		}
@@ -180,9 +180,9 @@ inline Doub Rat_interp::rawinterp(Int jl, Doub x)
 	Doub y, w, t, hh, h, dd;
 	const Doub *xa = &xx[jl], *ya = &yy[jl];
 	VecDoub c(mm), d(mm);
-	hh = std::abs(x - xa[0]);
+	hh = abs(x - xa[0]);
 	for (i = 0; i<mm; i++) {
-		h = std::abs(x - xa[i]);
+		h = abs(x - xa[i]);
 		if (h == 0.0) {
 			dy = 0.0;
 			return ya[i];

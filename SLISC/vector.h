@@ -1,6 +1,11 @@
+// vector container
 #pragma once
-#include "global.h"
 #include "meta.h"
+
+#ifndef NDEBUG
+#define SLS_CHECK_BOUNDS
+#define SLS_CHECK_SHAPE
+#endif
 
 namespace slisc {
 

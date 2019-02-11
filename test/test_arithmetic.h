@@ -390,7 +390,6 @@ inline void test_arithmetic()
 		VecInt v; linspace(v, 1, 4, 4);
 		VecLlong v1;
 		cumsum(v1, v);
-		disp(v); disp(v1);
 		if (v1[0] != 1 || v1[1] != 3 || v1[2] != 6 || v1[3] != 10)
 			error("failed!");
 	}

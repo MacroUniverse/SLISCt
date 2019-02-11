@@ -1,24 +1,21 @@
 // what every slisc header should include
+
 #pragma once
-#include <iostream>
+#include <limits>
 #include <complex>
 #include <vector>
 #include <string>
-#include <limits>
-
-#ifndef NDEBUG
-// this will not check the last index
-#define SLS_CHECK_BOUNDS
-#define SLS_CHECK_SHAPE
-#endif
+#include <iostream>
+#include <fstream>
 
 namespace slisc {
 
 // using std
 
 using std::complex;
-using std::vector; using std::string;
+using std::vector; using std::string; using std::to_string;
 using std::cout; using std::endl;
+using std::ifstream; using std::ofstream;
 
 // Scalar types
 

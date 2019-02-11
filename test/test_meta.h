@@ -1,7 +1,5 @@
 #pragma once
-#include "../SLISC/global.h"
-#include "../SLISC/meta.h"
-#include "../SLISC/vector.h"
+#include "../SLISC/scalar_arith.h"
 #include "../SLISC/matrix.h"
 #include "../SLISC/cmat.h"
 #include "../SLISC/mat3d.h"

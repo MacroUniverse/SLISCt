@@ -133,6 +133,14 @@ inline void linspace(T &v, const T1 &first, const T2 &last,
 	linspace_vss(v.ptr(), (contain_type<T>)first, (contain_type<T>)last, v.size());
 }
 
+template <class T, class T1, class T2, SLS_IF(is_Mat3d<T>())>
+inline void linspace(T &v, const T1 &first, const T2 &last,
+	Llong_I N1 = -1, Long_I N2 = -1, Long_I N3 = -1)
+{
+	if (N1 >= 0 && N2 >= 0 && N3 >= 0) v.resize(N1, N2, N3);
+	linspace_vss(v.ptr(), (contain_type<T>)first, (contain_type<T>)last, v.size());
+}
+
 // === vectorized math functions ===
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
@@ -693,7 +701,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 	Long Nr_a = a.nrows(), Nc_a = a.ncols(), Nc_x = x.ncols();
 	Long i, j, k;
 	y.resize(Nr_a, Nc_x);
-	vecset(y.ptr(), T::value_type(), Nr_a);
+	vecset(y.ptr(), contain_type<T>(), Nr_a*Nc_x);
 	for (i = 0; i < Nr_a; ++i) {
 		for (j = 0; j < Nc_x; ++j) {
 			for (k = 0; k < Nc_a; ++k)

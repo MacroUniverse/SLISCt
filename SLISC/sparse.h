@@ -1,10 +1,10 @@
-// sparse matrix classes
+// sparse matrix containers
 #pragma once
+#include "vector.h"
 
-#include "arithmetic.h"
-#ifndef NDEBUG_
+#ifndef NDEBUG
 // make sure (i,j) element doesn't exist when using MatCoo<T>::push(s,i,j) 
-#define _CHECK_COO_REPEAT_
+#define SLS_CHECK_COO_REPEAT
 #endif
 
 namespace slisc {
@@ -166,7 +166,7 @@ inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
 		error("MatCoo::push(): index out of bounds!");
 #endif
-#ifdef _CHECK_COO_REPEAT_
+#ifdef SLS_CHECK_COO_REPEAT
 	Long n;
 	for (n = 0; n < m_Nnz; ++n) {
 		if (row(n) == i && col(n) == j)
@@ -349,143 +349,6 @@ void MatCooH<T>::reshape(const MatCoo<T1> &a)
 		error("a is not square matrix!");
 #endif
 	reshape(a.nrows());
-}
-
-// ptr arithmetics
-
-template <class T, class T1, class T2, SLS_IF(
-	is_scalar<T1>() && is_scalar<T2>() &&
-	is_same<T, promo_type<T1, T2>>()
-)>
-void mul_cmat_cmat_diag(T *c, const T1 *a, Long_I Nr, Long_I Nc, const T2 *b)
-{
-	for (Long i = 0; i < Nc; ++i) {
-		times_vvs(c, a, b[i], Nr);
-		c += Nr; a += Nr;
-	}
-}
-
-template <class T, class Tx, class Ty, SLS_IF(
-	is_scalar<T>() && is_scalar<Tx>() &&
-	is_same<Ty, promo_type<T,Tx>>()
-)>
-void mul_v_coo_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I N)
-{
-	vecset(y, Ty(), Nr);
-	for (Long k = 0; k < N; ++k)
-		y[i[k]] += a_ij[k] * x[j[k]];
-}
-
-template <class T, class Tx, class Ty, SLS_IF(
-	is_scalar<T>() && is_scalar<Tx>() &&
-	is_same<Ty, promo_type<T, Tx>>()
-)>
-void mul_v_cooh_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I N)
-{
-	vecset(y, Ty(), Nr);
-	for (Long k = 0; k < N; ++k) {
-		Long r = i[k], c = j[k];
-		if (r == c)
-			y[r] += a_ij[k] * x[c];
-		else {
-			y[r] += a_ij[k] * x[c];
-			y[c] += conj(a_ij[k]) * x[r];
-		}
-	}
-}
-
-// arithmetics
-
-template <class T, class Ts, SLS_IF(
-	is_MatCoo<T>() && is_scalar<Ts>()
-)>
-inline void operator*=(T &v, const Ts &s)
-{
-	times_equals_vs(v.ptr(), s, v.size());
-}
-
-// dense matrix +=,-= MatCoo<>
-
-template <class T, class T1, SLS_IF(
-	is_dense_mat<T>() && is_MatCoo<T1>() &&
-	is_promo<contain_type<T>, contain_type<T1>>()
-)>
-inline void operator+=(T &v, const T1 &v1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	for (Long i = 0; i < v1.size(); ++i) {
-		v(v1.row(i), v1.col(i)) += v1[i];
-	}
-}
-
-template <class T, class T1, SLS_IF(
-	is_dense_mat<T>() && is_MatCoo<T1>() &&
-	is_promo<contain_type<T>, contain_type<T1>>()
-)>
-inline void operator-=(T &v, const T1 &v1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1)) error("wrong shape!");
-#endif
-	for (Long i = 0; i < v1.size(); ++i) {
-		v(v1.row(i), v1.col(i)) -= v1[i];
-	}
-}
-
-// infinite norm
-template <class T, SLS_IF(
-	type_num<contain_num<T>>() >= 20
-)>
-inline rm_comp<T> norm_inf(const MatCoo<T> &A)
-{
-	Vector<rm_comp<T>> abs_sum(A.nrows(), 0);
-	for (Long i = 0; i < A.nnz(); ++i) {
-		abs_sum(A.row(i)) += abs(A[i]);
-	}
-	return max(abs_sum);
-}
-
-// matrix vector multiplication
-
-template <class Ta, class Tx, class Ty, SLS_IF(
-	is_Vector<Ty>() && is_MatCoo<Ta>() && is_Vector<Tx>()
-)>
-void mul(Ty &y, const Ta &a, const Tx &x)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size()) error("wrong shape!");
-#endif
-	y.resize(a.nrows());
-	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.size());
-}
-
-template <class Ta, class Tx, class Ty, SLS_IF(
-	is_Vector<Ty>() && is_MatCooH<Ta>() && is_Vector<Tx>()
-)>
-void mul(Ty &y, const Ta &a, const Tx &x)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size()) error("wrong shape!");
-#endif
-	y.resize(a.nrows());
-	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.size());
-}
-
-// matrix matrix multiplication
-
-// mul(Cmat, Cmat, Diag)
-template <class T, class T1, class T2, SLS_IF(
-	is_scalar<T>() && is_scalar<T1>() && is_scalar<T2>()
-)>
-void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != b.nrows()) error("illegal shape!");
-#endif
-	c.resize(a);
-	mul_cmat_cmat_diag(c.ptr(), a.ptr(), a.nrows(), a.ncols(), b.ptr());
 }
 
 } // namespace slisc

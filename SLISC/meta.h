@@ -207,7 +207,7 @@ template <class T> struct is_comp_contain : integral_constant<Bool,
 template <class T1, class T2> struct is_same_contain : integral_constant<Bool,
 	is_contain<T1>() && contain_num<T1>() == contain_num<T2>()> {};
 
-// for Tc = std::complex<Tr>
+// for Tc = complex<Tr>
 // rm_comp<Tc> is Tr
 template <class T> struct rm_comp_imp { typedef T type; };
 template <class T> struct rm_comp_imp<complex<T>> { typedef T type; };

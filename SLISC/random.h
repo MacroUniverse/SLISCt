@@ -4,8 +4,9 @@
 #include "arithmetic.h"
 #include <ctime>
 
-#ifndef _RAND_SEED_
-#define _RAND_SEED_ std::time(nullptr)
+#ifndef SLS_RAND_SEED
+// default random seed, update every second
+#define SLS_RAND_SEED std::time(nullptr)
 #endif
 
 namespace slisc
@@ -28,7 +29,7 @@ namespace slisc
 				return (x + v) ^ w;
 			}
 		public:
-			Ran(Ullong j = _RAND_SEED_) :
+			Ran(Ullong j = SLS_RAND_SEED) :
 				v(4101842887655102017LL), w(1) {
 				u = j ^ v; int64();
 				v = u; int64();

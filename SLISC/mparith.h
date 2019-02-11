@@ -144,8 +144,8 @@ struct MParith {
 	void mpinv(VecUchar_O u, VecUchar_I v);
 	void mpdiv(VecUchar_O q, VecUchar_O r, VecUchar_I u, VecUchar_I v);
 	void mpsqrt(VecUchar_O w, VecUchar_O u, VecUchar_I v);
-	void mp2str(std::string &s, VecUchar_I a, Int_I pow = 1);
-	std::string mpPI(Int_I np);
+	void mp2str(Str_O s, VecUchar_I a, Int_I pow = 1);
+	Str mpPI(Int_I np);
 };
 
 typedef const Mp10 Mp10_I;
@@ -291,7 +291,7 @@ inline void Mp2562Mp10(Mp10_O x, Mp256_I x1) {
 		}
 	}
 
-	std::string str;
+	Str str;
 	a.mp2str(str, x11.x);
 	x.x.resize(str.size()-4);
 	x.x(0) = str.at(0) - 48;
@@ -446,7 +446,7 @@ void MParith::mpsqrt(VecUchar_O w, VecUchar_O u, VecUchar_I v) {
 // as an ASCII string s[0..m - 1], where m is a returned value.
 // NOTE: For simplicity, this routine implements a slow(/ N2) algorithm. Fast
 // (/ N lnN), more complicated, radix conversion algorithms do exist.
-void MParith::mp2str(std::string &s, VecUchar_I a0, Int_I pow)
+void MParith::mp2str(Str_O s, VecUchar_I a0, Int_I pow)
 {
 	const Uint IAZ=48;
 	char buffer[4];
@@ -467,11 +467,11 @@ void MParith::mp2str(std::string &s, VecUchar_I a0, Int_I pow)
 }
 
 // Demonstrate multiple precision routines by calculating and printing the first np bytes of pi.
-std::string MParith::mpPI(Int_I np) {
+Str MParith::mpPI(Int_I np) {
 	const Uint MACC=2;
 	Int ir,j,n=np+MACC;
 	Uchar mm;
-	std::string s;
+	Str s;
 	VecUchar x(n),y(n),sx(n),sxi(n),z(n),t(n),pi(n),ss(2*n),tt(2*n);
 	t[0]=2;
 	for (j=1;j<n;j++) t[j]=0;
