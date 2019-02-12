@@ -1,12 +1,17 @@
 // scalar utilities
 #pragma once
-#include <cmath>
-#include <algorithm>
 #include "complex_arith.h"
 
 namespace slisc {
 
 // these are slightly different from Numerical Recipes
+
+template <class T, SLS_IF(is_scalar<T>())>
+inline Bool ISNAN(const T &s)
+{
+	return s != s;
+}
+
 template<class T>
 constexpr const T &MIN(const T &a, const T &b)
 { return a < b ? a : b; }

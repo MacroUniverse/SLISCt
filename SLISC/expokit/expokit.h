@@ -19,6 +19,7 @@ void mul(Comp *y, const MatCooH<T> &a, Comp *x)
 }
 
 // expv()
+// use ZGEXPV() for MatCoo<>, ZHEXPV() for MatCooH<>
 
 template <Char Option = 0, class T, SLS_IF(
 	(is_MatCoo<T>() || is_MatCooH<T>()) &&

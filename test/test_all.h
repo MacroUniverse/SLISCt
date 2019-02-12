@@ -2,7 +2,7 @@
 // TODO: test mparith.h not finished
 
 #include "test_meta.h"
-#include "test/test_scalar_arith.h"
+#include "test_scalar_arith.h"
 #include "test_dense.h"
 #include "test_arithmetic.h"
 #include "test_fixsize.h"
@@ -21,6 +21,7 @@
 #ifdef SLS_USE_MKL
 #include "test/test_eig.h"
 #endif
+#include "test_except.h"
 
 // #include "test/test_mparith.h"
 
@@ -64,9 +65,12 @@ inline void test_all()
 	cout << "test_eigen_fft()" << endl;
 	test_eigen_fft();*/
 
-	cout << "auto test successful!" << endl;
+	cout << "auto test successful!\n" << endl;
 	Input inp;
 
+	if (inp.Bool("test_except() ?")) {
+		test_except();
+	}
 	if (inp.Bool("test_disp() ?")) {
 		test_disp();
 	}

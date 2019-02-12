@@ -964,9 +964,9 @@ inline void Coulomb_wave_functions::asymptotic_series (const int omega,const Com
       test = max (inf_norm (sum_term),inf_norm (dsum_term));
       n++;
     }
-    while ((test > precision) && (isfinite (test)));
+    while ((test > precision) && (abs(test) < 1e200));
 
-    if (!isfinite (test)) {is_it_successful = false; return;}
+    if (!(abs(test) < 1e200)) {is_it_successful = false; return;}
   }
 
   const Comp two_I_omega(0.0,2.0*omega);

@@ -1,7 +1,18 @@
 // what every slisc header should include
 
 #pragma once
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+#define SLS_USE_MKL // use Intel MKL when possible
+#ifndef NDEBUG
+#define SLS_NAN_ERROR // check nan at certain places
+#endif
+#define SLS_FP_EXCEPT // turn on floating point exception
+
 #include <limits>
+#include <cmath>
+#include <algorithm>
 #include <complex>
 #include <vector>
 #include <string>
@@ -9,12 +20,6 @@
 #include <fstream>
 
 namespace slisc {
-
-#define SLS_USE_MKL // use Intel MKL when possible
-
-#ifndef NDEBUG
-#define SLS_NAN_ERROR // check nan at certain places
-#endif
 
 // using std
 
@@ -318,8 +323,31 @@ typedef MatCooH<Comp> McoohComp;
 typedef const McoohComp &McoohComp_I;
 typedef McoohComp &McoohComp_O, &McoohComp_IO;
 
-// NaN definition
+// quiet NaN definition
+// uncomment one of the following 3 methods of defining a global NaN
+// you can test by verifying that (NaN != NaN) is true
+
+//Uint proto_nan[2]={0xffffffff, 0x7fffffff};
+//double NaN = *( double* )proto_nan;
+//Doub NaN = sqrt(-1.);
 static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
+
+// Floating Point Exceptions for Microsoft compilers
+// no exception for integer overflow
+#ifdef SLS_FP_EXCEPT
+#ifdef _MSC_VER
+struct turn_on_floating_exceptions {
+	turn_on_floating_exceptions() {
+		int cw = _controlfp(0, 0);
+		// also: EM_INEXACT
+		cw &= ~(EM_INVALID | EM_OVERFLOW | EM_ZERODIVIDE | EM_UNDERFLOW | EM_DENORMAL);
+		_controlfp(cw, MCW_EM);
+	}
+};
+// in case of ODR error, put this in main function;
+turn_on_floating_exceptions yes_turn_on_floating_exceptions;
+#endif
+#endif
 
 // === constants ===
 
