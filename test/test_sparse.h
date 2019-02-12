@@ -1,6 +1,7 @@
 #pragma once
-#include "../SLISC/disp.h"
+#include "../SLISC/arithmetic.h"
 #include "../SLISC/sparse_arith.h"
+#include "../SLISC/disp.h"
 
 inline void test_sparse()
 {
@@ -170,14 +171,16 @@ inline void test_sparse()
 
 	// inf_norm
 	{
-		McooDoub a(3, 3);
+		McooDoub a(3, 3, 10);
 		a.push(1., 0, 0); a.push(-2., 1, 1); a.push(3., 2, 2);
 		a.push(4., 0, 1); a.push(4., 1, 0);
 		a.push(5., 1, 2); a.push(-5., 2, 1);
-		disp(a);
-		auto x = norm_inf(a);
+		if (norm_inf(a) != 11.) error("failed!");
 
-		McoohDoub b(3, 3);
+		McoohComp b(3, 3, 10);
+		b.push(1., 0, 0); b.push(-2., 1, 1); b.push(3., 2, 2);
+		b.push(Comp(4.,5.), 0, 1); b.push(Comp(3.,2.), 1, 2);
+		if (abs(norm_inf(b) - 12.0086755) > 1e-6) error("failed!");
 	}
 
 	// mul(cmat, cmat, diag)
@@ -185,7 +188,7 @@ inline void test_sparse()
 		CmatInt c, a(4, 5, 1);
 		VecInt b; linspace(b, 1, 5, 5);
 		mul(c, a, (DiagInt)b);
-		if (!shape_cmp(c, a))  error("failed!");
+		if (!shape_cmp(c, a)) error("failed!");
 		if (!equals_to_vs(&c(0,0), 1, c.nrows())) error("failed!");
 		if (!equals_to_vs(&c(0,1), 2, c.nrows())) error("failed!");
 		if (!equals_to_vs(&c(0,2), 3, c.nrows())) error("failed!");

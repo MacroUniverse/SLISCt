@@ -1,6 +1,7 @@
 #pragma once
 #include "../SLISC/expokit/expokit.h"
 #include "../SLISC/arithmetic.h"
+#include "../SLISC/random.h"
 #include "../SLISC/disp.h"
 #include "../SLISC/sparse_arith.h"
 
@@ -9,46 +10,52 @@ void test_expokit()
 	using namespace slisc;
 
 	// === params ===========
-	Long n = 40; // matrix size
-	Int m = 20; // # krylov basis
+	Long N = 40; // matrix size
+	Int Nbase = 20; // # of krylov basis
 	Doub t = 1; // time
 	Doub tol = 0; // error tol
 	// ======================
 
-	Int i;
+	Long i, k;
 	McooComp A;
-	A.resize(n + 2 * (n - 1) + 2 * (n - 5));
-	A.reshape(n, n);
+	A.resize(500);
+	A.reshape(N, N);
 
-	for (i = 0; i < n; ++i) {
-		A.push(1., i, i);
+	for (k = 0; k < 10; ++k) {
+		A.trim(0);
+		for (i = 0; i < N; ++i) {
+			A.push(2*randDoub() - 1, i, i);
+		}
+		for (i = 0; i < N - 1; ++i) {
+			Doub val = 2 * randDoub() - 1;
+			A.push(val, i, i + 1);
+			A.push(val, i + 1, i);
+		}
+		for (i = 0; i < N - 3; ++i) {
+			Doub val = 2 * randDoub() - 1;
+			A.push(val, i, i + 3);
+			A.push(val, i + 3, i);
+		}
+		for (i = 0; i < N - 5; ++i) {
+			Doub val = 2 * randDoub() - 1;
+			A.push(val, i, i + 5);
+			A.push(val, i + 5, i);
+		}
+		for (i = 0; i < N - 7; ++i) {
+			Doub val = 2 * randDoub() - 1;
+			A.push(val, i, i + 7);
+			A.push(val, i + 7, i);
+		}
+
+		VecComp x(N), y1, y2;
+		linspace(x, 1, N);
+
+		expv<'G'>(y1, A, x, t, Nbase);
+		expv<'H'>(y2, A, x, t, Nbase);
+
+		y1 -= y2;
+		if (max_abs(y1) > 1e-12) error("failed!");
+
+		TODO: use eig.h or Eigen to calculate expA and check result!
 	}
-	for (i = 0; i < n - 1; ++i) {
-		A.push(0.6, i, i + 1);
-		A.push(0.6, i + 1, i);
-	}
-	for (i = 0; i < n - 5; ++i) {
-		A.push(0.4, i, i + 5);
-		A.push(0.4, i + 5, i);
-	}
-
-	VecComp v(n), w(n, 0.);
-	linspace(v, 1, n);
-
-	Doub anorm = norm_inf(A);
-
-	Int lwsp = MAX(10, SQR(n*(m + 2) + 5 * (m + 2)) + 7);
-	VecComp wsp(lwsp);
-	Int liwsp = MAX(m + 1, 7);
-	VecInt iwsp(liwsp);
-	Int itrace = 1;
-	Int iflag;
-	ZHEXPV(n, m, t, v.ptr(), w.ptr(), tol, anorm,
-		wsp.ptr(), lwsp, iwsp.ptr(), liwsp, A, itrace, iflag);
-	disp(w, 16);
-	w = 0.;
-	ZGEXPV(n, m, t, v.ptr(), w.ptr(), tol, anorm,
-		wsp.ptr(), lwsp, iwsp.ptr(), liwsp, A, itrace, iflag);
-	disp(w, 16);
 }
-

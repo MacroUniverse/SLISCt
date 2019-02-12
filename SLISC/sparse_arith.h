@@ -24,10 +24,10 @@ template <class T, class Tx, class Ty, SLS_IF(
 	is_scalar<T>() && is_scalar<Tx>() &&
 	is_same<Ty, promo_type<T,Tx>>()
 )>
-void mul_v_coo_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I N)
+void mul_v_coo_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I Nnz)
 {
 	vecset(y, Ty(), Nr);
-	for (Long k = 0; k < N; ++k)
+	for (Long k = 0; k < Nnz; ++k)
 		y[i[k]] += a_ij[k] * x[j[k]];
 }
 
@@ -35,10 +35,10 @@ template <class T, class Tx, class Ty, SLS_IF(
 	is_scalar<T>() && is_scalar<Tx>() &&
 	is_same<Ty, promo_type<T, Tx>>()
 )>
-void mul_v_cooh_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I N)
+void mul_v_cooh_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *j, Long_I Nr, Long_I Nnz)
 {
 	vecset(y, Ty(), Nr);
-	for (Long k = 0; k < N; ++k) {
+	for (Long k = 0; k < Nnz; ++k) {
 		Long r = i[k], c = j[k];
 		if (r == c)
 			y[r] += a_ij[k] * x[c];
@@ -95,7 +95,7 @@ template <class T, SLS_IF(
 )>
 inline rm_comp<T> norm_inf(const MatCoo<T> &A)
 {
-	Vector<rm_comp<T>> abs_sum(A.nrows(), rm_comp<T>(0));
+	Vector<rm_comp<T>> abs_sum(A.nrows(), 0.);
 	for (Long i = 0; i < A.nnz(); ++i) {
 		abs_sum(A.row(i)) += abs(A[i]);
 	}
@@ -107,12 +107,13 @@ template <class T, SLS_IF(
 )>
 inline rm_comp<T> norm_inf(const MatCooH<T> &A)
 {
-	Vector<rm_comp<T>> abs_sum(A.nrows(), 0);
+	Vector<rm_comp<T>> abs_sum(A.nrows(), 0.);
 	for (Long i = 0; i < A.nnz(); ++i) {
 		Long r = A.row(i), c = A.col(i);
-		abs_sum(r) += abs(A[i]);
+		auto val = abs(A[i]);
+		abs_sum(r) += val;
 		if (r != c)
-			abs_sum(c) += abs(A[i]);
+			abs_sum(c) += val;
 	}
 	return max(abs_sum);
 }
@@ -128,7 +129,7 @@ void mul(Ty &y, const Ta &a, const Tx &x)
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	y.resize(a.nrows());
-	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.size());
+	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
 }
 
 template <class Ta, class Tx, class Ty, SLS_IF(
@@ -140,7 +141,7 @@ void mul(Ty &y, const Ta &a, const Tx &x)
 	if (a.ncols() != x.size()) error("wrong shape!");
 #endif
 	y.resize(a.nrows());
-	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.size());
+	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
 }
 
 // matrix matrix multiplication

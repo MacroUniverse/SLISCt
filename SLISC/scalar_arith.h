@@ -7,12 +7,12 @@
 namespace slisc {
 
 // these are slightly different from Numerical Recipes
-template<class T1, class T2>
-constexpr const auto &MIN(const T1 &a, const T2 &b)
+template<class T>
+constexpr const T &MIN(const T &a, const T &b)
 { return a < b ? a : b; }
 
-template<class T1, class T2>
-constexpr const auto &MAX(const T1 &a, const T2 &b)
+template<class T>
+constexpr const T &MAX(const T &a, const T &b)
 { return a < b ? b : a; }
 
 template<class T>
@@ -30,17 +30,9 @@ constexpr Float SIGN(Float_I s)
 constexpr Doub SIGN(Doub_I s)
 { return s > 0. ? 1. : (s < 0. ? -1. : 0.); }
 
-constexpr Float SIGN(Float_I &a, Float_I &b)
-{ return 0.f <= b ? (0.f <= a ? a : -a) : (0.f <= a ? -a : a); }
-
-constexpr Doub SIGN(Doub_I &a, Doub_I &b)
-{ return 0. <= b ? (0. <= a ? a : -a) : (0. <= a ? -a : a); }
-
-constexpr Doub SIGN(Doub_I &a, Float_I &b)
-{ return 0.f <= b ? (0. <= a ? a : -a) : (0. <= a ? -a : a); }
-
-constexpr Float SIGN(Float_I &a, Doub_I &b)
-{ return 0. <= b ? (0.f <= a ? a : -a) : (0.f <= a ? -a : a); }
+template<class T>
+inline T SIGN(const T &a, const T &b)
+{ return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a); }
 
 // for SWAP, use std::swap instead
 

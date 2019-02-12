@@ -216,9 +216,14 @@ void ZHEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I
 		beta = cblas_dznrm2(n, w, 1);
 		hump = MAX(hump, beta);
 
-		t_new = gamma * t_step * pow(t_step*tol / err_loc, xm);
-		p1 = pow(10., round(log10(t_new) - sqr1) - 1);
-		t_new = trunc(t_new / p1 + 0.55) * p1;
+		// prevent dividing by zero
+		if (err_loc == 0)
+			t_new = p1 = 1e300;
+		else {
+			t_new = gamma * t_step * pow(t_step*tol / err_loc, xm);
+			p1 = pow(10., round(log10(t_new) - sqr1) - 1);
+			t_new = trunc(t_new / p1 + 0.55) * p1;
+		}
 
 		err_loc = MAX(err_loc, rndoff);
 

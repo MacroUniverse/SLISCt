@@ -15,7 +15,7 @@ namespace slisc
 	{
 		// Algorithm from Numerical Recipes 3ed
 		// empty construcotr uses "std:time()" as seed, avoid calling it twice in the same second.
-		// it is best if the whole program uses only one object, which is currently in rand() function.
+		// it is best if the whole program uses only one object, which is currently in randDoub() function.
 		class Ran
 		{
 		private:
@@ -40,7 +40,7 @@ namespace slisc
 	}
 
 	// generate random Doub in [0, 1]
-	inline Doub rand()
+	inline Doub randDoub()
 	{
 		static internal::Ran rand_gen;
 		return rand_gen.doub();
@@ -48,7 +48,7 @@ namespace slisc
 
 	// generate random Int in {0,1,2,...,N-1}
 	inline Int randInt(Int N)
-	{ return Int(round(N*rand() - 0.5)); }
+	{ return Int(round(N*randDoub() - 0.5)); }
 
 	// generate a random permutation of {0,1,2,...,N-1}
 	inline void randPerm(VecInt_O perm, Int_I N)
@@ -66,20 +66,18 @@ namespace slisc
 	}
 
 	inline Comp randComp()
-	{ return Comp(rand(), rand()); }
+	{ return Comp(randDoub(), randDoub()); }
 
-	template <typename T>
-	inline void rand(Vbase<T> &v)
+	inline void rand(Vbase<Doub> &v)
 	{
 		Long i, N = v.size();
 		for (i = 0; i < N; ++i)
-			v(i) = rand();
+			v[i] = randDoub();
 	}
 
 	// complex random number
 	// uniform distribution
-	template <>
-	inline void rand<Comp>(Vbase<Comp> &v)
+	inline void rand(Vbase<Comp> &v)
 	{
 		Long i, N = v.size();
 		for (i = 0; i < N; ++i)

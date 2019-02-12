@@ -7,7 +7,6 @@
 #include "test_arithmetic.h"
 #include "test_fixsize.h"
 #include "test_sparse.h"
-#include "test/test_eig.h"
 #include "test_interp1.h"
 #include "test_fft.h"
 #include "test_random.h"
@@ -19,6 +18,9 @@
 #include "test_input.h"
 #include "test_disp.h"
 #include "test_print.h"
+#ifdef SLS_USE_MKL
+#include "test/test_eig.h"
+#endif
 
 // #include "test/test_mparith.h"
 
@@ -39,8 +41,10 @@ inline void test_all()
 	test_fixsize();
 	cout << "test_sparse()" << endl;
 	test_sparse();
+#ifdef SLS_USE_MKL
 	cout << "test_eig()" << endl;
 	test_eig();
+#endif
 	cout << "test_interp1()" << endl;
 	test_interp1();
 	cout << "test_fft()" << endl;

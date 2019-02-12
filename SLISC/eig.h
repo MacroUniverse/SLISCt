@@ -6,7 +6,7 @@
 namespace slisc {
 
 // only upper triangle is needed
-void eigSym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
+void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (eigVec.nrows() != eigVec.ncols())

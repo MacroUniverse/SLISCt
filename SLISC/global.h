@@ -10,6 +10,12 @@
 
 namespace slisc {
 
+#define SLS_USE_MKL // use Intel MKL when possible
+
+#ifndef NDEBUG
+#define SLS_NAN_ERROR // check nan at certain places
+#endif
+
 // using std
 
 using std::complex;
