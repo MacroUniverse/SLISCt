@@ -20,6 +20,18 @@ void mul_cmat_cmat_diag(T *c, const T1 *a, Long_I Nr, Long_I Nc, const T2 *b)
 	}
 }
 
+template <class T, class T1, class T2, SLS_IF(
+	is_scalar<T1>() && is_scalar<T2>() &&
+	is_same<T, promo_type<T1, T2>>()
+)>
+void mul_cmat_diag_cmat(T *c, const T1 *a, const T2 *b, Long_I Nr, Long_I Nc)
+{
+	for (Long i = 0; i < Nc; ++i) {
+		times_vvv(c, b, a, Nr);
+		c += Nr; b += Nr;
+	}
+}
+
 template <class T, class Tx, class Ty, SLS_IF(
 	is_scalar<T>() && is_scalar<Tx>() &&
 	is_same<Ty, promo_type<T,Tx>>()
@@ -157,6 +169,19 @@ void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
 #endif
 	c.resize(a);
 	mul_cmat_cmat_diag(c.ptr(), a.ptr(), a.nrows(), a.ncols(), b.ptr());
+}
+
+// mul(Cmat, Diag, Cmat)
+template <class T, class T1, class T2, SLS_IF(
+	is_scalar<T>() && is_scalar<T1>() && is_scalar<T2>()
+)>
+void mul(Cmat<T> &c, const Diag<T2> &a, const Cmat<T1> &b)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.ncols() != b.nrows()) error("illegal shape!");
+#endif
+	c.resize(b);
+	mul_cmat_diag_cmat(c.ptr(), a.ptr(), b.ptr(), b.nrows(), b.ncols());
 }
 
 } // namespace slisc

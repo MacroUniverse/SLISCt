@@ -1,6 +1,6 @@
 // column-major matrix container
 #pragma once
-#include "vector.h"
+#include "matrix.h"
 
 namespace slisc {
 
@@ -88,13 +88,13 @@ inline Cmat<T> & Cmat<T>::operator=(const T &rhs)
 template <class T> template <class T1>
 inline Cmat<T> & Cmat<T>::operator=(const MatCoo<T1> &rhs)
 {
-	return coo2mat(*this, rhs);
+	return coo2dense(*this, rhs);
 }
 
 template <class T> template <class T1>
 inline Cmat<T> & Cmat<T>::operator=(const MatCooH<T1> &rhs)
 {
-	return cooh2mat(*this, rhs);
+	return cooh2dense(*this, rhs);
 }
 
 template <class T>

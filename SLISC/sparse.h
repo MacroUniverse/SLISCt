@@ -17,7 +17,6 @@ class Diag : public Vector<T>
 private:
 	typedef Vector<T> Base;
 public:
-	using Base::size;
 	using Base::operator();
 	using Base::operator=;
 	Diag() : Base() {}
@@ -32,8 +31,13 @@ public:
 	Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
 	{ *this = s; }
 	Diag(const Vector<T> &v) { *this = v; }
-	Long nrows() const { return size(); }
-	Long ncols() const { return size(); }
+	Long size() const
+	{
+		error("use nnz() instead!");
+	}
+	Long nnz() const { return Base::size(); }
+	Long nrows() const { return Base::size(); }
+	Long ncols() const { return Base::size(); }
 	Diag &operator=(const Diag &rhs)
 	{ Base::operator=(rhs); return *this; }
 	Diag &operator=(const Vector<T> &rhs)
@@ -67,6 +71,7 @@ private:
 	Vector<Long> m_row, m_col;
 	T m_zero; // TODO: this could be static inline variable for c++17
 public:
+	using Base::ptr;
 	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0), m_zero(T()) {}
 	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_zero(T()) {}
 	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
@@ -82,21 +87,28 @@ public:
 	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
-	using Base::size; // return m_N
 	Long nrows() const { return m_Nr; }
 	Long ncols() const { return m_Nc; }
-	Long nnz() const { return m_Nnz; }
+	Long size() const {
+		error("use nnz() or capacity() instead!");
+	}
+	Long nnz() const { return m_Nnz; } // return number of non-zero elements
+	Long capacity() const { return Base::size(); }
 	T &operator()(Long_I ind); // return element
 	const T &operator()(Long_I ind) const;
 	Long row(Long_I ind) const; // row index
 	Long col(Long_I ind) const; // column index
 	void trim(Long_I Nnz); // decrease m_Nnz to Nnz
-	void resize(Long_I N) // reallocate memory
+	void resize(Long_I N)
+	{
+		error("use reserve instead!");
+	}
+	void reserve(Long_I N) // reallocate memory, data will be lost
 	{ Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
-	void reshape(Long_I Nr, Long_I Nc) // change matrix size
+	void reshape(Long_I Nr, Long_I Nc) // change matrix shape
 	{ m_Nr = Nr; m_Nc = Nc; }
 	template <class T1>
-	void resize(const MatCoo<T1> &a);
+	void reserve(const MatCoo<T1> &a);
 	template <class T1>
 	void reshape(const MatCoo<T1> &a);
 };
@@ -118,13 +130,11 @@ template <class T> template <class T1>
 inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
 	if (this == &rhs) error("self assignment is forbidden!");
-	reshape(rhs); resize(rhs);
+	reshape(rhs); reserve(rhs);
 	m_row = rhs.m_row;
 	m_col = rhs.m_col;
 	m_Nnz = rhs.m_Nnz;
-	for (Long i = 0; i < m_Nnz; ++i) {
-		(*this)(i) = rhs(i);
-	}
+	veccpy(ptr(), rhs.ptr(), m_Nnz);
 	return *this;
 }
 
@@ -173,7 +183,7 @@ inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 			error("MatCoo::push(s,i,j): element already exists!");
 	}
 #endif
-	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please resize!");
+	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please reserve!");
 	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
 	++m_Nnz;
 }
@@ -189,7 +199,7 @@ inline void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
 		}
 	}
 	// push
-	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please resize!");
+	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please reserve!");
 	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
 	++m_Nnz;
 }
@@ -254,9 +264,9 @@ inline void MatCoo<T>::reshape(const MatCoo<T1> &a)
 
 template <class T>
 template <class T1>
-inline void MatCoo<T>::resize(const MatCoo<T1> &a)
+inline void MatCoo<T>::reserve(const MatCoo<T1> &a)
 {
-	resize(a.size());
+	reserve(a.capacity());
 }
 
 // sparse Hermitian / symmetric
@@ -276,7 +286,13 @@ public:
 	const T operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
-	void reshape(Long_I N) { Base::reshape(N, N); } // change matrix size
+	void reshape(Long_I Nr, Long_I Nc)
+	{
+#ifdef SLS_CHECK_SHAPE
+		if (Nr != Nc) error("must be a square matrix!");
+#endif
+		Base::reshape(Nr, Nc);
+	} // change matrix shape
 	template <class T1>
 	void reshape(const MatCoo<T1> &a);
 	template <class T1>

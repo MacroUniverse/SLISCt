@@ -1,8 +1,8 @@
 // meta-programming utilities
 
 #pragma once
-#include <type_traits>
 #include "global.h"
+#include <type_traits>
 
 // using variable argument macro to allow parsing of ",".
 // otherwise, "," will separate a single argument into multiple arguments

@@ -1,4 +1,4 @@
-// what every slisc header should include
+// every program that uses SLISC should include "global.h" first
 
 #pragma once
 #ifdef _MSC_VER

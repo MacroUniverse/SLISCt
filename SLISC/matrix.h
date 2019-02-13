@@ -6,24 +6,30 @@ namespace slisc {
 // Matrix Class
 
 // convert MatCoo to dense matrix
-template <class T, class T1>
-inline T &coo2mat(T &lhs, const MatCoo<T1> &rhs)
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_scalar<T1>() &&
+	is_promo<contain_type<T>, T1>()
+)>
+inline T &coo2dense(T &lhs, const MatCoo<T1> &rhs)
 {
 	lhs.resize(rhs.nrows(), rhs.ncols());
-	lhs = T::value_type();
-	for (Long i = 0; i < rhs.size(); ++i) {
-		lhs(rhs.row(i), rhs.col(i)) = rhs(i);
+	lhs = contain_type<T>(0);
+	for (Long i = 0; i < rhs.nnz(); ++i) {
+		lhs(rhs.row(i), rhs.col(i)) = rhs[i];
 	}
 	return lhs;
 }
 
 // convert MatCooH to dense matrix
-template <class T, class T1>
-inline T &cooh2mat(T &lhs, const MatCoo<T1> &rhs)
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_scalar<T1>() &&
+	is_promo<contain_type<T>, T1>()
+)>
+inline T &cooh2dense(T &lhs, const MatCooH<T1> &rhs)
 {
 	lhs.resize(rhs.nrows(), rhs.ncols());
-	lhs = T::value_type();
-	for (Long i = 0; i < rhs.size(); ++i) {
+	lhs = contain_type<T>(0);
+	for (Long i = 0; i < rhs.nnz(); ++i) {
 		Long r = rhs.row(i), c = rhs.col(i);
 		if (r == c)
 			lhs(r, r) = rhs(i);
@@ -115,13 +121,13 @@ inline Matrix<T> & Matrix<T>::operator=(const Matrix<T1> &rhs)
 template <class T> template <class T1>
 inline Matrix<T> & Matrix<T>::operator=(const MatCoo<T1> &rhs)
 {
-	return coo2mat(*this, rhs);
+	return coo2dense(*this, rhs);
 }
 
 template <class T> template <class T1>
 inline Matrix<T> & Matrix<T>::operator=(const MatCooH<T1> &rhs)
 {
-	return cooh2mat(*this, rhs);
+	return cooh2dense(*this, rhs);
 }
 
 template <class T>

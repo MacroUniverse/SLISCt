@@ -1,5 +1,5 @@
 // solve eigen problem
-
+#pragma once
 #include "cmat.h"
 #include <mkl.h>
 

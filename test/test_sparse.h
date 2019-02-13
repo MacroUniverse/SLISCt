@@ -9,36 +9,36 @@ inline void test_sparse()
 	// default constructor
 	{
 		McooDoub a;
-		if (a.size() != 0 || a.nrows() != 0 || a.ncols() != 0 || a.nnz() != 0)
+		if (a.nnz() != 0 || a.nrows() != 0 || a.ncols() != 0 || a.nnz() != 0)
 			error("failed!");
 		McoohComp b;
-		if (b.size() != 0 || b.nrows() != 0 || b.ncols() != 0 || b.nnz() != 0)
+		if (b.nnz() != 0 || b.nrows() != 0 || b.ncols() != 0 || b.nnz() != 0)
 			error("failed!");
 		DiagInt c;
-		if (c.size() != 0 || c.nrows() != 0 || c.ncols() != 0)
+		if (c.nnz() != 0 || c.nrows() != 0 || c.ncols() != 0)
 			error("failed!");
 	}
 
 	// 1 arg constructor
 	{
 		DiagInt c(4);
-		if (c.size() != 4 || c.nrows() != 4 || c.ncols() != 4)
+		if (c.nnz() != 4 || c.nrows() != 4 || c.ncols() != 4)
 			error("failed!");
 	}
 
 	// 2 arg constructor
 	{
 		McooDoub a(3, 4);
-		if (a.nrows() != 3 || a.ncols() != 4 || a.size() != 0 || a.nnz() != 0)
+		if (a.nrows() != 3 || a.ncols() != 4 || a.capacity() != 0 || a.nnz() != 0)
 			error("failed!");
 		McoohComp b(4, 4);
-		if (b.nrows() != 4 || b.ncols() != 4 || b.size() != 0 || b.nnz() != 0)
+		if (b.nrows() != 4 || b.ncols() != 4 || b.capacity() != 0 || b.nnz() != 0)
 			error("failed!");
 		DiagComp c(4, 4);
-		if (c.nrows() != 4 || c.ncols() != 4 || c.size() != 4)
+		if (c.nrows() != 4 || c.ncols() != 4 || c.nnz() != 4)
 			error("failed!");
 		DiagComp d(4, Comp(1,-3));
-		if (d.nrows() != 4 || d.ncols() != 4 || d.size() != 4)
+		if (d.nrows() != 4 || d.ncols() != 4 || d.nnz() != 4)
 			error("failed!");
 		if ((VecComp&)d != Comp(1, -3))
 			error("failed!");
@@ -47,13 +47,13 @@ inline void test_sparse()
 	// 3 arg constructor
 	{
 		McooDoub a(3, 4, 5);
-		if (a.nrows() != 3 || a.ncols() != 4 || a.size() != 5 || a.nnz() != 0)
+		if (a.nrows() != 3 || a.ncols() != 4 || a.capacity() != 5 || a.nnz() != 0)
 			error("failed!");
 		McoohComp b(3, 3, 5);
-		if (b.nrows() != 3 || b.ncols() != 3 || b.size() != 5 || b.nnz() != 0)
+		if (b.nrows() != 3 || b.ncols() != 3 || b.capacity() != 5 || b.nnz() != 0)
 			error("failed!");
 		DiagInt c(5, 5, 1);
-		if (c.nrows() != 5 || c.ncols() != 5 || c.size() != 5)
+		if (c.nrows() != 5 || c.ncols() != 5 || c.nnz() != 5)
 			error("failed!");
 		if ((VecInt&)c != 1)
 			error("failed!");
@@ -118,24 +118,24 @@ inline void test_sparse()
 				a.push(k, i, j);
 				if (i >= j) b.push(Comp(k, k), i, j);
 			}
-		for (i = 0; i < b.size(); ++i) {
+		for (i = 0; i < b.nnz(); ++i) {
 			if (b.row(i) > b.col(i))
 				error("failed!");
 		}
 		a1 = a; b1 = b;
 		if (a1.nrows() != a.nrows() || a1.ncols() != a.ncols() ||
-			a1.nnz() != a.nnz() || a1.size() != a.size())
+			a1.nnz() != a.nnz() || a1.capacity() != a.capacity())
 			error("failed!");
 		if (b1.nrows() != b.nrows() || b1.ncols() != b.ncols() ||
-			b1.nnz() != b.nnz() || b1.size() != b.size())
+			b1.nnz() != b.nnz() || b1.capacity() != b.capacity())
 			error("failed!");
-		for (i = 0; i < a.size(); ++i) {
+		for (i = 0; i < a.nnz(); ++i) {
 			if (a1.row(i) != a.row(i)) error("failed!");
 			if (a1.col(i) != a.col(i)) error("failed!");
 			if (a1(i) != a(i)) error("failed!");
 			++k;
 		}
-		for (i = 0; i < b.size(); ++i) {
+		for (i = 0; i < b.nnz(); ++i) {
 			if (b1.row(i) != b.row(i)) error("failed!");
 			if (b1.col(i) != b.col(i)) error("failed!");
 			if (b1(i) != b(i)) error("failed!");
@@ -194,5 +194,16 @@ inline void test_sparse()
 		if (!equals_to_vs(&c(0,2), 3, c.nrows())) error("failed!");
 		if (!equals_to_vs(&c(0,3), 4, c.nrows())) error("failed!");
 		if (!equals_to_vs(&c(0,4), 5, c.nrows())) error("failed!");
+	}
+
+	// mul(cmat, diag, cmat)
+	{
+		CmatDoub a(3, 3), b; linspace(a, 1, 9);
+		VecDoub v(3); linspace(v, 1, 3);
+		mul(b, diag(v), a);
+		if (b[0] != 1 || b[1] != 4 || b[2] != 9
+			|| b[3] != 4 || b[4] != 10 || b[5] != 18 ||
+			b[6] != 7 || b[7] != 16 || b[8] != 27)
+			error("failed!");
 	}
 }

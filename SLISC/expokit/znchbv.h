@@ -1,7 +1,7 @@
 // the translated ZNCHBV is not complete yet!
 #pragma once
-#include <mkl.h>
 #include "../global.h"
+#include <mkl.h>
 
 namespace slisc {
 

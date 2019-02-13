@@ -1,6 +1,6 @@
 #pragma once
-#include <mkl.h>
 #include "../global.h"
+#include <mkl.h>
 #include "../scalar_arith.h"
 
 namespace slisc {
