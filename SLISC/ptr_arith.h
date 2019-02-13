@@ -29,30 +29,17 @@ Bool equals_to_vv(const T1 *v1, const T2 *v2, Long_I N)
 
 // v += s
 
-template <class T, class T1, SLS_IF(
-	is_Int<T>() && is_Int<T1>() ||
-	is_Llong<T>() && is_Llong<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void plus_equals_vs(T *v, const T1 &s, Long_I N)
 {
+	T s1 = T(s);
 	for (Long i = 0; i < N; ++i)
-		v[i] += s;
+		v[i] += s1;
 }
 
 // v += v
 
-template <class T, class T1, SLS_IF(
-	is_Int<T>() && is_Int<T1>() ||
-	is_Llong<T>() && is_Llong<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>() ||
-	is_Comp<T>() && is_Doub<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void plus_equals_vv(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -61,31 +48,17 @@ inline void plus_equals_vv(T *v, const T1 *v1, Long_I N)
 
 // v -= s
 
-template <class T, class T1, SLS_IF(
-	is_Char<T>() && is_Char<T1>() ||
-	is_Int<T>() && is_Int<T1>() ||
-	is_Llong<T>() && is_Llong<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>() ||
-	is_Comp<T>() && is_Doub<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void minus_equals_vs(T *v, const T1 &s, Long_I N)
 {
+	T s1 = (T)s;
 	for (Long i = 0; i < N; ++i)
-		v[i] -= s;
+		v[i] -= s1;
 }
 
 // v -= v
 
-template <class T, class T1, SLS_IF(
-	is_Char<T>() && is_Char<T1>() ||
-	is_Int<T>() && is_Int<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>() ||
-	is_Comp<T>() && is_Doub<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void minus_equals_vv(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -94,29 +67,17 @@ inline void minus_equals_vv(T *v, const T1 *v1, Long_I N)
 
 // v *= s
 
-template <class T, class T1, SLS_IF(
-	is_Int<T>() && is_Int<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void times_equals_vs(T *v, const T1 &s, Long N)
 {
+	T s1 = T(s);
 	for (Long i = 0; i < N; ++i)
-		v[i] *= s;
+		v[i] *= s1;
 }
 
 // v *= v
 
-template <class T, class T1, SLS_IF(
-	is_Char<T>() && is_Char<T1>() ||
-	is_Int<T>() && is_Int<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>() ||
-	is_Comp<T>() && is_Doub<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void times_equals_vv(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -149,13 +110,7 @@ inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
 
 // v /= v
 
-template <class T, class T1, SLS_IF(
-	is_Int<T>() && is_Int<T1>() ||
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>()
-)>
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void divide_equals_vv(T *v, const T1 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)

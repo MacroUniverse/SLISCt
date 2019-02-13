@@ -10,6 +10,9 @@
 #endif
 #define SLS_FP_EXCEPT // turn on floating point exception
 
+#ifdef SLS_USE_MKL
+#include <mkl.h>
+#endif
 #include <limits>
 #include <cmath>
 #include <algorithm>

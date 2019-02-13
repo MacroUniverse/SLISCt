@@ -68,7 +68,7 @@ template <class T, class Ts, SLS_IF(
 )>
 inline void operator*=(T &v, const Ts &s)
 {
-	times_equals_vs(v.ptr(), s, v.size());
+	times_equals_vs(v.ptr(), s, v.nnz());
 }
 
 // dense matrix +=,-= MatCoo<>

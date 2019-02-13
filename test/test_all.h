@@ -18,11 +18,14 @@
 #include "test_input.h"
 #include "test_disp.h"
 #include "test_print.h"
+
 #ifdef SLS_USE_MKL
 #include "test/test_eig.h"
-#endif
 #include "test/test_mat_fun.h"
 #include "test/test_expokit.h"
+#include "test/test_fedvr.h"
+#endif
+
 #include "test_except.h"
 
 // #include "test/test_mparith.h"
@@ -51,6 +54,8 @@ inline void test_all()
 	test_mat_fun();
 	cout << "test_expokit()" << endl;
 	test_expokit();
+	cout << "test_fedvr()" << endl;
+	test_fedvr();
 #endif
 	cout << "test_interp1()" << endl;
 	test_interp1();
