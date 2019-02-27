@@ -129,12 +129,14 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
 template <class T> template <class T1>
 inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
-	if (this == &rhs) error("self assignment is forbidden!");
+	if ((void*)this == (void*)&rhs) error("self assignment is forbidden!");
 	reshape(rhs); reserve(rhs);
-	m_row = rhs.m_row;
-	m_col = rhs.m_col;
-	m_Nnz = rhs.m_Nnz;
+	m_row = rhs.nrows();
+	m_col = rhs.ncols();
+	m_Nnz = rhs.nnz();
 	veccpy(ptr(), rhs.ptr(), m_Nnz);
+	veccpy(&m_row[0], rhs.row_ptr(), m_Nnz);
+	veccpy(&m_col[0], rhs.col_ptr(), m_Nnz);
 	return *this;
 }
 
