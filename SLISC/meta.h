@@ -22,54 +22,108 @@ using std::true_type; using std::false_type;
 using std::integral_constant;
 
 // is_same<U,T> checks if U = T
-using std::is_same;
+template <class T1, class T2>
+constexpr Bool is_same()
+{
+	return std::is_same<T1, T2>::value;
+}
 
 // is_integral<T> checks if T = bool, character types, integer types
-using std::is_integral;
+template <class T>
+constexpr Bool is_integral()
+{
+	return std::is_integral<T>::value;
+}
 
 // is_floating_point<T> checks if T = float, double, long double
-using std::is_floating_point;
+template <class T>
+constexpr Bool is_floating_point()
+{
+	return std::is_floating_point<T>::value;
+}
 
 // is_arithmetic<T> checks if T = integral type || floating point type
-using std::is_arithmetic;
+template <class T>
+constexpr Bool is_arithmetic()
+{
+	return std::is_arithmetic<T>::value;
+}
 
 // is_fundamental<T> checks if T = arithmetic type || void || null pointer
-using std::is_fundamental;
+template <class T>
+constexpr Bool is_fundamental()
+{
+	return std::is_fundamental<T>::value;
+}
 
 // is_signed<T> checks if T(-1) < T(0)
-using std::is_signed;
+template <class T>
+constexpr Bool is_signed()
+{
+	return std::is_signed<T>::value;
+}
 
 // check if T is a specific type
 
 template<class T>
-struct is_Bool : integral_constant<Bool, is_same<T, Bool>()> {};
+constexpr Bool is_Bool()
+{
+	return is_same<T, Bool>();
+}
 
 template<class T>
-struct is_Char : integral_constant<Bool, is_same<T, Char>()> {};
+constexpr Bool is_Char()
+{
+	return is_same<T, Char>();
+}
 
 template<class T>
-struct is_Int : integral_constant<Bool, is_same<T, Int>()> {};
+constexpr Bool is_Int()
+{
+	return is_same<T, Int>();
+}
 
 template<class T>
-struct is_Llong : integral_constant<Bool, is_same<T, Llong>()> {};
+constexpr Bool is_Llong()
+{
+	return is_same<T, Llong>();
+}
 
 template<class T>
-struct is_Float : integral_constant<Bool, is_same<T, Float>()> {};
+constexpr Bool is_Float()
+{
+	return is_same<T, Float>();
+}
 
 template<class T>
-struct is_Doub : integral_constant<Bool, is_same<T, Doub>()> {};
+constexpr Bool is_Doub()
+{
+	return is_same<T, Doub>();
+}
 
 template<class T>
-struct is_Ldoub : integral_constant<Bool, is_same<T, Ldoub>()> {};
+constexpr Bool is_Ldoub()
+{
+	return is_same<T, Ldoub>();
+}
 
 template<class T>
-struct is_Fcomp : integral_constant<Bool, is_same<T, Fcomp>()> {};
+constexpr Bool is_Fcomp()
+{
+	return is_same<T, Fcomp>();
+}
 
 template<class T>
-struct is_Comp : integral_constant<Bool, is_same<T, Comp>()> {};
+constexpr Bool is_Comp()
+{
+	return is_same<T, Comp>();
+}
 
 template<class T>
-struct is_Lcomp : integral_constant<Bool, is_same<T, Lcomp>()> {};
+constexpr Bool is_Lcomp()
+{
+	return is_same<T, Lcomp>();
+}
 
 // type_num<T>() maps each scalr type to a unique number
 // a scalar type is defined as having a non-negative type number
@@ -102,61 +156,123 @@ constexpr Int type_num()
 
 // is_scalar<T> checks if is a scalar
 template<class T>
-struct is_scalar : integral_constant<Bool, type_num<T>() >= 0> {};
+constexpr Bool is_scalar()
+{
+	return type_num<T>() >= 0;
+}
+
 
 // is_real<T> checks if is a real scalar
 template<class T>
-struct is_real : integral_constant< Bool,
-	type_num<T>() >= 0 && type_num<T>() < 40> {};
+constexpr Bool is_real()
+{
+	return type_num<T>() >= 0 && type_num<T>() < 40;
+}
 
 // is_comp<T> checks if T is a scalar of complex<> type
 template<class T>
-struct is_comp : integral_constant<Bool, type_num<T>() >= 40> {};
+constexpr Bool is_comp()
+{
+	return type_num<T>() >= 40;
+}
 
 // check if is a specific container type
 
-template <class T> struct is_Vector : false_type {};
-template <class T> struct is_Vector<Vector<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_Vector_imp : false_type {};
+template <class T> struct is_Vector_imp<Vector<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Vector()
+{
+	return is_Vector_imp<T>();
+}
 
-template <class T> struct is_Matrix : false_type {};
-template <class T> struct is_Matrix<Matrix<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_Matrix_imp : false_type {};
+template <class T> struct is_Matrix_imp<Matrix<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Matrix()
+{
+	return is_Matrix_imp<T>();
+}
 
-template <class T> struct is_Cmat : false_type {};
-template <class T> struct is_Cmat<Cmat<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_Cmat_imp : false_type {};
+template <class T> struct is_Cmat_imp<Cmat<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Cmat()
+{
+	return is_Cmat_imp<T>();
+}
 
-template <class T> struct is_FixVec : false_type {};
-template <class T, Long N> struct is_FixVec<FixVec<T, N>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_FixVec_imp : false_type {};
+template <class T, Long N> struct is_FixVec_imp<FixVec<T, N>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_FixVec()
+{
+	return is_FixVec_imp<T>();
+}
 
-template <class T> struct is_FixCmat : false_type {};
-template <class T, Long Nr, Long Nc> struct is_FixCmat<FixCmat<T, Nr, Nc>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_FixCmat_imp : false_type {};
+template <class T, Long Nr, Long Nc> struct is_FixCmat_imp<FixCmat<T, Nr, Nc>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_FixCmat()
+{
+	return is_FixCmat_imp<T>();
+}
 
-template <class T> struct is_Mat3d : false_type {};
-template <class T> struct is_Mat3d<Mat3d<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_Mat3d_imp : false_type {};
+template <class T> struct is_Mat3d_imp<Mat3d<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Mat3d()
+{
+	return is_Mat3d_imp<T>();
+}
 
-template <class T> struct is_Diag : false_type {};
-template <class T> struct is_Diag<Diag<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_Diag_imp : false_type {};
+template <class T> struct is_Diag_imp<Diag<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Diag()
+{
+	return is_Diag_imp<T>();
+}
 
-template <class T> struct is_MatCoo : false_type {};
-template <class T> struct is_MatCoo<MatCoo<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_MatCoo_imp : false_type {};
+template <class T> struct is_MatCoo_imp<MatCoo<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_MatCoo()
+{
+	return is_MatCoo_imp<T>();
+}
 
-template <class T> struct is_MatCooH : false_type {};
-template <class T> struct is_MatCooH<MatCooH<T>> : integral_constant<Bool, is_scalar<T>::value> {};
+template <class T> struct is_MatCooH_imp : false_type {};
+template <class T> struct is_MatCooH_imp<MatCooH<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_MatCooH()
+{
+	return is_MatCooH_imp<T>();
+}
 
 // check if is fixed-size container
-template <class T> struct is_fixed : integral_constant<Bool,
-	is_FixVec<T>() || is_FixCmat<T>()>{};
+template <class T> constexpr Bool is_fixed()
+{
+	return is_FixVec<T>() || is_FixCmat<T>();
+}
 
 // check if is dense matrix (2D)
-template <class T> struct is_dense_mat : integral_constant<Bool,
-	is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>()> {};
+template <class T> constexpr Bool is_dense_mat()
+{
+	return is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>();
+}
 
 // check if is dense container (including fixed-size)
-template <class T> struct is_dense : integral_constant<Bool,
-	is_Vector<T>() || is_FixVec<T>() || is_dense_mat<T>() || is_Mat3d<T>()>{};
+template <class T> constexpr Bool is_dense()
+{
+	return is_Vector<T>() || is_FixVec<T>() || is_dense_mat<T>() || is_Mat3d<T>();
+}
 
 // check if is sparse vector/matrix
-template <class T> struct is_sparse : integral_constant<Bool,
-	is_Diag<T>() || is_MatCoo<T>() || is_MatCooH<T>()> {};
+template <class T> constexpr Bool is_sparse()
+{
+	return is_Diag<T>() || is_MatCoo<T>() || is_MatCooH<T>();
+}
 
 template <class T>
 constexpr Int contain_num()
@@ -177,7 +293,10 @@ constexpr Int contain_num()
 }
 
 // check if is a slisc container
-template <class T> struct is_contain : integral_constant<Bool, contain_num<T>() >= 0> {};
+template <class T> constexpr Bool is_contain()
+{
+	return contain_num<T>() >= 0;
+}
 
 // contain_type<T> is T::value_type, if T is a container
 // otherwise, contain_type<T> is T
@@ -189,19 +308,27 @@ constexpr auto contain_type_fun() { return T::value_type(); };
 
 template <class T> using contain_type = decltype(contain_type_fun<T>());
 
-template <class T> struct is_real_dense : integral_constant<Bool,
-	is_dense<T>() && is_real<contain_type<T>>()> {};
+template <class T> constexpr Bool is_real_dense()
+{
+	return is_dense<T>() && is_real<contain_type<T>>();
+}
 
-template <class T> struct is_comp_dense : integral_constant<Bool,
-	is_dense<T>() && is_comp<contain_type<T>>()> {};
+template <class T> constexpr Bool is_comp_dense()
+{
+	return is_dense<T>() && is_comp<contain_type<T>>();
+}
 
 // check if is a real slisc container
-template <class T> struct is_real_contain : integral_constant<Bool,
-	is_contain<T>() && is_real<contain_type<T>>()> {};
+template <class T> constexpr Bool is_real_contain()
+{
+	return is_contain<T>() && is_real<contain_type<T>>();
+}
 
 // check if is a complex slisc container
-template <class T> struct is_comp_contain : integral_constant<Bool,
-	is_contain<T>() && is_comp<contain_type<T>>()> {};
+template <class T> constexpr Bool is_comp_contain()
+{
+	return is_contain<T>() && is_comp<contain_type<T>>();
+}
 
 // check if two containers are the same (value_type can be different)
 template <class T1, class T2> struct is_same_contain : integral_constant<Bool,
@@ -318,4 +445,5 @@ template<> struct num_type_imp<Char> { typedef Int type; };
 template<> struct num_type_imp<Uchar> { typedef Int type; };
 
 template <typename T> using num_type = typename num_type_imp<T>::type;
-}
+
+} // namespace slisc
