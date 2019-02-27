@@ -331,8 +331,10 @@ template <class T> constexpr Bool is_comp_contain()
 }
 
 // check if two containers are the same (value_type can be different)
-template <class T1, class T2> struct is_same_contain : integral_constant<Bool,
-	is_contain<T1>() && contain_num<T1>() == contain_num<T2>()> {};
+template <class T1, class T2> constexpr Bool is_same_contain()
+{
+	return is_contain<T1>() && contain_num<T1>() == contain_num<T2>();
+}
 
 // for Tc = complex<Tr>
 // rm_comp<Tc> is Tr
@@ -393,7 +395,10 @@ constexpr Bool is_promo_fun()
 }
 
 template <class T1, class T2>
-struct is_promo : integral_constant<Bool, is_promo_fun<T1, T2>()> {};
+constexpr Bool is_promo()
+{
+	return is_promo_fun<T1, T2>();
+}
 
 // promo_type<T1,T2> is the smallest type that both T1, T2 can losslessly converted to
 // (including from integer to floating point conversions)
