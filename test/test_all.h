@@ -20,13 +20,14 @@
 #include "test_print.h"
 
 #ifdef SLS_USE_MKL
-#include "test/test_eig.h"
-#include "test/test_mat_fun.h"
-#include "test/test_expokit.h"
-#include "test/test_fedvr.h"
+#include "test_eig.h"
+#include "test_mat_fun.h"
+#include "test_expokit.h"
+#include "test_fedvr.h"
 #endif
 
 #include "test_except.h"
+#include "test_mattsave.h"
 
 // #include "test/test_mparith.h"
 
@@ -67,6 +68,8 @@ inline void test_all()
 	test_time();
 	cout << "test_coulomb()" << endl;
 	test_coulomb();
+	cout << "test_mattsave()" << endl;
+	test_mattsave();
 
 	// eigen
 	/*cout << "test_eigen_basics()" << endl;
