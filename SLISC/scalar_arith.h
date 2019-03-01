@@ -95,7 +95,8 @@ inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 
 // floating point functions
 
-using std::swap; using std::abs; using std::real; using std::imag;
+using std::min; using std::max; using std::swap;
+using std::abs; using std::real; using std::imag;
 using std::conj;
 using std::sqrt; using std::sin; using std::cos; using std::tan;
 using std::exp; using std::log; using std::log10;

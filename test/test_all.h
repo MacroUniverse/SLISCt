@@ -28,6 +28,7 @@
 
 #include "test_except.h"
 #include "test_mattsave.h"
+#include "test_anglib.h"
 
 // #include "test/test_mparith.h"
 
@@ -70,6 +71,8 @@ inline void test_all()
 	test_coulomb();
 	cout << "test_mattsave()" << endl;
 	test_mattsave();
+	cout << "test_anglib()" << endl;
+	test_anglib();
 
 	// eigen
 	/*cout << "test_eigen_basics()" << endl;
