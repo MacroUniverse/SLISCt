@@ -21,6 +21,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 namespace slisc {
 
@@ -54,7 +55,7 @@ typedef long long int Llong;
 typedef const Llong Llong_I; // 64 bit integer
 typedef Llong &Llong_O, &Llong_IO;
 
-typedef unsigned Llong Ullong;
+typedef unsigned long long int Ullong;
 typedef const Ullong Ullong_I;
 typedef Ullong &Ullong_O, &Ullong_IO;
 #endif

@@ -1,7 +1,7 @@
 #pragma once
-#include "SLISC/slisc.h"
-#include "SLISC/eig.h"
-#include "SLISC/fedvr.h"
+#include "../SLISC/slisc.h"
+#include "../SLISC/eig.h"
+#include "../SLISC/fedvr.h"
 
 inline double test_fedvr_fun(const double x, const int n)
 {

@@ -1,7 +1,7 @@
-#include "SLISC/arithmetic.h"
-#include "SLISC/coulomb.h"
-#include "SLISC/time.h"
-#include "SLISC/disp.h"
+#include "../SLISC/arithmetic.h"
+#include "../SLISC/coulomb.h"
+#include "../SLISC/time.h"
+#include "../SLISC/disp.h"
 
 void test_coulomb()
 {

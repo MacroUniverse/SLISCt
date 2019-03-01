@@ -70,7 +70,7 @@ inline Int to_num(Bool_I x) { return (Int)x; }
 inline Int to_num(Char_I x) { return (Int)x; }
 inline Int to_num(Uchar_I x) { return (Int)x; }
 template <class T>
-inline const T &to_num(const T &x) { return x; }
+inline const T to_num(const T &x) { return x; }
 
 // integer functions
 // check if an integer is odd

@@ -6,8 +6,11 @@
 
 // using variable argument macro to allow parsing of ",".
 // otherwise, "," will separate a single argument into multiple arguments
-#define SLS_IF_HELPER(cond) typename std::enable_if<(bool)(cond), Int>::type = 0
-#define SLS_IF(...) SLS_IF_HELPER(__VA_ARGS__)
+
+// #define SLS_IF_HELPER(cond) typename std::enable_if<(bool)(cond), Int>::type = 0
+// #define SLS_IF(...) SLS_IF_HELPER(__VA_ARGS__)
+
+#define SLS_IF(...) typename std::enable_if<(bool)(__VA_ARGS__), Int>::type = 0
 
 namespace slisc {
 

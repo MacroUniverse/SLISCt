@@ -46,13 +46,13 @@ constexpr void operator+=(T &z, const Tr &x)
 	z.real() += x;
 }
 
-template <class T, class T1, SLS_IF(
-	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
-)>
-constexpr void operator+=(T &z, const T1 &z1)
-{
-	z += (T)z1;
-}
+//template <class T, class T1, SLS_IF(
+//	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+//)>
+//constexpr void operator+=(T &z, const T1 &z1)
+//{
+//	z += (T)z1;
+//}
 
 // operator-=
 template <class T, class Tr, SLS_IF(
@@ -63,13 +63,13 @@ constexpr void operator-=(T &z, const Tr &x)
 	z.real() -= x;
 }
 
-template <class T, class T1, SLS_IF(
-	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
-)>
-constexpr void operator-=(T &z, const T1 &z1)
-{
-	z -= (T)z1;
-}
+//template <class T, class T1, SLS_IF(
+//	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+//)>
+//constexpr void operator-=(T &z, const T1 &z1)
+//{
+//	z -= (T)z1;
+//}
 
 // operator*=
 template <class T, class Tr, SLS_IF(
@@ -80,13 +80,13 @@ constexpr void operator*=(T &z, const Tr &x)
 	z *= (rm_comp<T>)x;
 }
 
-template <class T, class T1, SLS_IF(
-	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
-)>
-constexpr void operator*=(T &z, const T1 &z1)
-{
-	z *= (T)z1;
-}
+//template <class T, class T1, SLS_IF(
+//	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+//)>
+//constexpr void operator*=(T &z, const T1 &z1)
+//{
+//	z *= (T)z1;
+//}
 
 // operator/=
 template <class T, class Tr, SLS_IF(
@@ -97,13 +97,13 @@ constexpr void operator/=(T &z, const Tr &x)
 	z /= (rm_comp<T>)x;
 }
 
-template <class T, class T1, SLS_IF(
-	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
-)>
-constexpr void operator/=(T &z, const T1 &z1)
-{
-	z /= (T)z1;
-}
+//template <class T, class T1, SLS_IF(
+//	is_comp<T>() && is_comp<T1>() && type_num<T>() > type_num<T1>()
+//)>
+//constexpr void operator/=(T &z, const T1 &z1)
+//{
+//	z /= (T)z1;
+//}
 
 // operator+-*/ between comp and real
 

@@ -5,12 +5,12 @@ eigenPath = ../EigenTest/Eigen/
 
 # this project requires "MatFile_linux" github repository
 
-source = main.cpp SLISC/print.cpp
-objects = main.o print.o
+source = main.cpp #SLISC/print.cpp
+objects = main.o #print.o
 
-compiler = g++
+compiler = icc
 
-flags =  -I $(eigenPath) -std=c++11 -g
+flags =  -I $(eigenPath) -std=c++17 -g -mkl -fp-model precise -fp-model except
 # -O3
 
 $(exe):$(objects)

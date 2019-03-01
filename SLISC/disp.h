@@ -3,6 +3,7 @@
 // unable to be called in debugger
 
 #pragma once
+#include "scalar_arith.h"
 #include "matrix.h"
 #include "cmat.h"
 #include "mat3d.h"
