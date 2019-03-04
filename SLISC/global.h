@@ -110,6 +110,7 @@ typedef const Str &Str_I;
 typedef Str &Str_O, &Str_IO;
 
 // === class declarations ===
+template <class T> class ImagNum;
 template <class T> class Vector;
 template <class T> class Matrix;
 template <class T> class Cmat;
@@ -125,6 +126,11 @@ template <class T> class Gvector;
 template <class T> class Gmatrix;
 template <class T> class Gmat3d;
 #endif
+
+// pure imaginary number
+typedef ImagNum<Doub> Imag;
+typedef const Imag Imag_I;
+typedef Imag  &Imag_O, &Imag_IO;
 
 // vector and matrix types
 typedef const Vector<Int> &VecInt_I;

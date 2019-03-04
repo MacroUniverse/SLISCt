@@ -128,6 +128,18 @@ constexpr Bool is_Lcomp()
 	return is_same<T, Lcomp>();
 }
 
+template<class T>
+constexpr Bool is_ImagNum()
+{
+	return is_same<T, ImagNum>();
+}
+
+template<class T>
+constexpr Bool is_Imag()
+{
+	return is_same<T, Imag>();
+}
+
 // type_num<T>() maps each scalr type to a unique number
 // a scalar type is defined as having a non-negative type number
 // 0-19: integral types
@@ -138,22 +150,21 @@ constexpr Bool is_Lcomp()
 template <class T>
 constexpr Int type_num()
 {
-	if (is_integral<T>()) {
-		if (is_Bool<T>()) return 0;
-		if (is_Char<T>()) return 1;
-		if (is_Int<T>()) return 2;
-		if (is_Llong<T>()) return 3;
-	}
-	else if (is_floating_point<T>()) {
-		if (is_Float<T>()) return 20;
-		if (is_Doub<T>()) return 21;
-		if (is_Ldoub<T>()) return 22;
-	}
-	else {
-		if (is_Fcomp<T>()) return 40;
-		if (is_Comp<T>()) return 41;
-		if (is_Lcomp<T>()) return 42;
-	}
+	if (is_Bool<T>()) return 0;
+	if (is_Char<T>()) return 1;
+	if (is_Int<T>()) return 2;
+	if (is_Llong<T>()) return 3;
+
+	if (is_Float<T>()) return 20;
+	if (is_Doub<T>()) return 21;
+	if (is_Ldoub<T>()) return 22;
+
+	if (is_Fcomp<T>()) return 40;
+	if (is_Comp<T>()) return 41;
+	if (is_Lcomp<T>()) return 42;
+
+	if (is_Imag<T>()) return 61;
+
 	return -1;
 }
 
@@ -176,7 +187,7 @@ constexpr Bool is_real()
 template<class T>
 constexpr Bool is_comp()
 {
-	return type_num<T>() >= 40;
+	return type_num<T>() >= 40 && type_num<T>() < 60;
 }
 
 // check if is a specific container type
