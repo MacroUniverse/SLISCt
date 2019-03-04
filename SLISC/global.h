@@ -130,7 +130,7 @@ template <class T> class Gmat3d;
 // pure imaginary number
 typedef ImagNum<Doub> Imag;
 typedef const Imag Imag_I;
-typedef Imag  &Imag_O, &Imag_IO;
+typedef Imag &Imag_O, &Imag_IO;
 
 // vector and matrix types
 typedef const Vector<Int> &VecInt_I;
@@ -209,6 +209,10 @@ typedef const Matrix<Doub> &MatDoub_I;
 typedef Matrix<Doub> MatDoub;
 typedef Matrix<Doub> &MatDoub_O, &MatDoub_IO;
 
+typedef Matrix<Imag> MatImag;
+typedef const MatImag &MatImag_I;
+typedef MatImag &MatImag_O, &MatImag_IO;
+
 typedef const Matrix<Comp> &MatComp_I;
 typedef Matrix<Comp> MatComp;
 typedef Matrix<Comp> &MatComp_O, &MatComp_IO;
@@ -245,9 +249,13 @@ typedef const Cmat<Doub> &CmatDoub_I;
 typedef Cmat<Doub> CmatDoub;
 typedef Cmat<Doub> &CmatDoub_O, &CmatDoub_IO;
 
-typedef const Cmat<Comp> &CmatComp_I;
+typedef Cmat<Imag> CmatImag;
+typedef const CmatImag &CmatImag_I;
+typedef CmatImag &CmatImag_O, &CmatImag_IO;
+
 typedef Cmat<Comp> CmatComp;
-typedef Cmat<Comp> &CmatComp_O, &CmatComp_IO;
+typedef const CmatComp &CmatComp_I;
+typedef CmatComp &CmatComp_O, &CmatComp_IO;
 
 typedef const Cmat<Bool> &CmatBool_I;
 typedef Cmat<Bool> CmatBool;
@@ -320,6 +328,10 @@ typedef DiagComp &DiagComp_O, &DiagComp_IO;
 typedef MatCoo<Doub> McooDoub;
 typedef const McooDoub &McooDoub_I;
 typedef McooDoub &McooDoub_O, &McooDoub_IO;
+
+typedef MatCoo<Imag> McooImag;
+typedef const McooImag &McooImag_I;
+typedef McooImag &McooImag_O, &McooImag_IO;
 
 typedef MatCoo<Comp> McooComp;
 typedef const McooComp &McooComp_I;

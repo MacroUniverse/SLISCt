@@ -248,3 +248,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * complete test of "arithmetic.h"
 * check all compiler warnings
 * use `SLS_FOTBID_COPY_CONSTRUCTOR` to forbit copy constructor of containers, default should be undefined.
+* test "meta.h" for ImagNum<T> types

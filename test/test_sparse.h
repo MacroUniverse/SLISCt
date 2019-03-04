@@ -157,16 +157,49 @@ inline void test_sparse()
 				}
 			}
 		}
+	}
 
-		// matrix - vector multiplication
-		VecDoub y, y1, x(4);
-		linspace(x, 1., 4.);
-		mul(y, a, x); mul(y1, c, x);
-		if (y != y1) error("failed!");
-
-		VecComp v, v1;
-		mul(v, b, x); mul(v1, d, x);
-		if (v != v1) error("failed!");
+	// matrix - vector multiplication
+	{
+		// for McooDoub
+		{
+			McooDoub a(4, 4, 16);
+			for (Int i = 0; i < 16; ++i) {
+				a.push(i, i % 4, i / 4);
+			}
+			CmatDoub a1; a1 = a;
+			VecDoub v, v1, x(4);
+			linspace(x, 1., 4.);
+			mul(v, a, x); mul(v1, a1, x);
+			if (v != v1) error("failed!");
+		}
+		
+		
+		// for McooComp
+		{
+			McooComp b(4, 4, 16);
+			for (Int i = 0; i < 16; ++i) {
+				b.push(Comp(i, i + 1), i % 4, i / 4);
+			}
+			MatComp b1;	b1 = b;
+			VecComp v, v1, x(4);
+			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
+			mul(v, b, x); mul(v1, b1, x);
+			if (v != v1) error("failed!");
+		}
+		
+		// for McooImag
+		{
+			McooImag c(4, 4, 16);
+			for (Int i = 0; i < 16; ++i) {
+				c.push(Imag(i), i % 4, i / 4);
+			}
+			CmatImag c1; c1 = c;
+			VecComp v, v1, x(4);
+			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
+			mul(v, c, x); mul(v1, c1, x);
+			if (v != v1) error("failed!");
+		}
 	}
 
 	// inf_norm
