@@ -58,7 +58,7 @@ public:
 	void operator<<(Vbase &rhs);
 	~Vbase() {
 		if (m_p)
-			delete m_p;
+			delete[] m_p;
 	}
 };
 

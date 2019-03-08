@@ -30,6 +30,7 @@
 #include "test_except.h"
 #include "test_mattsave.h"
 #include "test_anglib.h"
+#include "test_fr.h"
 
 // #include "test/test_mparith.h"
 
@@ -76,6 +77,8 @@ inline void test_all()
 	test_mattsave();
 	cout << "test_anglib()" << endl;
 	test_anglib();
+	cout << "test_fr()" << endl;
+	test_fr();
 
 	// eigen
 	/*cout << "test_eigen_basics()" << endl;
