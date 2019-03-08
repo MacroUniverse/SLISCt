@@ -120,6 +120,8 @@ template <class T> class Mat3d;
 template <class T> class Diag;
 template <class T> class MatCoo;
 template <class T> class MatCooH;
+template <class T> class Flm;
+
 // For cuSLISC project
 #ifdef _CUSLISC_
 template <class T> class Gvector;
@@ -344,6 +346,14 @@ typedef McoohDoub &McoohDoub_O, &McoohDoub_IO;
 typedef MatCooH<Comp> McoohComp;
 typedef const McoohComp &McoohComp_I;
 typedef McoohComp &McoohComp_O, &McoohComp_IO;
+
+typedef Flm<Doub> FlmDoub;
+typedef const FlmDoub &FlmDoub_I;
+typedef FlmDoub &FlmDoub_O, &FlmDoub_IO;
+
+typedef Flm<Comp> FlmComp;
+typedef const FlmComp &FlmComp_I;
+typedef FlmComp &FlmComp_O, &FlmComp_IO;
 
 // quiet NaN definition
 // uncomment one of the following 3 methods of defining a global NaN
