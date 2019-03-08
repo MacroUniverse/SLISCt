@@ -27,7 +27,7 @@ void shift(Matrix<T> &a, Llong nshift, Int_I dim = 1)
 			memcpy(a[i], a[i] + n, sz_);
 			memcpy(a[i] + Nc-n, temp, sz);
 		}
-		delete temp;
+		delete[] temp;
 	}
 	else {
 		// I actually want n to be shift up
@@ -44,7 +44,7 @@ void shift(Matrix<T> &a, Llong nshift, Int_I dim = 1)
 		memcpy(temp, a.ptr(), sz);
 		memcpy(a.ptr(), a[n], sz_);
 		memcpy(a[Nr-n], temp, sz);
-		delete temp;
+		delete[] temp;
 	}
 }
 
@@ -60,7 +60,7 @@ void diagonals(Matrix<T> &a)
 		memcpy(a[i], a[i] + i, (Nc-i)*szT);
 		memcpy(a[i] + Nc-i, temp, i*szT);
 	}
-	delete temp;
+	delete[] temp;
 }
 
 // parallel version
@@ -75,7 +75,7 @@ void diagonals_par(Matrix<T> &a)
 		memcpy(temp, a[i], i*szT);
 		memcpy(a[i], a[i] + i, (Nc-i)*szT);
 		memcpy(a[i] + Nc-i, temp, i*szT);
-		delete temp;
+		delete[] temp;
 	}
 }
 
@@ -90,7 +90,7 @@ void idiagonals(Matrix<T> &a)
 		memcpy(a[i], a[i] + (Nc-i), i*szT);
 		memcpy(a[i] + i, temp, (Nc-i)*szT);
 	}
-	delete temp;
+	delete[] temp;
 }
 
 template <class T>
@@ -104,7 +104,7 @@ void idiagonals_par(Matrix<T> &a)
 		memcpy(temp, a[i], (Nc-i)*szT);
 		memcpy(a[i], a[i] + (Nc-i), i*szT);
 		memcpy(a[i] + i, temp, (Nc-i)*szT);
-		delete temp;
+		delete[] temp;
 	}
 }
 

@@ -361,8 +361,8 @@ static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
 struct turn_on_floating_exceptions {
 	turn_on_floating_exceptions() {
 		int cw = _controlfp(0, 0);
-		// also: EM_INEXACT
-		cw &= ~(EM_INVALID | EM_OVERFLOW | EM_ZERODIVIDE | EM_UNDERFLOW | EM_DENORMAL);
+		// also: EM_INEXACT, EM_UNDERFLOW
+		cw &= ~(EM_INVALID | EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL);
 		_controlfp(cw, MCW_EM);
 	}
 };

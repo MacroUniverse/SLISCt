@@ -68,7 +68,7 @@ private:
 	using Base::m_p;
 	using Base::m_N;
 	Long m_Nr, m_Nc, m_Nnz;
-	Vector<Long> m_row, m_col;
+	VecLong m_row, m_col;
 	T m_zero; // TODO: this could be static inline variable for c++17
 public:
 	using Base::ptr;
@@ -135,8 +135,8 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 	m_col = rhs.ncols();
 	m_Nnz = rhs.nnz();
 	veccpy(ptr(), rhs.ptr(), m_Nnz);
-	veccpy(&m_row[0], rhs.row_ptr(), m_Nnz);
-	veccpy(&m_col[0], rhs.col_ptr(), m_Nnz);
+	veccpy(m_row.ptr(), rhs.row_ptr(), m_Nnz);
+	veccpy(m_col.ptr(), rhs.col_ptr(), m_Nnz);
 	return *this;
 }
 

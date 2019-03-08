@@ -60,6 +60,9 @@ void mattsave(MatDoub_I &a, const std::string &varname, MATTFile *pfile,
 void mattsave(MatComp_I &a, const std::string &varname, MATTFile *pfile,
 			Long_I step1 = 1, Long_I step2 = 1);
 
+void mattsave(CmatComp_I &a, const std::string &varname, MATTFile *pfile,
+	Long_I step1 = 1, Long_I step2 = 1);
+
 void mattsave(Mat3Doub_I &a, const std::string &varname, MATTFile *pfile,
 			Long_I step1 = 1, Long_I step2 = 1, Long_I step3 = 1);
 
@@ -448,6 +451,37 @@ inline void mattsave(MatDoub_I &a, const std::string &varname, MATTFile *pfile,
 }
 
 inline void mattsave(MatComp_I &a, const std::string &varname, MATTFile *pfile,
+	Long_I step1, Long_I step2)
+{
+	Long i, j, m, n;
+	Comp c; Doub cr, ci;
+	std::ofstream &fout = pfile->out;
+	++pfile->n; pfile->ind.push_back(fout.tellp());
+	// write variable name info
+	n = varname.size();
+	fout << n << '\n';
+	for (i = 0; i < n; ++i) {
+		fout << (Int)varname.at(i) << '\n';
+	}
+	// write data type info
+	fout << 1 << '\n';
+	// write dimension info
+	m = (a.nrows() + step1 - 1) / step1; n = (a.ncols() + step2 - 1) / step2;
+	fout << 2 << '\n' << m << '\n' << n << '\n';
+	// write matrix data
+	for (j = 0; j < n; ++j)
+		for (i = 0; i < m; ++i) {
+			c = a(step1*i, step2*j); cr = real(c); ci = imag(c);
+			if (ci == 0)
+				fout << cr << '\n';
+			else if (ci < 0)
+				fout << cr << ci << "i\n";
+			else
+				fout << cr << '+' << ci << "i\n";
+		}
+}
+
+inline void mattsave(CmatComp_I &a, const std::string &varname, MATTFile *pfile,
 	Long_I step1, Long_I step2)
 {
 	Long i, j, m, n;

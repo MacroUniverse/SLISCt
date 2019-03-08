@@ -9,7 +9,7 @@ namespace slisc {
 // anglib.f90: angular momentum coupling coefficients in Fortran 90
 // Copyright (C) 1998  Paul Stevenson
 
-Doub factorial(Int_I n) {
+inline Doub factorial(Int_I n) {
 	Doub res;
 	if (n == 0 || n == 1)
 		return 1.;
@@ -17,7 +17,7 @@ Doub factorial(Int_I n) {
 		return n * factorial(n - 1);
 }
 
-Doub binom(Int_I n, Int_I r) {
+inline Doub binom(Int_I n, Int_I r) {
 	Doub res;
 	if (n == r || r == 0)
 		return 1.;
@@ -28,7 +28,7 @@ Doub binom(Int_I n, Int_I r) {
 }
 
 // clebsch gordan coefficient [j1/2,m1/2,j2/2,m2/2,j/2,m/2]
-Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
+inline Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
 
 	Doub cleb, factor, sum;
 	Int par, z, zmin, zmax;
@@ -65,12 +65,15 @@ Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
 
 // 3j symbol [j1/2,m1/2,j2/2,m2/2,j/2,m/2]
 // written by me
-Doub threej(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j3, Int_I m3)
+inline Doub threej(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j3, Int_I m3)
 {
-	return pow(-1, (j1 -j2 -m3)/2.) / sqrt(j3+1.) * cleb(j1, m1, j2, m2, j3, -m3);
+#ifndef NDEBUG
+	if (isodd(j1 - j2 - m3)) error("unknown!");
+#endif
+	return pow(-1, (j1 -j2 -m3)/2) / sqrt(j3+1.) * cleb(j1, m1, j2, m2, j3, -m3);
 }
 
-Doub angdelta(Int_I a, Int_I b, Int_I c) {
+inline Doub angdelta(Int_I a, Int_I b, Int_I c) {
 	Doub angdelta, scr1;
 	scr1 = factorial((a + b - c) / 2);
 	scr1 = scr1 / factorial((a + b + c) / 2 + 1);
@@ -81,7 +84,7 @@ Doub angdelta(Int_I a, Int_I b, Int_I c) {
 }
 
 // 6j symbol [a/2,b/2,c/2; d/2,e/2,f/2]
-Doub sixj(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f)
+inline Doub sixj(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f)
 {
 	Doub sixj;
 	Int  nlo, nhi, n;
@@ -119,7 +122,7 @@ Doub sixj(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f)
 }
 
 // 9j symbol [a/2,b/2,c/2; d/2,e/2,f/2; g/2,h/2,i/2]
-Doub ninej(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f, Int_I g, Int_I h, Int_I i) {
+inline Doub ninej(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f, Int_I g, Int_I h, Int_I i) {
 	Doub ninej, sum;
 	Int xlo, xhi, x;
 
