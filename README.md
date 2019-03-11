@@ -218,6 +218,16 @@ void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub x
 void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
 ```
 
+## Data File (.matt)
+.matt is a text based format that I designed to immitate Matlab's .mat file.
+* can write many variables and matrices to a single file, with names.
+* can find and read any number of stored variables/matrices from a file by name without scanning through the whole file. Thus, reading a large file is fast.
+* there is a Matlab function `mattread()` that works similar to `load()` to read this file into Matlab workspace. This reading subroutine can be easily implemented for any other language.
+* Matrices are stored in column major order. Memory access speed is negaligible comparing to hard-drive.
+* TODO: is it possible to use space instead of `\n` so that there is no CRLF issue?
+* TODO: use `typenum<T>()` to specify type, instead of 1,2,3,etc.
+* TODO: `i` is not necessary, consider use `a+b` or `a-b` to represents complex numbers. However, `mattread()` might take longer time because Matlab cannot recognize this format directly.
+
 ## Related Projects
 * See cuSLISC project for a GPU version of SLISC using CUDA.
 * See MatFile project for saving and reading "Vector" or "Matrix" to/from Matlab data file ".mat", or text based file ".matt".

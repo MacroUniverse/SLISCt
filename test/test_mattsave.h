@@ -36,10 +36,6 @@ void test_mattsave()
 	mattsave(vc, "vc", pfmatt);
 
 	// matrices
-	MatUchar A8(2, 3);
-	A8 = 0;
-	A8(0, 0) = 1; A8(0, 1) = 3; A8(0, 2) = 5; A8(1, 2) = 11;
-	mattsave(A8, "A8", pfmatt);
 
 	MatInt AI(2, 3);
 	AI = 0;

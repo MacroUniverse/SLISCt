@@ -81,6 +81,12 @@ constexpr Bool is_Char()
 }
 
 template<class T>
+constexpr Bool is_Uchar()
+{
+	return is_same<T, Uchar>();
+}
+
+template<class T>
 constexpr Bool is_Int()
 {
 	return is_same<T, Int>();
