@@ -43,7 +43,7 @@ struct MATTFile {
 	vector<Long> ind; // variable positions (line indices)
 };
 
-// read the next variable after previous '\n'
+// read the next variable after previous ' '
 Long scanInverse(std::ifstream &fin)
 {
 	Char c;
@@ -52,7 +52,7 @@ Long scanInverse(std::ifstream &fin)
 	ind = fin.tellg();
 	for (i = 2; i < 100; ++i) {
 		fin.seekg(ind - i); c = fin.get();
-		if (c == '\n') break;
+		if (c == ' ') break;
 	}
 	fin >> N;
 	fin.seekg(ind - i);
@@ -99,19 +99,16 @@ inline void getprofile(MATTFile *pfile)
 
 MATTFile *mattOpen(Str fname, Char_I *rw)
 {
-	// must open file in binary mode, otherwise, '\n' will be written as "\r\n"
-	// and seekg() will not work the same in linux.
-
 	MATTFile* pfile = new MATTFile;
 	if (rw[0] == 'w') {
 		pfile->rw = 'w';
 		pfile->n = 0;
-		pfile->out = std::ofstream(fname, std::ios_base::binary);
+		pfile->out = std::ofstream(fname);
 		pfile->out.precision(MATFILE_PRECISION);
 	}
 	else {
 		pfile->rw = 'r';
-		pfile->in = std::ifstream(fname, std::ios_base::binary);
+		pfile->in = std::ifstream(fname);
 		if (!pfile->in)
 			error("error: file not found: ");
 		pfile->in.precision(17);
@@ -127,7 +124,7 @@ inline void mattClose(MATTFile* pfile)
 		std::ofstream &fout = pfile->out;
 		// write position of variables
 		for (i = pfile->ind.size() - 1; i >= 0; --i)
-			fout << pfile->ind[i] << "\n";
+			fout << pfile->ind[i] << ' ';
 		// write number of variables
 		fout << pfile->n;
 		pfile->out.close();
@@ -148,29 +145,29 @@ void mattsave(const T &s, Str_I varname, MATTFile *pfile)
 	++pfile->n; pfile->ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
-	fout << n << '\n';
+	fout << n << ' ';
 	for (i = 0; i < n; ++i) {
-		fout << to_num(varname.at(i)) << '\n';
+		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Uchar<T>()) fout << 3 << '\n';
-	else if (is_Int<T>()) fout << 2 << '\n';
-	else if (is_Doub<T>()) fout << 0 << '\n';
-	else if (is_Comp<T>()) fout << 1 << '\n';
+	if (is_Uchar<T>()) fout << 3 << ' ';
+	else if (is_Int<T>()) fout << 2 << ' ';
+	else if (is_Doub<T>()) fout << 0 << ' ';
+	else if (is_Comp<T>()) fout << 1 << ' ';
 	else error("unhandled case!");
 	// write dimension info
-	fout << 0 << '\n';
+	fout << 0 << ' ';
 	// write matrix data
 	if (!is_comp<T>()) {
-		fout << to_num(s) << '\n';
+		fout << to_num(s) << ' ';
 	}
 	else if (is_Comp<T>()) {
 		if (imag(s) == 0)
-			fout << real(s) << '\n';
+			fout << real(s) << ' ';
 		else if (imag(s) < 0)
-			fout << real(s) << imag(s) << "i\n";
+			fout << real(s) << imag(s) << "i ";
 		else
-			fout << real(s) << '+' << imag(s) << "i\n";
+			fout << real(s) << '+' << imag(s) << "i ";
 	}
 	else
 		error("unhandled case!");
@@ -186,31 +183,31 @@ inline void mattsave(const Vector<T> &v, Str_I varname, MATTFile *pfile)
 	++pfile->n; pfile->ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
-	fout << n << '\n';
+	fout << n << ' ';
 	for (i = 0; i < n; ++i) {
-		fout << to_num(varname.at(i)) << '\n';
+		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Uchar<T>()) fout << 3 << '\n';
-	else if (is_Int<T>()) fout << 2 << '\n';
-	else if (is_Doub<T>()) fout << 0 << '\n';
-	else if (is_Comp<T>()) fout << 1 << '\n';
+	if (is_Uchar<T>()) fout << 3 << ' ';
+	else if (is_Int<T>()) fout << 2 << ' ';
+	else if (is_Doub<T>()) fout << 0 << ' ';
+	else if (is_Comp<T>()) fout << 1 << ' ';
 	else error("unhandled");
 	// write dimension info
 	n = v.size();
-	fout << 1 << '\n' << n << '\n';
+	fout << 1 << ' ' << n << ' ';
 	// write matrix data
 	for (i = 0; i < n; ++i) {
 		if (!is_comp<T>())
-			fout << to_num(v[i]) << '\n';
+			fout << to_num(v[i]) << ' ';
 		else {
 			auto cr = real(v[i]), ci = imag(v[i]);
 			if (ci == 0)
-				fout << cr << '\n';
+				fout << cr << ' ';
 			else if (ci < 0)
-				fout << cr << ci << "i\n";
+				fout << cr << ci << "i ";
 			else
-				fout << cr << '+' << ci << "i\n";
+				fout << cr << '+' << ci << "i ";
 		}
 	}
 }
@@ -227,32 +224,32 @@ inline void mattsave(const Tm &a, Str_I varname, MATTFile *pfile,
 	++pfile->n; pfile->ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
-	fout << n << '\n';
+	fout << n << ' ';
 	for (i = 0; i < n; ++i) {
-		fout << to_num(varname.at(i)) << '\n';
+		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Uchar<T>()) fout << 3 << '\n';
-	else if (is_Int<T>()) fout << 2 << '\n';
-	else if (is_Doub<T>()) fout << 0 << '\n';
-	else if (is_Comp<T>()) fout << 1 << '\n';
+	if (is_Uchar<T>()) fout << 3 << ' ';
+	else if (is_Int<T>()) fout << 2 << ' ';
+	else if (is_Doub<T>()) fout << 0 << ' ';
+	else if (is_Comp<T>()) fout << 1 << ' ';
 	else error("unhandled!");
 	// write dimension info
 	m = (a.nrows() + step1 - 1) / step1; n = (a.ncols() + step2 - 1) / step2;
-	fout << 2 << '\n' << m << '\n' << n << '\n';
+	fout << 2 << ' ' << m << ' ' << n << ' ';
 	// write matrix data
 	for (j = 0; j < n; ++j)
 		for (i = 0; i < m; ++i) {
 			if (!is_comp<T>())
-				fout << to_num(a(step1*i, step2*j)) << '\n';
+				fout << to_num(a(step1*i, step2*j)) << ' ';
 			else {
 				auto c = a(step1*i, step2*j); auto cr = real(c), ci = imag(c);
 				if (ci == 0)
-					fout << cr << '\n';
+					fout << cr << ' ';
 				else if (ci < 0)
-					fout << cr << ci << "i\n";
+					fout << cr << ci << "i ";
 				else
-					fout << cr << '+' << ci << "i\n";
+					fout << cr << '+' << ci << "i ";
 			}
 		}
 }
@@ -268,32 +265,32 @@ inline void mattsave(const Mat3d<T> &a, Str_I varname, MATTFile *pfile,
 	++pfile->n; pfile->ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
-	fout << n << '\n';
+	fout << n << ' ';
 	for (i = 0; i < n; ++i) {
-		fout << to_num(varname.at(i)) << '\n';
+		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Doub<T>()) fout << 0 << '\n';
-	else if (is_Comp<T>()) fout << 1 << '\n';
+	if (is_Doub<T>()) fout << 0 << ' ';
+	else if (is_Comp<T>()) fout << 1 << ' ';
 	// write dimension info
 	m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
 	q = (a.dim3() + step3 - 1) / step3;
-	fout << 3 << '\n' << m << '\n' << n << '\n' << q << '\n';
+	fout << 3 << ' ' << m << ' ' << n << ' ' << q << ' ';
 	// write matrix data
 	for (k = 0; k < q; ++k)
 	for (j = 0; j < n; ++j)
 	for (i = 0; i < m; ++i) {
 		if constexpr (!is_comp<T>()) {
-			fout << a(step1*i, step2*j, step3*k) << '\n';
+			fout << a(step1*i, step2*j, step3*k) << ' ';
 		}
 		else {
 			auto c = a(step1*i, step2*j, step3*k); auto cr = real(c), ci = imag(c);
 			if (ci == 0)
-				fout << cr << '\n';
+				fout << cr << ' ';
 			else if (ci < 0)
-				fout << cr << ci << "i\n";
+				fout << cr << ci << "i ";
 			else
-				fout << cr << '+' << ci << "i\n";
+				fout << cr << '+' << ci << "i ";
 		}
 	}
 }
@@ -306,46 +303,46 @@ inline void mattsave(Mat3Doub_I &a, Str_I varname, MATTFile *pfile,
 	++pfile->n; pfile->ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
-	fout << n << '\n';
+	fout << n << ' ';
 	for (i = 0; i < n; ++i) {
-		fout << (Int)varname.at(i) << '\n';
+		fout << (Int)varname.at(i) << ' ';
 	}
 	// write data type info
-	fout << 0 << '\n';
+	fout << 0 << ' ';
 	if (xyz == 'x') {
 		// write dimension info
 		m = (a.dim2() + step1 - 1) / step1; n = (a.dim3() + step2 - 1) / step2;
-		fout << 3 << '\n' << m << '\n' << n << '\n' << Nslice << '\n';
+		fout << 3 << ' ' << m << ' ' << n << ' ' << Nslice << ' ';
 		// write matrix data
 		for (i = 0; i < Nslice; ++i) {
 			ind = slice[i];
 			for (k = 0; k < n; ++k)
 				for (j = 0; j < m; ++j)
-					fout << a(ind, step1*j, step2*k) << '\n';
+					fout << a(ind, step1*j, step2*k) << ' ';
 		}
 	}
 	else if (xyz == 'y') {
 		// write dimension info
 		m = (a.dim3() + step1 - 1) / step1; n = (a.dim1() + step2 - 1) / step2;
-		fout << 3 << '\n' << m << '\n' << n << '\n' << Nslice << '\n';
+		fout << 3 << ' ' << m << ' ' << n << ' ' << Nslice << ' ';
 		// write matrix data
 		for (j = 0; j < Nslice; ++j) {
 			ind = slice[j];
 			for (i = 0; i < n; ++i)
 				for (k = 0; k < m; ++k)
-					fout << a(step2*i, ind, step1*k) << '\n';
+					fout << a(step2*i, ind, step1*k) << ' ';
 		}
 	}
 	else if (xyz == 'z') {
 		// write dimension info
 		m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
-		fout << 3 << '\n' << m << '\n' << n << '\n' << Nslice << '\n';
+		fout << 3 << ' ' << m << ' ' << n << ' ' << Nslice << ' ';
 		// write matrix data
 		for (k = 0; k < Nslice; ++k) {
 			ind = slice[k];
 			for (j = 0; j < n; ++j)
 				for (i = 0; i < m; ++i)
-					fout << a(step1*i, step2*j, ind) << '\n';
+					fout << a(step1*i, step2*j, ind) << ' ';
 		}
 	}
 	else
@@ -361,16 +358,16 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 	++pfile->n; pfile->ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
-	fout << n << '\n';
+	fout << n << ' ';
 	for (i = 0; i < n; ++i) {
-		fout << (Int)varname.at(i) << '\n';
+		fout << (Int)varname.at(i) << ' ';
 	}
 	// write data type info
-	fout << 1 << '\n';
+	fout << 1 << ' ';
 	if (xyz == 'x') {
 		// write dimension info
 		m = (a.dim2() + step1 - 1) / step1; n = (a.dim3() + step2 - 1) / step2;
-		fout << 3 << '\n' << m << '\n' << n << '\n' << Nslice << '\n';
+		fout << 3 << ' ' << m << ' ' << n << ' ' << Nslice << ' ';
 		// write matrix data
 		for (i = 0; i < Nslice; ++i) {
 			ind = slice[i];
@@ -379,11 +376,11 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 				{
 					c = a(ind, step1*j, step2*k); cr = real(c); ci = imag(c);
 					if (ci == 0)
-						fout << cr << '\n';
+						fout << cr << ' ';
 					else if (ci < 0)
-						fout << cr << ci << "i\n";
+						fout << cr << ci << "i ";
 					else
-						fout << cr << '+' << ci << "i\n";
+						fout << cr << '+' << ci << "i ";
 				}
 					
 		}
@@ -391,7 +388,7 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 	else if (xyz == 'y') {
 		// write dimension info
 		m = (a.dim3() + step1 - 1) / step1; n = (a.dim1() + step2 - 1) / step2;
-		fout << 3 << '\n' << m << '\n' << n << '\n' << Nslice << '\n';
+		fout << 3 << ' ' << m << ' ' << n << ' ' << Nslice << ' ';
 		// write matrix data
 		for (j = 0; j < Nslice; ++j) {
 			ind = slice[j];
@@ -399,18 +396,18 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 				for (k = 0; k < m; ++k) {
 					c = a(step2*i, ind, step1*k); cr = real(c); ci = imag(c);
 					if (ci == 0)
-						fout << cr << '\n';
+						fout << cr << ' ';
 					else if (ci < 0)
-						fout << cr << ci << "i\n";
+						fout << cr << ci << "i ";
 					else
-						fout << cr << '+' << ci << "i\n";
+						fout << cr << '+' << ci << "i ";
 				}
 		}
 	}
 	else if (xyz == 'z') {
 		// write dimension info
 		m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
-		fout << 3 << '\n' << m << '\n' << n << '\n' << Nslice << '\n';
+		fout << 3 << ' ' << m << ' ' << n << ' ' << Nslice << ' ';
 		// write matrix data
 		for (k = 0; k < Nslice; ++k) {
 			ind = slice[k];
@@ -418,11 +415,11 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 				for (i = 0; i < m; ++i) {
 					c = a(step1*i, step2*j, ind); cr = real(c); ci = imag(c);
 					if (ci == 0)
-						fout << cr << '\n';
+						fout << cr << ' ';
 					else if (ci < 0)
-						fout << cr << ci << "i\n";
+						fout << cr << ci << "i ";
 					else
-						fout << cr << '+' << ci << "i\n";
+						fout << cr << '+' << ci << "i ";
 				}
 		}
 	}
@@ -446,14 +443,14 @@ inline void scanComplex(Comp &c, std::ifstream &fin)
 	Uchar ch;
 	fin >> cr;
 	ch = fin.get();
-	if (ch == '\n') {
+	if (ch == ' ') {
 		c = cr; return;
 	}
 	fin >> ci;
 	if (ch == '-')
 		ci *= -1.;
 	c = Comp(cr, ci);
-	fin.ignore(100, '\n');
+	fin.ignore(100, ' ');
 }
 
 template <class T, SLS_IF(
