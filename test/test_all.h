@@ -36,7 +36,7 @@
 
 inline void test_all()
 {
-	using std::cout; using std::endl;
+	using slisc::cout; using slisc::endl;
 	using slisc::Input;
 
 	cout << "test_meta()" << endl;
@@ -91,15 +91,18 @@ inline void test_all()
 	cout << "auto test successful!\n" << endl;
 	Input inp;
 
-	if (inp.Bool("test_except() ?")) {
-		test_except();
+	if (inp.Bool("run optional tests?")) {
+		if (inp.Bool("test_disp() ?")) {
+			test_disp();
+		}
+		if (inp.Bool("test_print() ?")) {
+			test_print();
+		}
+		if (inp.Bool("test_except() ?")) {
+			test_except();
+		}
 	}
-	if (inp.Bool("test_disp() ?")) {
-		test_disp();
-	}
-	if (inp.Bool("test_print() ?")) {
-		test_print();
-	}
+
 	//cout << "test_mparith()" << endl;
 	//test_mparith();
 	cout << "testing successful!" << endl;

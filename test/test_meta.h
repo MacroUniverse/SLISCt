@@ -27,12 +27,12 @@ inline void test_meta()
 	if (!is_integral<Int>()) error("failed!");
 	if (!is_integral<Long>()) error("failed!");
 	if (!is_integral<Llong>()) error("failed!");
-	if (is_integral<float>()) error("failed!");
+	if (is_integral<Float>()) error("failed!");
 	if (is_integral<Doub>()) error("failed!");
 	if (is_integral<Ldoub>()) error("failed!");
 
 	// is_floating_point
-	if (!is_floating_point<float>()) error("failed!");
+	if (!is_floating_point<Float>()) error("failed!");
 	if (!is_floating_point<Doub>()) error("failed!");
 	if (!is_floating_point<Ldoub>()) error("failed!");
 	if (is_floating_point<Char>()) error("failed!");
@@ -46,7 +46,7 @@ inline void test_meta()
 	if (!is_arithmetic<Uchar>()) error("failed!");
 	if (!is_arithmetic<Int>()) error("failed!");
 	if (!is_arithmetic<Long>()) error("failed!");
-	if (!is_arithmetic<float>()) error("failed!");
+	if (!is_arithmetic<Float>()) error("failed!");
 	if (!is_arithmetic<Doub>()) error("failed!");
 	if (!is_arithmetic<Ldoub>()) error("failed!");
 
