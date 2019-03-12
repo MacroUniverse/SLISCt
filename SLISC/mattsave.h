@@ -1,47 +1,39 @@
 // save vectors and matrices defined in "nr3.h" to ".mat" or ".matt" files.
 // see README.txt for details
-// class types: Doub=0, Comp=1, Int=2, Uchar=3.
+// class types: Doub=0, Comp=1, Int=2, Char=3.
 
 #pragma once
 //#define MATFILE_BINARY
 //#define MATFILE_DUAL
-
-#ifndef MATFILE_PRECISION
-#define MATFILE_PRECISION 16
-#endif
 
 #include "../SLISC/slisc.h"
 
 namespace slisc {
 
 // matt file object
-struct MATTFile;
-
-// open a file (read: rw = 'r', write: rw = 'w')
-MATTFile *mattOpen(Str fname, Char_I *rw);
-
-// close a file;
-void mattClose(MATTFile *pfile);
-
-// save a scalar / matrix
-// void mattsave(const T &s, Str_I varname, MATTFile *pfile);
-
-// load a scalar / matrix
-// void mattload(T &I, Str_I varname, MATTFile *pfile);
+struct Matt;
 
 // ========== Implementation ============
 
-// MATTFile class for text mode
-struct MATTFile {
-	char rw; // 'r' for read 'w' for write
-	ifstream in; // read file
-	ofstream out; // write file
-	Int n; // variable numbers
-	vector<Str> name; // variable names
-	vector<Int> type; // variable types
-	vector<vector<Long>> size; // variable dimensions
-	vector<Long> ind; // variable positions (line indices)
+// Matt class for text mode
+class Matt {
+public:
+	char m_rw; // 'r' for read 'w' for write
+	ifstream m_in; // read file
+	ofstream m_out; // write file
+	Int m_n; // variable numbers
+	vector<Str> m_name; // variable names
+	vector<Int> m_type; // variable types
+	vector<vector<Long>> m_size; // variable dimensions
+	vector<Long> m_ind; // variable positions (line indices)
+
+	void get_profile();
+	void open(Str fname, Char_I *rw, Int_I precision = 17);
+	void close();
 };
+
+typedef const Matt &Matt_I;
+typedef Matt &Matt_O, &Matt_IO;
 
 // read the next variable after previous ' '
 Long scanInverse(std::ifstream &fin)
@@ -60,89 +52,86 @@ Long scanInverse(std::ifstream &fin)
 }
 
 // get var names and positions from the end of the file
-// after return, pfile->ind[i] points to the first matrix element;
-inline void getprofile(MATTFile *pfile)
+// after return, pfile.m_ind[i] points to the first matrix element;
+inline void Matt::get_profile()
 {
 	Int i, j, n, temp;
-	std::vector<Long> size;
+	vector<Long> size;
 	Str name;
-	std::ifstream &fin = pfile->in;
+	ifstream &fin = m_in;
 
 	// read number of variables and their positions
 	fin.seekg(0, fin.end);
-	pfile->n = (Int)scanInverse(fin);
-	for (i = 0; i < pfile->n; ++i)
-		pfile->ind.push_back(scanInverse(fin));
+	m_n = (Int)scanInverse(fin);
+	for (i = 0; i < m_n; ++i)
+		m_ind.push_back(scanInverse(fin));
 
 	// loop through each variable
-	for (i = 0; i < pfile->n; ++i) {
-		fin.seekg(pfile->ind[i]);
+	for (i = 0; i < m_n; ++i) {
+		fin.seekg(m_ind[i]);
 		// read var name
 		fin >> n;
 		name.resize(0);
 		for (j = 0; j < n; ++j) {
-			fin >> temp; name.push_back((char)temp);
+			fin >> temp; name.push_back((Char)temp);
 		}
-		pfile->name.push_back(name);
+		m_name.push_back(name);
 		// read var type
-		fin >> temp; pfile->type.push_back(temp);
+		fin >> temp; m_type.push_back(temp);
 		// read var dim
 		fin >> n;
 		size.resize(0);
 		for (j = 0; j < n; ++j) {
 			fin >> temp; size.push_back(temp);
 		}
-		pfile->size.push_back(size);
-		pfile->ind[i] = fin.tellg();
+		m_size.push_back(size);
+		m_ind[i] = fin.tellg();
 	}
 }
 
-MATTFile *mattOpen(Str fname, Char_I *rw)
+void Matt::open(Str fname, Char_I *rw, Int_I precision)
 {
-	MATTFile* pfile = new MATTFile;
 	if (rw[0] == 'w') {
-		pfile->rw = 'w';
-		pfile->n = 0;
-		pfile->out = std::ofstream(fname);
-		pfile->out.precision(MATFILE_PRECISION);
+		m_rw = 'w';
+		m_n = 0;
+		m_out = std::ofstream(fname);
+		m_out.precision(precision);
 	}
 	else {
-		pfile->rw = 'r';
-		pfile->in = std::ifstream(fname);
-		if (!pfile->in)
+		m_rw = 'r';
+		m_in = std::ifstream(fname);
+		if (!m_in)
 			error("error: file not found: ");
-		pfile->in.precision(17);
-		getprofile(pfile); // get var names
+		m_in.precision(17);
+		get_profile(); // get var names
 	}
-	return pfile;
 }
 
-inline void mattClose(MATTFile* pfile)
+inline void Matt::close()
 {
 	Llong i;
-	if (pfile->rw == 'w') {
-		std::ofstream &fout = pfile->out;
+	if (m_rw == 'w') {
+		std::ofstream &fout = m_out;
 		// write position of variables
-		for (i = pfile->ind.size() - 1; i >= 0; --i)
-			fout << pfile->ind[i] << ' ';
+		for (i = m_ind.size() - 1; i >= 0; --i)
+			fout << m_ind[i] << ' ';
 		// write number of variables
-		fout << pfile->n;
-		pfile->out.close();
+		fout << m_n;
+		m_out.close();
 	}
 	else {
-		pfile->in.close();
+		m_in.close();
 	}
-	delete pfile;
 }
 
 template <class T, SLS_IF(
-	is_Uchar<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
+	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
 )>
-void mattsave(const T &s, Str_I varname, MATTFile *pfile)
+void save(const T &s, Str_I varname, Matt_IO pfile)
 {
 	Long i, n;
-	ofstream &fout = pfile->out;
-	++pfile->n; pfile->ind.push_back(fout.tellp());
+	ofstream &fout = pfile.m_out;
+	++pfile.m_n; pfile.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
 	fout << n << ' ';
@@ -150,11 +139,7 @@ void mattsave(const T &s, Str_I varname, MATTFile *pfile)
 		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Uchar<T>()) fout << 3 << ' ';
-	else if (is_Int<T>()) fout << 2 << ' ';
-	else if (is_Doub<T>()) fout << 0 << ' ';
-	else if (is_Comp<T>()) fout << 1 << ' ';
-	else error("unhandled case!");
+	fout << type_num<T>() << ' ';
 	// write dimension info
 	fout << 0 << ' ';
 	// write matrix data
@@ -174,13 +159,13 @@ void mattsave(const T &s, Str_I varname, MATTFile *pfile)
 }
 
 template <class T, SLS_IF(
-	is_Int<T>() || is_Uchar<T>() || is_Doub<T>() || is_Comp<T>()
+	is_Int<T>() || is_Char<T>() || is_Doub<T>() || is_Comp<T>()
 )>
-inline void mattsave(const Vector<T> &v, Str_I varname, MATTFile *pfile)
+inline void save(const Vector<T> &v, Str_I varname, Matt_IO pfile)
 {
 	Long i, n;
-	ofstream &fout = pfile->out;
-	++pfile->n; pfile->ind.push_back(fout.tellp());
+	ofstream &fout = pfile.m_out;
+	++pfile.m_n; pfile.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
 	fout << n << ' ';
@@ -188,11 +173,7 @@ inline void mattsave(const Vector<T> &v, Str_I varname, MATTFile *pfile)
 		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Uchar<T>()) fout << 3 << ' ';
-	else if (is_Int<T>()) fout << 2 << ' ';
-	else if (is_Doub<T>()) fout << 0 << ' ';
-	else if (is_Comp<T>()) fout << 1 << ' ';
-	else error("unhandled");
+	fout << type_num<T>() << ' ';
 	// write dimension info
 	n = v.size();
 	fout << 1 << ' ' << n << ' ';
@@ -214,14 +195,14 @@ inline void mattsave(const Vector<T> &v, Str_I varname, MATTFile *pfile)
 
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
 	(is_Matrix<Tm>() || is_Cmat<Tm>()) &&
-	(is_Uchar<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>())
+	(is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>())
 )>
-inline void mattsave(const Tm &a, Str_I varname, MATTFile *pfile,
+inline void save(const Tm &a, Str_I varname, Matt_IO pfile,
 	Long_I step1 = 1, Long_I step2 = 1)
 {
 	Long i, j, m, n;
-	ofstream &fout = pfile->out;
-	++pfile->n; pfile->ind.push_back(fout.tellp());
+	ofstream &fout = pfile.m_out;
+	++pfile.m_n; pfile.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
 	fout << n << ' ';
@@ -229,11 +210,7 @@ inline void mattsave(const Tm &a, Str_I varname, MATTFile *pfile,
 		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Uchar<T>()) fout << 3 << ' ';
-	else if (is_Int<T>()) fout << 2 << ' ';
-	else if (is_Doub<T>()) fout << 0 << ' ';
-	else if (is_Comp<T>()) fout << 1 << ' ';
-	else error("unhandled!");
+	fout << type_num<T>() << ' ';
 	// write dimension info
 	m = (a.nrows() + step1 - 1) / step1; n = (a.ncols() + step2 - 1) / step2;
 	fout << 2 << ' ' << m << ' ' << n << ' ';
@@ -257,12 +234,12 @@ inline void mattsave(const Tm &a, Str_I varname, MATTFile *pfile,
 template <class T, SLS_IF(
 	is_Doub<T>() || is_Comp<T>()
 )>
-inline void mattsave(const Mat3d<T> &a, Str_I varname, MATTFile *pfile,
+inline void save(const Mat3d<T> &a, Str_I varname, Matt_IO pfile,
 	Long_I step1 = 1, Long_I step2 = 1, Long_I step3 = 1)
 {
 	Long i, j, k, m, n, q;
-	ofstream &fout = pfile->out;
-	++pfile->n; pfile->ind.push_back(fout.tellp());
+	ofstream &fout = pfile.m_out;
+	++pfile.m_n; pfile.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
 	fout << n << ' ';
@@ -270,8 +247,7 @@ inline void mattsave(const Mat3d<T> &a, Str_I varname, MATTFile *pfile,
 		fout << to_num(varname.at(i)) << ' ';
 	}
 	// write data type info
-	if (is_Doub<T>()) fout << 0 << ' ';
-	else if (is_Comp<T>()) fout << 1 << ' ';
+	fout << type_num<T>() << ' ';
 	// write dimension info
 	m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
 	q = (a.dim3() + step3 - 1) / step3;
@@ -295,12 +271,12 @@ inline void mattsave(const Mat3d<T> &a, Str_I varname, MATTFile *pfile,
 	}
 }
 
-inline void mattsave(Mat3Doub_I &a, Str_I varname, MATTFile *pfile,
+inline void save(Mat3Doub_I &a, Str_I varname, Matt_IO pfile,
 	Char_I xyz, VecInt_I &slice, Long_I step1 = 1, Long_I step2 = 1)
 {
 	Long i, j, k, m, n, ind, Nslice{ slice.size() };
-	std::ofstream &fout = pfile->out;
-	++pfile->n; pfile->ind.push_back(fout.tellp());
+	std::ofstream &fout = pfile.m_out;
+	++pfile.m_n; pfile.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
 	fout << n << ' ';
@@ -308,7 +284,7 @@ inline void mattsave(Mat3Doub_I &a, Str_I varname, MATTFile *pfile,
 		fout << (Int)varname.at(i) << ' ';
 	}
 	// write data type info
-	fout << 0 << ' ';
+	fout << type_num<Doub>() << ' ';
 	if (xyz == 'x') {
 		// write dimension info
 		m = (a.dim2() + step1 - 1) / step1; n = (a.dim3() + step2 - 1) / step2;
@@ -349,13 +325,13 @@ inline void mattsave(Mat3Doub_I &a, Str_I varname, MATTFile *pfile,
 		error("illegal value of xyz");
 }
 
-inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
+inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO pfile,
 	Char_I xyz, VecInt_I &slice, Long_I step1 = 1, Long_I step2 = 1)
 {
 	Long i, j, k, m, n, ind, Nslice{ slice.size() };
 	Comp c; Doub cr, ci;
-	std::ofstream &fout = pfile->out;
-	++pfile->n; pfile->ind.push_back(fout.tellp());
+	std::ofstream &fout = pfile.m_out;
+	++pfile.m_n; pfile.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
 	fout << n << ' ';
@@ -363,7 +339,7 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 		fout << (Int)varname.at(i) << ' ';
 	}
 	// write data type info
-	fout << 1 << ' ';
+	fout << type_num<Comp>() << ' ';
 	if (xyz == 'x') {
 		// write dimension info
 		m = (a.dim2() + step1 - 1) / step1; n = (a.dim3() + step2 - 1) / step2;
@@ -428,10 +404,10 @@ inline void mattsave(Mat3Comp_I &a, Str_I varname, MATTFile *pfile,
 }
 
 // search variable in file by name
-inline Int nameSearch(Str_I name, MATTFile *pfile)
+inline Int nameSearch(Str_I name, Matt_IO pfile)
 {
-	for (Int i = 0; i < pfile->n; ++i)
-		if (name == pfile->name[i])
+	for (Int i = 0; i < pfile.m_n; ++i)
+		if (name == pfile.m_name[i])
 			return i;
 	error("variable name not found!");
 	return -1;
@@ -440,7 +416,7 @@ inline Int nameSearch(Str_I name, MATTFile *pfile)
 inline void scanComplex(Comp &c, std::ifstream &fin)
 {
 	Doub cr = 0, ci = 0;
-	Uchar ch;
+	Char ch;
 	fin >> cr;
 	ch = fin.get();
 	if (ch == ' ') {
@@ -454,73 +430,55 @@ inline void scanComplex(Comp &c, std::ifstream &fin)
 }
 
 template <class T, SLS_IF(
-	is_Uchar<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
+	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
 )>
-inline void mattload(T &s, Str_I varname, MATTFile *pfile)
+inline void load(T &s, Str_I varname, Matt_IO pfile)
 {
 	Int i;
-	ifstream &fin = pfile->in;
+	ifstream &fin = pfile.m_in;
 	i = nameSearch(varname, pfile);
-	fin.seekg(pfile->ind[i]);
+	fin.seekg(pfile.m_ind[i]);
 
-	// read var type and dim and var data
-	if constexpr (is_Uchar<T>()) {
-		if (pfile->type[i] != 3 || pfile->size[i].size() != 0)
-			error("wrong type or dim!");
+	if (!is_promo(type_num<T>(), pfile.m_type[i]))
+		error("wrong type!");
+	if (pfile.m_size[i].size() != 0)
+		error("wrong dimension!");
+
+	if constexpr (is_Char<T>()) {
 		Int temp; fin >> temp; s = (T)temp;
 	}
 	else if constexpr (is_Int<T>()) {
-		// read var type and dim
-		if (pfile->type[i] < 2 || pfile->size[i].size() != 0)
-			error("wrong type or dim!");
 		fin >> s;
 	}
 	else if constexpr (is_Doub<T>()) {
-		if (pfile->type[i] == 1 || pfile->size[i].size() != 0)
-			error("wrong type or dim!");
 		fin >> s;
 	}
 	else if constexpr (is_Comp<T>()) {
-		if (pfile->size[i].size() != 0)
-			error("wrong type or dim!");
 		scanComplex(s, fin);
 	}
 	else error("unhandled!");
 }
 
 template <class T, SLS_IF(
-	is_Uchar<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
+	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
 )>
-inline void mattload(Vector<T> &v, Str_I varname, MATTFile *pfile)
+inline void load(Vector<T> &v, Str_I varname, Matt_IO pfile)
 {
 	Long i, n, dim;
-	ifstream &fin = pfile->in;
+	ifstream &fin = pfile.m_in;
 	i = nameSearch(varname, pfile);
-	fin.seekg(pfile->ind[i]);
+	fin.seekg(pfile.m_ind[i]);
 
-	// read var type and dim
-	dim = pfile->size[i].size();
-	if (is_Uchar<T>()) {
-		if (pfile->type[i] != 3 || dim != 1) error("wrong type or dim!");
-	}
-	else if (is_Int<T>()) {
-		if (pfile->type[i] < 2 || dim != 1) error("wrong type or dim!");
-	}
-		
-	else if (is_Doub<T>()) {
-		if (pfile->type[i] == 1 || dim != 1) error("wrong type or dim!");
-	}
-		
-	else if (is_Comp<T>()) {
-		if (dim != 1) error("wrong type or dim!");
-	}
-	else error("unhandled!");
+	if (!is_promo(type_num<T>(), pfile.m_type[i]))
+		error("wrong type!");
+	if (pfile.m_size[i].size() != 1)
+		error("wrong dimension!");
 
-	n = pfile->size[i][0]; v.resize(n);
+	n = pfile.m_size[i][0]; v.resize(n);
 	// read var data
 	for (i = 0; i < n; ++i) {
-		if constexpr (is_Uchar<T>()) {
-			Int temp; fin >> temp;  v[i] = (Uchar)temp;
+		if constexpr (is_Char<T>()) {
+			Int temp; fin >> temp;  v[i] = (Char)temp;
 		}
 		else if constexpr (is_Int<T>() || is_Doub<T>())
 			fin >> v[i];
@@ -528,37 +486,26 @@ inline void mattload(Vector<T> &v, Str_I varname, MATTFile *pfile)
 }
 
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
-	is_Matrix<Tm>() && (is_Uchar<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>())
+	is_Matrix<Tm>() && (is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>())
 )>
-inline void mattload(Tm &a, Str_I varname, MATTFile *pfile)
+inline void load(Tm &a, Str_I varname, Matt_IO pfile)
 {
 	Long i, j, dim, m, n;
-	ifstream &fin = pfile->in;
+	ifstream &fin = pfile.m_in;
 	i = nameSearch(varname, pfile);
-	fin.seekg(pfile->ind[i]);
+	fin.seekg(pfile.m_ind[i]);
 
-	// read var type and dim
-	dim = pfile->size[i].size();
-	if (is_Uchar<T>()) {
-		if (pfile->type[i] != 3 || dim != 2) error("wrong type or dim!");
-	}
-	else if (is_Int<T>()) {
-		if (pfile->type[i] < 2 || dim != 2) error("wrong type or dim!");
-	}
-	else if (is_Doub<T>()) {
-		if (pfile->type[i] == 1 || dim != 2) error("wrong type or dim!");
-	}
-	else if (is_Comp<T>()) {
-		if (dim != 2) error("wrong type or dim!");
-	}
-	else error("unhandled!");
+	if (!is_promo(type_num<T>(), pfile.m_type[i]))
+		error("wrong type!");
+	if (pfile.m_size[i].size() != 2)
+		error("wrong dimension!");
 
-	m = pfile->size[i][0]; n = pfile->size[i][1]; a.resize(m, n);
+	m = pfile.m_size[i][0]; n = pfile.m_size[i][1]; a.resize(m, n);
 	// read var data
 	for (j = 0; j < n; ++j)
 		for (i = 0; i < m; ++i) {
-			if constexpr (is_Uchar<T>()) {
-				Int temp; fin >> temp;  a(i, j) = (Uchar)temp;
+			if constexpr (is_Char<T>()) {
+				Int temp; fin >> temp;  a(i, j) = (Char)temp;
 			}
 			else if constexpr (is_Int<T>() || is_Doub<T>())
 				fin >> a(i, j);
@@ -571,23 +518,19 @@ inline void mattload(Tm &a, Str_I varname, MATTFile *pfile)
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
 	is_Mat3d<Tm>() && (is_Doub<T>() || is_Comp<T>())
 )>
-inline void mattload(Tm &a, Str_I varname, MATTFile *pfile)
+inline void load(Tm &a, Str_I varname, Matt_IO pfile)
 {
 	Long i, j, k, dim, m, n, q;
-	ifstream &fin = pfile->in;
+	ifstream &fin = pfile.m_in;
 	i = nameSearch(varname, pfile);
-	fin.seekg(pfile->ind[i]);
+	fin.seekg(pfile.m_ind[i]);
 
-	// read var type and dim
-	dim = pfile->size[i].size();
-	if (is_Doub<T>()) {
-		if (pfile->type[i] == 1 || dim != 3) error("wrong type or dim!");
-	}
-	else if (is_Comp<T>()) {
-		if (dim != 3) error("wrong type or dim!");
-	}
+	if (!is_promo(type_num<T>(), pfile.m_type[i]))
+		error("wrong type!");
+	if (pfile.m_size[i].size() != 3)
+		error("wrong dimension!");
 	
-	m = pfile->size[i][0]; n = pfile->size[i][1]; q = pfile->size[i][2];
+	m = pfile.m_size[i][0]; n = pfile.m_size[i][1]; q = pfile.m_size[i][2];
 	a.resize(m, n, q);
 	// read var data
 	for (k = 0; k < q; ++k)
@@ -599,7 +542,6 @@ inline void mattload(Tm &a, Str_I varname, MATTFile *pfile)
 					scanComplex(a(i, j, k), fin);
 				else error("unhandled!");
 			}
-				
 }
 
 } // namespace slisc

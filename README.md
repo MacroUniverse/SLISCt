@@ -42,6 +42,12 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * A type with `_I` suffix is the `const` or `reference to const` version of that type, used in function parameter declarations to indicate an input argument. Similarly, `_O` means output (reference type), `_IO` means both input and output (reference type). Note that a reference to `_O` or `_I` types is still a reference type.
 
+## Meta Programming
+* every supported type has a type num `type_num<T>()`
+* functions like `is_*(...)` can dynamically or statically check properties and relations of types.
+* functions like `is_*<...>()` can statically check properties and relations of types.
+* SFINAE technique is used to limit template function instantiation, just use the macro function `SLS_IF(cond)` as the last template parameter.
+
 ## Headers Introduction
 * `slisc.h` includes all type definitions and constants, and basic arithmetics.
 * `global.h` has all the container declaration and type definitions etc.
@@ -218,13 +224,14 @@ void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub x
 void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
 ```
 
-## Data File (.matt)
-.matt is a text based format that I designed to immitate Matlab's .mat file.
+## Matt File (.matt)
+* .matt is a text based format that I designed to immitate Matlab's .mat file.
 * can write many variables and matrices to a single file, with names.
 * can find and read any number of stored variables/matrices from a file by name without scanning through the whole file. Thus, reading a large file is fast.
-* there is a Matlab function `mattread()` that works similar to `load()` to read this file into Matlab workspace. This reading subroutine can be easily implemented for any other language.
+* the read in value type T2 can be different from the written value type T1, if T1 can be losslessly converted to T2 (see `is_promo<T1,T2>()`).
+* there is a Matlab function `save()` that works similar to `load()` to read this file into Matlab workspace. This reading subroutine can be easily implemented for any other language.
 * Matrices are stored in column major order. Memory access speed is negaligible comparing to hard-drive.
-* TODO: use `typenum<T>()` to specify type, instead of 1,2,3,etc.
+
 * TODO: `i` is not necessary, consider use `a+b` or `a-b` to represents complex numbers. However, `mattread()` might take longer time because Matlab cannot recognize this format directly.
 
 ## Related Projects

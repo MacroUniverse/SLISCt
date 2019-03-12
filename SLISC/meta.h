@@ -175,26 +175,40 @@ constexpr Bool is_scalar()
 	return type_num<T>() >= 0;
 }
 
-
 // is_real<T> checks if is a real scalar
+constexpr Bool is_real(Int_I type_num)
+{
+	return type_num >= 0 && type_num < 40;
+}
+
 template<class T>
 constexpr Bool is_real()
 {
-	return type_num<T>() >= 0 && type_num<T>() < 40;
+	return is_real(type_num<T>());
 }
 
 // is_comp<T> checks if T is a scalar of ImagNum<> type
+constexpr Bool is_ImagNum(Int_I type_num)
+{
+	return type_num >= 60 && type_num < 80;
+}
+
 template<class T>
 constexpr Bool is_ImagNum()
 {
-	return type_num<T>() >= 60 && type_num<T>() < 80;
+	return is_ImagNum(type_num<T>());
 }
 
 // is_comp<T> checks if T is a scalar of complex<> type
+constexpr Bool is_comp(Int_I type_num)
+{
+	return type_num >= 40 && type_num < 60;
+}
+
 template<class T>
 constexpr Bool is_comp()
 {
-	return type_num<T>() >= 40 && type_num<T>() < 60;
+	return is_comp(type_num<T>());
 }
 
 // check if is a specific container type
@@ -393,32 +407,31 @@ struct Cconst
 // (including T1 = T2)
 // (including from integer to floating point conversions)
 // might be used to enable operator=,+=,-=,*=,/= etc.
-template <class T1, class T2>
-constexpr Bool is_promo_fun()
+constexpr Bool is_promo(Int_I type_num1, Int_I type_num2)
 {
-	if (is_real<T2>()) {
-		if (is_real<T1>()) {
-			if (type_num<T1>() >= type_num<T2>())
+	if (type_num2 >= 0 && type_num2 < 40) {
+		if (is_real(type_num1)) {
+			if (type_num1 >= type_num2)
 				return true;
 		}
 		else { // is_comp<T1>()
-			if (type_num<T1>() - type_num<T2>() >= 20)
+			if (type_num1 - type_num2 >= 20)
 				return true;
 		}
 	}
-	else if (is_comp<T2>()) {
-		if (is_comp<T1>()) {
-			if (type_num<T1>() >= type_num<T2>())
+	else if (is_comp(type_num2)) {
+		if (is_comp(type_num2)) {
+			if (type_num1 >= type_num2)
 				return true;
 		}
 	}
-	else if (is_ImagNum<T2>()) {
-		if (is_ImagNum<T1>()) {
-			if (type_num<T1>() >= type_num<T2>())
+	else if (is_ImagNum(type_num2)) {
+		if (is_ImagNum(type_num1)) {
+			if (type_num1 >= type_num2)
 				return true;
 		}
-		if (is_comp<T1>()) {
-			if (type_num<T2>() - type_num<T1>() >= 20)
+		if (is_comp(type_num1)) {
+			if (type_num2 - type_num1 >= 20)
 				return true;
 		}
 	}
@@ -428,7 +441,7 @@ constexpr Bool is_promo_fun()
 template <class T1, class T2>
 constexpr Bool is_promo()
 {
-	return is_promo_fun<T1, T2>();
+	return is_promo(type_num<T1>(), type_num<T2>());
 }
 
 // promo_type<T1,T2> is the smallest type that both T1, T2 can losslessly converted to
