@@ -29,18 +29,32 @@ public:
 	vector<vector<Long>> m_size; // variable dimensions
 	vector<Long> m_ind; // variable positions (line indices)
 
-	void get_profile();
+	// open a file
 	void open(Str fname, Char_I *rw, Int_I precision = 17);
-	void close();
-	template <class T, SLS_IF(is_scalar<T>())>
-	void write(const T &s);
+
+	// close a file
+	void close();	
+
+	// ===== internal functions =====
+
+	// get var names and positions from the end of the file
+	// after return, matt.m_ind[i] points to the first matrix element;
+	void get_profile();
+
+	// search a variable by name, return index to m_name[i]
+	Int search(Str_I name);
+
+	// read a complex number from m_in
+	void readComplex(Comp &c);
+
+	// read a scalar from m_in
 	template <class T, SLS_IF(is_scalar<T>())>
 	void read(T &s);
-	void scanComplex(Comp &c);
-};
 
-typedef const Matt &Matt_I;
-typedef Matt &Matt_O, &Matt_IO;
+	// write a scalar to m_out
+	template <class T, SLS_IF(is_scalar<T>())>
+	void write(const T &s);
+};
 
 // read the next variable after previous delimiter
 Long scanInverse(ifstream &fin)
@@ -58,8 +72,6 @@ Long scanInverse(ifstream &fin)
 	return N;
 }
 
-// get var names and positions from the end of the file
-// after return, matt.m_ind[i] points to the first matrix element;
 inline void Matt::get_profile()
 {
 	Int i, j, n, temp;
@@ -94,6 +106,16 @@ inline void Matt::get_profile()
 		m_size.push_back(size);
 		m_ind[i] = fin.tellg();
 	}
+}
+
+// search variable in file by name
+inline Int Matt::search(Str_I name)
+{
+	for (Int i = 0; i < m_n; ++i)
+		if (name == m_name[i])
+			return i;
+	error("variable name not found!");
+	return -1;
 }
 
 void Matt::open(Str fname, Char_I *rw, Int_I precision)
@@ -159,11 +181,11 @@ void Matt::read(T &s)
 	else if constexpr (is_Int<T>() || is_Doub<T>())
 		m_in >> s;
 	else if constexpr (is_Comp<T>())
-		scanComplex(s);
+		readComplex(s);
 	else error("unhandled!");
 }
 
-inline void Matt::scanComplex(Comp &c)
+inline void Matt::readComplex(Comp &c)
 {
 	Doub cr = 0, ci = 0;
 	Char ch;
@@ -392,16 +414,6 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 		error("illegal value of xyz");
 }
 
-// search variable in file by name
-inline Int nameSearch(Str_I name, Matt_IO matt)
-{
-	for (Int i = 0; i < matt.m_n; ++i)
-		if (name == matt.m_name[i])
-			return i;
-	error("variable name not found!");
-	return -1;
-}
-
 template <class T, SLS_IF(
 	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
 )>
@@ -409,7 +421,7 @@ inline void load(T &s, Str_I varname, Matt_IO matt)
 {
 	Int i;
 	ifstream &fin = matt.m_in;
-	i = nameSearch(varname, matt);
+	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -427,7 +439,7 @@ inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
 {
 	Long i, n, dim;
 	ifstream &fin = matt.m_in;
-	i = nameSearch(varname, matt);
+	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -437,13 +449,8 @@ inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
 
 	n = matt.m_size[i][0]; v.resize(n);
 	// read var data
-	for (i = 0; i < n; ++i) {
-		if constexpr (is_Char<T>()) {
-			Int temp; fin >> temp;  v[i] = (Char)temp;
-		}
-		else if constexpr (is_Int<T>() || is_Doub<T>())
-			fin >> v[i];
-	}
+	for (i = 0; i < n; ++i)
+		matt.read(v[i]);
 }
 
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
@@ -453,7 +460,7 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
 {
 	Long i, j, dim, m, n;
 	ifstream &fin = matt.m_in;
-	i = nameSearch(varname, matt);
+	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -475,7 +482,7 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
 {
 	Long i, j, k, dim, m, n, q;
 	ifstream &fin = matt.m_in;
-	i = nameSearch(varname, matt);
+	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))

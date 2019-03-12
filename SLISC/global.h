@@ -121,6 +121,7 @@ template <class T> class Diag;
 template <class T> class MatCoo;
 template <class T> class MatCooH;
 template <class T> class Flm;
+class Matt;
 
 // For cuSLISC project
 #ifdef _CUSLISC_
@@ -354,6 +355,9 @@ typedef FlmDoub &FlmDoub_O, &FlmDoub_IO;
 typedef Flm<Comp> FlmComp;
 typedef const FlmComp &FlmComp_I;
 typedef FlmComp &FlmComp_O, &FlmComp_IO;
+
+typedef const Matt &Matt_I;
+typedef Matt &Matt_O, &Matt_IO;
 
 // quiet NaN definition
 // uncomment one of the following 3 methods of defining a global NaN

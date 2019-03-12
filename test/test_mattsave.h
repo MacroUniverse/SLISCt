@@ -1,4 +1,4 @@
-#include "../SLISC/mattsave.h"
+#include "../SLISC/matt.h"
 
 void test_mattsave()
 {
