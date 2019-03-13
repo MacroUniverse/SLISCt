@@ -150,8 +150,6 @@ inline const T & Vbase<T>::end(Long_I i) const
 	return m_p[m_N-i];
 }
 
-// Vector Class
-
 template <class T>
 class Vector : public Vbase<T>
 {
@@ -180,6 +178,12 @@ public:
 	void operator<<(Vector &rhs); // move data and rhs.resize(0)
 	template <class T1>
 	void resize(const Vector<T1> &v) {resize(v.size());}
+	template <class T1>
+	friend void slice(Vector<T1> &v, const T1 *ptr);
+	template <class T1>
+	friend void slice(Vector<T1> &v, const T1 *ptr, Long_I N);
+	template <class T1>
+	friend void rm_slice(Vector<T1> &v);
 };
 
 template <class T>

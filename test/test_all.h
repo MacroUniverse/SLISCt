@@ -5,6 +5,7 @@
 #include "test_scalar_arith.h"
 #include "test_imag.h"
 #include "test_dense.h"
+#include "test_slice.h"
 #include "test_arithmetic.h"
 #include "test_fixsize.h"
 #include "test_sparse.h"
@@ -45,6 +46,8 @@ inline void test_all()
 	test_scalar_arith();
 	cout << "test_dense()" << endl;
 	test_dense();
+	cout << "test_slice()" << endl;
+	test_slice();
 	cout << "test_arithmetic()" << endl;
 	test_arithmetic();
 	cout << "test_imag()" << endl;
