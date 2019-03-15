@@ -34,4 +34,6 @@
 #include "sparse.h"
 #include "sparse_arith.h"
 
+#include "time.h"
+#include "matt.h"
 #include "disp.h"

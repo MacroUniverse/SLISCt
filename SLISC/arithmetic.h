@@ -608,22 +608,20 @@ inline void outprod(T &v, const T1 &v1, const T2 &v2)
 	}*/
 }
 
-// parallel version
 template <class T, class T1, class T2, SLS_IF(
 	is_dense_mat<T>() && is_Vector<T1>() && is_Vector<T2>()
 )>
 inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 {
 	error("TODO");
-	/*Long i, N1{ v1.size() }, N2{ v2.size() };
+	/*Long N1{ v1.size() }, N2{ v2.size() };
 	v.resize(N1, N2);
-	#pragma omp parallel for
-	for (i = 0; i < N1; ++i) {
-		Long j;
+#pragma omp parallel for
+	for (Long i = 0; i < N1; ++i) {
 		Comp *pc, v1_i;
-		pc = v[i];
+		pc = v.ptr(i);
 		v1_i = v1[i];
-		for (j = 0; j < N2; ++j)
+		for (Long j = 0; j < N2; ++j)
 			pc[j] = v1_i*v2[j];
 	}*/
 }
@@ -646,28 +644,27 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 	}
 }
 
-// vector-matrix multiplication (row vector assumed)
-
 // parallel version
 template <class T, class T1, class T2, SLS_IF(
-	is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>()
+	is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>()
 )>
-inline void mul_par(T &y, const T1 &x, const T2 &a)
+inline void mul_par(T &y, const T1 &a, const T2 &x)
 {
-	error("TODO");
-//#ifdef SLS_CHECK_BOUNDS
-//	if (x.size() != a.nrows()) error("wrong size!");
-//#endif
-//	Long j, m{ a.nrows() }, n{ a.ncols() };
-//	y.resize(n); y = 0.;
-//	#pragma omp parallel for
-//	for (j = 0; j < n; ++j) {
-//		Long k;
-//		for (k = 0; k < m; ++k)
-//			y[j] += x[k] * a[k][j];
-//	}
+#ifdef SLS_CHECK_SHAPE
+	if (a.ncols() != x.size())
+		error("illegal shape!");
+#endif
+	Long Nr_a = a.nrows(), Nc_a = a.ncols();
+	y.resize(a.nrows());
+	vecset(y.ptr(), contain_type<T>(), Nr_a);
+#pragma omp parallel for
+	for (Long i = 0; i < Nr_a; ++i) {
+		for (Long j = 0; j < Nc_a; ++j)
+			y[i] += a(i, j) * x[j];
+	}
 }
 
+// vector-matrix multiplication (row vector assumed)
 template <class T, class T1, class T2, SLS_IF(
 	is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>()
 )>
@@ -683,6 +680,26 @@ inline void mul(T &y, const T1 &x, const T2 &a)
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
 	for (j = 0; j < Nc_a; ++j) {
 		for (i = 0; i < Nr_a; ++i)
+			y[j] += x[i] * a(i, j);
+	}
+}
+
+// parallel version
+template <class T, class T1, class T2, SLS_IF(
+	is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>()
+)>
+inline void mul_par(T &y, const T1 &x, const T2 &a)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (x.size() != a.nrows())
+		error("illegal shape!");
+#endif
+	Long Nr_a = a.nrows(), Nc_a = a.ncols();
+	y.resize(Nc_a);
+	vecset(y.ptr(), contain_type<T>(), Nc_a);
+#pragma omp parallel for
+	for (Long j = 0; j < Nc_a; ++j) {
+		for (Long i = 0; i < Nr_a; ++i)
 			y[j] += x[i] * a(i, j);
 	}
 }

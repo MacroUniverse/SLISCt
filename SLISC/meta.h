@@ -23,7 +23,7 @@ using std::true_type; using std::false_type;
 // integral_constant<Bool, false> is false_type
 using std::integral_constant;
 
-// is_same<U,T> checks if U = T
+// is_same<T1,T2>() checks if T1 = T2
 template <class T1, class T2>
 constexpr Bool is_same()
 {
@@ -167,13 +167,6 @@ constexpr Int type_num()
 	return -1;
 }
 
-// is_scalar<T> checks if is a scalar
-template<class T>
-constexpr Bool is_scalar()
-{
-	return type_num<T>() >= 0;
-}
-
 // is_real<T> checks if is a real scalar
 constexpr Bool is_real(Int_I type_num)
 {
@@ -186,18 +179,6 @@ constexpr Bool is_real()
 	return is_real(type_num<T>());
 }
 
-// is_comp<T> checks if T is a scalar of ImagNum<> type
-constexpr Bool is_ImagNum(Int_I type_num)
-{
-	return type_num >= 60 && type_num < 80;
-}
-
-template<class T>
-constexpr Bool is_ImagNum()
-{
-	return is_ImagNum(type_num<T>());
-}
-
 // is_comp<T> checks if T is a scalar of complex<> type
 constexpr Bool is_comp(Int_I type_num)
 {
@@ -208,6 +189,25 @@ template<class T>
 constexpr Bool is_comp()
 {
 	return is_comp(type_num<T>());
+}
+
+// checks if T is a scalar of ImagNum<> type
+constexpr Bool is_imag(Int_I type_num)
+{
+	return type_num >= 60 && type_num < 80;
+}
+
+template<class T>
+constexpr Bool is_imag()
+{
+	return is_imag(type_num<T>());
+}
+
+// is_scalar<T> checks if is a scalar
+template<class T>
+constexpr Bool is_scalar()
+{
+	return type_num<T>() >= 0;
 }
 
 // check if is a specific container type
@@ -424,8 +424,8 @@ constexpr Bool is_promo(Int_I type_num1, Int_I type_num2)
 				return true;
 		}
 	}
-	else if (is_ImagNum(type_num2)) {
-		if (is_ImagNum(type_num1)) {
+	else if (is_imag(type_num2)) {
+		if (is_imag(type_num1)) {
 			if (type_num1 >= type_num2)
 				return true;
 		}
@@ -481,11 +481,11 @@ template <class Tc, class Tr,
 auto promo_type_fun() { return complex<Tr>(); }
 
 template <class Ti, class Tc,
-	SLS_IF(is_ImagNum<Ti>() && is_comp<Tc>() && type_num<Ti>() - type_num<Tc>() <= 20)>
+	SLS_IF(is_imag<Ti>() && is_comp<Tc>() && type_num<Ti>() - type_num<Tc>() <= 20)>
 	auto promo_type_fun() { return Tc(); }
 
 template <class Ti, class Tc,
-	SLS_IF(is_ImagNum<Ti>() && is_comp<Tc>() && type_num<Ti>() - type_num<Tc>() > 20)>
+	SLS_IF(is_imag<Ti>() && is_comp<Tc>() && type_num<Ti>() - type_num<Tc>() > 20)>
 	auto promo_type_fun() { return complex<typename Ti::value_type>(); }
 
 template <class T1, class T2> struct promo_type_imp

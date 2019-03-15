@@ -67,16 +67,17 @@ void diagonals(Matrix<T> &a)
 template <class T>
 void diagonals_par(Matrix<T> &a)
 {
-	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
+	error("TODO");
+	/*Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
 	Long szT = sizeof(T);
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (i = 1; i < Nr; ++i) {
 		T *temp = new T[Nc];
 		memcpy(temp, a[i], i*szT);
-		memcpy(a[i], a[i] + i, (Nc-i)*szT);
-		memcpy(a[i] + Nc-i, temp, i*szT);
+		memcpy(a[i], a[i] + i, (Nc - i)*szT);
+		memcpy(a[i] + Nc - i, temp, i*szT);
 		delete[] temp;
-	}
+	}*/
 }
 
 template <class T>
@@ -93,19 +94,21 @@ void idiagonals(Matrix<T> &a)
 	delete[] temp;
 }
 
+// parallel version
 template <class T>
 void idiagonals_par(Matrix<T> &a)
 {
-	Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
+	error("TODO");
+	/*Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
 	Long szT = sizeof(T);
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (i = 1; i < Nr; ++i) {
 		T *temp = new T[Nc];
-		memcpy(temp, a[i], (Nc-i)*szT);
-		memcpy(a[i], a[i] + (Nc-i), i*szT);
-		memcpy(a[i] + i, temp, (Nc-i)*szT);
+		memcpy(temp, a[i], (Nc - i)*szT);
+		memcpy(a[i], a[i] + (Nc - i), i*szT);
+		memcpy(a[i] + i, temp, (Nc - i)*szT);
 		delete[] temp;
-	}
+	}*/
 }
 
 } // namespace slisc

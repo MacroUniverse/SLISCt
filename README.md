@@ -2,7 +2,9 @@ Scientific Library In Simple C++ (SLISC)
 
 ## Introduction
 
-SLISC is a header-only library mostly based on Numerical Recipes 3ed, using simple C++ features so that it is easy to read, use and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse) and 3D matrix. Algorithms from Numerical Recipes are slowly added. The library also provides some utilities frequently used, such as timers and IO utilities. The library can optionally use some algorithms in Eigen (another header-only library) or use Intel MKL subroutines.
+SLISC is a header-only library written in a style similar to Numerical Recipes 3ed, using simple C++ features so that it is easy to read and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse), 3D matrix (row-major), and basic arithmetics for them. Codes from many other projects or libraries has been incorporated into SLISC (e.g. Numerical Recipes, Eigen, Intel MKL etc.). The library also provides some utilities frequently used, such as timers and IO utilities (a text based file format `.matt` similar to Matlab's `.mat`).
+
+SLISC has a comprehensive test suit, main.cpp will execute all the tests. Tests has been performed in Windows using Visual C++ and Intel compilers in Visual Studio 15.9.8 and in Linux using gcc and Intel compilers. If intel MKL (now free) is not installed, some functions will not work or will much slower.
 
 A simple example :
 
@@ -30,29 +32,35 @@ int main()
 }
 ```
 
-SLISC has a modular design like the Standard Template Library. Just include any header file in the `SLISC/` folder. All definitions has namespace `slisc`.
+SLISC has a modular design like the Standard Template Library. Just include any header file(s) in the `SLISC/` folder. All definitions has namespace `slisc`.
 
-## Programming Style
-
-* All containers types are returned by reference.
+## Recommended Programming Style
+* All SLISC containers types (e.g. Matrix<>, Vector<>) should be returned by reference.
 * Avoid using unsigned integer types when possible. They are not supported by SLISC for now.
 * Generally, functions output arguments can not be any of the input arguments (this is called aliasing).
 
-* Intrinsic types are aliased inside the library. For example, `Bool` is `bool`, `Int` is 32-bit integer, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`. `Long` is used as vector/matrix index and variable. `Long` is `Llong` by default, define `SLS_USE_INT_AS_LONG` macro to use "Int" instead. 
+* Intrinsic types are aliased inside the library. For example, `Bool` is `bool`, `Int` is 32-bit integer, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`. `Llong` is `long long`.
 
 * A type with `_I` suffix is the `const` or `reference to const` version of that type, used in function parameter declarations to indicate an input argument. Similarly, `_O` means output (reference type), `_IO` means both input and output (reference type). Note that a reference to `_O` or `_I` types is still a reference type.
 
 ## Meta Programming
-* every supported type has a type num `type_num<T>()`
-* functions like `is_*(...)` can dynamically or statically check properties and relations of types.
-* functions like `is_*<...>()` can statically check properties and relations of types.
-* SFINAE technique is used to limit template function instantiation, just use the macro function `SLS_IF(cond)` as the last template parameter.
+* The file "meta.h" implements some meta programming utilities. These utilities are as user-friendly as possible, so that anyone with a basic c++ knowledge can understand their meaning with a glance. SLISC users should have a basic idea of how these utilities work, and are welcome to use them, but there is no need to understand how they are implemented.
+
+* The macro function `SLS_IF(condition)` can be used to limit template function instantiation. If `condition` is `true`, then template can be instantiated normally, if `condition` is `false` the function will not be instantiated. As example, the function `mul()` in "arithmetic.h" for matrix-vector multiplication is defined as
+```cpp
+template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>())>
+inline void mul(T &y, const T1 &a, const T2 &x)
+{/*...*/}
+```
+Where `is_Vector<T>()` returns `true` if `T` is a `Vector<>` container, `is_dense_mat<T>()` returns `true` if `T` is a dense matrix (such as `Matrix<>`, `Cmat<>`, `FixCmat<>`). These function templates are also defined in "meta.h".
 
 ## Headers Introduction
-* `slisc.h` includes all type definitions and constants, and basic arithmetics.
+When using something in any header file, just including that header file will be enough. Header files can be included in any order. There is some brief introduction for each header file:
+* `slisc.h` is a shorthand for some of the mostly used headerfiles.
 * `global.h` has all the container declaration and type definitions etc.
 * `meta.h` has all the meta-programming utilities.
-* `complex_arith.h` defines extra operators involving std::complex<>, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=`.
+* `complex_arith.h` defines extra operators used by std::complex<>, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=`.
+* `imag.h` defines a pure imaginary number type `Imag<>`, and related operators.
 * `scalar_arith.h` defines scalar utilities such as `MIN()`, `MAX()`, `SQR()`, `isodd()`, `mod()`.
 * `vector.h` defines the base type `Vbase<T>` and vector container `Vector<T>`.
 * `matrix.h` defines the row-major matrix container `Matrix<T>`.
@@ -62,16 +70,49 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 * `sparse.h` defines the sparse square diagonal matrix `Diag<T>`, COO sparse matrix `MatCoo<T>`, COO sparse Hermitian matrix `MatCooH<T>`.
 * TODO...
 
-## Scalar Types
-TODO...
-For example, `Bool` is `bool`, `Char` is `char`, `Int` is 32-bit integer, `Llong` is 64-bit integer; `Float` is `float`, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`; `Ldoub` is `long double`; `Long` is `Llong` by default, define "SLS_USE_INT_AS_LONG" macro to use "Int" instead. Use "Long" for vector/matrix index or loop variable etc.
+## "global.h"
 
-## Constants
+### Scalar Types
+`Bool` is `bool`, `Char` is `char`, `Int` is 32-bit integer, `Llong` is 64-bit integer; `Float` is `float`, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`; `Ldoub` is `long double`; `Long` `Long` is used as vector/matrix indices variables, and is `Llong` by default, define `SLS_USE_INT_AS_LONG` macro to use `Int` as `Long`.
+TODO...
+
+### Constants
 ```cpp
 const Doub PI = 3.14159265358979323;
 const Doub E  = 2.71828182845904524;
 const Comp I(0., 1.);
 ```
+
+## "meta.h":
+* Every supported scalar type has a type number. `type_num<T>()` will return the type number of type `T`.
+* Functions like `is_*(...)` can dynamically or statically check properties of types. The inputs are type numbers.
+* functions like `is_*<...>()` can statically check properties of types. template parameters are types.
+* `is_same<T1,T2>()` checks if `T1 = T2`.
+* `is_integral<T>()` checks if `T` is an integral type, i.e. character types or integer types.
+* `is_arithmetic<T>()` checks if `T` is an arithmetic type, i.e. integral type or floating point types.
+* `is_fundamental<T>()` checks if `T` is a fundamental type, i.e. arithmetic type or `void` or `nullptr`.
+* `is_signed<T>` checks if a type is signed, i.e. `T(-1) < T(0)`.
+* the following utilities checks if `T` is a specific scalar type: `is_Bool<T>()`, `is_Char<T>()`, `is_Uchar<T>()`, `is_Int<T>()`, `is_Llong<T>()`, `is_Float<T>()`, `is_Ldoub<T>()`, `is_Fcomp<T>()`, `is_Comp<T>()`, `is_Lcomp()`, `is_Imag()`.
+* `is_real<T>()` checks if `T` is not a `std::complex<>` or `Imag<>` type.
+* `is_comp<T>()` checks if `T` is an `std::complex<>` type.
+* `is_imag<T>()` checks if `T` is an `Imag<>` type.
+* `is_scalar<T>()` checks if `T` is scalar type supported by SLISC.	
+* `is_Vector<T>()` checks if `T` is a `Vector<>` type. The following are similar: `is_Matrix<T>()`, `is_Cmat()`, `is_FixVec()`, `is_FixCmat()`, `is_Mat3d()`, `is_Diag()`, `is_MatCoo()`, `is_MatCooH()`.
+* `is_fixed<T>()` checks if `T` is a fixed-size container.
+* `is_dense_mat<T>()` checks if is dense matrix (2D).
+* `is_dense<T>()` checks if is dense container (including fixed-size)
+* `is_sparse<T>()` check if is sparse vector/matrix
+* Every SLISC matrix/vector container should has a container number, which can be returned by `contain_num<T>()`.
+* `contain_type<T>()` returns the value type of any SLISC container type `T`.
+* `is_real_dense<T>()` checks if `is_dense<T>() && is_real<contain_type<T>>()`.
+* `is_comp_dense<T>()` checks if `is_dense<T>() && is_comp<contain_type<T>>()`
+* `is_real_contain<T>()` checks if `is_contain<T>() && is_real<contain_type<T>>()`
+* `is_comp_contain<T>()` checks if `is_contain<T>() && is_comp<contain_type<T>>()`
+* `is_same_contain<T>()` checks if `is_contain<T1>() && contain_num<T1>() == contain_num<T2>()`
+
+TODO...
+
+## "vector.h"
 
 ### Common Members for Vector, Matrix, Mat3d Templates
 * `size()`: return total number of elements.
@@ -95,13 +136,13 @@ resize(Long_I) : resize vector, contents are not preserved. resize() does nothin
 
 resize(Vector<> v) : resize to the same size of v
 
-### Matrix Class Template
-The matrix template name is Matrix<T>, Methods are similar to that of vector class. Matrix is row-major only. 
+## "matrix.h"
+The matrix template name is `Matrix<>`, Methods are similar to that of vector class. Matrix is row-major only. 
 
 TODO.
 
-### Mat3d Class Template
-3D matrix template name is Mat3d. Methods are similar to that of vector class. Mat3d is row-major only.
+## "mat3d.h"
+3D matrix template name is `Mat3d<>`. Methods are similar to that of vector class. Mat3d is row-major only.
 
 TODO.
 
@@ -112,10 +153,10 @@ The typedefs for vector/matrix classes are (each type also comes with "_I", "_O"
 * includes basic arithmatics like "==", "+=", "*=", plus(), minus(), etc.
 * Operators `+, -, *, /, +=, -=, *=, /=` are only for container types element-wise operations.
 
-## disp.h
+## "disp.h"
 includes various overloaded "disp()" functions.
 
-## time.h
+## "time.h"
 time utilities
 
 // all times are in seconds.
@@ -124,13 +165,13 @@ Doub Timer::toc()
 void CPUTimer::tic()
 Doub CPUTimer::toc()
 
-## scalar utilities
+## "scalar_arith.h"
 
 Int isodd(Int n) // return 1 if n is odd, return 0 otherwise
 Bool ispow2(Int n) // if n is a power of 2 or 0
 operator +,-,*,/ between Complex and Int
 
-## vec/mat display
+## "disp.h"
 
 void disp(av) // can also be used while debugging, because of this, default arguments are not allowed
 void disp(v, start, n)
@@ -140,18 +181,18 @@ void disp(..., precision)
 
 If you want to use "disp()" in debugger, add "SLISC/print.cpp" to compiler and use "print()" with the same arguments.
 
-## get vec/mat properties
+## "arithmetic.h"
 
+### basic utilities
 ```cpp
-n = numel(av)
-s = sum(av)
+s = sum(av) // sum of elements
 s = max(av) // max of absolute values for complex mat/vec
 s = max(ind, av) // also output the index
 s = norm(v) // vec/mat norm
 s = norm2(v) // vec/mat norm squared
 ```
 
-## matrix manipulation
+### matrix manipulation
 ```cpp
 void linspace(vec/mat, first, last, N = -1)
 void trans(a) // matrix transpose
@@ -200,7 +241,7 @@ In gdb, things are a little more complicated, since gdb does not fully support f
 void integral(Vector<T> &F, const Vector<T> &f, Doub_I dx) // simple indefinite integration
 ```
 
-## FFT related
+## "fft.h"
 ```cpp
 fftshift()
 void dft(MatComplex_O &Y, Doub kmin, Doub kmax, Int Nk, MatComplex_I &X, Doub xmin, Doub xmax)
@@ -213,15 +254,25 @@ template<typename T> inline Str num2str(T s) // mainly std::to_string(), but no 
 ```
 
 ## OpenMP functions
+parallelized version of a function should always end with "_par"
 ```cpp
-// parallelized version of functions
-void diagonals_par(Matrix<T> &a)
-void idiagonals_par(Matrix<T> &a)
-void outprod_par(Matrix<T> &prod, const Vector<T1> &v1, const Vector<T2> &v2)
-void outprod_par(Matrix<T> &prod, VecComp_I &v1, const Vector<T2> &v2)
-void mul_par(Vector<T> &y, const Vector<T1> &x, const Matrix<T2> &a)
-void dft_par(MatComp_O &Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I &X, Doub xmin, Doub xmax)
-void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax)
+// arithmetic.h
+template <class T, class T1, class T2, SLS_IF(is_dense_mat<T>() && is_Vector<T1>() && is_Vector<T2>())>
+inline void outprod_par(T &v, const T1 &v1, const T2 &v2);
+
+template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>())>
+inline void mul_par(T &y, const T1 &a, const T2 &x);
+
+template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>())>
+inline void mul_par(T &y, const T1 &x, const T2 &a)
+
+// arithmetic1.h
+void diagonals_par(Matrix<T> &a);
+void idiagonals_par(Matrix<T> &a);
+
+// fft.h
+void dft_par(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax);
+void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub kmin, Doub kmax);
 ```
 
 ## Matt File (.matt)
