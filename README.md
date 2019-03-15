@@ -4,7 +4,7 @@ Scientific Library In Simple C++ (SLISC)
 
 SLISC is a header-only library written in a style similar to Numerical Recipes 3ed, using simple C++ features so that it is easy to read and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse), 3D matrix (row-major), and basic arithmetics for them. Codes from many other projects or libraries has been incorporated into SLISC (e.g. Numerical Recipes, Eigen, Intel MKL etc.). The library also provides some utilities frequently used, such as timers and IO utilities (a text based file format `.matt` similar to Matlab's `.mat`).
 
-SLISC has a comprehensive test suit, main.cpp will execute all the tests. Tests has been performed in Windows using Visual C++ and Intel compilers in Visual Studio 15.9.8 and in Linux using gcc and Intel compilers. If intel MKL (now free) is not installed, some functions will not work or will much slower.
+SLISC has a comprehensive test suit, main.cpp will execute all the tests. Tests has been performed in Windows using Visual C++ and Intel compilers in Visual Studio 15.9.8 and in Linux using gcc and Intel compilers. If intel MKL (now free) is not installed, some functions will not work or will be much slower.
 
 A simple example :
 
@@ -46,7 +46,7 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 ## Meta Programming
 * The file "meta.h" implements some meta programming utilities. These utilities are as user-friendly as possible, so that anyone with a basic c++ knowledge can understand their meaning with a glance. SLISC users should have a basic idea of how these utilities work, and are welcome to use them, but there is no need to understand how they are implemented.
 
-* The macro function `SLS_IF(condition)` can be used to limit template function instantiation. If `condition` is `true`, then template can be instantiated normally, if `condition` is `false` the function will not be instantiated. As example, the function `mul()` in "arithmetic.h" for matrix-vector multiplication is defined as
+* The macro function `SLS_IF(condition)` can be used to limit template function instantiation. If `condition` is `true`, then template can be instantiated normally, if `condition` is `false` the function will not be instantiated. As an example, the function `mul()` in "arithmetic.h" for matrix-vector multiplication is defined as
 ```cpp
 template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>())>
 inline void mul(T &y, const T1 &a, const T2 &x)
@@ -55,7 +55,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 Where `is_Vector<T>()` returns `true` if `T` is a `Vector<>` container, `is_dense_mat<T>()` returns `true` if `T` is a dense matrix (such as `Matrix<>`, `Cmat<>`, `FixCmat<>`). These function templates are also defined in "meta.h".
 
 ## Headers Introduction
-When using something in any header file, just including that header file will be enough. Header files can be included in any order. There is some brief introduction for each header file:
+When using something in any header file, just including that header file will be enough. Header files can be included in any order. Here is some brief introduction for each header file:
 * `slisc.h` is a shorthand for some of the mostly used headerfiles.
 * `global.h` has all the container declaration and type definitions etc.
 * `meta.h` has all the meta-programming utilities.
@@ -67,7 +67,32 @@ When using something in any header file, just including that header file will be
 * `cmat.h` defines the col-major matrix container `Cmat<T>`.
 * `fixsize.h` defines the fixed-size vector `FixVec<T,N>`, and col-major matrix `FixCmat<T,Nr,Nc>`.
 * `mat3d.h` defines the row-major 3D array `Mat3d<T>`.
-* `sparse.h` defines the sparse square diagonal matrix `Diag<T>`, COO sparse matrix `MatCoo<T>`, COO sparse Hermitian matrix `MatCooH<T>`.
+* `disp.h` display SLISC containers (matrix, vector, etc.)
+* `input.h` promp for input, can save input history and repeat input automatically
+* `matt.h` save/load text-based data files in `.matt` format, can save multiple named scalars and containers to a single file
+* `ptr_arith.h` low level functions for `arithmetic.h`, using pointers as input and output instead of vector/matrix containers.
+* `arithmetic.h` has utilities for dense matrices and vectors, e.g. `sum()`, `norm()`, dot product, matrix-vector multiplication.
+* `slice.h` (experimental) matrix slicing, e.g. separate one column of a matrix and name it as a vector.
+* `random.h` random number utilities
+* `time.h` timing utilities
+* `sort.h` sorting utilities
+* `search.h` search elements in containers
+* `string.h` string utilities
+* `svd.h` for singlar value decomposition
+* `eig.h` calculate matrix eigen values/vectors
+* `fft.h` for fourier transforms
+* `interp1.h` for 1 dimensional interpolation
+* `interp2.h` for 2 dimensional interpolation
+* `ludcmp.h` for LU decomposition
+* `sparse.h` defines the sparse square diagonal matrix `Diag<T>`, COO sparse matrix `MatCoo<T>`, COO sparse Hermitian matrix `MatCooH<T>`, and basic arithmetics.
+* `mat_fun.h` functions of square matrix
+* `anglib.h` has functions for Clebsch–Gordan coefficients, 3j, 6j, and 9j symbols.
+* `coulomb.h` calculates coulomb functions (F, G, H), and their derivatives.
+* `fedvr.h` utilities for Finite Element Discrete Variable Representations, could be used to solve TDSE.
+* `flm.h` a data structure for quantum mechanics wave functions in spherical coordinates (partial waves)
+* `mparith.h` for arbitrary precision calculation
+* `expokit.h` calculate matrix exponential
+
 * TODO...
 
 ## "global.h"
