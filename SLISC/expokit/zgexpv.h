@@ -11,8 +11,11 @@ namespace slisc {
 // `T` can be any user defined matrix class
 // mul(Comp *y, const T &mat, Comp *x) must be defined to perform matrix-vector multiplication (y = mat * x)
 
+// ======== modifications ==================
+// modified so that w is both input and output vector
+
 template <class T>
-void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I anorm,
+void ZGEXPV(Int_I n, Int_I m, Doub_I t, Comp *w, Doub tol, Doub_I anorm,
 	Comp *wsp, Int_I lwsp, Int *iwsp, Int_I liwsp, const T &mat, Int_I itrace, Int_O iflag)
 {
 	const Int mxstep = 500, mxreject = 0, ideg = 6;
@@ -75,9 +78,7 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, const Comp *v, Comp *w, Doub tol, Doub_I
 
 	break_tol = 1.0e-7;
 
-
 	sgn = SIGN(1., t);
-	cblas_zcopy(n, v, 1, w, 1);
 	beta = cblas_dznrm2(n, w, 1);
 	vnorm = beta;
 	hump = beta;

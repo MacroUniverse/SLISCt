@@ -1,5 +1,5 @@
 #pragma once
-#include "../SLISC/expokit/expokit.h"
+#include "../SLISC/expokit.h"
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/random.h"
 #include "../SLISC/disp.h"
@@ -57,8 +57,10 @@ void test_expokit()
 		mul(y0, expA, x);
 
 		// expokit result
-		expv<'G'>(y1, A, x, t, Nbase);
-		expv<'H'>(y2, A, x, t, Nbase);
+		y1 = x;
+		expv<'G'>(y1, A, t, Nbase);
+		y2 = x;
+		expv<'H'>(y2, A, t, Nbase);
 		
 		y1 -= y0;
 		auto xerr = max_abs(y1);
