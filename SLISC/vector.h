@@ -178,12 +178,15 @@ public:
 	void operator<<(Vector &rhs); // move data and rhs.resize(0)
 	template <class T1>
 	void resize(const Vector<T1> &v) {resize(v.size());}
+
 	template <class T1>
 	friend void slice(Vector<T1> &v, const T1 *ptr);
 	template <class T1>
 	friend void slice(Vector<T1> &v, const T1 *ptr, Long_I N);
 	template <class T1>
-	friend void rm_slice(Vector<T1> &v);
+	friend void slice_resize(Vector<T1> &v, Long_I N);
+	template <class T1>
+	friend void slice_reset(Vector<T1> &v);
 };
 
 template <class T>
