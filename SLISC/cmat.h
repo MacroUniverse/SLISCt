@@ -10,7 +10,7 @@ namespace slisc {
 template <class T>
 class Cmat : public Vbase<T>
 {
-private:
+protected:
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;

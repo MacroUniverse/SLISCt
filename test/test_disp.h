@@ -8,7 +8,7 @@ void test_disp()
 	VecChar v8(3);
 	linspace(v8, 1, 3); disp(v8);
 	VecInt vi(3);
-	linspace<Int>(vi, 1, 3); disp(vi);
+	linspace(vi, 1, 3); disp(vi);
 	MatChar A8(2, 3);
 	linspace(A8, 1, 6); disp(A8);
 	MatInt AI(2, 3);

@@ -54,8 +54,8 @@ namespace slisc
 	inline void randPerm(VecInt_O perm, Int_I N)
 	{
 		Int j, n, ind;
-		VecInt pool;
-		linspace(pool, 0, N - 1, N);
+		VecInt pool(N);
+		linspace(pool, 0, N - 1);
 		perm.resize(N);
 		for (n = N; n > 0; --n) {
 			ind = randInt(n);

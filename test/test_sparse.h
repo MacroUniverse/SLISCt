@@ -168,7 +168,7 @@ inline void test_sparse()
 				a.push(i, i % 4, i / 4);
 			}
 			CmatDoub a1; a1 = a;
-			VecDoub v, v1, x(4);
+			VecDoub v(a.nrows()), v1(a1.nrows()), x(4);
 			linspace(x, 1., 4.);
 			mul(v, a, x); mul(v1, a1, x);
 			if (v != v1) error("failed!");
@@ -182,7 +182,7 @@ inline void test_sparse()
 				b.push(Comp(i, i + 1), i % 4, i / 4);
 			}
 			MatComp b1;	b1 = b;
-			VecComp v, v1, x(4);
+			VecComp v(b.nrows()), v1(b1.nrows()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, b, x); mul(v1, b1, x);
 			if (v != v1) error("failed!");
@@ -195,7 +195,7 @@ inline void test_sparse()
 				c.push(Imag(i), i % 4, i / 4);
 			}
 			CmatImag c1; c1 = c;
-			VecComp v, v1, x(4);
+			VecComp v(c.nrows()), v1(c1.nrows()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, c, x); mul(v1, c1, x);
 			if (v != v1) error("failed!");
@@ -219,7 +219,7 @@ inline void test_sparse()
 	// mul(cmat, cmat, diag)
 	{
 		CmatInt c, a(4, 5, 1);
-		VecInt b; linspace(b, 1, 5, 5);
+		VecInt b(5); linspace(b, 1, 5);
 		mul(c, a, (DiagInt)b);
 		if (!shape_cmp(c, a)) error("failed!");
 		if (!equals_to_vs(&c(0,0), 1, c.nrows())) error("failed!");

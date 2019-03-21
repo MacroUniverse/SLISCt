@@ -5,7 +5,7 @@ void test_fft()
 {
 	using namespace slisc;
 	// test bit_inv()
-	VecComp v; linspace(v, 1., 16., 16);
+	VecComp v(16); linspace(v, 1., 16.);
 	VecComp v1(16);
 	bit_inv(v1.ptr(), v.ptr(), v.size());
 	VecComp v2; v2 = v;
@@ -26,14 +26,14 @@ void test_fft()
 	if (max_abs(v1) > 1e-15) error("failed!");
 
 	// fft_interp()
-	VecDoub x; linspace(x, 1., 3., 3);
-	VecComp y; linspace(y, Comp(1., 1.), Comp(3., 3.), 3);
+	VecDoub x(3); linspace(x, 1., 3.);
+	VecComp y(3); linspace(y, Comp(1., 1.), Comp(3., 3.));
 	if (abs(fft_interp(x[0], x, y) - y[0]) > 1e-15) error("failed!");
 	if (abs(fft_interp(x[1], x, y) - y[1]) > 1e-15) error("failed!");
 	if (abs(fft_interp(x[2], x, y) - y[2]) > 1e-15) error("failed!");
 
 	// fftshift()
-	VecInt vInt; linspace(vInt, 1, 4, 4);
+	VecInt vInt(4); linspace(vInt, 1, 4);
 	fftshift(vInt);
 	VecInt vInt1(4); vInt1[0] = 3; vInt1[1] = 4; vInt1[2] = 1; vInt1[3] = 2;
 	if (vInt != vInt1) error("failed!");

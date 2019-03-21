@@ -118,27 +118,10 @@ const auto norm(T &v, SLS_IF(is_dense<T>()))
 
 // does not work for integers
 
-template <class T, class T1, class T2, SLS_IF(is_scalar<T>())>
-inline void linspace(Vector<T> &v, const T1 &first, const T2 &last, Llong_I N = -1)
+template <class Tv, class T1, class T2, SLS_IF(is_dense<Tv>())>
+inline void linspace(Tv &v, const T1 &first, const T2 &last)
 {
-	if (N >= 0) v.resize(N);
-	linspace_vss(v.ptr(), (T)first, (T)last, v.size());
-}
-
-template <class T, class T1, class T2, SLS_IF(is_dense_mat<T>())>
-inline void linspace(T &v, const T1 &first, const T2 &last,
-	Llong_I Nr = -1, Long_I Nc = -1)
-{
-	if (Nr >= 0 && Nc >= 0) v.resize(Nr, Nc);
-	linspace_vss(v.ptr(), (contain_type<T>)first, (contain_type<T>)last, v.size());
-}
-
-template <class T, class T1, class T2, SLS_IF(is_Mat3d<T>())>
-inline void linspace(T &v, const T1 &first, const T2 &last,
-	Llong_I N1 = -1, Long_I N2 = -1, Long_I N3 = -1)
-{
-	if (N1 >= 0 && N2 >= 0 && N3 >= 0) v.resize(N1, N2, N3);
-	linspace_vss(v.ptr(), (contain_type<T>)first, (contain_type<T>)last, v.size());
+	linspace_vss(v.ptr(), (contain_type<Tv>)first, (contain_type<Tv>)last, v.size());
 }
 
 // === vectorized math functions ===
@@ -170,7 +153,7 @@ void tan(T &v, const T1 &v1)
 // === vector/matrix arithmetics ===
 
 // flip(v)
-template <class T, SLS_IF(is_Vector<T>())>
+template <class T, SLS_IF(is_dense_vec<T>())>
 inline void flip(T &v)
 {
 	flip_v(v.ptr(), v.size());
@@ -178,7 +161,7 @@ inline void flip(T &v)
 
 // v = flip(v)
 template <class T, class T1, SLS_IF(
-	is_Vector<T>() && is_Vector<T1>()
+	is_Vector<T>() && is_dense_vec<T1>()
 )>
 inline void flip(T &v, const T1 &v1)
 {
@@ -580,7 +563,7 @@ inline void conj(T &v, const T1 &v1)
 // dot products ( sum conj(v1[i])*v2[i] )
 
 // s = dot(v, v)
-template <class T1, class T2, SLS_IF(is_Vector<T1>() && is_Vector<T2>())>
+template <class T1, class T2, SLS_IF(is_dense_vec<T1>() && is_dense_vec<T2>())>
 inline auto dot(const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -592,7 +575,7 @@ inline auto dot(const T1 &v1, const T2 &v2)
 // outer product ( v(i,j) = conj(v1[i])*v2[j] )
 // outprod(v, v, v)
 template <class T, class T1, class T2, SLS_IF(
-	is_dense_mat<T>() && is_Vector<T1>() && is_Vector<T2>()
+	is_dense_mat<T>() && is_dense_vec<T1>() && is_dense_vec<T2>()
 )>
 inline void outprod(T &v, const T1 &v1, const T2 &v2)
 {
@@ -609,7 +592,7 @@ inline void outprod(T &v, const T1 &v1, const T2 &v2)
 }
 
 template <class T, class T1, class T2, SLS_IF(
-	is_dense_mat<T>() && is_Vector<T1>() && is_Vector<T2>()
+	is_dense_mat<T>() && is_dense_vec<T1>() && is_dense_vec<T2>()
 )>
 inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 {
@@ -627,7 +610,7 @@ inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 }
 
 template <class T, class T1, class T2, SLS_IF(
-	is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>()
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>()
 )>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
@@ -646,7 +629,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 
 // parallel version
 template <class T, class T1, class T2, SLS_IF(
-	is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>()
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>()
 )>
 inline void mul_par(T &y, const T1 &a, const T2 &x)
 {
@@ -666,7 +649,7 @@ inline void mul_par(T &y, const T1 &a, const T2 &x)
 
 // vector-matrix multiplication (row vector assumed)
 template <class T, class T1, class T2, SLS_IF(
-	is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>()
+	is_dense_vec<T>() && is_dense_vec<T1>() && is_dense_mat<T2>()
 )>
 inline void mul(T &y, const T1 &x, const T2 &a)
 {
@@ -686,7 +669,7 @@ inline void mul(T &y, const T1 &x, const T2 &a)
 
 // parallel version
 template <class T, class T1, class T2, SLS_IF(
-	is_Vector<T>() && is_Vector<T1>() && is_dense_mat<T2>()
+	is_dense_vec<T>() && is_dense_vec<T1>() && is_dense_mat<T2>()
 )>
 inline void mul_par(T &y, const T1 &x, const T2 &a)
 {
@@ -731,7 +714,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 
 // indefinite integral;
 // use cumsum(y)*dx instead
-template <class T, class T1, SLS_IF(is_Vector<T>() && is_Vector<T1>())>
+template <class T, class T1, SLS_IF(is_dense_vec<T>() && is_dense_vec<T1>())>
 void cumsum(T &v, const T1 &v1)
 {
 	v.resize(v1); cumsum_vv(v.ptr(), v1.ptr(), v1.size());

@@ -244,6 +244,19 @@ constexpr Bool is_FixVec()
 	return is_FixVec_imp<T>();
 }
 
+template <class T> struct is_Svector_imp : false_type {};
+template <class T> struct is_Svector_imp<Svector<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Svector()
+{
+	return is_Svector_imp<T>();
+}
+
+template <class T> constexpr Bool is_dense_vec()
+{
+	return is_Vector<T>() || is_FixVec<T>() || is_Svector<T>();
+}
+
 template <class T> struct is_FixCmat_imp : false_type {};
 template <class T, Long Nr, Long Nc> struct is_FixCmat_imp<FixCmat<T, Nr, Nc>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>
@@ -299,7 +312,7 @@ template <class T> constexpr Bool is_dense_mat()
 // check if is dense container (including fixed-size)
 template <class T> constexpr Bool is_dense()
 {
-	return is_Vector<T>() || is_FixVec<T>() || is_dense_mat<T>() || is_Mat3d<T>();
+	return is_dense_vec<T>() || is_dense_mat<T>() || is_Mat3d<T>();
 }
 
 // check if is sparse vector/matrix
@@ -319,9 +332,12 @@ constexpr Int contain_num()
 	else if (is_FixVec<T>()) return 20;
 	else if (is_FixCmat<T>()) return 22;
 
-	else if (is_Diag<T>()) return 31;
+	else if (is_Diag<T>()) return 31; // TODO: start from 30
 	else if (is_MatCoo<T>()) return 32;
 	else if (is_MatCooH<T>()) return 33;
+
+	else if (is_Svector<T>()) return 40;
+	// TODO: Scmat return ?
 
 	return -1;
 }

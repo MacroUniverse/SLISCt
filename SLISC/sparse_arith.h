@@ -133,26 +133,25 @@ inline rm_comp<T> norm_inf(const MatCooH<T> &A)
 // matrix vector multiplication
 
 template <class Ta, class Tx, class Ty, SLS_IF(
-	is_Vector<Ty>() && is_MatCoo<Ta>() && is_Vector<Tx>()
+	is_Vector<Ty>() && is_MatCoo<Ta>() && is_dense_vec<Tx>()
 )>
 void mul(Ty &y, const Ta &a, const Tx &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size()) error("wrong shape!");
+	if (a.ncols() != x.size() || a.nrows() != y.size())
+		error("wrong shape!");
 #endif
-	y.resize(a.nrows());
 	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
 }
 
 template <class Ta, class Tx, class Ty, SLS_IF(
-	is_Vector<Ty>() && is_MatCooH<Ta>() && is_Vector<Tx>()
+	is_dense_vec<Ty>() && is_MatCooH<Ta>() && is_dense_vec<Tx>()
 )>
 void mul(Ty &y, const Ta &a, const Tx &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size()) error("wrong shape!");
+	if (a.ncols() != x.size() || a.rows() != y.size()) error("wrong shape!");
 #endif
-	y.resize(a.nrows());
 	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
 }
 

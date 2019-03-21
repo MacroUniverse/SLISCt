@@ -8,7 +8,7 @@ void test_print()
 	VecChar v8(3);
 	linspace(v8, 1, 3);
 	VecInt vi(3);
-	linspace<Int>(vi, 1, 3);
+	linspace(vi, 1, 3);
 	MatChar A8(2, 3);
 	linspace(A8, 1, 6);
 	MatInt AI(2, 3);

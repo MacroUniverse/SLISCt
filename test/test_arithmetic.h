@@ -26,7 +26,7 @@ inline void test_arithmetic()
 		max(ind, b); if (ind != 3) error("failed!");
 		if (!is_equiv(max_abs(b), 5)) error("failed!");
 
-		VecDoub c; linspace(c, 1., 10., 10);
+		VecDoub c(10); linspace(c, 1., 10.);
 		if (!is_equiv(sum(c), 55.)) error("failed!");
 		if (!is_equiv(max(c), 10.)) error("failed!");
 		max(ind, c); if (ind != 9) error("failed!");
@@ -41,9 +41,9 @@ inline void test_arithmetic()
 
 	// flip
 	{
-		VecInt v, v1, v2;
-		linspace(v, -2, 3, 6); v2 = v;
-		linspace(v1, 3, -2, 6);
+		VecInt v(6), v1(6), v2;
+		linspace(v, -2, 3); v2 = v;
+		linspace(v1, 3, -2);
 		flip(v);
 		if (v != v1) error("failed!");
 		flip(v, v1);
@@ -52,26 +52,30 @@ inline void test_arithmetic()
 
 	// trans
 	{
-		CmatComp a; linspace(a, Comp(0, 0), Comp(8, 8), 3, 3);
-		MatComp b; linspace(b, Comp(0, 0), Comp(8, 8), 3, 3);
+		CmatComp a(3,3); linspace(a, Comp(0, 0), Comp(8, 8));
+		MatComp b(3,3); linspace(b, Comp(0, 0), Comp(8, 8));
 		trans(a);
 		if (a != b) error("failed!");
 
-		linspace(a, Comp(0, 0), Comp(5, 5), 2, 3);
-		linspace(b, Comp(0, 0), Comp(5, 5), 3, 2);
+		a.resize(2, 3);
+		linspace(a, Comp(0, 0), Comp(5, 5));
+		b.resize(3, 2);
+		linspace(b, Comp(0, 0), Comp(5, 5));
 		MatComp c; trans(c, a);
 		if (c != b)  error("failed!");
 	}
 
 	// her
 	{
-		CmatComp a; linspace(a, Comp(0, 0), Comp(8, 8), 3, 3);
-		MatComp b; linspace(b, Comp(0, 0), Comp(8, -8), 3, 3);
+		CmatComp a(3,3); linspace(a, Comp(0, 0), Comp(8, 8));
+		MatComp b(3,3); linspace(b, Comp(0, 0), Comp(8, -8));
 		her(a);
 		if (a != b) error("failed!");
 
-		linspace(a, Comp(0, 0), Comp(5, 5), 2, 3);
-		linspace(b, Comp(0, 0), Comp(5, -5), 3, 2);
+		a.resize(2, 3);
+		linspace(a, Comp(0, 0), Comp(5, 5));
+		b.resize(3, 2);
+		linspace(b, Comp(0, 0), Comp(5, -5));
 		MatComp c; her(c, a);
 		if (c != b)  error("failed!");
 	}
@@ -151,15 +155,15 @@ inline void test_arithmetic()
 
 	// rem(), mod()
 	{
-		VecInt v, v1;
-		linspace(v, -20, 19, 40); linspace(v1, 0, 39, 40);
+		VecInt v(40), v1(40);
+		linspace(v, -20, 19); linspace(v1, 0, 39);
 		mod(v, 5); rem(v1, 5);
 		if (v != v1) error("failed!");
 	}
 
 	{
-		VecLlong v, v1;
-		linspace(v, -20, 19, 40); linspace(v1, 0, 39, 40);
+		VecLlong v(40), v1(40);
+		linspace(v, -20, 19); linspace(v1, 0, 39);
 		mod(v, 5LL); rem(v1, 5LL);
 		if (v != v1) error("failed!");
 	}
@@ -272,11 +276,11 @@ inline void test_arithmetic()
 
 	// real(v), v = real(v)
 	{
-		VecComp v; linspace(v, Comp(1.1,1.1), Comp(3.3,3.3), 3);
-		VecComp v1; linspace(v1, 1.1, 3.3, 3);
+		VecComp v(3); linspace(v, Comp(1.1,1.1), Comp(3.3,3.3));
+		VecComp v1(3); linspace(v1, 1.1, 3.3);
 		real(v);
 		if (v != v1) error("failed!");
-		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3));
 		VecDoub v2;
 		real(v2, v);
 		if(v2 != v1) error("failed!");
@@ -284,11 +288,11 @@ inline void test_arithmetic()
 
 	// imag(v), v = imag(v)
 	{
-		VecComp v; linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
-		VecComp v1; linspace(v1, 1.1, 3.3, 3);
+		VecComp v(3); linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3));
+		VecComp v1(3); linspace(v1, 1.1, 3.3);
 		imag(v);
 		if (v != v1) error("failed!");
-		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3));
 		VecDoub v2;
 		imag(v2, v);
 		if (v2 != v1) error("failed!");
@@ -298,11 +302,11 @@ inline void test_arithmetic()
 	{
 		// doub
 		{
-			VecDoub v; linspace(v, -2, 2, 5);
+			VecDoub v(5); linspace(v, -2, 2);
 			VecComp v1(5); v1[0] = 2; v1[1] = 1; v1[2] = 0; v1[3] = 1; v1[4] = 2;
 			abs(v);
 			if (v != v1) error("failed!");
-			linspace(v, -2, 2, 5);
+			linspace(v, -2, 2);
 			VecDoub v2;
 			abs(v2, v);
 			if (v2 != v1) error("failed!");
@@ -310,11 +314,11 @@ inline void test_arithmetic()
 		
 		// comp
 		{
-			VecComp v; linspace(v, Comp(3, 4), Comp(9, 12), 3);
-			VecComp v1; linspace(v1, 5, 15, 3);
+			VecComp v(3); linspace(v, Comp(3, 4), Comp(9, 12));
+			VecComp v1(3); linspace(v1, 5, 15);
 			abs(v);
 			if (v != v1) error("failed!");
-			linspace(v, Comp(3, 4), Comp(9, 12), 3);
+			linspace(v, Comp(3, 4), Comp(9, 12));
 			VecDoub v2;
 			abs(v2, v);
 			if (v2 != v1) error("failed!");
@@ -323,11 +327,11 @@ inline void test_arithmetic()
 
 	// conj(v), v = conj(v)
 	{
-		VecComp v; linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
-		VecComp v1; linspace(v1, Comp(1.1, -1.1), Comp(3.3, -3.3), 3);
+		VecComp v(3); linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3));
+		VecComp v1(3); linspace(v1, Comp(1.1, -1.1), Comp(3.3, -3.3));
 		conj(v);
 		if (v != v1) error("failed!");
-		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
+		linspace(v, Comp(1.1, 1.1), Comp(3.3, 3.3));
 		Vector<Lcomp> v2;
 		conj(v2, v);
 		if (v2 != v1) error("failed!");
@@ -336,17 +340,17 @@ inline void test_arithmetic()
 	// s = dot(v, v)
 	{
 		{
-			VecComp x; VecDoub y;
-			linspace(x, Comp(1.1, 1.1), Comp(3.3, 3.3), 3);
-			linspace(y, 1., 3., 3);
+			VecComp x(3); VecDoub y(3);
+			linspace(x, Comp(1.1, 1.1), Comp(3.3, 3.3));
+			linspace(y, 1., 3.);
 			auto s = dot(x, y);
 			if (abs(s - Comp(15.4, -15.4)) > 1e-14) error("failed!");
 		}
 
 		{
-			VecDoub x; VecChar y;
-			linspace(x, 1.1, 3.3, 3);
-			linspace(y, 1, 3, 3);
+			VecDoub x(3); VecChar y(3);
+			linspace(x, 1.1, 3.3);
+			linspace(y, 1, 3);
 			auto s = dot(x, y);
 			if (abs(s - 15.4) > 1e-14) error("failed!");
 		}
@@ -354,8 +358,8 @@ inline void test_arithmetic()
 
 	// matrix-vector multiplication
 	{
-		CmatComp a; linspace(a, Comp(1, -1), Comp(28, -28), 4, 7);
-		VecChar v; linspace(v, 1, 7, 7);
+		CmatComp a(4,7); linspace(a, Comp(1, -1), Comp(28, -28));
+		VecChar v(7); linspace(v, 1, 7);
 		Vector<Lcomp> v1(4), v2;
 		v1[0] = Comp(476, -476); v1[1] = Comp(504, -504);
 		v1[2] = Comp(532, -532); v1[3] = Comp(560, -560);
@@ -365,8 +369,8 @@ inline void test_arithmetic()
 
 	// vector-matrix multiplication
 	{
-		MatComp a; linspace(a, Comp(1, -1), Comp(28, -28), 7, 4);
-		VecChar v; linspace(v, 1, 7, 7);
+		MatComp a(7,4); linspace(a, Comp(1, -1), Comp(28, -28));
+		VecChar v(7); linspace(v, 1, 7);
 		Vector<Lcomp> v1(4), v2;
 		v1[0] = Comp(476, -476); v1[1] = Comp(504, -504);
 		v1[2] = Comp(532, -532); v1[3] = Comp(560, -560);
@@ -376,7 +380,7 @@ inline void test_arithmetic()
 
 	// matrix-matrix multiplication
 	{
-		MatComp a; linspace(a, Comp(1, -1), Comp(28, -28), 7, 4);
+		MatComp a(7,4); linspace(a, Comp(1, -1), Comp(28, -28));
 		FixCmat<Comp, 4, 7> b; her(b, a);
 		CmatComp c;
 		mul(c, b, a);
@@ -387,7 +391,7 @@ inline void test_arithmetic()
 
 	// v = cumsum(v)
 	{
-		VecInt v; linspace(v, 1, 4, 4);
+		VecInt v(4); linspace(v, 1, 4);
 		VecLlong v1;
 		cumsum(v1, v);
 		if (v1[0] != 1 || v1[1] != 3 || v1[2] != 6 || v1[3] != 10)

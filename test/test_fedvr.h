@@ -42,7 +42,7 @@ inline void test_D2_mat()
 	using namespace slisc;
 	Doub xmin = -1., xmax = 1.;
 	Int Nfe = 2, Ngs = 10;
-	VecDoub bounds; linspace(bounds, -1., 1., Nfe + 1);
+	VecDoub bounds(Nfe + 1); linspace(bounds, -1., 1.);
 
 	// second derivative matrix
 	McooDoub D2s;
@@ -53,7 +53,7 @@ inline void test_D2_mat()
 		y[i] = test_fedvr_fun(x[i], 2);
 	}
 	y /= u;
-	VecDoub d2y; // second derivative
+	VecDoub d2y(D2s.nrows()); // second derivative
 	mul(d2y, D2s, y);
 	d2y *= u;
 	d2y -= 2;
@@ -70,7 +70,7 @@ inline void test_inf_sqr_well()
 	Int Ngs = 10, Nfe = 5; // grid points per finite element (including boundaries)
 	// =============
 
-	VecDoub bounds; linspace(bounds, xmin, xmax, Nfe + 1);
+	VecDoub bounds(Nfe + 1); linspace(bounds, xmin, xmax);
 
 	VecDoub x, w, u;
 	CmatDoub H; McooDoub Hs; // dense and sparse Hamiltonian
@@ -104,7 +104,7 @@ inline void test_SHO()
 	Int Ngs = 10, Nfe = 10; // grid points per finite element (including boundaries)
 	// ==============
 
-	VecDoub bounds; linspace(bounds, xmin, xmax, Nfe + 1);
+	VecDoub bounds(Nfe + 1); linspace(bounds, xmin, xmax);
 
 	VecDoub x, w, u;
 	CmatDoub H; McooDoub Hs; // dense and sparse Hamiltonian
