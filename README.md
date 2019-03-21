@@ -171,6 +171,9 @@ TODO.
 
 TODO.
 
+## "slice.h"
+`Svector<>` inherits `Vector<>` and thus can be casted to a vector when input to a function. `Svector` does not have it's own allocated memory, but use a block of contiguous memory from other dense containers (this is called slicing). For example, if we need to calculate the sum of a column of a `Cmat`, we can create an `Svector` to represent one column of `Cmat`, then use it as input to `sum()` function (need to cast to `Vector<>` first, unless `sum()` accepts `Svector` directly).
+
 ### Vector/Matrix Type Alias
 The typedefs for vector/matrix classes are (each type also comes with "_I", "_O", and "_IO" versions) :  VecInt, VecUint, VecLlong, VecUllong, VecChar, VecUchar, VecDoub, VecComp, VecBool, MatInt, MatUint, MatLlong, MatUllong, MatChar, MatUchar, MatDoub, MatComp, MatBool, Mat3Doub, Mat3Comp.
 
@@ -342,3 +345,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * use `SLS_FOTBID_COPY_CONSTRUCTOR` to forbit copy constructor of containers, default should be undefined.
 * test "meta.h" for ImagNum<T> types
 * a constructor of Vbase/Vector that leaves things uninitialized might be added, and use it to optimize Svector() constructor
+* modify "meta.h" so that `Svector` could be used as function arguments without casting to `Vector` first.

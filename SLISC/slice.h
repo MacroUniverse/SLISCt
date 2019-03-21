@@ -2,13 +2,6 @@
 #include "vector.h"
 
 namespace slisc {
-// === slice to Vector ===
-
-// #### IMPORTANT ####
-// "v" must be empty or a sliced vector before using any function below
-// use "slice_reset(v)" before "v" is destroyed
-
-// contiguous slice, set size
 
 // contiguous slice vector class
 template <class T>
