@@ -346,3 +346,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * test "meta.h" for ImagNum<T> types
 * a constructor of Vbase/Vector that leaves things uninitialized might be added, and use it to optimize Svector() constructor
 * modify "meta.h" so that `Svector` could be used as function arguments without casting to `Vector` first.
+* modify `resize()` of dense matrices so that the input can be a sparse matrix

@@ -11,10 +11,11 @@ void test_eig()
 		CmatDoub a(2, 2);
 		a(0, 0) = 1.; a(1, 1) = 2.;
 		a(1, 0) = 3.; a(0, 1) = 3.;
-		CmatDoub eigVec; VecDoub eigVal;
+		CmatDoub eigVec; VecDoub eigVal(a.nrows()); eigVec.resize(a);
 		eig_sym(eigVal, eigVec, a);
 
-		CmatDoub eigVec1, eigVec2;
+		CmatDoub eigVec1(a.nrows(), eigVec.ncols()), eigVec2;
+		eigVec2.resize(eigVec);
 		mul(eigVec1, a, eigVec);
 		mul(eigVec2, eigVec, diag(eigVal));
 		eigVec1 -= eigVec2;
@@ -22,7 +23,7 @@ void test_eig()
 	}
 	
 	CmatDoub a(50, 50);
-	CmatDoub eigVec; VecDoub eigVal;
+	CmatDoub eigVec; VecDoub eigVal(a.nrows()); eigVec.resize(a);
 	CmatDoub eigVec1, eigVec2;
 	for (Long k = 0; k < 10; ++k) {
 		// fill upper triangle
@@ -35,7 +36,9 @@ void test_eig()
 			a(i, i) = 20 * rand() - 10;
 
 		eig_sym(eigVal, eigVec, a);
+		eigVec1.resize(a.nrows(), eigVec.ncols());
 		mul(eigVec1, a, eigVec);
+		eigVec2.resize(eigVec);
 		mul(eigVec2, eigVec, diag(eigVal));
 		eigVec1 -= eigVec2;
 		auto err = max_abs(eigVec1);

@@ -8,7 +8,7 @@ void test_fft()
 	VecComp v(16); linspace(v, 1., 16.);
 	VecComp v1(16);
 	bit_inv(v1.ptr(), v.ptr(), v.size());
-	VecComp v2; v2 = v;
+	VecComp v2(v.size()); v2 = v;
 	bit_inv(v2.ptr(), v2.size());
 	if (v1 != v2) error("failed!");
 	bit_inv(v1.ptr(), v1.size());

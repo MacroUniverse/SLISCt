@@ -256,7 +256,7 @@ void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I b
 	// grid points, weights, base function values in [-1, 1]
 	VecDoub x0, w0, f0;
 	GaussLobatto(x0, w0, Ngs);
-	invSqrt(f0, w0);
+	f0.resize(w0); invSqrt(f0, w0);
 	CmatDoub df(Ngs, Ngs); // df(i, j) = f_j(x_i)
 	legendre_interp_der(df, x0);
 	for (i = 0; i < Ngs; ++i)
@@ -272,7 +272,7 @@ void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I b
 	}
 
 	FEDVR_grid(x, w, wFE, xFE, x0, w0);
-	invSqrt(u, w);
+	u.resize(w); invSqrt(u, w);
 
 	// Sparse Hamiltonian
 	D2_matrix(D2, w0, wFE, df);

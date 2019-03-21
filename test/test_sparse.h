@@ -143,9 +143,9 @@ inline void test_sparse()
 		}
 
 		// copy from sparse to dense matrix
-		MatDoub c; MatComp d;
+		MatDoub c(a.nrows(), a.ncols()); MatComp d(b.nrows(), b.ncols());
 		c = a; d = b;
-		CmatDoub e; CmatComp f;
+		CmatDoub e(a.nrows(), a.ncols()); CmatComp f(b.nrows(),b.ncols());
 		e = a; f = b;
 		for (i = 0; i < 4; ++i) {
 			for (j = 0; j < 4; ++j) {
@@ -167,7 +167,7 @@ inline void test_sparse()
 			for (Int i = 0; i < 16; ++i) {
 				a.push(i, i % 4, i / 4);
 			}
-			CmatDoub a1; a1 = a;
+			CmatDoub a1(a.nrows(), a.ncols()); a1 = a;
 			VecDoub v(a.nrows()), v1(a1.nrows()), x(4);
 			linspace(x, 1., 4.);
 			mul(v, a, x); mul(v1, a1, x);
@@ -181,7 +181,7 @@ inline void test_sparse()
 			for (Int i = 0; i < 16; ++i) {
 				b.push(Comp(i, i + 1), i % 4, i / 4);
 			}
-			MatComp b1;	b1 = b;
+			MatComp b1(b.nrows(), b.ncols()); b1 = b;
 			VecComp v(b.nrows()), v1(b1.nrows()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, b, x); mul(v1, b1, x);
@@ -194,7 +194,7 @@ inline void test_sparse()
 			for (Int i = 0; i < 16; ++i) {
 				c.push(Imag(i), i % 4, i / 4);
 			}
-			CmatImag c1; c1 = c;
+			CmatImag c1(c.nrows(), c.ncols()); c1 = c;
 			VecComp v(c.nrows()), v1(c1.nrows()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, c, x); mul(v1, c1, x);

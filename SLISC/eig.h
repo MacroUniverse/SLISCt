@@ -9,8 +9,8 @@ namespace slisc {
 void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (eigVec.nrows() != eigVec.ncols())
-		error("must be a square matrix!");
+	if (A.nrows() != A.ncols() || !shape_cmp(eigVec, A) || eigVal.size() != eigVec.nrows())
+		error("wrong shape!");
 #endif
 	eigVec = A;
 	Long N = A.ncols();

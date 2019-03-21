@@ -125,7 +125,10 @@ inline Vbase<T> & Vbase<T>::operator=(const T &rhs)
 template <class T> template <class T1>
 inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
 {
-	resize(rhs.size());
+#ifdef SLS_CHECK_SHAPE
+	if (rhs.size() != m_N)
+		error("wrong shape!");
+#endif
 	veccpy(m_p, rhs.ptr(), m_N);
 	return *this;
 }

@@ -30,7 +30,7 @@ public:
 	}
 	Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
 	{ *this = s; }
-	Diag(const Vector<T> &v) { *this = v; }
+	Diag(const Vector<T> &v) { Base::resize(v.size()); *this = v; }
 	Long size() const
 	{
 		error("use nnz() instead!");
@@ -38,6 +38,7 @@ public:
 	Long nnz() const { return Base::size(); }
 	Long nrows() const { return Base::size(); }
 	Long ncols() const { return Base::size(); }
+	static constexpr Int ndims() { return 2; }
 	Diag &operator=(const Diag &rhs)
 	{ Base::operator=(rhs); return *this; }
 	Diag &operator=(const Vector<T> &rhs)
@@ -89,6 +90,7 @@ public:
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	Long nrows() const { return m_Nr; }
 	Long ncols() const { return m_Nc; }
+	static constexpr Int ndims() { return 2; }
 	Long size() const {
 		error("use nnz() or capacity() instead!");
 	}

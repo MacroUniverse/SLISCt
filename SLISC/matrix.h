@@ -12,7 +12,10 @@ template <class T, class T1, SLS_IF(
 )>
 inline T &coo2dense(T &lhs, const MatCoo<T1> &rhs)
 {
-	lhs.resize(rhs.nrows(), rhs.ncols());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(lhs, rhs))
+		error("wrong shape!");
+#endif
 	lhs = contain_type<T>(0);
 	for (Long i = 0; i < rhs.nnz(); ++i) {
 		lhs(rhs.row(i), rhs.col(i)) = rhs[i];

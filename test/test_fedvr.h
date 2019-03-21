@@ -75,12 +75,12 @@ inline void test_inf_sqr_well()
 	VecDoub x, w, u;
 	CmatDoub H; McooDoub Hs; // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
-	H = Hs;
+	H.resize(Hs.nrows(), Hs.ncols()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// solve eigen states
-	VecDoub eigVal; // eigen values / bound state energies
-	CmatDoub eigVec; // eigen vectors / bound states wave functions
+	VecDoub eigVal(H.nrows()); // eigen values / bound state energies
+	CmatDoub eigVec; eigVec.resize(H); // eigen vectors / bound states wave functions
 	eig_sym(eigVal, eigVec, H);
 
 	// test energies
@@ -110,7 +110,7 @@ inline void test_SHO()
 	CmatDoub H; McooDoub Hs; // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 
-	H = Hs;
+	H.resize(Hs.nrows(), Hs.ncols()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// add potential to Hamiltonian
@@ -119,8 +119,8 @@ inline void test_SHO()
 	}
 
 	// solve eigen states
-	VecDoub eigVal; // eigen values / bound state energies
-	CmatDoub eigVec; // eigen vectors / bound states wave functions
+	VecDoub eigVal(H.nrows()); // eigen values / bound state energies
+	CmatDoub eigVec; eigVec.resize(H); // eigen vectors / bound states wave functions
 	eig_sym(eigVal, eigVec, H);
 
 	// test energies

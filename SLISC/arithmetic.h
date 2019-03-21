@@ -128,27 +128,63 @@ inline void linspace(Tv &v, const T1 &first, const T2 &last)
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
 void sqrt(T &v, const T1 &v1)
-{ v.resize(v1); sqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	sqrt_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 void invSqrt(T &v, const T1 &v1)
-{ v.resize(v1); invSqrt_vv(v.ptr(), v1.ptr(), v1.size()); }
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	invSqrt_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 void sin(T &v, const T1 &v1)
-{ v.resize(v1); sin_vv(v.ptr(), v1.ptr(), v1.size()); }
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	sin_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 void cos(T &v, const T1 &v1)
-{ v.resize(v1); cos_vv(v.ptr(), v1.ptr(), v1.size()); }
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	cos_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 void exp(T &v, const T1 &v1)
-{ v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size()); }
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 void tan(T &v, const T1 &v1)
-{ v.resize(v1); tan_vv(v.ptr(), v1.ptr(), v1.size()); }
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	tan_vv(v.ptr(), v1.ptr(), v1.size());
+}
 
 // === vector/matrix arithmetics ===
 
@@ -161,11 +197,14 @@ inline void flip(T &v)
 
 // v = flip(v)
 template <class T, class T1, SLS_IF(
-	is_Vector<T>() && is_dense_vec<T1>()
+	is_dense_vec<T>() && is_dense_vec<T1>()
 )>
 inline void flip(T &v, const T1 &v1)
 {
-	v.resize(v1);
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
 	flip(v.ptr(), v1.ptr(), v1.size());
 }
 
@@ -176,7 +215,8 @@ template <class T, SLS_IF(is_dense_mat<T>())>
 inline void trans(T &v)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.nrows() != v.ncols()) error("illegal shape!");
+	if (v.nrows() != v.ncols())
+		error("illegal shape!");
 #endif
 	for (Long i = 0; i < v.nrows(); ++i)
 		for (Long j = 0; j < i; ++j)
@@ -189,7 +229,10 @@ template <class T, class T1, SLS_IF(
 )>
 inline void trans(T &v, const T1 &v1)
 {
-	v.resize(v1.ncols(), v1.nrows());
+#ifdef SLS_CHECK_SHAPE
+	if (v.nrows() != v1.ncols() || v.ncols() != v1.nrows())
+		error("wrong size!");
+#endif
 	for (Long i = 0; i < v.nrows(); ++i)
 		for (Long j = 0; j < v.ncols(); ++j)
 			v(i, j) = v1(j, i);
@@ -225,7 +268,10 @@ template <class T, class T1, SLS_IF(
 )>
 inline void her(T &v, const T1 &v1)
 {
-	v.resize(v1.ncols(), v1.nrows());
+#ifdef SLS_CHECK_SHAPE
+	if (v.nrows() != v1.ncols() || v.ncols() != v1.nrows())
+		error("wrong shape!");
+#endif
 	for (Long i = 0; i < v.nrows(); ++i) {
 		for (Long j = 0; j < v.ncols(); ++j)
 			v(i, j) = conj(v1(j, i));
@@ -238,7 +284,8 @@ template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 inline void operator+=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1))
+		error("wrong shape!");
 #endif
 	plus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -249,7 +296,8 @@ template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 inline void operator-=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1))
+		error("wrong shape!");
 #endif
 	minus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -260,7 +308,8 @@ template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 inline void operator*=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1))
+		error("wrong shape!");
 #endif
 	times_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -271,7 +320,8 @@ template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 inline void operator/=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v, v1))
+		error("wrong shape!");
 #endif
 	divide_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -322,7 +372,10 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void rem(T &v, const T1 &v1, const Ts &s)
 {
-	v.resize(v1);
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
 	rem_vvs(v.ptr(), v1.ptr(), s, v.size());
 }
 
@@ -341,7 +394,10 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void mod(T &v, const T1 &v1, const Ts &s)
 {
-	v.resize(v1);
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
 	mod_vvs(v.ptr(), v1.ptr(), s, v.size());
 }
 
@@ -355,7 +411,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Plus(T &v, const T1 &v1, const Ts &s)
 {
-	v.resize(v1); plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 template <class T, class T1, class Ts, SLS_IF(
@@ -363,7 +423,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Plus(T &v, const Ts &s, const T1 &v1)
 {
-	v.resize(v1); plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 // v = v + v
@@ -374,9 +438,9 @@ template <class T, class T1, class T2, SLS_IF(
 inline void Plus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1)) error("wrong shape!");
 #endif
-	v.resize(v1); plus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
+	plus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
 
 // -v inplace
@@ -393,7 +457,11 @@ template <class T, class T1, SLS_IF(
 )>
 inline void Minus(T &v, const T1 &v1)
 {
-	v.resize(v1); minus_vv(v.ptr(), v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	minus_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 // v = s - v
@@ -403,7 +471,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Minus(T &v, const Ts &s, const T1 &v1)
 {
-	v.resize(v1); minus_vsv(v.ptr(), s, v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	minus_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
 
 // v = v - s
@@ -413,7 +485,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Minus(T &v, const T1 &v1, const Ts &s)
 {
-	v.resize(v1); minus_vvs(v.ptr(), v1.ptr(), s, v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	minus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 // v = v - v
@@ -424,9 +500,10 @@ template <class T, class T1, class T2, SLS_IF(
 inline void Minus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1))
+		error("wrong shape!");
 #endif
-	v.resize(v1); minus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v1.size());
+	minus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v1.size());
 }
 
 // v = v * s
@@ -436,7 +513,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Times(T &v, const T1 &v1, const Ts &s)
 {
-	v.resize(v1); times_vvs(v.ptr(), v1.ptr(), s, v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	times_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 // v = s * v
@@ -446,7 +527,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Times(T &v, const Ts &s, const T1 &v1)
 {
-	v.resize(v1); times_vvs(v.ptr(), v1.ptr(), s, v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	times_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 // v = v * v
@@ -457,9 +542,9 @@ template <class T, class T1, class T2, SLS_IF(
 inline void Times(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1)) error("wrong shape!");
 #endif
-	v.resize(v1); times_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
+	times_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
 
 // v = v / s
@@ -469,7 +554,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Divide(T &v, const T1 &v1, const Ts &s)
 {
-	v.resize(v1); divide_vvs(v.ptr(), v1.ptr(), s, v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	divide_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 // v = s / v
@@ -479,7 +568,11 @@ template <class T, class T1, class Ts, SLS_IF(
 )>
 inline void Divide(T &v, const Ts &s, const T1 &v1)
 {
-	v.resize(v1); divide_vsv(v.ptr(), s, v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	divide_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
 
 // v = v / v
@@ -490,9 +583,10 @@ template <class T, class T1, class T2, SLS_IF(
 inline void Divide(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1))
+		error("wrong shape!");
 #endif
-	v.resize(v1); divide_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
+	divide_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
 
 // real(v)
@@ -509,7 +603,11 @@ template <class T, class T1,
 	SLS_IF(is_same_contain<T, T1>(), is_comp_dense<T1>())>
 inline void real(T &v, const T1 &v1)
 {
-	v.resize(v1); real_vv(v.ptr(), v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	real_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 // imag(v)
@@ -524,7 +622,11 @@ template <class T, class T1,
 	SLS_IF(is_same_contain<T, T1>() && is_comp_dense<T1>())>
 	inline void imag(T &v, const T1 &v1)
 {
-	v.resize(v1); imag_vv(v.ptr(), v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	imag_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 // abs(v)
@@ -538,7 +640,11 @@ inline void abs(T &v)
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 inline void abs(T &v, const T1 &v1)
 {
-	v.resize(v1); abs_vv(v.ptr(), v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
+	abs_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 // to_comp() deleted, use operator= instead
@@ -556,7 +662,10 @@ template <class T, class T1, SLS_IF(
 )>
 inline void conj(T &v, const T1 &v1)
 {
-	v.resize(v1);
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("wrong size!");
+#endif
 	conj_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
@@ -567,7 +676,8 @@ template <class T1, class T2, SLS_IF(is_dense_vec<T1>() && is_dense_vec<T2>())>
 inline auto dot(const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2)) error("wrong shape!");
+	if (!shape_cmp(v1, v2))
+		error("wrong shape!");
 #endif
 	return dot_vv(v1.ptr(), v2.ptr(), v2.size());
 }
@@ -615,11 +725,10 @@ template <class T, class T1, class T2, SLS_IF(
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size())
+	if (a.ncols() != x.size() || y.size() != a.nrows())
 		error("illegal shape!");
 #endif
 	Long i, j, Nr_a = a.nrows(), Nc_a = a.ncols();
-	y.resize(a.nrows());
 	vecset(y.ptr(), contain_type<T>(), Nr_a);
 	for (i = 0; i < Nr_a; ++i) {
 		for (j = 0; j < Nc_a; ++j)
@@ -634,11 +743,10 @@ template <class T, class T1, class T2, SLS_IF(
 inline void mul_par(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size())
+	if (a.ncols() != x.size() || y.size() != a.nrows())
 		error("illegal shape!");
 #endif
 	Long Nr_a = a.nrows(), Nc_a = a.ncols();
-	y.resize(a.nrows());
 	vecset(y.ptr(), contain_type<T>(), Nr_a);
 #pragma omp parallel for
 	for (Long i = 0; i < Nr_a; ++i) {
@@ -653,16 +761,14 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul(T &y, const T1 &x, const T2 &a)
 {
+	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 #ifdef SLS_CHECK_SHAPE
-	if (x.size() != a.nrows())
+	if (x.size() != a.nrows() || y.size() != Nc_a)
 		error("illegal shape!");
 #endif
-	Long Nr_a = a.nrows(), Nc_a = a.ncols();
-	Long i, j, k;
-	y.resize(Nc_a);
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
-	for (j = 0; j < Nc_a; ++j) {
-		for (i = 0; i < Nr_a; ++i)
+	for (Long j = 0; j < Nc_a; ++j) {
+		for (Long i = 0; i < Nr_a; ++i)
 			y[j] += x[i] * a(i, j);
 	}
 }
@@ -673,12 +779,11 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul_par(T &y, const T1 &x, const T2 &a)
 {
+	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 #ifdef SLS_CHECK_SHAPE
-	if (x.size() != a.nrows())
+	if (x.size() != a.nrows() || y.size() != Nc_a)
 		error("illegal shape!");
 #endif
-	Long Nr_a = a.nrows(), Nc_a = a.ncols();
-	y.resize(Nc_a);
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
 #pragma omp parallel for
 	for (Long j = 0; j < Nc_a; ++j) {
@@ -694,17 +799,15 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
+	Long Nr_a = a.nrows(), Nc_a = a.ncols(), Nc_x = x.ncols();
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.nrows())
+	if (a.ncols() != x.nrows() || y.nrows() != Nr_a || y.ncols() != Nc_x)
 		error("illegal shape!");
 #endif
-	Long Nr_a = a.nrows(), Nc_a = a.ncols(), Nc_x = x.ncols();
-	Long i, j, k;
-	y.resize(Nr_a, Nc_x);
 	vecset(y.ptr(), contain_type<T>(), Nr_a*Nc_x);
-	for (i = 0; i < Nr_a; ++i) {
-		for (j = 0; j < Nc_x; ++j) {
-			for (k = 0; k < Nc_a; ++k)
+	for (Long i = 0; i < Nr_a; ++i) {
+		for (Long j = 0; j < Nc_x; ++j) {
+			for (Long k = 0; k < Nc_a; ++k)
 				y(i, j) += a(i, k) * x(k, j);
 		}
 	}
@@ -717,7 +820,11 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 template <class T, class T1, SLS_IF(is_dense_vec<T>() && is_dense_vec<T1>())>
 void cumsum(T &v, const T1 &v1)
 {
-	v.resize(v1); cumsum_vv(v.ptr(), v1.ptr(), v1.size());
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		error("illegal shape!");
+#endif
+		cumsum_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 } // namespace slisc

@@ -48,8 +48,9 @@ void test_expokit()
 			A.push(val, i + 7, i);
 		}
 
-		VecComp x(N), y0, y1, y2;
-		CmatDoub A0, expA; A0 = A;
+		VecComp x(N), y0(N), y1(N), y2(N);
+		CmatDoub A0(A.nrows(), A.ncols()), expA;
+		expA.resize(A0); A0 = A;
 		linspace(x, 1, N);
 
 		// reference result
