@@ -117,6 +117,7 @@ template <class T> class Cmat;
 template <class T, Long Nr> class FixVec;
 template <class T, Long Nr, Long Nc> class FixCmat;
 template <class T> class Mat3d;
+template <class T> class Svector;
 template <class T> class Diag;
 template <class T> class MatCoo;
 template <class T> class MatCooH;
@@ -180,77 +181,77 @@ typedef const Vector<Comp> &VecComp_I;
 typedef Vector<Comp> VecComp;
 typedef Vector<Comp> &VecComp_O, &VecComp_IO;
 
-typedef const Vector<Bool> &VecBool_I;
 typedef Vector<Bool> VecBool;
-typedef Vector<Bool> &VecBool_O, &VecBool_IO;
+typedef const VecBool&VecBool_I;
+typedef VecBool &VecBool_O, &VecBool_IO;
 
-typedef const Matrix<Int> &MatInt_I;
 typedef Matrix<Int> MatInt;
-typedef Matrix<Int> &MatInt_O, &MatInt_IO;
+typedef const MatInt &MatInt_I;
+typedef MatInt &MatInt_O, &MatInt_IO;
 
-typedef const Matrix<Uint> &MatUint_I;
 typedef Matrix<Uint> MatUint;
-typedef Matrix<Uint> &MatUint_O, &MatUint_IO;
+typedef const MatUint &MatUint_I;
+typedef MatUint &MatUint_O, &MatUint_IO;
 
-typedef const Matrix<Llong> &MatLlong_I;
 typedef Matrix<Llong> MatLlong;
-typedef Matrix<Llong> &MatLlong_O, &MatLlong_IO;
+typedef const MatLlong &MatLlong_I;
+typedef MatLlong &MatLlong_O, &MatLlong_IO;
 
-typedef const Matrix<Ullong> &MatUllong_I;
 typedef Matrix<Ullong> MatUllong;
-typedef Matrix<Ullong> &MatUllong_O, &MatUllong_IO;
+typedef const MatUllong &MatUllong_I;
+typedef MatUllong &MatUllong_O, &MatUllong_IO;
 
-typedef const Matrix<Char> &MatChar_I;
 typedef Matrix<Char> MatChar;
-typedef Matrix<Char> &MatChar_O, &MatChar_IO;
+typedef const MatChar &MatChar_I;
+typedef MatChar &MatChar_O, &MatChar_IO;
 
-typedef const Matrix<Uchar> &MatUchar_I;
 typedef Matrix<Uchar> MatUchar;
-typedef Matrix<Uchar> &MatUchar_O, &MatUchar_IO;
+typedef const MatUchar &MatUchar_I;
+typedef MatUchar &MatUchar_O, &MatUchar_IO;
 
-typedef const Matrix<Doub> &MatDoub_I;
 typedef Matrix<Doub> MatDoub;
-typedef Matrix<Doub> &MatDoub_O, &MatDoub_IO;
+typedef const MatDoub &MatDoub_I;
+typedef MatDoub &MatDoub_O, &MatDoub_IO;
 
 typedef Matrix<Imag> MatImag;
 typedef const MatImag &MatImag_I;
 typedef MatImag &MatImag_O, &MatImag_IO;
 
-typedef const Matrix<Comp> &MatComp_I;
 typedef Matrix<Comp> MatComp;
-typedef Matrix<Comp> &MatComp_O, &MatComp_IO;
+typedef const MatComp &MatComp_I;
+typedef MatComp &MatComp_O, &MatComp_IO;
 
-typedef const Matrix<Bool> &MatBool_I;
 typedef Matrix<Bool> MatBool;
-typedef Matrix<Bool> &MatBool_O, &MatBool_IO;
+typedef const MatBool &MatBool_I;
+typedef MatBool &MatBool_O, &MatBool_IO;
 
-typedef const Cmat<Int> &CmatInt_I;
 typedef Cmat<Int> CmatInt;
-typedef Cmat<Int> &CmatInt_O, &CmatInt_IO;
+typedef const CmatInt &CmatInt_I;
+typedef CmatInt &CmatInt_O, &CmatInt_IO;
 
-typedef const Cmat<Uint> &CmatUint_I;
 typedef Cmat<Uint> CmatUint;
-typedef Cmat<Uint> &CmatUint_O, &CmatUint_IO;
+typedef const CmatUint &CmatUint_I;
+typedef CmatUint &CmatUint_O, &CmatUint_IO;
 
-typedef const Cmat<Llong> &CmatLlong_I;
 typedef Cmat<Llong> CmatLlong;
-typedef Cmat<Llong> &CmatLlong_O, &CmatLlong_IO;
+typedef const CmatLlong &CmatLlong_I;
+typedef CmatLlong &CmatLlong_O, &CmatLlong_IO;
 
-typedef const Cmat<Ullong> &CmatUllong_I;
 typedef Cmat<Ullong> CmatUllong;
-typedef Cmat<Ullong> &CmatUllong_O, &CmatUllong_IO;
+typedef const CmatUllong &CmatUllong_I;
+typedef CmatUllong &CmatUllong_O, &CmatUllong_IO;
 
-typedef const Cmat<Char> &CmatChar_I;
 typedef Cmat<Char> CmatChar;
-typedef Cmat<Char> &CmatChar_O, &CmatChar_IO;
+typedef const CmatChar &CmatChar_I;
+typedef CmatChar &CmatChar_O, &CmatChar_IO;
 
-typedef const Cmat<Uchar> &CmatUchar_I;
 typedef Cmat<Uchar> CmatUchar;
-typedef Cmat<Uchar> &CmatUchar_O, &CmatUchar_IO;
+typedef const CmatUchar &CmatUchar_I;
+typedef CmatUchar &CmatUchar_O, &CmatUchar_IO;
 
-typedef const Cmat<Doub> &CmatDoub_I;
 typedef Cmat<Doub> CmatDoub;
-typedef Cmat<Doub> &CmatDoub_O, &CmatDoub_IO;
+typedef const CmatDoub &CmatDoub_I;
+typedef CmatDoub &CmatDoub_O, &CmatDoub_IO;
 
 typedef Cmat<Imag> CmatImag;
 typedef const CmatImag &CmatImag_I;
@@ -260,17 +261,21 @@ typedef Cmat<Comp> CmatComp;
 typedef const CmatComp &CmatComp_I;
 typedef CmatComp &CmatComp_O, &CmatComp_IO;
 
-typedef const Cmat<Bool> &CmatBool_I;
 typedef Cmat<Bool> CmatBool;
-typedef Cmat<Bool> &CmatBool_O, &CmatBool_IO;
+typedef const CmatBool &CmatBool_I;
+typedef CmatBool &CmatBool_O, &CmatBool_IO;
 
-typedef const Mat3d<Doub> &Mat3Doub_I;
 typedef Mat3d<Doub> Mat3Doub;
-typedef Mat3d<Doub> &Mat3Doub_O, &Mat3Doub_IO;
+typedef const Mat3Doub &Mat3Doub_I;
+typedef Mat3Doub &Mat3Doub_O, &Mat3Doub_IO;
 
-typedef const Mat3d<Comp> &Mat3Comp_I;
 typedef Mat3d<Comp> Mat3Comp;
-typedef Mat3d<Comp> &Mat3Comp_O, &Mat3Comp_IO;
+typedef const Mat3Comp &Mat3Comp_I;
+typedef Mat3Comp &Mat3Comp_O, &Mat3Comp_IO;
+
+typedef Svector<Int> SvecInt;
+typedef const SvecInt &SvecInt_I;
+typedef SvecInt &SvecInt_O, &SvecInt_IO;
 
 // fixed-size containers
 

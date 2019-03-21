@@ -5,38 +5,73 @@ namespace slisc {
 // === slice to Vector ===
 
 // #### IMPORTANT ####
-// the sliced vector "v" must not be deleted or resized
 // "v" must be empty or a sliced vector before using any function below
 // use "slice_reset(v)" before "v" is destroyed
 
 // contiguous slice, set size
+
+// contiguous slice vector class
 template <class T>
-inline void slice(Vector<T> &v, const T *ptr, Long_I N)
+class Svector : public Vector<T>
 {
-	v.m_p = (T *)ptr; v.m_N = N;
-}
-	
-// contiguous slice, size unchanged
+public:
+	typedef Vector<T> Base;
+	using Base::m_p;
+	using Base::m_N;
+	Svector();
+	Svector(Long_I N);
+	Svector(const T *ptr, Long_I N);
+	// There is no upper bound checking of N, use with care
+	void set_N(Long_I N);
+	void set_ptr(const T *ptr);
+	void set(const T *ptr, Long_I N);
+	~Svector();
+};
+
 template <class T>
-inline void slice(Vector<T> &v, const T *ptr)
+inline Svector<T>::Svector()
+{}
+
+template <class T>
+inline Svector<T>::Svector(Long_I N)
 {
-	v.m_p = (T *)ptr;
+	m_N = N;
 }
 
-// set size (m_N) of the vector, pointer unchanged
 template <class T>
-inline void slice_resize(Vector<T> &v, Long_I N)
+inline Svector<T>::Svector(const T *ptr, Long_I N)
+{
+	// TODO: might be inefficient since m_p, m_N are initialized to 0 by Vector class first
+	// a constructor of Vbase/Vector that leaves things uninitialized might be added.
+	// same problem with other constructors and destructor
+	m_p = (T *)ptr; m_N = N;
+}
+
+template<class T>
+inline void Svector<T>::set_N(Long_I N)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (N <= 0) error("illegal N!");
 #endif
-	v.m_N = N;
+	m_N = N;
 }
 
-// reset vector to normal, with zero size
-template <class T>
-inline void slice_reset(Vector<T> &v)
+template<class T>
+inline void Svector<T>::set_ptr(const T * ptr)
 {
-	v.m_p = nullptr; v.m_N = 0;
+	m_p = (T *)ptr;
 }
+
+template<class T>
+inline void Svector<T>::set(const T * ptr, Long_I N)
+{
+	m_p = (T *)ptr; m_N = N;
+}
+
+template<class T>
+inline Svector<T>::~Svector()
+{
+	m_p = nullptr; m_N = 0;
+}
+
 }
