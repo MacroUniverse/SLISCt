@@ -11,11 +11,11 @@
 // #define SLS_CHECK_COO_REPEAT // defined when debugging
 
 // === internal macros ===
-// error(str)
-// warning(str)
-// SLS_IF_HELPER(cond)
+// SLS_ERR(str)
+// SLS_WARN(str)
+// SLS_IF0(...)
 // SLS_IF(...)
-// time_h_error(str)
+// SLS_TIME_H_ERR(str)
 
 #include "global.h"
 #include "meta.h"

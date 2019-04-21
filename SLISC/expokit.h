@@ -30,7 +30,7 @@ inline void expv(VecComp_IO v, const T &mat, Doub_I t, Int_I Nkrylov)
 	const Doub tol = 0.; // set tolerance here
 #ifdef SLS_CHECK_SHAPE
 	if (mat.nrows() != mat.ncols() || mat.ncols() != v.size())
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	Int iflag;
 	VecComp wsp(MAX(Long(10), SQR(mat.nrows()*(Nkrylov + 2) + 5 * (Nkrylov + 2)) + 7));
@@ -46,7 +46,7 @@ inline void expv(VecComp_IO v, const T &mat, Doub_I t, Int_I Nkrylov)
 			tol, norm_inf(mat), wsp.ptr(), wsp.size(),
 			iwsp.ptr(), iwsp.size(), mat, 0, iflag);
 	}
-	else error("unknown!");
+	else SLS_ERR("unknown!");
 }
 
 } // namespace slisc

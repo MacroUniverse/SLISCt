@@ -10,9 +10,9 @@ void test_eigen_fft()
 	fft.fwd(g, f);
 	f1[0] = 0.; f1[1] = 4.; f1[2] = 0.; f1[3] = 0.;
 	g -= f1;
-	if (max_abs(g) > 1e-15) error("failed!");
+	if (max_abs(g) > 1e-15) SLS_ERR("failed!");
 	fft.fwd(g, f);
 	fft.inv(f1, g);
 	f1 /= 4.; f1 -= f0;
-	if (max_abs(f1) > 1e-15) error("failed!");
+	if (max_abs(f1) > 1e-15) SLS_ERR("failed!");
 }

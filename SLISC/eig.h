@@ -10,13 +10,13 @@ void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (A.nrows() != A.ncols() || !shape_cmp(eigVec, A) || eigVal.size() != eigVec.nrows())
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	eigVec = A;
 	Long N = A.ncols();
 	eigVal.resize(N);
 	Int ret = LAPACKE_dsyev(LAPACK_COL_MAJOR, 'V', 'U',N, eigVec.ptr(),N, eigVal.ptr());
-	if (ret != 0) error("failed!");
+	if (ret != 0) SLS_ERR("failed!");
 }
 
 }

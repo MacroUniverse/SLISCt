@@ -68,7 +68,7 @@ inline Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
 inline Doub threej(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j3, Int_I m3)
 {
 #ifndef NDEBUG
-	if (isodd(j1 - j2 - m3)) error("unknown!");
+	if (isodd(j1 - j2 - m3)) SLS_ERR("unknown!");
 #endif
 	return pow(-1, (j1 -j2 -m3)/2) / sqrt(j3+1.) * cleb(j1, m1, j2, m2, j3, -m3);
 }

@@ -79,60 +79,60 @@ void test_mattsave()
 
 	Int r_si;
 	load(r_si, "si", matt);
-	if (r_si != si) error("failed!");
+	if (r_si != si) SLS_ERR("failed!");
 
 	Doub r_s;
 	load(r_s, "s", matt);
-	if (abs(r_s-s) > 1e-15) error("failed!");
+	if (abs(r_s-s) > 1e-15) SLS_ERR("failed!");
 
 	Comp r_sc;
 	load(r_sc, "sc", matt);
-	if (abs(r_sc-sc) > 1e-15) error("failed!");
+	if (abs(r_sc-sc) > 1e-15) SLS_ERR("failed!");
 
 	// vectors
 	// TODO: Char
 
 	VecInt r_vi;
 	load(r_vi, "vi", matt);
-	if (r_vi != vi) error("failed!");
+	if (r_vi != vi) SLS_ERR("failed!");
 
 	VecDoub r_v;
 	load(r_v, "v", matt);
 	r_v -= v;
-	if (norm(r_v) > 1e-15) error("failed!");
+	if (norm(r_v) > 1e-15) SLS_ERR("failed!");
 
 	VecComp r_vc;
 	load(r_vc, "vc", matt);
 	r_vc -= vc;
-	if (norm(r_v) > 1e-15) error("failed!");
+	if (norm(r_v) > 1e-15) SLS_ERR("failed!");
 
 	// matrices
 	// TODO: Char
 
 	MatInt r_AI;
 	load(r_AI, "AI", matt);
-	if (r_AI != AI) error("failed!");
+	if (r_AI != AI) SLS_ERR("failed!");
 
 	MatDoub r_A;
 	load(r_A, "A", matt);
 	r_A -= A;
-	if (norm(r_A) > 1e-15) error("failed!");
+	if (norm(r_A) > 1e-15) SLS_ERR("failed!");
 
 	MatComp r_C;
 	load(r_C, "C", matt);
 	r_C -= C;
-	if (norm(r_C) > 1e-15) error("failed!");
+	if (norm(r_C) > 1e-15) SLS_ERR("failed!");
 
 	// 3D arrays
 	Mat3Doub r_A3;
 	load(r_A3, "A3", matt);
 	r_A3 -= A3;
-	if (norm(r_A3) > 1e-15) error("failed!");
+	if (norm(r_A3) > 1e-15) SLS_ERR("failed!");
 
 	Mat3Comp r_C3;
 	load(r_C3, "C3", matt);
 	r_C3 -= C3;
-	if (norm(r_C3) > 1e-15) error("failed!");
+	if (norm(r_C3) > 1e-15) SLS_ERR("failed!");
 
 	matt.close();
 }

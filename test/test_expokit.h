@@ -65,9 +65,9 @@ void test_expokit()
 		
 		y1 -= y0;
 		auto xerr = max_abs(y1);
-		if (max_abs(y1) > 5e-12) error("failed!");
+		if (max_abs(y1) > 5e-12) SLS_ERR("failed!");
 		y2 -= y0;
 		xerr = max_abs(y1);
-		if (max_abs(y2) > 5e-12) error("failed!");
+		if (max_abs(y2) > 5e-12) SLS_ERR("failed!");
 	}
 }

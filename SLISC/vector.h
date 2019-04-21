@@ -77,7 +77,7 @@ template <class T>
 inline void Vbase<T>::operator<<(Vbase &rhs)
 {
 	if (this == &rhs)
-		error("self move is forbidden!");
+		SLS_ERR("self move is forbidden!");
 	if (m_p != nullptr) delete[] m_p;
 	m_N = rhs.m_N; rhs.m_N = 0;
 	m_p = rhs.m_p; rhs.m_p = nullptr;
@@ -88,7 +88,7 @@ inline T & Vbase<T>::operator[](Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
 if (i<0 || i>=m_N)
-	error("Vbase subscript out of bounds");
+	SLS_ERR("Vbase subscript out of bounds");
 #endif
 	return m_p[i];
 }
@@ -98,7 +98,7 @@ inline const T & Vbase<T>::operator[](Long_I i) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_N)
-		error("Vbase subscript out of bounds");
+		SLS_ERR("Vbase subscript out of bounds");
 #endif
 	return m_p[i];
 }
@@ -127,7 +127,7 @@ inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (rhs.size() != m_N)
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	veccpy(m_p, rhs.ptr(), m_N);
 	return *this;
@@ -138,7 +138,7 @@ inline T & Vbase<T>::end(Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > m_N)
-		error("index out of bound");
+		SLS_ERR("index out of bound");
 #endif
 	return m_p[m_N-i];
 }
@@ -148,7 +148,7 @@ inline const T & Vbase<T>::end(Long_I i) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > m_N)
-		error("index out of bound");
+		SLS_ERR("index out of bound");
 #endif
 	return m_p[m_N-i];
 }
@@ -186,7 +186,7 @@ public:
 template <class T>
 Vector<T>::Vector(const Vector<T> &rhs)
 {
-	error("Copy constructor or move constructor is forbidden, use reference "
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference "
 		 "argument for function input or output, and use \"=\" to copy!");
 }
 

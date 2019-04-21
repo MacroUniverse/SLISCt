@@ -32,7 +32,7 @@ inline void test_gauss()
 		y[i] = test_fedvr_fun(x0[i], 2);
 	}
 	Doub res = dot(y, w0);
-	if (abs(res + 4. / 3.) > 1e-14) error("failed!");
+	if (abs(res + 4. / 3.) > 1e-14) SLS_ERR("failed!");
 }
 
 // test second derivative matrix
@@ -57,7 +57,7 @@ inline void test_D2_mat()
 	mul(d2y, D2s, y);
 	d2y *= u;
 	d2y -= 2;
-	if (max_abs(d2y) > 5e-13) error("failed!");
+	if (max_abs(d2y) > 5e-13) SLS_ERR("failed!");
 }
 
 // bound states of infinite square well
@@ -89,7 +89,7 @@ inline void test_inf_sqr_well()
 	for (Int n = 1; n <= 8; ++n)
 		eng[n - 1] = SQR(PI) / 2. * SQR(n);
 	minus_equals_vv(eng.ptr(), eigVal.ptr(), 8);
-	if (max_abs_v(eng.ptr(), 8) > 1e-5) error("failed!");
+	if (max_abs_v(eng.ptr(), 8) > 1e-5) SLS_ERR("failed!");
 
 	// TODO: test wave function using analytical solution
 }
@@ -126,7 +126,7 @@ inline void test_SHO()
 	// test energies
 	VecDoub Eng(8); linspace(Eng, 0.5, 7.5);
 	minus_equals_vv(Eng.ptr(), eigVal.ptr(), 8);
-	if (max_abs_v(Eng.ptr(), 8) > 1e-5) error("failed!");
+	if (max_abs_v(Eng.ptr(), 8) > 1e-5) SLS_ERR("failed!");
 
 	// TODO: test wave function using analytical solution.
 }

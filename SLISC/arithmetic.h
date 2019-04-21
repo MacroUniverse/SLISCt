@@ -131,7 +131,7 @@ void sqrt(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	sqrt_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -141,7 +141,7 @@ void invSqrt(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	invSqrt_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -151,7 +151,7 @@ void sin(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	sin_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -161,7 +161,7 @@ void cos(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	cos_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -171,7 +171,7 @@ void exp(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -181,7 +181,7 @@ void tan(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	tan_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -203,7 +203,7 @@ inline void flip(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	flip(v.ptr(), v1.ptr(), v1.size());
 }
@@ -216,7 +216,7 @@ inline void trans(T &v)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (v.nrows() != v.ncols())
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 	for (Long i = 0; i < v.nrows(); ++i)
 		for (Long j = 0; j < i; ++j)
@@ -231,7 +231,7 @@ inline void trans(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (v.nrows() != v1.ncols() || v.ncols() != v1.nrows())
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	for (Long i = 0; i < v.nrows(); ++i)
 		for (Long j = 0; j < v.ncols(); ++j)
@@ -245,7 +245,7 @@ template <class T, SLS_IF(is_comp_dense<T>() && is_dense_mat<T>())>
 inline void her(T &v)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.nrows() != v.ncols()) error("illegal shape!");
+	if (v.nrows() != v.ncols()) SLS_ERR("illegal shape!");
 #endif
 	// diagonal
 	for (Long i = 0; i < v.nrows(); ++i)
@@ -270,7 +270,7 @@ inline void her(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (v.nrows() != v1.ncols() || v.ncols() != v1.nrows())
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	for (Long i = 0; i < v.nrows(); ++i) {
 		for (Long j = 0; j < v.ncols(); ++j)
@@ -285,7 +285,7 @@ inline void operator+=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	plus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -297,7 +297,7 @@ inline void operator-=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	minus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -309,7 +309,7 @@ inline void operator*=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	times_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -321,7 +321,7 @@ inline void operator/=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	divide_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -374,7 +374,7 @@ inline void rem(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	rem_vvs(v.ptr(), v1.ptr(), s, v.size());
 }
@@ -396,7 +396,7 @@ inline void mod(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	mod_vvs(v.ptr(), v1.ptr(), s, v.size());
 }
@@ -413,7 +413,7 @@ inline void Plus(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
@@ -425,7 +425,7 @@ inline void Plus(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	plus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
@@ -438,7 +438,7 @@ template <class T, class T1, class T2, SLS_IF(
 inline void Plus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1)) SLS_ERR("wrong shape!");
 #endif
 	plus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
@@ -459,7 +459,7 @@ inline void Minus(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	minus_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -473,7 +473,7 @@ inline void Minus(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	minus_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
@@ -487,7 +487,7 @@ inline void Minus(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	minus_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
@@ -501,7 +501,7 @@ inline void Minus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	minus_vvv(v.ptr(), v1.ptr(), v2.ptr(), v1.size());
 }
@@ -515,7 +515,7 @@ inline void Times(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	times_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
@@ -529,7 +529,7 @@ inline void Times(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	times_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
@@ -542,7 +542,7 @@ template <class T, class T1, class T2, SLS_IF(
 inline void Times(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1)) error("wrong shape!");
+	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1)) SLS_ERR("wrong shape!");
 #endif
 	times_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
@@ -556,7 +556,7 @@ inline void Divide(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	divide_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
@@ -570,7 +570,7 @@ inline void Divide(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	divide_vsv(v.ptr(), s, v1.ptr(), v1.size());
 }
@@ -584,7 +584,7 @@ inline void Divide(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v1, v2) || !shape_cmp(v, v1))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	divide_vvv(v.ptr(), v1.ptr(), v2.ptr(), v2.size());
 }
@@ -605,7 +605,7 @@ inline void real(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	real_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -624,7 +624,7 @@ template <class T, class T1,
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	imag_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -642,7 +642,7 @@ inline void abs(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	abs_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -664,7 +664,7 @@ inline void conj(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("wrong size!");
+		SLS_ERR("wrong size!");
 #endif
 	conj_vv(v.ptr(), v1.ptr(), v1.size());
 }
@@ -677,7 +677,7 @@ inline auto dot(const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v1, v2))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	return dot_vv(v1.ptr(), v2.ptr(), v2.size());
 }
@@ -689,7 +689,7 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void outprod(T &v, const T1 &v1, const T2 &v2)
 {
-	error("TODO");
+	SLS_ERR("TODO");
 	/*Long i, j, N1{ v1.size() }, N2{ v2.size() };
 	Comp *pc, v1_i;
 	v.resize(N1, N2);
@@ -706,7 +706,7 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 {
-	error("TODO");
+	SLS_ERR("TODO");
 	/*Long N1{ v1.size() }, N2{ v2.size() };
 	v.resize(N1, N2);
 #pragma omp parallel for
@@ -726,7 +726,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.ncols() != x.size() || y.size() != a.nrows())
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 	Long i, j, Nr_a = a.nrows(), Nc_a = a.ncols();
 	vecset(y.ptr(), contain_type<T>(), Nr_a);
@@ -744,7 +744,7 @@ inline void mul_par(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.ncols() != x.size() || y.size() != a.nrows())
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 	vecset(y.ptr(), contain_type<T>(), Nr_a);
@@ -764,7 +764,7 @@ inline void mul(T &y, const T1 &x, const T2 &a)
 	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 #ifdef SLS_CHECK_SHAPE
 	if (x.size() != a.nrows() || y.size() != Nc_a)
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
 	for (Long j = 0; j < Nc_a; ++j) {
@@ -782,7 +782,7 @@ inline void mul_par(T &y, const T1 &x, const T2 &a)
 	Long Nr_a = a.nrows(), Nc_a = a.ncols();
 #ifdef SLS_CHECK_SHAPE
 	if (x.size() != a.nrows() || y.size() != Nc_a)
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
 #pragma omp parallel for
@@ -802,7 +802,7 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 	Long Nr_a = a.nrows(), Nc_a = a.ncols(), Nc_x = x.ncols();
 #ifdef SLS_CHECK_SHAPE
 	if (a.ncols() != x.nrows() || y.nrows() != Nr_a || y.ncols() != Nc_x)
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 	vecset(y.ptr(), contain_type<T>(), Nr_a*Nc_x);
 	for (Long i = 0; i < Nr_a; ++i) {
@@ -822,7 +822,7 @@ void cumsum(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
-		error("illegal shape!");
+		SLS_ERR("illegal shape!");
 #endif
 		cumsum_vv(v.ptr(), v1.ptr(), v1.size());
 }

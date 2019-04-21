@@ -58,7 +58,7 @@ Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &s) : Mat3d(N1, N2, N3)
 template <class T>
 Mat3d<T>::Mat3d(const Mat3d<T> &rhs)
 {
-	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
@@ -101,7 +101,7 @@ inline T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[m_N2*m_N3*i + m_N3*j + k];
 }
@@ -111,7 +111,7 @@ inline const T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[m_N2*m_N3*i + m_N3*j + k];
 }
@@ -121,7 +121,7 @@ inline const T * Mat3d<T>::ptr(Long_I i, Long_I j) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p + m_N2*m_N3*i + m_N3*j;
 }
@@ -131,7 +131,7 @@ inline T *Mat3d<T>::ptr(Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p + m_N2*m_N3*i + m_N3*j;
 }

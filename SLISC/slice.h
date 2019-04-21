@@ -46,7 +46,7 @@ template<class T>
 inline void Svector<T>::set_size(Long_I N)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (N <= 0) error("illegal N!");
+	if (N <= 0) SLS_ERR("illegal N!");
 #endif
 	m_N = N;
 }
@@ -66,7 +66,7 @@ inline void Svector<T>::set(const T * ptr, Long_I N)
 template<class T>
 inline void Svector<T>::resize(Long_I N)
 {
-	error("Svector cannot be resized, consider using set_size()!");
+	SLS_ERR("Svector cannot be resized, consider using set_size()!");
 }
 
 template<class T>
@@ -121,7 +121,7 @@ template<class T>
 inline void Scmat<T>::set_size(Long_I Nr, Long_I Nc)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (Nr <= 0 || Nc <= 0) error("illegal Nr or Nc!");
+	if (Nr <= 0 || Nc <= 0) SLS_ERR("illegal Nr or Nc!");
 #endif
 	m_Nr = Nr; m_Nc = Nc; m_N = Nr * Nc;
 }
@@ -142,7 +142,7 @@ inline void Scmat<T>::set(const T * ptr, Long_I Nr, Long_I Nc)
 template<class T>
 inline void Scmat<T>::resize(Long_I Nr, Long_I Nc)
 {
-	error("Scmat<> cannot be resized, consider using set_size()!");
+	SLS_ERR("Scmat<> cannot be resized, consider using set_size()!");
 }
 
 template<class T>

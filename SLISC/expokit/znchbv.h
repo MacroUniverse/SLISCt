@@ -11,7 +11,7 @@ namespace slisc {
 
 void ZNCHBV(Int_I m, Doub_I t, const Comp *H, Int_I ldh, Comp *y, Comp *wsp)
 {
-	error("the translated ZNCHBV is not complete yet, do it now!");
+	SLS_ERR("the translated ZNCHBV is not complete yet, do it now!");
 	const Comp zero = 0.;
 	const Int ndeg = 7;
 	Int i, j, k, ip, ih, iy, iz;

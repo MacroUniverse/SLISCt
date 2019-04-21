@@ -87,7 +87,7 @@ template <class T>
 void fftshift(Vector<T> &v)
 {
 	Long n{ v.size() };
-	if (isodd(n)) error("fftshift only supports even columns!");
+	if (isodd(n)) SLS_ERR("fftshift only supports even columns!");
 	Long halfn{ n / 2 };
 	Vector<T> temp(halfn);
 	size_t size{ halfn * sizeof(T) };
@@ -101,7 +101,7 @@ void fftshift(Matrix<T> &a, Int_I dim = 1)
 {
 	Long m{ a.nrows() }, n{ a.ncols() };
 	if (dim == 1) {
-		if (isodd(m)) error("fftshift only supports even rows!");
+		if (isodd(m)) SLS_ERR("fftshift only supports even rows!");
 			Long halfm = m / 2;
 		Matrix<T> temp(halfm, n);
 		Long size = halfm*n * sizeof(T);
@@ -110,7 +110,7 @@ void fftshift(Matrix<T> &a, Int_I dim = 1)
 		memcpy(a[halfm], temp[0], size);
 	}
 	else if (dim == 2) {
-		if (isodd(n)) error("fftshift only supports even columns!");
+		if (isodd(n)) SLS_ERR("fftshift only supports even columns!");
 			Long i, halfn{ n / 2 };
 		Vector<T> temp(halfn);
 		Long size = halfn * sizeof(T);
@@ -147,7 +147,7 @@ void idft_par(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub km
 inline void four1(Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
-	if (n<2 || n&(n-1)) error("n must be power of 2 in four1");
+	if (n<2 || n&(n-1)) SLS_ERR("n must be power of 2 in four1");
 	bit_inv((Comp*)data, n);
 	nn = n << 1;
 	mmax=2;
@@ -399,7 +399,7 @@ inline void fft_interp(VecComp_O y1, VecDoub_I x1, VecDoub_I x, VecComp_I y)
 inline void four2x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
-	if (n<2 || n&(n-1)) error("n must be power of 2 in four1");
+	if (n<2 || n&(n-1)) SLS_ERR("n must be power of 2 in four1");
 	nn = n << 1;
 	// get bit inverse order to the end of data2
 	Doub *pwork = data2+nn;
@@ -457,7 +457,7 @@ inline void ifft2x(VecComp_O data2, VecComp_I data)
 inline void four4x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 	Int nn,mmax,m,j,istep,i;
 	Doub wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
-	if (n<2 || n&(n-1)) error("n must be power of 2 in four1");
+	if (n<2 || n&(n-1)) SLS_ERR("n must be power of 2 in four1");
 	nn = n << 1;
 	// get bit inverse order to the end of data2
 	Doub *pwork = data2+3*nn;

@@ -25,7 +25,7 @@ public:
 	Diag(Long_I Nr, Long_I Nc) : Base(Nr)
 	{
 #ifdef SLS_CHECK_SHAPE
-		if (Nr != Nc) error("must be a square matrix!");
+		if (Nr != Nc) SLS_ERR("must be a square matrix!");
 #endif
 	}
 	Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
@@ -33,7 +33,7 @@ public:
 	Diag(const Vector<T> &v) { Base::resize(v.size()); *this = v; }
 	Long size() const
 	{
-		error("use nnz() instead!");
+		SLS_ERR("use nnz() instead!");
 	}
 	Long nnz() const { return Base::size(); }
 	Long nrows() const { return Base::size(); }
@@ -92,7 +92,7 @@ public:
 	Long ncols() const { return m_Nc; }
 	static constexpr Int ndims() { return 2; }
 	Long size() const {
-		error("use nnz() or capacity() instead!");
+		SLS_ERR("use nnz() or capacity() instead!");
 	}
 	Long nnz() const { return m_Nnz; } // return number of non-zero elements
 	Long capacity() const { return Base::size(); }
@@ -103,7 +103,7 @@ public:
 	void trim(Long_I Nnz); // decrease m_Nnz to Nnz
 	void resize(Long_I N)
 	{
-		error("use reserve instead!");
+		SLS_ERR("use reserve instead!");
 	}
 	void reserve(Long_I N) // reallocate memory, data will be lost
 	{ Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
@@ -118,7 +118,7 @@ public:
 template <class T>
 MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
 {
-	error("Copy constructor or move constructor is forbidden, use reference "
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference "
 		 "argument for function input or output, and use \"=\" to copy!");
 }
 
@@ -131,7 +131,7 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
 template <class T> template <class T1>
 inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
-	if ((void*)this == (void*)&rhs) error("self assignment is forbidden!");
+	if ((void*)this == (void*)&rhs) SLS_ERR("self assignment is forbidden!");
 	reshape(rhs); reserve(rhs);
 	m_row = rhs.nrows();
 	m_col = rhs.ncols();
@@ -147,14 +147,14 @@ inline T& MatCoo<T>::ref(Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		error("MatCoo::operator()(i,j): index out of bounds!");
+		SLS_ERR("MatCoo::operator()(i,j): index out of bounds!");
 #endif
 	Long n;
 	for (n = 0; n < m_Nnz; ++n) {
 		if (row(n) == i && col(n) == j)
 			return m_p[n];
 	}
-	error("MatCoo::operator()(i,j): element does not exist!");
+	SLS_ERR("MatCoo::operator()(i,j): element does not exist!");
 	return m_p[0];
 }
 
@@ -163,7 +163,7 @@ inline const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		error("MatCoo::operator()(i,j): index out of bounds!");
+		SLS_ERR("MatCoo::operator()(i,j): index out of bounds!");
 #endif
 	Long n;
 	for (n = 0; n < m_Nnz; ++n)
@@ -178,16 +178,16 @@ inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
-		error("MatCoo::push(): index out of bounds!");
+		SLS_ERR("MatCoo::push(): index out of bounds!");
 #endif
 #ifdef SLS_CHECK_COO_REPEAT
 	Long n;
 	for (n = 0; n < m_Nnz; ++n) {
 		if (row(n) == i && col(n) == j)
-			error("MatCoo::push(s,i,j): element already exists!");
+			SLS_ERR("MatCoo::push(s,i,j): element already exists!");
 	}
 #endif
-	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please reserve!");
+	if (m_Nnz == m_N) SLS_ERR("MatCoo::add(): out of memory, please reserve!");
 	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
 	++m_Nnz;
 }
@@ -203,7 +203,7 @@ inline void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
 		}
 	}
 	// push
-	if (m_Nnz == m_N) error("MatCoo::add(): out of memory, please reserve!");
+	if (m_Nnz == m_N) SLS_ERR("MatCoo::add(): out of memory, please reserve!");
 	m_p[m_Nnz] = s; m_row[m_Nnz] = i; m_col[m_Nnz] = j;
 	++m_Nnz;
 }
@@ -213,7 +213,7 @@ inline T & MatCoo<T>::operator()(Long_I ind)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
-		error("MatCoo::operator(): subscript out of bounds!");
+		SLS_ERR("MatCoo::operator(): subscript out of bounds!");
 #endif
 	return m_p[ind];
 }
@@ -223,7 +223,7 @@ inline const T & MatCoo<T>::operator()(Long_I ind) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
-		error("MatCoo::operator() const: subscript out of bounds!");
+		SLS_ERR("MatCoo::operator() const: subscript out of bounds!");
 #endif
 	return m_p[ind];
 }
@@ -233,7 +233,7 @@ inline Long MatCoo<T>::row(Long_I ind) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
-		error("MatCoo::row() subscript out of bounds");
+		SLS_ERR("MatCoo::row() subscript out of bounds");
 #endif
 	return m_row[ind];
 }
@@ -243,7 +243,7 @@ inline Long MatCoo<T>::col(Long_I ind) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind < 0 || ind >= m_Nnz)
-		error("MatCoo::col() subscript out of bounds");
+		SLS_ERR("MatCoo::col() subscript out of bounds");
 #endif
 	return m_col[ind];
 }
@@ -253,10 +253,10 @@ inline void MatCoo<T>::trim(Long_I Nnz)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (Nnz < 0)
-		error("MatCoo::trim() negative input!");
+		SLS_ERR("MatCoo::trim() negative input!");
 #endif
 	if (Nnz < m_Nnz) m_Nnz = Nnz;
-	else if (Nnz > m_Nnz) error("MatCoo::trim(): Nnz > m_Nnz!");
+	else if (Nnz > m_Nnz) SLS_ERR("MatCoo::trim(): Nnz > m_Nnz!");
 }
 
 template <class T>
@@ -293,7 +293,7 @@ public:
 	void reshape(Long_I Nr, Long_I Nc)
 	{
 #ifdef SLS_CHECK_SHAPE
-		if (Nr != Nc) error("must be a square matrix!");
+		if (Nr != Nc) SLS_ERR("must be a square matrix!");
 #endif
 		Base::reshape(Nr, Nc);
 	} // change matrix shape
@@ -308,7 +308,7 @@ template <class T>
 MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc) : Base(Nr, Nc)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (Nr != Nc) error("must be square matrix!");
+	if (Nr != Nc) SLS_ERR("must be square matrix!");
 #endif
 }
 
@@ -316,7 +316,7 @@ template <class T>
 MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (Nr != Nc) error("must be square matrix!");
+	if (Nr != Nc) SLS_ERR("must be square matrix!");
 #endif
 }
 
@@ -338,7 +338,7 @@ template <class T>
 inline T &MatCooH<T>::ref(Long_I i, Long_I j)
 {
 	if (i > j)
-		error("lower triangle is empty!");
+		SLS_ERR("lower triangle is empty!");
 	else
 		return Base::ref(i, j);
 }
@@ -366,7 +366,7 @@ void MatCooH<T>::reshape(const MatCoo<T1> &a)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.nrows() != a.ncols())
-		error("a is not square matrix!");
+		SLS_ERR("a is not square matrix!");
 #endif
 	reshape(a.nrows());
 }

@@ -424,7 +424,7 @@ template <class T, SLS_IF(
 inline Long sum_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (N <= 0) error("illegal length!");
+	if (N <= 0) SLS_ERR("illegal length!");
 #endif
 	Long s = v[0];
 	for (Long i = 1; i < N; ++i)
@@ -438,7 +438,7 @@ template <class T, SLS_IF(
 inline T sum_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (N <= 0) error("illegal length!");
+	if (N <= 0) SLS_ERR("illegal length!");
 #endif
 	T s = v[0];
 	for (Long i = 1; i < N; ++i)
@@ -452,7 +452,7 @@ template <class T, SLS_IF(is_real<T>() && !is_Bool<T>())>
 inline T max_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (N <= 0) error("illegal length!");
+	if (N <= 0) SLS_ERR("illegal length!");
 #endif
 	T s = v[0], val;
 	for (Long i = 1; i < N; ++i) {
@@ -468,7 +468,7 @@ template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
 inline rm_comp<T> max_abs_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (N <= 0) error("illegal length!");
+	if (N <= 0) SLS_ERR("illegal length!");
 #endif
 	rm_comp<T> s = abs(v[0]), val;
 	for (Long i = 1; i < N; ++i) {
@@ -507,7 +507,7 @@ template <class T1, class T2, SLS_IF(
 inline auto dot_vv(const T1 *v1, const T2 *v2, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (N <= 0) error("illegal length!");
+	if (N <= 0) SLS_ERR("illegal length!");
 #endif
 	auto s = conj(v1[0]) * v2[0];
 	for (Long i = 1; i < N; ++i) {
@@ -599,7 +599,7 @@ template <class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void cumsum_vv(T *v, const T1 *v1, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (N <= 0) error("illegal length!");
+	if (N <= 0) SLS_ERR("illegal length!");
 #endif
 	v[0] = v1[0];
 	for (Long i = 1; i < N; ++i)

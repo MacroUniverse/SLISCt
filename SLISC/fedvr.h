@@ -99,7 +99,7 @@ inline void GaussLobatto(VecDoub_O &x, VecDoub_O &w, Int_I N)
 		w[15] = 0.0083333333333333333333333333333333333333;
 	}
 	else {
-		error("no data!");
+		SLS_ERR("no data!");
 	}
 	for (i = 1; i < N2; ++i)
 		x[i] = -x[N - i - 1];

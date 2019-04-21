@@ -60,7 +60,7 @@ Cmat<T>::Cmat(Long_I Nr, Long_I Nc, const T *ptr) : Cmat(Nr, Nc)
 template <class T>
 Cmat<T>::Cmat(const Cmat<T> &rhs)
 {
-	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
@@ -110,7 +110,7 @@ inline T & Cmat<T>::operator()(Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[i+m_Nr*j];
 }
@@ -120,7 +120,7 @@ inline const T & Cmat<T>::operator()(Long_I i, Long_I j) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[i+m_Nr*j];
 }

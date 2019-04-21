@@ -23,7 +23,7 @@ void ZGPADM(Int_I ideg, Int_I m, Doub_I t, const Comp *H, Int_I ldh, Comp *wsp, 
 	if (ldh < m) iflag = -1;
 	if (lwsp < 4 * mm + ideg + 1) iflag = -2;
 	if (iflag != 0)
-		error("bad sizes (in input of ZGPADM)");
+		SLS_ERR("bad sizes (in input of ZGPADM)");
 
 	icoef = 0;
 	ih2 = icoef + ideg + 1;
@@ -47,7 +47,7 @@ void ZGPADM(Int_I ideg, Int_I m, Doub_I t, const Comp *H, Int_I ldh, Comp *wsp, 
 
 	hnorm = abs(t*hnorm);
 	if (hnorm == 0.)
-		error("Error - null H in input of ZGPADM.");
+		SLS_ERR("Error - null H in input of ZGPADM.");
 	ns = MAX(0, Int(log(hnorm) / log(2.)) + 2);
 	scale = Comp(t / pow(2, ns), 0.);
 	scale2 = scale*scale;
@@ -107,7 +107,7 @@ void ZGPADM(Int_I ideg, Int_I m, Doub_I t, const Comp *H, Int_I ldh, Comp *wsp, 
 	iflag = LAPACKE_zgesv(LAPACK_COL_MAJOR, m, m, (MKL_Complex16*)wsp + iq, m, ipiv,
 		(MKL_Complex16*)wsp + ip, m);
 	if (iflag != 0)
-		error("Problem in ZGESV (within ZGPADM)");
+		SLS_ERR("Problem in ZGESV (within ZGPADM)");
 	cblas_zdscal(mm, 2., wsp + ip, 1);
 	for (j = 0; j < m; ++j)
 		wsp[ip + j*(m + 1)] = wsp[ip + j*(m + 1)] + one;

@@ -75,7 +75,7 @@ public:
 				}
 			}
 			// failed
-			warning("illegal input, try again!");
+			SLS_WARN("illegal input, try again!");
 			pause(1);
 		}
 	}
@@ -153,7 +153,7 @@ public:
 				return;
 			}
 			// failed
-			warning("illegal input, try again!");
+			SLS_WARN("illegal input, try again!");
 			pause(1);
 		}
 	}

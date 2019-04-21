@@ -11,7 +11,7 @@ void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.nrows() != a.ncols() || !shape_cmp(out, a))
-		error("not a square matrix!");
+		SLS_ERR("not a square matrix!");
 #endif
 	VecDoub eigVal(a.nrows()); CmatDoub eigVec; eigVec.resize(a);
 	eig_sym(eigVal, eigVec, a);

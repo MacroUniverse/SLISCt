@@ -87,7 +87,7 @@ template <class T>
 Bool Flm<T>::exist(Long_I L, Long_I M) const
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (L < 0) error("L < 0 is illegal!");
+	if (L < 0) SLS_ERR("L < 0 is illegal!");
 #endif
 	if (L <= Lmax() && M >= m_Mmin && M <= m_Mmax && get(L, M).size() > 0) return true;
 	return false;
@@ -98,7 +98,7 @@ const Vector<T> &Flm<T>::get(Long_I L, Long_I M) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (L < 0 || L > Lmax() || M < m_Mmin || M > m_Mmax)
-		error("{L,M} out of bound!");
+		SLS_ERR("{L,M} out of bound!");
 #endif
 	return (*this)(L, M - m_Mmin);
 }
@@ -107,7 +107,7 @@ template <class T>
 Vector<T> &Flm<T>::get(Long_I L, Long_I M)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (!exist(L, M)) error("{L,M} out of bound!");
+	if (!exist(L, M)) SLS_ERR("{L,M} out of bound!");
 #endif
 	return (*this)(L, M - m_Mmin);
 }

@@ -19,5 +19,5 @@ void test_mat_fun()
 	out0(0, 2) = out0(2, 0) = 3.792041496895060e2;
 	out0(1, 2) = out0(2, 1) = -4.382106846116269e2;
 	out -= out0;
-	if (max_abs(out) > 5e-13) error("failed!");
+	if (max_abs(out) > 5e-13) SLS_ERR("failed!");
 }

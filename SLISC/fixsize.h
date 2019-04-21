@@ -36,7 +36,7 @@ inline T & FixVec<T, N>::operator[](Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= N)
-		error("FixVec subscript out of bounds");
+		SLS_ERR("FixVec subscript out of bounds");
 #endif
 	return m_data[i];
 }
@@ -46,7 +46,7 @@ inline const T & FixVec<T, N>::operator[](Long_I i) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= N)
-		error("FixVec subscript out of bounds");
+		SLS_ERR("FixVec subscript out of bounds");
 #endif
 	return m_data[i];
 }
@@ -74,7 +74,7 @@ template <class T, Long N>
 inline void FixVec<T, N>::resize(Long_I n) const
 {
 #ifdef SLS_CHECK_SHAPE
-	if (n != N) error("cannot resize fixed vector!");
+	if (n != N) SLS_ERR("cannot resize fixed vector!");
 #endif
 }
 
@@ -90,7 +90,7 @@ inline T & FixVec<T, N>::end(Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > N)
-		error("index out of bound");
+		SLS_ERR("index out of bound");
 #endif
 	return m_data[N-i];
 }
@@ -100,7 +100,7 @@ inline const T & FixVec<T, N>::end(Long_I i) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > N)
-		error("index out of bound");
+		SLS_ERR("index out of bound");
 #endif
 	return m_data[N-i];
 }
@@ -139,7 +139,7 @@ FixCmat<T, Nr, Nc>::FixCmat(const T &s)
 template <class T, Long Nr, Long Nc>
 FixCmat<T, Nr, Nc>::FixCmat(const FixCmat<T, Nr, Nc> &rhs)
 {
-	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T, Long Nr, Long Nc>
@@ -170,7 +170,7 @@ inline T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= Nr || j < 0 || j >= Nc)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_data[i+Nr*j];
 }
@@ -180,7 +180,7 @@ inline const T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= Nr || j < 0 || j >= Nc)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_data[i+Nr*j];
 }
@@ -198,7 +198,7 @@ inline void FixCmat<T, Nr, Nc>::resize(Long nr, Long nc) const
 {
 #ifdef SLS_CHECK_SHAPE
 	if (nr != Nr || nc != Nc)
-		error("cannot resize fixed matrix!");
+		SLS_ERR("cannot resize fixed matrix!");
 #endif
 }
 

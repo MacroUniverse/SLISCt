@@ -14,7 +14,7 @@ inline T &coo2dense(T &lhs, const MatCoo<T1> &rhs)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(lhs, rhs))
-		error("wrong shape!");
+		SLS_ERR("wrong shape!");
 #endif
 	lhs = contain_type<T>(0);
 	for (Long i = 0; i < rhs.nnz(); ++i) {
@@ -103,7 +103,7 @@ Matrix<T>::Matrix(Long_I Nr, Long_I Nc, const T *ptr) : Matrix(Nr, Nc)
 template <class T>
 Matrix<T>::Matrix(const Matrix<T> &rhs) : Matrix()
 {
-	error("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
@@ -146,7 +146,7 @@ inline T& Matrix<T>::operator()(Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[m_Nc*i+j];
 }
@@ -156,7 +156,7 @@ inline const T & Matrix<T>::operator()(Long_I i, Long_I j) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[m_Nc*i+j];
 }
@@ -166,7 +166,7 @@ inline const T * Matrix<T>::ptr(Long_I i) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p + m_Nc*i;
 }
@@ -176,7 +176,7 @@ inline T * Matrix<T>::ptr(Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr)
-		error("Matrix subscript out of bounds");
+		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p + m_Nc*i;
 }

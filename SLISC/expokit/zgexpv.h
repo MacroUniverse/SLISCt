@@ -40,7 +40,7 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, Comp *w, Doub tol, Doub_I anorm,
 	if (m >= n || m <= 0)
 		iflag = -3;
 	if (iflag != 0)
-		error("bad sizes (in input of ZGEXPV)");
+		SLS_ERR("bad sizes (in input of ZGEXPV)");
 
 	k1 = 2;
 	mh = m + 2;

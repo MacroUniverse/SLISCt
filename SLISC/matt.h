@@ -114,7 +114,7 @@ inline Int Matt::search(Str_I name)
 	for (Int i = 0; i < m_n; ++i)
 		if (name == m_name[i])
 			return i;
-	error("variable name not found!");
+	SLS_ERR("variable name not found!");
 	return -1;
 }
 
@@ -130,7 +130,7 @@ void Matt::open(Str fname, Char_I *rw, Int_I precision)
 		m_rw = 'r';
 		m_in = ifstream(fname);
 		if (!m_in)
-			error("error: file not found: ");
+			SLS_ERR("error: file not found: ");
 		m_in.precision(17);
 		get_profile(); // get var names
 	}
@@ -169,7 +169,7 @@ void Matt::write(const T &s)
 			m_out << real(s) << '+' << imag(s) << "i ";
 	}
 	else
-		error("unhandled case!");
+		SLS_ERR("unhandled case!");
 }
 
 template <class T, SLS_IF0(is_scalar<T>())>
@@ -182,7 +182,7 @@ void Matt::read(T &s)
 		m_in >> s;
 	else if constexpr (is_Comp<T>())
 		readComplex(s);
-	else error("unhandled!");
+	else SLS_ERR("unhandled!");
 }
 
 inline void Matt::readComplex(Comp &c)
@@ -356,7 +356,7 @@ inline void save(Mat3Doub_I &a, Str_I varname, Matt_IO matt,
 		}
 	}
 	else
-		error("illegal value of xyz");
+		SLS_ERR("illegal value of xyz");
 }
 
 inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
@@ -411,7 +411,7 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 		}
 	}
 	else
-		error("illegal value of xyz");
+		SLS_ERR("illegal value of xyz");
 }
 
 template <class T, SLS_IF(
@@ -425,9 +425,9 @@ inline void load(T &s, Str_I varname, Matt_IO matt)
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
-		error("wrong type!");
+		SLS_ERR("wrong type!");
 	if (matt.m_size[i].size() != 0)
-		error("wrong dimension!");
+		SLS_ERR("wrong dimension!");
 
 	matt.read<T>(s);
 }
@@ -443,9 +443,9 @@ inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
-		error("wrong type!");
+		SLS_ERR("wrong type!");
 	if (matt.m_size[i].size() != 1)
-		error("wrong dimension!");
+		SLS_ERR("wrong dimension!");
 
 	n = matt.m_size[i][0]; v.resize(n);
 	// read var data
@@ -464,9 +464,9 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
-		error("wrong type!");
+		SLS_ERR("wrong type!");
 	if (matt.m_size[i].size() != 2)
-		error("wrong dimension!");
+		SLS_ERR("wrong dimension!");
 
 	m = matt.m_size[i][0]; n = matt.m_size[i][1]; a.resize(m, n);
 	// read var data
@@ -486,9 +486,9 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
 	fin.seekg(matt.m_ind[i]);
 
 	if (!is_promo(type_num<T>(), matt.m_type[i]))
-		error("wrong type!");
+		SLS_ERR("wrong type!");
 	if (matt.m_size[i].size() != 3)
-		error("wrong dimension!");
+		SLS_ERR("wrong dimension!");
 	
 	m = matt.m_size[i][0]; n = matt.m_size[i][1]; q = matt.m_size[i][2];
 	a.resize(m, n, q);

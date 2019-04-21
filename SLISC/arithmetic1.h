@@ -67,7 +67,7 @@ void diagonals(Matrix<T> &a)
 template <class T>
 void diagonals_par(Matrix<T> &a)
 {
-	error("TODO");
+	SLS_ERR("TODO");
 	/*Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
 	Long szT = sizeof(T);
 #pragma omp parallel for
@@ -98,7 +98,7 @@ void idiagonals(Matrix<T> &a)
 template <class T>
 void idiagonals_par(Matrix<T> &a)
 {
-	error("TODO");
+	SLS_ERR("TODO");
 	/*Long i, Nr{ a.nrows() }, Nc{ a.ncols() };
 	Long szT = sizeof(T);
 #pragma omp parallel for

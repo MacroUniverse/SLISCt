@@ -19,7 +19,7 @@ void test_eig()
 		mul(eigVec1, a, eigVec);
 		mul(eigVec2, eigVec, diag(eigVal));
 		eigVec1 -= eigVec2;
-		if (max_abs(eigVec1) > 1e-14) error("failed!");
+		if (max_abs(eigVec1) > 1e-14) SLS_ERR("failed!");
 	}
 	
 	CmatDoub a(50, 50);
@@ -44,7 +44,7 @@ void test_eig()
 		auto err = max_abs(eigVec1);
 		if (max_abs(eigVec1) > 5e-5) {
 			cout << max_abs(eigVec1) << endl;
-			error("failed!"); // TODO: why is windows more accurate?
+			SLS_ERR("failed!"); // TODO: why is windows more accurate?
 		}
 	}
 }
