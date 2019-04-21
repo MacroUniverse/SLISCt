@@ -2,7 +2,7 @@ Scientific Library In Simple C++ (SLISC)
 
 ## Introduction
 
-SLISC is a header-only library written in a style similar to Numerical Recipes 3ed, using simple C++ features so that it is easy to read and modify while maintaining a high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse), 3D matrix (row-major), and basic arithmetics for them. Codes from many other projects or libraries has been incorporated into SLISC (e.g. Numerical Recipes, Eigen, Intel MKL etc.). The library also provides some utilities frequently used, such as timers and IO utilities (a text based file format `.matt` similar to Matlab's `.mat`).
+SLISC is a header-only library written in a style similar to Numerical Recipes 3ed, using simple C++ features so that it is easy to read and modify while maintaining a relatively high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse), 3D matrix (row-major), and basic arithmetics for them. Codes from many other projects or libraries has been incorporated into SLISC (e.g. Numerical Recipes, Eigen, Intel MKL etc.). The library also provides some utilities frequently used, such as timers and IO utilities (a text based file format `.matt` similar to Matlab's `.mat`).
 
 SLISC has a comprehensive test suit, main.cpp will execute all the tests. Tests has been performed in Windows using Visual C++ and Intel compilers in Visual Studio 15.9.8 and in Linux using gcc and Intel compilers. If intel MKL (now free) is not installed, some functions will not work or will be much slower. Note that SLISC is a project in development, interfaces are subjected to change and not all code are working.
 
@@ -41,25 +41,25 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 
 * Intrinsic types are aliased inside the library. For example, `Bool` is `bool`, `Int` is 32-bit integer, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`. `Llong` is `long long`.
 
-* A type with `_I` suffix is the `const` or `reference to const` version of that type, used in function parameter declarations to indicate an input argument. Similarly, `_O` means output (reference type), `_IO` means both input and output (reference type). Note that a reference to `_O` or `_I` types is still a reference type.
+* A type with `_I` suffix is the `const` or `reference to const` version of that type, used in function parameter declarations to indicate an input argument. Similarly, `_O` means output (reference type), `_IO` means both input and output (reference type). Note that a reference to an `_O` or `_IO` types is still a reference type.
 
 ## Meta Programming
 * The file "meta.h" implements some meta programming utilities. These utilities are as user-friendly as possible, so that anyone with a basic c++ knowledge can understand their meaning with a glance. SLISC users should have a basic idea of how these utilities work, and are welcome to use them, but there is no need to understand how they are implemented.
 
 * The macro function `SLS_IF(condition)` can be used to limit template function instantiation. If `condition` is `true`, then template can be instantiated normally, if `condition` is `false` the function will not be instantiated. As an example, the function `mul()` in "arithmetic.h" for matrix-vector multiplication is defined as
 ```cpp
-template <class T, class T1, class T2, SLS_IF(is_Vector<T>() && is_dense_mat<T1>() && is_Vector<T2>())>
+template <class T, class T1, class T2, SLS_IF(is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>())>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {/*...*/}
 ```
-Where `is_Vector<T>()` returns `true` if `T` is a `Vector<>` container, `is_dense_mat<T>()` returns `true` if `T` is a dense matrix (such as `Matrix<>`, `Cmat<>`, `FixCmat<>`). These function templates are also defined in "meta.h".
+Where `is_dense_vec<T>()` returns `true` if `T` is a dense vector (such as `Vector<>`, `FixVec<>`, `Svector<>`), `is_dense_mat<T>()` returns `true` if `T` is a dense matrix (such as `Matrix<>`, `Cmat<>`, `FixCmat<>`). These function templates are also defined in "meta.h".
 
 ## Headers Introduction
 When using something in any header file, just including that header file will be enough. Header files can be included in any order. Here is some brief introduction for each header file:
-* `slisc.h` is a shorthand for some of the mostly used headerfiles.
+* `slisc.h` is a shorthand for some of the most frequently used header files.
 * `global.h` has all the container declaration and type definitions etc.
 * `meta.h` has all the meta-programming utilities.
-* `complex_arith.h` defines extra operators used by std::complex<>, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=`.
+* `complex_arith.h` defines extra operators used by `std::complex<>`, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=`.
 * `imag.h` defines a pure imaginary number type `Imag<>`, and related operators.
 * `scalar_arith.h` defines scalar utilities such as `MIN()`, `MAX()`, `SQR()`, `isodd()`, `mod()`.
 * `vector.h` defines the base type `Vbase<T>` and vector container `Vector<T>`.
@@ -68,8 +68,8 @@ When using something in any header file, just including that header file will be
 * `fixsize.h` defines the fixed-size vector `FixVec<T,N>`, and col-major matrix `FixCmat<T,Nr,Nc>`.
 * `mat3d.h` defines the row-major 3D array `Mat3d<T>`.
 * `disp.h` display SLISC containers (matrix, vector, etc.)
-* `input.h` promp for input, can save input history and repeat input automatically
-* `matt.h` save/load text-based data files in `.matt` format, can save multiple named scalars and containers to a single file
+* `input.h` promp for input, can save input history and repeat input automatically.
+* `matt.h` save/load text-based data files in `.matt` format, can save multiple named scalars and containers to a single ascii file.
 * `ptr_arith.h` low level functions for `arithmetic.h`, using pointers as input and output instead of vector/matrix containers.
 * `arithmetic.h` has utilities for dense matrices and vectors, e.g. `sum()`, `norm()`, dot product, matrix-vector multiplication.
 * `slice.h` (experimental) matrix slicing, e.g. separate one column of a matrix and name it as a vector.
@@ -210,6 +210,8 @@ void disp(..., precision)
 If you want to use "disp()" in debugger, add "SLISC/print.cpp" to compiler and use "print()" with the same arguments.
 
 ## "arithmetic.h"
+
+There is no automatic `resize()` inside functions in SLISC, for performance reason and to reduce bugs. In `SLS_CHECK_SHAPES` is defined (in debug mode it's defined by default), shapes of matrix/vector will be checked.
 
 ### basic utilities
 ```cpp

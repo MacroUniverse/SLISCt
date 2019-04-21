@@ -504,10 +504,7 @@ template <class Ti, class Tc,
 	SLS_IF(is_imag<Ti>() && is_comp<Tc>() && type_num<Ti>() - type_num<Tc>() > 20)>
 	auto promo_type_fun() { return complex<typename Ti::value_type>(); }
 
-template <class T1, class T2> struct promo_type_imp
-{ using type = decltype(promo_type_fun<T1, T2>()); };
-
-template <class T1, class T2> using promo_type = typename promo_type_imp<T1, T2>::type;
+template <class T1, class T2> using promo_type = decltype(promo_type_fun<T1, T2>());
 
 // to_num_t<T> is Int if T = bool, character types
 // otherwise is T
