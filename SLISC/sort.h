@@ -1,6 +1,19 @@
-#include "slisc.h"
+#include "global.h"
 
 namespace slisc {
+	// ======== declarations =========
+
+	// sort v in ascending order, and rearrange v1 at the same time
+	template<class T, class U>
+	void sort2(Vector<T> &v, Vector<U> &v1);
+
+	template<class T, class U>
+	void sort2(vector<T> &v, vector<U> &v1);
+
+	// sort v, and output the original index of each element
+
+
+	// ======== implementations =======
 	template<class T>
 	void sort(Vector<T> &arr, Int m = -1)
 	{
@@ -26,15 +39,15 @@ namespace slisc {
 			}
 			else {
 				k = (l + ir) >> 1;
-				SWAP(arr[k], arr[l + 1]);
+				swap(arr[k], arr[l + 1]);
 				if (arr[l] > arr[ir]) {
-					SWAP(arr[l], arr[ir]);
+					swap(arr[l], arr[ir]);
 				}
 				if (arr[l + 1] > arr[ir]) {
-					SWAP(arr[l + 1], arr[ir]);
+					swap(arr[l + 1], arr[ir]);
 				}
 				if (arr[l] > arr[l + 1]) {
-					SWAP(arr[l], arr[l + 1]);
+					swap(arr[l], arr[l + 1]);
 				}
 				i = l + 1;
 				j = ir;
@@ -43,7 +56,7 @@ namespace slisc {
 					do i++; while (arr[i] < a);
 					do j--; while (arr[j] > a);
 					if (j < i) break;
-					SWAP(arr[i], arr[j]);
+					swap(arr[i], arr[j]);
 				}
 				arr[l + 1] = arr[j];
 				arr[j] = a;
@@ -64,10 +77,10 @@ namespace slisc {
 	}
 
 	template<class T, class U>
-	void sort2(Vector<T> &arr, Vector<U> &brr)
+	void sort2_vv(T *v, U *v1, Long_I N)
 	{
 		const Int M = 7, NSTACK = 64;
-		Int i, ir, j, k, jstack = -1, l = 0, n = arr.size();
+		Int i, ir, j, k, jstack = -1, l = 0, n = N;
 		T a;
 		U b;
 		VecInt istack(NSTACK);
@@ -75,15 +88,15 @@ namespace slisc {
 		for (;;) {
 			if (ir - l < M) {
 				for (j = l + 1; j <= ir; j++) {
-					a = arr[j];
-					b = brr[j];
+					a = v[j];
+					b = v1[j];
 					for (i = j - 1; i >= l; i--) {
-						if (arr[i] <= a) break;
-						arr[i + 1] = arr[i];
-						brr[i + 1] = brr[i];
+						if (v[i] <= a) break;
+						v[i + 1] = v[i];
+						v1[i + 1] = v1[i];
 					}
-					arr[i + 1] = a;
-					brr[i + 1] = b;
+					v[i + 1] = a;
+					v1[i + 1] = b;
 				}
 				if (jstack < 0) break;
 				ir = istack[jstack--];
@@ -91,35 +104,35 @@ namespace slisc {
 			}
 			else {
 				k = (l + ir) >> 1;
-				SWAP(arr[k], arr[l + 1]);
-				SWAP(brr[k], brr[l + 1]);
-				if (arr[l] > arr[ir]) {
-					SWAP(arr[l], arr[ir]);
-					SWAP(brr[l], brr[ir]);
+				swap(v[k], v[l + 1]);
+				swap(v1[k], v1[l + 1]);
+				if (v[l] > v[ir]) {
+					swap(v[l], v[ir]);
+					swap(v1[l], v1[ir]);
 				}
-				if (arr[l + 1] > arr[ir]) {
-					SWAP(arr[l + 1], arr[ir]);
-					SWAP(brr[l + 1], brr[ir]);
+				if (v[l + 1] > v[ir]) {
+					swap(v[l + 1], v[ir]);
+					swap(v1[l + 1], v1[ir]);
 				}
-				if (arr[l] > arr[l + 1]) {
-					SWAP(arr[l], arr[l + 1]);
-					SWAP(brr[l], brr[l + 1]);
+				if (v[l] > v[l + 1]) {
+					swap(v[l], v[l + 1]);
+					swap(v1[l], v1[l + 1]);
 				}
 				i = l + 1;
 				j = ir;
-				a = arr[l + 1];
-				b = brr[l + 1];
+				a = v[l + 1];
+				b = v1[l + 1];
 				for (;;) {
-					do i++; while (arr[i] < a);
-					do j--; while (arr[j] > a);
+					do i++; while (v[i] < a);
+					do j--; while (v[j] > a);
 					if (j < i) break;
-					SWAP(arr[i], arr[j]);
-					SWAP(brr[i], brr[j]);
+					swap(v[i], v[j]);
+					swap(v1[i], v1[j]);
 				}
-				arr[l + 1] = arr[j];
-				arr[j] = a;
-				brr[l + 1] = brr[j];
-				brr[j] = b;
+				v[l + 1] = v[j];
+				v[j] = a;
+				v1[l + 1] = v1[j];
+				v1[j] = b;
 				jstack += 2;
 				if (jstack >= NSTACK) throw("NSTACK too small in sort2.");
 				if (ir - i + 1 >= j - l) {
@@ -137,77 +150,12 @@ namespace slisc {
 	}
 
 	template<class T, class U>
-	void sort2(vector<T> &arr, vector<U> &brr)
-	{
-		const Int M = 7, NSTACK = 64;
-		Int i, ir, j, k, jstack = -1, l = 0, n = arr.size();
-		T a;
-		U b;
-		VecInt istack(NSTACK);
-		ir = n - 1;
-		for (;;) {
-			if (ir - l < M) {
-				for (j = l + 1; j <= ir; j++) {
-					a = arr[j];
-					b = brr[j];
-					for (i = j - 1; i >= l; i--) {
-						if (arr[i] <= a) break;
-						arr[i + 1] = arr[i];
-						brr[i + 1] = brr[i];
-					}
-					arr[i + 1] = a;
-					brr[i + 1] = b;
-				}
-				if (jstack < 0) break;
-				ir = istack[jstack--];
-				l = istack[jstack--];
-			}
-			else {
-				k = (l + ir) >> 1;
-				SWAP(arr[k], arr[l + 1]);
-				SWAP(brr[k], brr[l + 1]);
-				if (arr[l] > arr[ir]) {
-					SWAP(arr[l], arr[ir]);
-					SWAP(brr[l], brr[ir]);
-				}
-				if (arr[l + 1] > arr[ir]) {
-					SWAP(arr[l + 1], arr[ir]);
-					SWAP(brr[l + 1], brr[ir]);
-				}
-				if (arr[l] > arr[l + 1]) {
-					SWAP(arr[l], arr[l + 1]);
-					SWAP(brr[l], brr[l + 1]);
-				}
-				i = l + 1;
-				j = ir;
-				a = arr[l + 1];
-				b = brr[l + 1];
-				for (;;) {
-					do i++; while (arr[i] < a);
-					do j--; while (arr[j] > a);
-					if (j < i) break;
-					SWAP(arr[i], arr[j]);
-					SWAP(brr[i], brr[j]);
-				}
-				arr[l + 1] = arr[j];
-				arr[j] = a;
-				brr[l + 1] = brr[j];
-				brr[j] = b;
-				jstack += 2;
-				if (jstack >= NSTACK) throw("NSTACK too small in sort2.");
-				if (ir - i + 1 >= j - l) {
-					istack[jstack] = ir;
-					istack[jstack - 1] = i;
-					ir = j - 1;
-				}
-				else {
-					istack[jstack] = j - 1;
-					istack[jstack - 1] = l;
-					l = i;
-				}
-			}
-		}
-	}
+	void sort2(Vector<T> &v, Vector<U> &v1)
+	{ sort2_vv(v.ptr(), v1.ptr(), v1.size()); }
+
+	template<class T, class U>
+	void sort2(vector<T> &v, vector<U> &v1)
+	{ sort2_vv(v.data(), v1.data(), v1.size()); }
 
 	template<class T>
 	void shell(Vector<T> &a, Int m = -1)
@@ -262,7 +210,7 @@ namespace slisc {
 		for (i = n / 2 - 1; i >= 0; i--)
 			hpsort_util::sift_down(ra, i, n - 1);
 		for (i = n - 1; i>0; i--) {
-			SWAP(ra[0], ra[i]);
+			swap(ra[0], ra[i]);
 			hpsort_util::sift_down(ra, 0, i - 1);
 		}
 	}
@@ -362,15 +310,15 @@ namespace slisc {
 			}
 			else {
 				k = (l + ir) >> 1;
-				SWAP(indx[k], indx[l + 1]);
+				swap(indx[k], indx[l + 1]);
 				if (arr[indx[l]] > arr[indx[ir]]) {
-					SWAP(indx[l], indx[ir]);
+					swap(indx[l], indx[ir]);
 				}
 				if (arr[indx[l + 1]] > arr[indx[ir]]) {
-					SWAP(indx[l + 1], indx[ir]);
+					swap(indx[l + 1], indx[ir]);
 				}
 				if (arr[indx[l]] > arr[indx[l + 1]]) {
-					SWAP(indx[l], indx[l + 1]);
+					swap(indx[l], indx[l + 1]);
 				}
 				i = l + 1;
 				j = ir;
@@ -380,7 +328,7 @@ namespace slisc {
 					do i++; while (arr[indx[i]] < a);
 					do j--; while (arr[indx[j]] > a);
 					if (j < i) break;
-					SWAP(indx[i], indx[j]);
+					swap(indx[i], indx[j]);
 				}
 				indx[l + 1] = indx[j];
 				indx[j] = indxt;
@@ -410,18 +358,18 @@ namespace slisc {
 		for (;;) {
 			if (ir <= l + 1) {
 				if (ir == l + 1 && arr[ir] < arr[l])
-					SWAP(arr[l], arr[ir]);
+					swap(arr[l], arr[ir]);
 				return arr[k];
 			}
 			else {
 				mid = (l + ir) >> 1;
-				SWAP(arr[mid], arr[l + 1]);
+				swap(arr[mid], arr[l + 1]);
 				if (arr[l] > arr[ir])
-					SWAP(arr[l], arr[ir]);
+					swap(arr[l], arr[ir]);
 				if (arr[l + 1] > arr[ir])
-					SWAP(arr[l + 1], arr[ir]);
+					swap(arr[l + 1], arr[ir]);
 				if (arr[l] > arr[l + 1])
-					SWAP(arr[l], arr[l + 1]);
+					swap(arr[l], arr[l + 1]);
 				i = l + 1;
 				j = ir;
 				a = arr[l + 1];
@@ -429,7 +377,7 @@ namespace slisc {
 					do i++; while (arr[i] < a);
 					do j--; while (arr[j] > a);
 					if (j < i) break;
-					SWAP(arr[i], arr[j]);
+					swap(arr[i], arr[j]);
 				}
 				arr[l + 1] = arr[j];
 				arr[j] = a;
@@ -459,7 +407,7 @@ namespace slisc {
 						if (k > m - 1) break;
 						if (k != (m - 1) && heap[k] > heap[k + 1]) k++;
 						if (heap[j] <= heap[k]) break;
-						SWAP(heap[k], heap[j]);
+						swap(heap[k], heap[j]);
 						j = k;
 					}
 				}
