@@ -19,13 +19,13 @@ inline void test_gauss()
 {
 	using namespace slisc;
 	Int Ngs = 10, Nfe = 2;
-	VecDoub x0, w0;
+	VecDoub x0(Ngs), w0(Ngs);
 
 	// test Gauss-Lobatto integration
 	// int_{-1}^1 (x+1)(x-1) dx = -4/3
 
 	Int i;
-	GaussLobatto(x0, w0, Ngs);
+	GaussLobatto(x0, w0);
 
 	VecDoub y(Ngs);
 	for (i = 0; i < Ngs; ++i) {
@@ -45,8 +45,8 @@ inline void test_D2_mat()
 	VecDoub bounds(Nfe + 1); linspace(bounds, -1., 1.);
 
 	// second derivative matrix
-	McooDoub D2s;
-	VecDoub x, w, u;
+	McooDoub D2s(0,0);
+	VecDoub x(0), w(0), u(0);
 	D2_matrix(D2s, x, w, u, bounds, Ngs);
 	VecDoub y(x.size());
 	for (Long i = 0; i < x.size(); ++i) {
@@ -72,15 +72,15 @@ inline void test_inf_sqr_well()
 
 	VecDoub bounds(Nfe + 1); linspace(bounds, xmin, xmax);
 
-	VecDoub x, w, u;
-	CmatDoub H; McooDoub Hs; // dense and sparse Hamiltonian
+	VecDoub x(0), w(0), u(0);
+	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 	H.resize(Hs.nrows(), Hs.ncols()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// solve eigen states
 	VecDoub eigVal(H.nrows()); // eigen values / bound state energies
-	CmatDoub eigVec; eigVec.resize(H); // eigen vectors / bound states wave functions
+	CmatDoub eigVec(0, 0); eigVec.resize(H); // eigen vectors / bound states wave functions
 	eig_sym(eigVal, eigVec, H);
 
 	// test energies
@@ -106,8 +106,8 @@ inline void test_SHO()
 
 	VecDoub bounds(Nfe + 1); linspace(bounds, xmin, xmax);
 
-	VecDoub x, w, u;
-	CmatDoub H; McooDoub Hs; // dense and sparse Hamiltonian
+	VecDoub x(0), w(0), u(0);
+	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 
 	H.resize(Hs.nrows(), Hs.ncols()); H = Hs;
@@ -120,7 +120,7 @@ inline void test_SHO()
 
 	// solve eigen states
 	VecDoub eigVal(H.nrows()); // eigen values / bound state energies
-	CmatDoub eigVec; eigVec.resize(H); // eigen vectors / bound states wave functions
+	CmatDoub eigVec(0, 0); eigVec.resize(H); // eigen vectors / bound states wave functions
 	eig_sym(eigVal, eigVec, H);
 
 	// test energies

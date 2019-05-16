@@ -57,7 +57,7 @@ struct WrapVecDoub {
 	WrapVecDoub(Int_I nn) : vvec(nn), v(vvec), n(nn/2),
 	mask(n-1) {validate();}
 
-	WrapVecDoub(VecDoub &vec) : v(vec), n(vec.size()/2),
+	WrapVecDoub(VecDoub &vec) : vvec(0), v(vec), n(vec.size()/2),
 	mask(n-1) {validate();}
 		
 	void validate() {if (n&(n-1)) throw("vec size must be power of 2");}
@@ -512,7 +512,10 @@ inline void four4x(Doub *data2, const Doub *data, Int_I n, Int_I isign) {
 
 inline void fft4x(VecComp_O data4, VecComp_I data)
 {
-	data4.resize(data.size()*4);
+#ifdef SLS_CHECK_SHAPE
+	if (data4.size() != data.size() * 4)
+		SLS_ERR("wrong shape!");
+#endif
 	four4x((Doub*)data4.ptr(), (Doub*)data.ptr(), data.size(), -1);
 }
 

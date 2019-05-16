@@ -6,11 +6,11 @@ void test_input()
 	using namespace std;
 	Int i;
 	Input inp;
-	VecInt v;
-	VecDoub x, y;
 	Int N = 3;
-	v.resize(N); v = 3;
-	x.resize(N); y.resize(N);
+	VecInt v(N);
+	VecDoub x(N), y(N);
+
+	v = 3;
 	inp.newfile("input_test.txt");
 
 	for (i = 0; i < N; ++i) {

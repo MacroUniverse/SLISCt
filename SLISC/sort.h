@@ -258,7 +258,7 @@ namespace slisc {
 		template<class T> Indexx(const Vector<T> &arr) {
 			index(&arr[0], arr.size());
 		}
-		Indexx() {}
+		Indexx() : indx(0) {}
 
 		template<class T> void sort(Vector<T> &brr) {
 			if (brr.size() != n) throw("bad size in Index sort");

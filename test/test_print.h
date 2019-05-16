@@ -15,8 +15,7 @@ void test_print()
 	linspace(AI, 1, 6);
 	Mat3Doub A3(2, 2, 2);
 	linspace(A3, 1., 8.);
-	Mat3Comp C3;
-	C3.resize(2, 2, 2);
+	Mat3Comp C3(2, 2, 2);
 	linspace(C3, Comp(0, 1), Comp(14, 15));
 	printf("set breakpoint here and try print() in debugger!\n");
 	pause();

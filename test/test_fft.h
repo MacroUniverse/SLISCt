@@ -50,7 +50,7 @@ void test_fft()
 	ifft(v3);
 	if (v2 != v3) SLS_ERR("failed!");
 
-	VecComp v4;
+	VecComp v4(v.size()*4);
 	fft4x(v4, v);
 	VecComp v5(16, 0.);  v5[0] = v[0]; v5[1] = v[1]; v5[14] = v[2]; v5[15] = v[3];
 	fft(v5);

@@ -8,13 +8,13 @@ inline void test_sparse()
 	using namespace slisc;
 	// default constructor
 	{
-		McooDoub a;
+		McooDoub a(0,0);
 		if (a.nnz() != 0 || a.nrows() != 0 || a.ncols() != 0 || a.nnz() != 0)
 			SLS_ERR("failed!");
-		McoohComp b;
+		McoohComp b(0,0);
 		if (b.nnz() != 0 || b.nrows() != 0 || b.ncols() != 0 || b.nnz() != 0)
 			SLS_ERR("failed!");
-		DiagInt c;
+		DiagInt c(0);
 		if (c.nnz() != 0 || c.nrows() != 0 || c.ncols() != 0)
 			SLS_ERR("failed!");
 	}
@@ -110,8 +110,8 @@ inline void test_sparse()
 	{
 		// copy assignment
 		Long i, j, k = 0;
-		McooDoub a(4, 4, 16), a1;
-		McoohComp b(4, 4, 10), b1;
+		McooDoub a(4, 4, 16), a1(0,0);
+		McoohComp b(4, 4, 10), b1(0,0);
 		for (i = 0; i < 4; ++i)
 			for (j = 0; j < 4; ++j) {
 				++k;
@@ -218,8 +218,9 @@ inline void test_sparse()
 
 	// mul(cmat, cmat, diag)
 	{
-		CmatInt c, a(4, 5, 1);
+		CmatInt a(4, 5, 1);
 		VecInt b(5); linspace(b, 1, 5);
+		CmatInt c(4, 5);
 		mul(c, a, (DiagInt)b);
 		if (!shape_cmp(c, a)) SLS_ERR("failed!");
 		if (!equals_to_vs(&c(0,0), 1, c.nrows())) SLS_ERR("failed!");
@@ -231,7 +232,7 @@ inline void test_sparse()
 
 	// mul(cmat, diag, cmat)
 	{
-		CmatDoub a(3, 3), b; linspace(a, 1, 9);
+		CmatDoub a(3, 3), b(3,3); linspace(a, 1, 9);
 		VecDoub v(3); linspace(v, 1, 3);
 		mul(b, diag(v), a);
 		if (b[0] != 1 || b[1] != 4 || b[2] != 9

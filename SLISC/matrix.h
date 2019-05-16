@@ -52,11 +52,11 @@ private:
 	using Base::m_p;
 	using Base::m_N;
 	Long m_Nr, m_Nc;
+	Matrix(); // default constructor: uninitialized
 public:
 	using Base::ptr;
 	using Base::operator();
 	using Base::operator=;
-	Matrix();
 	Matrix(Long_I Nr, Long_I Nc);
 	Matrix(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Matrix(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
@@ -87,7 +87,7 @@ public:
 };
 
 template <class T>
-Matrix<T>::Matrix() : m_Nr(0), m_Nc(0) {}
+Matrix<T>::Matrix() {}
 
 template <class T>
 Matrix<T>::Matrix(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}

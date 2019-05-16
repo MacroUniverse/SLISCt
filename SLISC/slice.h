@@ -72,7 +72,7 @@ inline void Svector<T>::resize(Long_I N)
 template<class T>
 inline Svector<T>::~Svector()
 {
-	m_p = nullptr; m_N = 0;
+	m_N = 0;
 }
 
 // contiguous slice matrix class (column major)
@@ -148,7 +148,7 @@ inline void Scmat<T>::resize(Long_I Nr, Long_I Nc)
 template<class T>
 inline Scmat<T>::~Scmat()
 {
-	m_p = nullptr;
+	m_N = 0;
 }
 
 }

@@ -15,11 +15,11 @@ private:
 	Long m_N1;
 	Long m_N2;
 	Long m_N3;
+	Mat3d(); // default constructor: uninitialized
 public:
 	using Base::operator();
 	using Base::ptr;
 	using Base::operator=;
-	Mat3d();
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
@@ -46,7 +46,7 @@ public:
 };
 
 template <class T>
-Mat3d<T>::Mat3d(): m_N1(0), m_N2(0), m_N3(0) {}
+Mat3d<T>::Mat3d() {}
 
 template <class T>
 Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N2(N2), m_N3(N3) {}

@@ -9,7 +9,7 @@
 
 namespace slisc {
 
-// array copying
+// memory set and copy
 template<class T>
 inline void vecset(T *dest, const T &val, Long_I n)
 {
@@ -37,39 +37,109 @@ class Vbase
 protected:
 	Long m_N; // number of elements
 	T *m_p; // pointer to the first element
+	Vbase(); // default constructor, everything is uninitialized
 public:
 	typedef T value_type;
-	Vbase() : m_N(0), m_p(nullptr) {}
-	explicit Vbase(Long_I N) : m_N(N), m_p(new T[N]) {}
-	T* ptr() { return m_p; } // get pointer
-	const T* ptr() const { return m_p; }
-	Long size() const { return m_N; }
+	// constructors
+	explicit Vbase(Long_I N);
+	Vbase(const Vector<T> &rhs); // copy constructor
+
+	// get properties
+	T* ptr(); // get pointer
+	const T* ptr() const;
+	Long size() const;
 	void resize(Long_I N);
+	// resize and copy old data, new elements are uninitialized
+	void resize_cpy(Long_I N);
 	T & operator[](Long_I i);
 	const T & operator[](Long_I i) const;
 	T & operator()(Long_I i);
 	const T & operator()(Long_I i) const;
-	T& end(Long_I i = 1);
-	const T& end(Long_I i = 1) const;
+	T& end();
+	const T& end() const;
+	T& end(Long_I i);
+	const T& end(Long_I i) const;
 	Vbase & operator=(const Vbase &rhs);
 	template <class T1>
 	Vbase & operator=(const Vbase<T1> &rhs);
 	Vbase & operator=(const T &rhs); // for scalar
-	void operator<<(Vbase &rhs);
-	~Vbase() {
-		if (m_p)
-			delete[] m_p;
-	}
+	void operator<<(Vbase &rhs); // move data
+	~Vbase();
 };
+
+template<class T>
+inline Vbase<T>::Vbase() {}
+
+template<class T>
+inline Vbase<T>::Vbase(Long_I N) : m_N(N), m_p(new T[N]) {}
+
+template <class T>
+Vbase<T>::Vbase(const Vector<T> &rhs)
+{
+#ifndef SLS_ALLOW_COPY_CONSTRUCTOR
+	SLS_ERR("Copy constructor or move constructor is forbidden, use reference "
+		"argument for function input or output, and use \"=\" to copy!");
+#endif
+	m_N = rhs.m_N;
+	m_p = new T[rhs.m_N];
+	veccpy(m_p, rhs.ptr(), m_N);
+}
+
+template<class T>
+inline T * Vbase<T>::ptr()
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("using ptr() for empty container!");
+#endif
+	return m_p;
+}
+
+template<class T>
+inline const T * Vbase<T>::ptr() const
+{
+	return m_p;
+}
+
+template<class T>
+inline Long Vbase<T>::size() const
+{
+	return m_N;
+}
 
 template <class T>
 inline void Vbase<T>::resize(Long_I N)
 {
 	if (N != m_N) {
-		if (m_p != nullptr)
+		if (m_N == 0) {
+			m_N = N; m_p = new T[N];
+		}
+		else {
 			delete[] m_p;
-		m_N = N;
-		m_p = N > 0 ? new T[N] : nullptr;
+			if (N == 0)
+				m_N = 0;
+			else {
+				m_N = N;
+				m_p = new T[N];
+			}
+		}
+	}
+}
+
+template <class T>
+inline void Vbase<T>::resize_cpy(Long_I N)
+{
+	if (N != m_N) {
+		if (m_N == 0 || N == 0) {
+			resize(N);
+		}
+		else {
+			m_N = N;
+			T *old_p = m_p;
+			m_p = new T[N];
+			veccpy(m_p, old_p, N);
+			delete[] old_p;
+		}
 	}
 }
 
@@ -78,9 +148,10 @@ inline void Vbase<T>::operator<<(Vbase &rhs)
 {
 	if (this == &rhs)
 		SLS_ERR("self move is forbidden!");
-	if (m_p != nullptr) delete[] m_p;
+	if (m_N != 0)
+		delete[] m_p;
 	m_N = rhs.m_N; rhs.m_N = 0;
-	m_p = rhs.m_p; rhs.m_p = nullptr;
+	m_p = rhs.m_p;
 }
 
 template <class T>
@@ -134,13 +205,33 @@ inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
 }
 
 template <class T>
+inline T & Vbase<T>::end()
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("tring to use end() on empty vector!");
+#endif
+	return m_p[m_N - 1];
+}
+
+template <class T>
+inline const T & Vbase<T>::end() const
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("tring to use end() on empty vector!");
+#endif
+	return m_p[m_N - 1];
+}
+
+template <class T>
 inline T & Vbase<T>::end(Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i <= 0 || i > m_N)
 		SLS_ERR("index out of bound");
 #endif
-	return m_p[m_N-i];
+	return m_p[m_N - i];
 }
 
 template <class T>
@@ -150,7 +241,14 @@ inline const T & Vbase<T>::end(Long_I i) const
 	if (i <= 0 || i > m_N)
 		SLS_ERR("index out of bound");
 #endif
-	return m_p[m_N-i];
+	return m_p[m_N - i];
+}
+
+template<class T>
+inline Vbase<T>::~Vbase()
+{
+	if (m_N != 0)
+		delete[] m_p;
 }
 
 template <class T>
@@ -160,34 +258,56 @@ protected:
 	typedef Vbase<T> Base;
 	using Base::m_p;
 	using Base::m_N;
+	Vector();
 public:
 	using Base::resize;
+	using Base::resize_cpy;
 	using Base::operator=;
-	Vector() {}
-	explicit Vector(Long_I N): Base(N) {}
-	Vector(Long_I N, const T &s) //initialize to constant value
-	: Vector(N) { *this = s; }
-	Vector(Long_I N, const T *a) // Initialize to array
-	: Vector(N) { veccpy(m_p, a, N); }
-	Vector(const Vector &rhs);	// Copy constructor forbidden
-	static constexpr Int ndims() { return 1; }
+
+	explicit Vector(Long_I N);
+	Vector(Long_I N, const T &s); // initialize to constant value
+	Vector(Long_I N, const T *a); // copy from existing memory
+
+	Vector(const Vector &rhs);	// copy constructor
+	static constexpr Int ndims(); // dimension
 	Vector &operator=(const Vector &rhs);
 	template <class T1>
 	Vector &operator=(const Vector<T1> &rhs);
-#ifdef _CUSLISC_
+	void operator<<(Vector &rhs); // move data and rhs.resize(0)
+	template <class T1>
+	void resize(const Vector<T1> &v);
+#ifdef SLS_CUSLISC
 	Vector & operator=(const Gvector<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	void operator<<(Vector &rhs); // move data and rhs.resize(0)
-	template <class T1>
-	void resize(const Vector<T1> &v) {resize(v.size());}
 };
 
-template <class T>
-Vector<T>::Vector(const Vector<T> &rhs)
+template<class T>
+inline Vector<T>::Vector() {}
+
+template<class T>
+inline Vector<T>::Vector(Long_I N) : Base(N) {}
+
+template<class T>
+inline Vector<T>::Vector(Long_I N, const T & s) : Vector(N)
 {
-	SLS_ERR("Copy constructor or move constructor is forbidden, use reference "
-		 "argument for function input or output, and use \"=\" to copy!");
+	*this = s;
+}
+
+template<class T>
+inline Vector<T>::Vector(Long_I N, const T * a) : Vector(N)
+{
+	veccpy(m_p, a, N);
+}
+
+template <class T>
+Vector<T>::Vector(const Vector<T> &rhs) : Base(rhs)
+{}
+
+template<class T>
+inline constexpr Int Vector<T>::ndims()
+{
+	return 1;
 }
 
 template <class T>
@@ -201,6 +321,13 @@ Vector<T> &Vector<T>::operator=(const Vector<T1> &rhs)
 {
 	Base::operator=(rhs);
 	return *this;
+}
+
+template<class T>
+template<class T1>
+inline void Vector<T>::resize(const Vector<T1>& v)
+{
+	resize(v.size());
 }
 
 template <class T>

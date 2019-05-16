@@ -10,7 +10,7 @@ void test_mat_fun()
 	a(0, 1) = a(1, 0) = -2.;
 	a(0, 2) = a(2, 0) = 3.;
 	a(1, 2) = a(2, 1) = -4.;
-	CmatDoub out, out0(3, 3); out.resize(a);
+	CmatDoub out(0, 0), out0(3, 3); out.resize(a);
 	exp_mat_sym(out, a, 1);
 	out0(0, 0) = 3.025725493155477e2;
 	out0(1, 1) = 4.036648217771199e2;

@@ -15,10 +15,10 @@ protected:
 	using Base::m_p;
 	using Base::m_N;
 	Long m_Nr, m_Nc;
+	Cmat(); // default constructor: uninitialized
 public:
 	using Base::operator();
 	using Base::operator=;
-	Cmat();
 	Cmat(Long_I Nr, Long_I Nc);
 	Cmat(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Cmat(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
@@ -44,7 +44,7 @@ public:
 };
 
 template <class T>
-Cmat<T>::Cmat() : m_Nr(0), m_Nc(0) {}
+Cmat<T>::Cmat() {}
 
 template <class T>
 Cmat<T>::Cmat(Long_I Nr, Long_I Nc) : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}

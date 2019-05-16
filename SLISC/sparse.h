@@ -16,10 +16,10 @@ class Diag : public Vector<T>
 {
 private:
 	typedef Vector<T> Base;
+	Diag() : Base() {} // default constructor: uninitialized
 public:
 	using Base::operator();
 	using Base::operator=;
-	Diag() : Base() {}
 	Diag(Long_I N) : Base(N) {}
 	Diag(Long_I N, const T &s) : Base(N, s) {}
 	Diag(Long_I Nr, Long_I Nc) : Base(Nr)
@@ -30,7 +30,10 @@ public:
 	}
 	Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
 	{ *this = s; }
-	Diag(const Vector<T> &v) { Base::resize(v.size()); *this = v; }
+	Diag(const Vector<T> &v) : Base(v.size())
+	{
+		*this = v;
+	}
 	Long size() const
 	{
 		SLS_ERR("use nnz() instead!");
@@ -71,10 +74,11 @@ private:
 	Long m_Nr, m_Nc, m_Nnz;
 	VecLong m_row, m_col;
 	T m_zero; // TODO: this could be static inline variable for c++17
+	MatCoo() : m_zero(T()) {} // default constructor: uninitialized
 public:
 	using Base::ptr;
-	MatCoo(): m_Nr(0), m_Nc(0), m_Nnz(0), m_zero(T()) {}
-	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_zero(T()) {}
+	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_zero(T()), m_row(0), m_col(0)
+	{ m_N = 0; }
 	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
 		Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz), m_zero(T()) {}
 	MatCoo(const MatCoo &rhs);		// Copy constructor
@@ -281,8 +285,8 @@ class MatCooH : public MatCoo<T>
 {
 private:
 	typedef MatCoo<T> Base;
+	MatCooH() : Base() {} // default constructor : uninitialized
 public:
-	MatCooH(): Base() {}
 	MatCooH(Long_I Nr, Long_I Nc);
 	MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz);
 	using Base::operator();

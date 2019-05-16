@@ -8,10 +8,14 @@ namespace slisc {
 // x is in [-1,1]
 // data from https://keisan.casio.com/exec/system/1280801905
 // use 38 digits data in case long double is needed
-inline void GaussLobatto(VecDoub_O &x, VecDoub_O &w, Int_I N)
+inline void GaussLobatto(VecDoub_O &x, VecDoub_O &w)
 {
+#ifdef SLS_CHECK_SHAPE
+	if (x.size() != w.size())
+		SLS_ERR("wrong shape!");
+#endif
+	Long_I N = x.size();
 	Int i, N2 = N/2;
-	x.resize(N); w.resize(N);
 	x[0] = -1; x[N - 1] = 1;
 	// only set 0 <= x < 1 and w for x >= 0! Others will be calculated. index is 0 based!
 	if (N == 4) {
@@ -254,9 +258,9 @@ void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I b
 	Int Nx = (Ngs - 1)*Nfe - 1; // total grid points
 
 	// grid points, weights, base function values in [-1, 1]
-	VecDoub x0, w0, f0;
-	GaussLobatto(x0, w0, Ngs);
-	f0.resize(w0); invSqrt(f0, w0);
+	VecDoub x0(Ngs), w0(Ngs), f0(Ngs);
+	GaussLobatto(x0, w0);
+	invSqrt(f0, w0);
 	CmatDoub df(Ngs, Ngs); // df(i, j) = f_j(x_i)
 	legendre_interp_der(df, x0);
 	for (i = 0; i < Ngs; ++i)

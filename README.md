@@ -38,6 +38,7 @@ SLISC has a modular design like the Standard Template Library. Just include any 
 * All SLISC containers types (e.g. Matrix<>, Vector<>) should be returned by reference.
 * Avoid using unsigned integer types when possible. They are not supported by SLISC for now.
 * Generally, functions output arguments can not be any of the input arguments (this is called aliasing).
+* There is no public default constructor for SLISC containers.
 
 * Intrinsic types are aliased inside the library. For example, `Bool` is `bool`, `Int` is 32-bit integer, `Doub` is `double` (64-bit); `Comp` is `std::complex<Doub>`. `Llong` is `long long`.
 
@@ -326,6 +327,8 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
 * Use SFINAE macro `SLISC_IF(bool)` to limit template instanciation.
 * Templates must work for all possible instanciations.
+* Default constructors must be `protected` and empty, so that it can be most efficient, and can be used as GPU global variable.
+* use `m_N` to determin if `delete[]` should be used, never set `m_p` to `nullptr`.
 
 ## TODO
 * consider define pure imaginary number as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
@@ -349,3 +352,6 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * a constructor of Vbase/Vector that leaves things uninitialized might be added, and use it to optimize Svector() constructor
 * modify "meta.h" so that `Svector` could be used as function arguments without casting to `Vector` first.
 * modify `resize()` of dense matrices so that the input can be a sparse matrix
+* change `ptr()` function to `data()` for containers, like `std::vector<>`
+* `container.resize(container)` should support every possible container
+* todo: `Svector` should not inherit from `Vector`, define it's own member functions.

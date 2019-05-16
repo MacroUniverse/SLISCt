@@ -13,11 +13,12 @@ void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
 	if (a.nrows() != a.ncols() || !shape_cmp(out, a))
 		SLS_ERR("not a square matrix!");
 #endif
-	VecDoub eigVal(a.nrows()); CmatDoub eigVec; eigVec.resize(a);
+	Long N = a.nrows();
+	VecDoub eigVal(N); CmatDoub eigVec(N, N);
 	eig_sym(eigVal, eigVec, a);
 	eigVal *= t;
 	exp(eigVal, eigVal);
-	CmatDoub temp;
+	CmatDoub temp(N, N);
 	mul(temp, eigVec, diag(eigVal));
 	trans(eigVec);
 	mul(out, temp, eigVec);

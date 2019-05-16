@@ -165,8 +165,9 @@ void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.ncols() != b.nrows()) SLS_ERR("illegal shape!");
+	if (c.nrows() != a.nrows() || c.ncols() != b.ncols())
+		SLS_ERR("illegal shape!");
 #endif
-	c.resize(a);
 	mul_cmat_cmat_diag(c.ptr(), a.ptr(), a.nrows(), a.ncols(), b.ptr());
 }
 
