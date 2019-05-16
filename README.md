@@ -347,11 +347,8 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * complete test of "ptr_arith.h"
 * complete test of "arithmetic.h"
 * check all compiler warnings
-* use `SLS_FOTBID_COPY_CONSTRUCTOR` to forbit copy constructor of containers, default should be undefined.
 * test "meta.h" for ImagNum<T> types
-* a constructor of Vbase/Vector that leaves things uninitialized might be added, and use it to optimize Svector() constructor
 * modify "meta.h" so that `Svector` could be used as function arguments without casting to `Vector` first.
-* modify `resize()` of dense matrices so that the input can be a sparse matrix
 * change `ptr()` function to `data()` for containers, like `std::vector<>`
 * `container.resize(container)` should support every possible container
-* todo: `Svector` should not inherit from `Vector`, define it's own member functions.
+* `operator=` for containers (and slice classes!) should work for any possible right hand side type

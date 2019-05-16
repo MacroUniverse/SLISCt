@@ -35,8 +35,8 @@ template <class T>
 class Vbase
 {
 protected:
-	Long m_N; // number of elements
 	T *m_p; // pointer to the first element
+	Long m_N; // number of elements
 	Vbase(); // default constructor, everything is uninitialized
 public:
 	typedef T value_type;
