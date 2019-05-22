@@ -212,6 +212,22 @@ constexpr Bool is_scalar()
 
 // check if is a specific container type
 
+template <class T> struct is_vector_imp : false_type {};
+template <class T> struct is_vector_imp<vector<T>> : true_type {};
+template<class T>
+constexpr Bool is_vector()
+{
+	return is_vector_imp<T>();
+}
+
+template <class T> struct is_basic_str_imp : false_type {};
+template <class T> struct is_basic_str_imp<std::basic_string<T>> : true_type {};
+template<class T>
+constexpr Bool is_basic_str()
+{
+	return is_basic_str_imp<T>();
+}
+
 template <class T> struct is_Vector_imp : false_type {};
 template <class T> struct is_Vector_imp<Vector<T>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>

@@ -106,6 +106,14 @@ typedef string Str;
 typedef const Str &Str_I;
 typedef Str &Str_O, &Str_IO;
 
+typedef char32_t Char32;
+typedef const Char32 Char32_I;
+typedef Char32 &Char32_O, &Char32_IO;
+
+typedef std::u32string Str32;
+typedef const Str32 &Str32_I;
+typedef Str32 &Str32_O, &Str32_IO;
+
 // === class declarations ===
 template <class T> class ImagNum;
 template <class T> class Vector;
@@ -361,6 +369,10 @@ typedef FlmComp &FlmComp_O, &FlmComp_IO;
 typedef const Matt &Matt_I;
 typedef Matt &Matt_O, &Matt_IO;
 
+template <class T> using vector_I = const vector<T> &;
+template <class T> using vector_O = vector<T> &;
+template <class T> using vector_IO = vector<T> &;
+
 // quiet NaN definition
 // uncomment one of the following 3 methods of defining a global NaN
 // you can test by verifying that (NaN != NaN) is true
@@ -383,7 +395,7 @@ struct turn_on_floating_exceptions {
 	}
 };
 // in case of ODR error, put this in main function;
-turn_on_floating_exceptions yes_turn_on_floating_exceptions;
+inline turn_on_floating_exceptions yes_turn_on_floating_exceptions;
 #endif
 #endif
 
@@ -398,4 +410,4 @@ const Comp I(0., 1.);
 
 #define SLS_WARN(str) do{cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl;} while(0)
 
-}
+} // namespace slisc

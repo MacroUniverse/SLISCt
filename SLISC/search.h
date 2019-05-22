@@ -1,7 +1,19 @@
 #pragma once
-#include "slisc.h"
+#include "global.h"
 
 namespace slisc {
+
+// see if elm == vec[i], return i
+// return -1 if not found
+template <class T, class Tv>
+inline Long search(const T &elm, const Tv &vec)
+{
+	for (Long i = 0; i < vec.size(); ++i) {
+		if (elm == vec[i])
+			return i;
+	}
+	return -1;
+}
 
 // search ind so that v[ind] == s
 // same as lookupInt(), but Int operator-(v[i], s) must be implemented
@@ -12,7 +24,7 @@ namespace slisc {
 // return -2: if s is not found and v[0] < s < v[end], output ind so that v[ind] < s < v[ind+1]
 // return -3: if s is not found because v.size() == 0
 template <class T, class T1>
-Int lookupInt(Long_O ind, const T1 &v, const T &s)
+inline Int lookupInt(Long_O ind, const T1 &v, const T &s)
 {
 	Int diff;
 	Long i, N = v.size(), ind1 = 0, ind2 = N - 1;

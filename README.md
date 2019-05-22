@@ -2,7 +2,7 @@ Scientific Library In Simple C++ (SLISC)
 
 ## Introduction
 
-SLISC is a header-only library written in a style similar to Numerical Recipes 3ed, using simple C++ features so that it is easy to read and modify while maintaining a relatively high performance. The library currencly provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse), 3D matrix (row-major), and basic arithmetics for them. Codes from many other projects or libraries has been incorporated into SLISC (e.g. Numerical Recipes, Eigen, Intel MKL etc.). The library also provides some utilities frequently used, such as timers and IO utilities (a text based file format `.matt` similar to Matlab's `.mat`).
+SLISC is a header-only library written in a style similar to Numerical Recipes 3ed, using simple C++ features so that it is easy to read and modify while maintaining a relatively high performance. The library currently provides simple class templates for vector, matrix (row-major and col-major, fixed-size and sparse), 3D matrix (row-major), and basic arithmetics for them. Codes from many other projects or libraries has been incorporated into SLISC (e.g. Numerical Recipes, Eigen, Intel MKL etc.). The library also provides some utilities frequently used, such as timers and IO utilities (a text based file format `.matt` similar to Matlab's `.mat`).
 
 SLISC has a comprehensive test suit, main.cpp will execute all the tests. Tests has been performed in Windows using Visual C++ and Intel compilers in Visual Studio 15.9.8 and in Linux using gcc and Intel compilers. If intel MKL (now free) is not installed, some functions will not work or will be much slower. Note that SLISC is a project in development, interfaces are subjected to change and not all code are working.
 
@@ -153,7 +153,7 @@ TODO...
 
 Constructors: Vector() for default, Vector(Long_I n) for vector size, Vector(Long_I n, const T &a) to specify element as well, Vector(Long_I n, const T *a) to initialize from array.
 
-`operator=` : Copy-assignment operator has auto resize, self-assignment is forbidden. The right hand side can be a scalar.
+`operator=` : Copy-assignment operator, self-assignment is forbidden. The right hand side can be a scalar.
 
 `operator[]` : for vector, get a reference for the i-th element; for matrix, return a pointer for the second index.
 
@@ -212,7 +212,7 @@ If you want to use "disp()" in debugger, add "SLISC/print.cpp" to compiler and u
 
 ## "arithmetic.h"
 
-There is no automatic `resize()` inside functions in SLISC, for performance reason and to reduce bugs. In `SLS_CHECK_SHAPES` is defined (in debug mode it's defined by default), shapes of matrix/vector will be checked.
+There is no automatic `resize()` inside functions in SLISC, for performance reason and for compatibility with fixed sized containers or container slicing. In `SLS_CHECK_SHAPES` is defined (in debug mode it's defined by default), shapes of matrix/vector will be checked.
 
 ### basic utilities
 ```cpp

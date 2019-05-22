@@ -18,7 +18,9 @@ constexpr const T &MIN(const T &a, const T &b)
 
 template<class T>
 constexpr const T &MAX(const T &a, const T &b)
-{ return a < b ? b : a; }
+{
+	return a < b ? b : a;
+}
 
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
@@ -39,6 +41,13 @@ template<class T>
 inline T SIGN(const T &a, const T &b)
 { return b >= 0 ? (a >= 0 ? a : -a) : (a >= 0 ? -a : a); }
 
+// get std::vector size in Long instead of size_t
+template <class T, SLS_IF(is_vector<T>() || is_basic_str<T>())>
+inline Long Size(const T &v)
+{
+	return (Long)v.size();
+}
+
 // for SWAP, use std::swap instead
 
 template <class T, SLS_IF(is_floating_point<T>())>
@@ -53,6 +62,18 @@ inline Comp INV(Comp_I x)
 
 inline Lcomp INV(Lcomp_I x)
 { return 1.l/x; }
+
+// check if `elm` is one of `vec[i]`
+// `vec.size()` must be defined
+// if you need i, see `search()` in `search.h`
+template <class T1, class T2>
+inline Bool is_in(const T1 &elm, const T2 &vec)
+{
+	for (Long i = 0; i < vec.size(); ++i)
+		if (elm == vec[i])
+			return true;
+	return false;
+}
 
 // check if two scalars have the same types and values
 // const-ness and reference are ignored
@@ -76,6 +97,7 @@ inline const T to_num(const T &x) { return x; }
 // check if an integer is odd
 inline Bool isodd(Int_I n) { return n & 1; }
 inline Bool isodd(Long_I n) { return n & 1; }
+inline Bool isodd(size_t n) { return n & 1; }
 
 // return true if n is power of 2 or 0
 inline Bool ispow2(Int_I n) { return (n&(n-1)) == 0; }
