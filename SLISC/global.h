@@ -124,6 +124,7 @@ template <class T, Long Nr, Long Nc> class FixCmat;
 template <class T> class Mat3d;
 template <class T> class Cmat3d;
 template <class T> class Svector;
+template <class T> class Scmat;
 template <class T> class Diag;
 template <class T> class MatCoo;
 template <class T> class MatCooH;
@@ -279,6 +280,14 @@ typedef Mat3d<Comp> Mat3Comp;
 typedef const Mat3Comp &Mat3Comp_I;
 typedef Mat3Comp &Mat3Comp_O, &Mat3Comp_IO;
 
+typedef Cmat3d<Int> Cmat3Int;
+typedef const Cmat3Int &Cmat3Int_I;
+typedef Cmat3Int &Cmat3Int_O, &Cmat3Int_IO;
+
+typedef Cmat3d<Long> Cmat3Long;
+typedef const Cmat3Long &Cmat3Long_I;
+typedef Cmat3Long &Cmat3Long_O, &Cmat3Long_IO;
+
 typedef Cmat3d<Doub> Cmat3Doub;
 typedef const Cmat3Doub &Cmat3Doub_I;
 typedef Cmat3Doub &Cmat3Doub_O, &Cmat3Doub_IO;
@@ -290,6 +299,34 @@ typedef Cmat3Comp &Cmat3Comp_O, &Cmat3Comp_IO;
 typedef Svector<Int> SvecInt;
 typedef const SvecInt &SvecInt_I;
 typedef SvecInt &SvecInt_O, &SvecInt_IO;
+
+typedef Svector<Long> SvecLong;
+typedef const SvecLong &SvecLong_I;
+typedef SvecLong &SvecLong_O, &SvecLong_IO;
+
+typedef Svector<Doub> SvecDoub;
+typedef const SvecDoub &SvecDoub_I;
+typedef SvecDoub &SvecDoub_O, &SvecDoub_IO;
+
+typedef Svector<Comp> SvecComp;
+typedef const SvecComp &SvecComp_I;
+typedef SvecComp &SvecComp_O, &SvecComp_IO;
+
+typedef Scmat<Int> ScmatInt;
+typedef const ScmatInt &ScmatInt_I;
+typedef ScmatInt &ScmatInt_O, &ScmatInt_IO;
+
+typedef Scmat<Long> ScmatLong;
+typedef const ScmatLong &ScmatLong_I;
+typedef ScmatInt &ScmatLong_O, &ScmatLong_IO;
+
+typedef Scmat<Doub> ScmatDoub;
+typedef const ScmatDoub &ScmatDoub_I;
+typedef ScmatDoub &ScmatDoub_O, &ScmatDoub_IO;
+
+typedef Scmat<Comp> ScmatComp;
+typedef const ScmatComp &ScmatComp_I;
+typedef ScmatComp &ScmatComp_O, &ScmatComp_IO;
 
 // fixed-size containers
 

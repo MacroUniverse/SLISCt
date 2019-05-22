@@ -190,8 +190,8 @@ public:
 	using Base::m_N;
 	Long m_Nr, m_Nc;
 	Scmat();
-	Scmat(Long_I Nr, Long_I Nc, Long_I N = Nr*Nc);
-	Scmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I N = Nr * Nc);
+	Scmat(Long_I Nr, Long_I Nc);
+	Scmat(const T *ptr, Long_I Nr, Long_I Nc);
 
 	// === Cmat functions ===
 	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
@@ -235,13 +235,13 @@ inline Scmat<T>::Scmat()
 {}
 
 template <class T>
-inline Scmat<T>::Scmat(Long_I Nr, Long_I Nc, Long_I N)
-	: m_Nr(Nr), m_Nc(Nc), Base(N)
+inline Scmat<T>::Scmat(Long_I Nr, Long_I Nc)
+	: m_Nr(Nr), m_Nc(Nc), Base(Nr*Nc)
 {}
 
 template <class T>
-inline Scmat<T>::Scmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I N)
-	: Scmat(Nr, Nc, N)
+inline Scmat<T>::Scmat(const T *ptr, Long_I Nr, Long_I Nc)
+	: Scmat(Nr, Nc)
 {
 	m_p = (T *)ptr;
 }

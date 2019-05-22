@@ -1,6 +1,7 @@
 #include "../SLISC/disp.h"
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/time.h"
+#include "../SLISC/slice.h"
 
 void test_disp()
 {
@@ -17,6 +18,8 @@ void test_disp()
 	linspace(A3, 1, 8); disp(A3);
 	Mat3Comp C3(2, 2, 2);
 	linspace(C3, Comp(0, 1), Comp(14, 15)); disp(C3);
-	Cmat3Doub A3c(2, 2, 2);
+	Cmat3Int A3c(2, 2, 2);
 	linspace(A3c, 1, 8); disp(A3); disp(A3c);
+	ScmatInt sl(A3c.ptr(), 2, 2); disp(sl);
+	sl.set_ptr(&A3c(0, 0, 1)); disp(sl);
 }
