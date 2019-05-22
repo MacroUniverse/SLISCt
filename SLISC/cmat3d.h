@@ -1,4 +1,4 @@
-// row-major 3D container
+// column-major 3D container
 #pragma once
 #include "vector.h"
 
@@ -6,7 +6,7 @@ namespace slisc {
 // 3D Matrix Class
 
 template <class T>
-class Mat3d : public Vbase<T>
+class Cmat3d : public Vbase<T>
 {
 private:
 	typedef Vbase<T> Base;
@@ -15,27 +15,27 @@ private:
 	Long m_N1;
 	Long m_N2;
 	Long m_N3;
-	Mat3d(); // default constructor: uninitialized
+	Cmat3d(); // default constructor: uninitialized
 public:
 	using Base::operator();
 	using Base::ptr;
 	using Base::operator=;
-	Mat3d(Long_I N1, Long_I N2, Long_I N3);
-	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
-	Mat3d(const Mat3d &rhs);   // Copy constructor
+	Cmat3d(Long_I N1, Long_I N2, Long_I N3);
+	Cmat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
+	Cmat3d(const Cmat3d &rhs);   // Copy constructor
 	static constexpr Int ndims() { return 3; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'r'; } // row major memory
-	Mat3d & operator=(const Mat3d &rhs);	// copy assignment
+	static constexpr Char major() { return 'c'; } // row major memory
+	Cmat3d & operator=(const Cmat3d &rhs);	// copy assignment
 	template <class T1>
-	Mat3d & operator=(const Mat3d<T1> &rhs);
+	Cmat3d & operator=(const Cmat3d<T1> &rhs);
 #ifdef _CUSLISC_
-	Mat3d & operator=(const Gmat3d<T> &rhs) // copy from GPU vector
+	Cmat3d & operator=(const Gmat3d<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
 #endif
-	void operator<<(Mat3d &rhs); // move data and rhs.resize(0, 0, 0)
+	void operator<<(Cmat3d &rhs); // move data and rhs.resize(0, 0, 0)
 	void resize(Long_I N1, Long_I N2, Long_I N3);
 	template <class T1>
-	void resize(const Mat3d<T1> &a);
+	void resize(const Cmat3d<T1> &a);
 	T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
 	const T & operator()(Long_I i, Long_I j, Long_I k) const;
 	const T* ptr(Long_I i, Long_I j) const;
@@ -46,29 +46,29 @@ public:
 };
 
 template <class T>
-Mat3d<T>::Mat3d() {}
+Cmat3d<T>::Cmat3d() {}
 
 template <class T>
-Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N2(N2), m_N3(N3) {}
+Cmat3d<T>::Cmat3d(Long_I N1, Long_I N2, Long_I N3) : Base(N1*N2*N3), m_N1(N1), m_N2(N2), m_N3(N3) {}
 
 template <class T>
-Mat3d<T>::Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &s) : Mat3d(N1, N2, N3)
+Cmat3d<T>::Cmat3d(Long_I N1, Long_I N2, Long_I N3, const T &s) : Cmat3d(N1, N2, N3)
 { *this = s; }
 
 template <class T>
-Mat3d<T>::Mat3d(const Mat3d<T> &rhs)
+Cmat3d<T>::Cmat3d(const Cmat3d<T> &rhs)
 {
 	SLS_ERR("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
-inline Mat3d<T> & Mat3d<T>::operator=(const Mat3d<T> &rhs)
+inline Cmat3d<T> & Cmat3d<T>::operator=(const Cmat3d<T> &rhs)
 {
 	return operator=<T>(rhs);
 }
 
 template <class T> template <class T1>
-inline Mat3d<T> & Mat3d<T>::operator=(const Mat3d<T1> &rhs)
+inline Cmat3d<T> & Cmat3d<T>::operator=(const Cmat3d<T1> &rhs)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (m_N1 != rhs.dim1() || m_N2 != rhs.dim2() || m_N3 != rhs.dim3())
@@ -79,7 +79,7 @@ inline Mat3d<T> & Mat3d<T>::operator=(const Mat3d<T1> &rhs)
 }
 
 template <class T>
-inline void Mat3d<T>::operator<<(Mat3d<T> &rhs)
+inline void Cmat3d<T>::operator<<(Cmat3d<T> &rhs)
 {
 	m_N1 = rhs.m_N1; m_N2 = rhs.m_N2; m_N3 = rhs.m_N3;
 	rhs.m_N1 = rhs.m_N2 = rhs.m_N3 = 0;
@@ -87,7 +87,7 @@ inline void Mat3d<T>::operator<<(Mat3d<T> &rhs)
 }
 
 template <class T>
-inline void Mat3d<T>::resize(Long_I N1, Long_I N2, Long_I N3)
+inline void Cmat3d<T>::resize(Long_I N1, Long_I N2, Long_I N3)
 {
 	if (N1 != m_N1 || N2 != m_N2 || N3 != m_N3) {
 		Base::resize(N1*N2*N3);
@@ -97,54 +97,60 @@ inline void Mat3d<T>::resize(Long_I N1, Long_I N2, Long_I N3)
 
 template <class T>
 template <class T1>
-inline void Mat3d<T>::resize(const Mat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
+inline void Cmat3d<T>::resize(const Cmat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
 
 template <class T>
-inline T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
+inline T & Cmat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p[m_N2*m_N3*i + m_N3*j + k];
+	return m_p[i + m_N1*j + m_N1*m_N2*k];
 }
 
 template <class T>
-inline const T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
+inline const T & Cmat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p[m_N2*m_N3*i + m_N3*j + k];
+	return m_p[i + m_N1*j + m_N1*m_N2*k];
 }
 
 template <class T>
-inline const T * Mat3d<T>::ptr(Long_I i, Long_I j) const
+inline const T * Cmat3d<T>::ptr(Long_I j, Long_I k) const
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
+	if (j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p + m_N2*m_N3*i + m_N3*j;
+	return m_p + m_N1*j + m_N1*m_N2*k;
 }
 
 template <class T>
-inline T *Mat3d<T>::ptr(Long_I i, Long_I j)
+inline T *Cmat3d<T>::ptr(Long_I j, Long_I k)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
+	if (j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p + m_N2*m_N3*i + m_N3*j;
+	return m_p + m_N3*j + m_N2*m_N3*k;
 }
 
 template <class T>
-inline Long Mat3d<T>::dim1() const { return m_N1; }
-
-template <class T>
-inline Long Mat3d<T>::dim2() const { return m_N2; }
-
-template <class T>
-inline Long Mat3d<T>::dim3() const { return m_N3; }
+inline Long Cmat3d<T>::dim1() const {
+	return m_N1;
 }
+
+template <class T>
+inline Long Cmat3d<T>::dim2() const {
+	return m_N2;
+}
+
+template <class T>
+inline Long Cmat3d<T>::dim3() const {
+	return m_N3;
+}
+} // namespace slisc

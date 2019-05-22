@@ -122,6 +122,7 @@ template <class T> class Cmat;
 template <class T, Long Nr> class FixVec;
 template <class T, Long Nr, Long Nc> class FixCmat;
 template <class T> class Mat3d;
+template <class T> class Cmat3d;
 template <class T> class Svector;
 template <class T> class Diag;
 template <class T> class MatCoo;
@@ -277,6 +278,14 @@ typedef Mat3Doub &Mat3Doub_O, &Mat3Doub_IO;
 typedef Mat3d<Comp> Mat3Comp;
 typedef const Mat3Comp &Mat3Comp_I;
 typedef Mat3Comp &Mat3Comp_O, &Mat3Comp_IO;
+
+typedef Cmat3d<Doub> Cmat3Doub;
+typedef const Cmat3Doub &Cmat3Doub_I;
+typedef Cmat3Doub &Cmat3Doub_O, &Cmat3Doub_IO;
+
+typedef Cmat3d<Comp> Cmat3Comp;
+typedef const Cmat3Comp &Cmat3Comp_I;
+typedef Cmat3Comp &Cmat3Comp_O, &Cmat3Comp_IO;
 
 typedef Svector<Int> SvecInt;
 typedef const SvecInt &SvecInt_I;

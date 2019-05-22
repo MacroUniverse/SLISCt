@@ -327,7 +327,7 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * Class members variables should start with `m_` for clearity, and avoid name confliction with member function arguments.
 * Use SFINAE macro `SLISC_IF(bool)` to limit template instanciation.
 * Templates must work for all possible instanciations.
-* Default constructors must be `protected` and empty, so that it can be most efficient, and can be used as GPU global variable.
+* Default constructors must be `protected` and empty, so that it can be most efficient, and can be used as GPU global variable. However, `new` or `std::vector` will require the default constructor. Also, the destructor will give an error when deleting an uninitialized container. I'll keep it this way for now, and think about it later.
 * use `m_N` to determin if `delete[]` should be used, never set `m_p` to `nullptr`.
 
 ## TODO

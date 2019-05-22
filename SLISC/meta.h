@@ -289,6 +289,14 @@ constexpr Bool is_Mat3d()
 	return is_Mat3d_imp<T>();
 }
 
+template <class T> struct is_Cmat3d_imp : false_type {};
+template <class T> struct is_Cmat3d_imp<Cmat3d<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Cmat3d()
+{
+	return is_Cmat3d_imp<T>();
+}
+
 template <class T> struct is_Diag_imp : false_type {};
 template <class T> struct is_Diag_imp<Diag<T>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>
@@ -328,7 +336,7 @@ template <class T> constexpr Bool is_dense_mat()
 // check if is dense container (including fixed-size)
 template <class T> constexpr Bool is_dense()
 {
-	return is_dense_vec<T>() || is_dense_mat<T>() || is_Mat3d<T>();
+	return is_dense_vec<T>() || is_dense_mat<T>() || is_Mat3d<T>() || is_Cmat3d<T>();
 }
 
 // check if is sparse vector/matrix
@@ -344,6 +352,7 @@ constexpr Int contain_num()
 	else if (is_Matrix<T>()) return 1;
 	else if (is_Cmat<T>()) return 2;
 	else if (is_Mat3d<T>()) return 3;
+	else if (is_Cmat3d<T>()) return 4;
 
 	else if (is_FixVec<T>()) return 20;
 	else if (is_FixCmat<T>()) return 22;
