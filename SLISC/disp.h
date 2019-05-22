@@ -33,6 +33,8 @@ template <class T>
 void disp(const MatCooH<T> &a, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const Mat3d<T> &a, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Cmat3d<T> &a, Int_I precision = def_disp_prec);
 
 // version 3 & 4
 template <class T>
@@ -47,6 +49,8 @@ template <class T>
 void disp(const MatCooH<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
 template <class T>
 void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision = def_disp_prec);
+template <class T>
+void disp(const Cmat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision = def_disp_prec);
 
 // implementation
 
@@ -66,7 +70,7 @@ void disp(const T *ptr, Long_I n, Int_I precision)
 // version 1 & 2
 
 template <class T>
-inline void disp(const Vector<T> &v, Int_I precision)
+void disp(const Vector<T> &v, Int_I precision)
 {
 	Long i, n{ v.size() };
 	auto oldPrecision = cout.precision();
@@ -81,7 +85,7 @@ inline void disp(const Vector<T> &v, Int_I precision)
 }
 
 template <class T>
-inline void disp_mat(const T &a, Int_I precision)
+void disp_mat(const T &a, Int_I precision)
 {
 	Long i, j, m{ a.nrows() }, n{ a.ncols() };
 	auto oldPrecision = cout.precision();
@@ -119,7 +123,7 @@ void disp(const MatCooH<T> &a, Int_I precision)
 { disp_mat(a, precision); }
 
 template <class T>
-inline void disp(const Mat3d<T> &a, Int_I precision)
+void disp_mat3(const T &a, Int_I precision)
 {
 	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
 	auto oldPrecision = cout.precision();
@@ -139,10 +143,20 @@ inline void disp(const Mat3d<T> &a, Int_I precision)
 	cout.precision(oldPrecision);
 }
 
+template <class T>
+void disp(const Mat3d<T> &a, Int_I precision) {
+	disp_mat3(a, precision);
+}
+
+template <class T>
+void disp(const Cmat3d<T> &a, Int_I precision) {
+	disp_mat3(a, precision);
+}
+
 // version 3 & 4
 
 template <class T>
-inline void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision)
+void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision)
 {
 	Long i;
 	auto oldPrecision = cout.precision();
@@ -157,7 +171,7 @@ inline void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision)
 }
 
 template <class T>
-inline void disp_mat(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+void disp_mat(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 {
 	Long i, j;
 	auto oldPrecision = cout.precision();
@@ -175,23 +189,23 @@ inline void disp_mat(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I
 }
 
 template <class T>
-inline void disp(const Matrix<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+void disp(const Matrix<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 { disp_mat(a, start1, start2, n1, n2, precision); }
 
 template <class T>
-inline void disp(const Cmat<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+void disp(const Cmat<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 { disp_mat(a, start1, start2, n1, n2, precision); }
 
 template <class T>
-inline void disp(const MatCoo<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+void disp(const MatCoo<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 { disp_mat(a, start1, start2, n1, n2, precision); }
 
 template <class T>
-inline void disp(const MatCooH<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
+void disp(const MatCooH<T> &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision)
 { disp_mat(a, start1, start2, n1, n2, precision); }
 
 template <class T>
-inline void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
+void disp_mat3(const T &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
 {
 	Long i, j, k;
 	auto oldPrecision = cout.precision();
@@ -210,5 +224,13 @@ inline void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3,
 	}
 	cout.precision(oldPrecision);
 }
+
+template <class T>
+void disp(const Mat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
+{ disp_mat3(a, start1, start2, start3, n1, n2, n3, precision); }
+
+template <class T>
+void disp(const Cmat3d<T> &a, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3, Int_I precision)
+{ disp_mat3(a, start1, start2, start3, n1, n2, n3, precision); }
 
 } // namespace slisc
