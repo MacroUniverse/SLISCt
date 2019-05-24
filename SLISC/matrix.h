@@ -78,7 +78,7 @@ public:
 	T& operator()(Long_I i, Long_I j); // double indexing
 	const T& operator()(Long_I i, Long_I j) const;
 	const T *ptr(Long_I i) const; // pointer to the beginning of a row
-	T *ptr(Long_I i);
+	T *ptr(Long_I row);
 	Long nrows() const;
 	Long ncols() const;
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
@@ -162,23 +162,23 @@ inline const T & Matrix<T>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T>
-inline const T * Matrix<T>::ptr(Long_I i) const
+inline const T * Matrix<T>::ptr(Long_I row) const
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_Nr)
+	if (row < 0 || row >= m_Nr)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p + m_Nc*i;
+	return m_p + m_Nc* row;
 }
 
 template <class T>
-inline T * Matrix<T>::ptr(Long_I i)
+inline T * Matrix<T>::ptr(Long_I row)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_Nr)
+	if (row < 0 || row >= m_Nr)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p + m_Nc*i;
+	return m_p + m_Nc* row;
 }
 
 template <class T>

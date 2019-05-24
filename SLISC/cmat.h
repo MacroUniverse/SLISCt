@@ -36,6 +36,8 @@ public:
 	void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
+	const T *ptr(Long_I col) const; // pointer to the beginning of a column
+	T *ptr(Long_I col);
 	Long nrows() const;
 	Long ncols() const;
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
@@ -123,6 +125,26 @@ inline const T & Cmat<T>::operator()(Long_I i, Long_I j) const
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[i+m_Nr*j];
+}
+
+template <class T>
+inline const T * Cmat<T>::ptr(Long_I col) const
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (col < 0 || col >= m_Nc)
+		SLS_ERR("Matrix subscript out of bounds");
+#endif
+	return m_p + m_Nr * col;
+}
+
+template <class T>
+inline T * Cmat<T>::ptr(Long_I col)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (col < 0 || col >= m_Nc)
+		SLS_ERR("Matrix subscript out of bounds");
+#endif
+	return m_p + m_Nr * col;
 }
 
 template <class T>

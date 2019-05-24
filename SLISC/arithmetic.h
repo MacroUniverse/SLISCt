@@ -68,6 +68,52 @@ Bool operator!=(const T1 &v1, const T2 &v2)
 	return !(v1 == v2);
 }
 
+// copy one row of dense matrix to a dense vector
+template <class Tvec, class Tmat,
+	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
+inline void row_cpy(Tvec &v, const Tmat &a, Long_I row)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (v.size() != a.nrows()) {
+		SLS_ERR("wrong shape!");
+	}
+#endif
+	Long Nr = a.nrows(), Nc = a.ncols();
+	if constexpr (a.major() == 'r') { // row major
+		veccpy(v.ptr(), a.ptr(row), Nc);
+	}
+	else if constexpr (a.major() == 'c') { // column major
+		auto p = a.ptr() + row;
+		for (Long i = 0; i < Nc; ++i) {
+			v[i] = *p;
+			p += Nr;
+		}
+	}
+}
+
+// copy one column of dense matrix to a dense vector
+template <class Tvec, class Tmat,
+	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
+	inline void col_cpy(Tvec &v, const Tmat &a, Long_I col)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (v.size() != a.ncols()) {
+		SLS_ERR("wrong shape!");
+	}
+#endif
+	Long Nr = a.nrows(), Nc = a.ncols();
+	if constexpr (a.major() == 'c') { // column major
+		veccpy(v.ptr(), a.ptr(col), Nr);
+	}
+	else if constexpr (a.major() == 'r') { // row major
+		auto p = a.ptr() + col;
+		for (Long i = 0; i < Nr; ++i) {
+			v[i] = *p;
+			p += Nc;
+		}
+	}
+}
+
 // sum of container elements
 
 template <class T, SLS_IF(is_dense<T>())>
