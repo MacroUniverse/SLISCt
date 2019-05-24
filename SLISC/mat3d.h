@@ -19,6 +19,7 @@ private:
 public:
 	using Base::operator();
 	using Base::ptr;
+	using Base::operator=;
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
