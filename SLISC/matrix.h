@@ -64,8 +64,8 @@ public:
 	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
 	static constexpr Char major() { return 'r'; } // row major memory
 	Matrix & operator=(const Matrix &rhs);
-	template <class T1>
-	Matrix & operator=(const Matrix<T1> &rhs);	// copy assignment
+	template <class Tmat, SLS_IF(is_dense_mat<Tmat>())>
+	Matrix & operator=(const Tmat &rhs);	// copy assignment
 	template <class T1>
 	Matrix & operator=(const MatCoo<T1> &rhs);
 	template <class T1>
@@ -77,8 +77,6 @@ public:
 	void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
 	T& operator()(Long_I i, Long_I j); // double indexing
 	const T& operator()(Long_I i, Long_I j) const;
-	const T *ptr(Long_I i) const; // pointer to the beginning of a row
-	T *ptr(Long_I row);
 	Long nrows() const;
 	Long ncols() const;
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
@@ -109,15 +107,14 @@ Matrix<T>::Matrix(const Matrix<T> &rhs) : Matrix()
 template <class T>
 inline Matrix<T> & Matrix<T>::operator=(const Matrix<T> &rhs)
 {
-	return operator=<T>(rhs);
+	copy(*this, rhs);
+	return *this;
 }
 
-template <class T> template <class T1>
-inline Matrix<T> & Matrix<T>::operator=(const Matrix<T1> &rhs)
+template <class T> template <class Tmat, SLS_IF0(is_dense_mat<Tmat>())>
+inline Matrix<T> & Matrix<T>::operator=(const Tmat &rhs)
 {
-	m_Nr = rhs.nrows();
-	m_Nc = rhs.ncols();
-	Base::operator=(rhs);
+	copy(*this, rhs);
 	return *this;
 }
 
@@ -159,26 +156,6 @@ inline const T & Matrix<T>::operator()(Long_I i, Long_I j) const
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[m_Nc*i+j];
-}
-
-template <class T>
-inline const T * Matrix<T>::ptr(Long_I row) const
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (row < 0 || row >= m_Nr)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_Nc* row;
-}
-
-template <class T>
-inline T * Matrix<T>::ptr(Long_I row)
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (row < 0 || row >= m_Nr)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_Nc* row;
 }
 
 template <class T>

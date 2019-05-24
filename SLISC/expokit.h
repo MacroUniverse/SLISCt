@@ -21,11 +21,13 @@ void mul(Comp *y, const MatCooH<T> &a, Comp *x)
 // expv()
 // use ZGEXPV() for MatCoo<>, ZHEXPV() for MatCooH<>
 
-template <Char Option = 0, class T, SLS_IF(
-	(is_MatCoo<T>() || is_MatCooH<T>()) &&
-	(is_Comp<contain_type<T>>() || is_Doub<contain_type<T>>())
+template <Char Option = 0, class Tvec, class Tmat, SLS_IF(
+	is_dense_vec<Tvec>() &&
+	(is_Comp<contain_type<Tvec>>() || is_Doub<contain_type<Tvec>>()) &&
+	(is_MatCoo<Tmat>() || is_MatCooH<Tmat>()) &&
+	(is_Comp<contain_type<Tmat>>() || is_Doub<contain_type<Tmat>>())
 )>
-inline void expv(VecComp_IO v, const T &mat, Doub_I t, Int_I Nkrylov)
+inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov)
 {
 	const Doub tol = 0.; // set tolerance here
 #ifdef SLS_CHECK_SHAPE
@@ -36,12 +38,12 @@ inline void expv(VecComp_IO v, const T &mat, Doub_I t, Int_I Nkrylov)
 	VecComp wsp(MAX(Long(10), SQR(mat.nrows()*(Nkrylov + 2) + 5 * (Nkrylov + 2)) + 7));
 	VecInt iwsp(MAX(Nkrylov + 2, 7));
 
-	if constexpr (Option == 'G' || Option == 0 && is_MatCoo<T>()) {
+	if constexpr (Option == 'G' || Option == 0 && is_MatCoo<Tmat>()) {
 		ZGEXPV(v.size(), Nkrylov, t, v.ptr(),
 			tol, norm_inf(mat), wsp.ptr(), wsp.size(),
 			iwsp.ptr(), iwsp.size(), mat, 0, iflag);
 	}
-	else if constexpr (Option == 'H' || Option == 0 && is_MatCooH<T>()) {
+	else if constexpr (Option == 'H' || Option == 0 && is_MatCooH<Tmat>()) {
 		ZHEXPV(v.size(), Nkrylov, t, v.ptr(),
 			tol, norm_inf(mat), wsp.ptr(), wsp.size(),
 			iwsp.ptr(), iwsp.size(), mat, 0, iflag);

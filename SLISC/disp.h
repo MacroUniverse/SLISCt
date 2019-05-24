@@ -16,17 +16,17 @@ const Int def_disp_prec = 4;
 
 // ptr version
 template <class T>
-void disp(const T *ptr, Long_I N, Int_I precision = def_disp_prec);
+void disp(const T *ptr, Long_I n, Int_I precision = def_disp_prec);
 
 // version 1 & 2
-template <class T>
-void disp(const Vector<T> &v, Int_I precision = def_disp_prec);
+//template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+//void disp(const Tv &v, Int_I precision = def_disp_prec);
 //template <class T>
 //void disp(const T &a, Int_I precision = def_disp_prec);
 
 // version 3 & 4
-template <class T>
-void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision = def_disp_prec);
+//template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+//void disp(const Tv &v, Long_I start, Long_I n, Int_I precision = def_disp_prec);
 //template <class T>
 //void disp(const T &a, Long_I start1, Long_I start2, Long_I n1, Long_I n2, Int_I precision = def_disp_prec);
 //template <class T>
@@ -49,15 +49,15 @@ void disp(const T *ptr, Long_I n, Int_I precision)
 
 // version 1 & 2
 
-template <class T>
-void disp(const Vector<T> &v, Int_I precision)
+template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+void disp(const Tv &v, Int_I precision = def_disp_prec)
 {
-	Long i, n{ v.size() };
 	auto oldPrecision = cout.precision();
 	cout.precision(precision);
-	if (v.size() == 0) cout << "empty";
+	if (v.size() == 0)
+		cout << "empty";
 	else
-		for (i = 0; i < n; ++i) {
+		for (Long i = 0; i < v.size(); ++i) {
 			cout << to_num(v[i]) << "   ";
 		}
 	cout << endl << endl;
@@ -114,15 +114,14 @@ void disp(const T &a, Int_I precision = def_disp_prec) {
 
 // version 3 & 4
 
-template <class T>
-void disp(const Vector<T> &v, Long_I start, Long_I n, Int_I precision)
+template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+void disp(const Tv &v, Long_I start, Long_I n, Int_I precision = def_disp_prec)
 {
-	Long i;
 	auto oldPrecision = cout.precision();
 	cout.precision(precision);
 	if (v.size() == 0) cout << "empty";
 	else
-	for (i = start; i < start + n; ++i) {
+	for (Long i = start; i < start + n; ++i) {
 		cout << to_num(v[i]) << "   ";
 	}
 	cout << endl << endl;

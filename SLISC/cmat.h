@@ -17,6 +17,7 @@ protected:
 	Long m_Nr, m_Nc;
 	Cmat(); // default constructor: uninitialized
 public:
+	using Base::ptr;
 	using Base::operator();
 	using Base::operator=;
 	Cmat(Long_I Nr, Long_I Nc);
@@ -26,8 +27,8 @@ public:
 	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
 	static constexpr Char major() { return 'c'; } // row major memory
 	Cmat & operator=(const Cmat &rhs);	// copy assignment
-	template <class T1>
-	Cmat & operator=(const Cmat<T1> &rhs);
+	template <class Tmat, SLS_IF(is_dense_mat<Tmat>())>
+	Cmat & operator=(const Tmat &rhs);
 	Cmat & operator=(const T &rhs);
 	template <class T1>
 	Cmat & operator=(const MatCoo<T1> &rhs);
@@ -36,8 +37,6 @@ public:
 	void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
-	const T *ptr(Long_I col) const; // pointer to the beginning of a column
-	T *ptr(Long_I col);
 	Long nrows() const;
 	Long ncols() const;
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
@@ -62,28 +61,28 @@ Cmat<T>::Cmat(Long_I Nr, Long_I Nc, const T *ptr) : Cmat(Nr, Nc)
 template <class T>
 Cmat<T>::Cmat(const Cmat<T> &rhs)
 {
-	SLS_ERR("Copy constructor or move constructor is forbidden, use reference argument for function input or output, and use \"=\" to copy!");
+	SLS_ERR("Copy constructor or move constructor is forbidden, "
+		"use reference argument for function input or output, and use \"=\" to copy!");
 }
 
 template <class T>
 inline Cmat<T> & Cmat<T>::operator=(const Cmat<T> &rhs)
 {
-	return operator=<T>(rhs);
+	copy(*this, rhs);
+	return *this;
 }
 
-template <class T> template <class T1>
-inline Cmat<T> & Cmat<T>::operator=(const Cmat<T1> &rhs)
+template <class T> template <class Tmat, SLS_IF0(is_dense_mat<Tmat>())>
+inline Cmat<T> & Cmat<T>::operator=(const Tmat &rhs)
 {
-	m_Nr = rhs.nrows();
-	m_Nc = rhs.ncols();
-	Base::operator=(rhs);
+	copy(*this, rhs);
 	return *this;
 }
 
 template <class T>
 inline Cmat<T> & Cmat<T>::operator=(const T &rhs)
 {
-	Base::operator=(rhs);
+	vecset(m_p, rhs, m_N);
 	return *this;
 }
 
@@ -125,26 +124,6 @@ inline const T & Cmat<T>::operator()(Long_I i, Long_I j) const
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[i+m_Nr*j];
-}
-
-template <class T>
-inline const T * Cmat<T>::ptr(Long_I col) const
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (col < 0 || col >= m_Nc)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_Nr * col;
-}
-
-template <class T>
-inline T * Cmat<T>::ptr(Long_I col)
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (col < 0 || col >= m_Nc)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_Nr * col;
 }
 
 template <class T>

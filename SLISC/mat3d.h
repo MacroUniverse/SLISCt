@@ -19,15 +19,14 @@ private:
 public:
 	using Base::operator();
 	using Base::ptr;
-	using Base::operator=;
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
 	static constexpr Int ndims() { return 3; } // matrix is 2 dimensional
 	static constexpr Char major() { return 'r'; } // row major memory
 	Mat3d & operator=(const Mat3d &rhs);	// copy assignment
-	template <class T1>
-	Mat3d & operator=(const Mat3d<T1> &rhs);
+	template <class Tmat3, SLS_IF(is_dense_mat3<Tmat3>())>
+	Mat3d & operator=(const Tmat3 &rhs);
 #ifdef _CUSLISC_
 	Mat3d & operator=(const Gmat3d<T> &rhs) // copy from GPU vector
 	{ rhs.get(*this); return *this; }
@@ -64,17 +63,14 @@ Mat3d<T>::Mat3d(const Mat3d<T> &rhs)
 template <class T>
 inline Mat3d<T> & Mat3d<T>::operator=(const Mat3d<T> &rhs)
 {
-	return operator=<T>(rhs);
+	copy(*this, rhs);
+	return *this;
 }
 
-template <class T> template <class T1>
-inline Mat3d<T> & Mat3d<T>::operator=(const Mat3d<T1> &rhs)
+template <class T> template <class Tmat3, SLS_IF0(is_dense_mat3<Tmat3>())>
+inline Mat3d<T> & Mat3d<T>::operator=(const Tmat3 &rhs)
 {
-#ifdef SLS_CHECK_SHAPE
-	if (m_N1 != rhs.dim1() || m_N2 != rhs.dim2() || m_N3 != rhs.dim3())
-		SLS_ERR("wrong shape!");
-#endif
-	Base::operator=(rhs);
+	copy(*this, rhs);
 	return *this;
 }
 

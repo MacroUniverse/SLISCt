@@ -15,7 +15,7 @@ void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 	eigVec = A;
 	Long N = A.ncols();
 	eigVal.resize(N);
-	Int ret = LAPACKE_dsyev(LAPACK_COL_MAJOR, 'V', 'U',N, eigVec.ptr(),N, eigVal.ptr());
+	Int ret = LAPACKE_dsyev(LAPACK_COL_MAJOR, 'V', 'U',N, eigVec.ptr(), N, eigVal.ptr());
 	if (ret != 0) SLS_ERR("failed!");
 }
 

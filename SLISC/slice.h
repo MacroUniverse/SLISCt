@@ -37,10 +37,13 @@ public:
 	Svector & operator=(const T &rhs); // for scalar
 
 	// === other member functions ===
-	// There is no upper bound checking for set_size(), use with care
+	// There is no bound checking, use with care
 	void set_size(Long_I N);
 	void set_ptr(const T *ptr);
 	void set(const T *ptr, Long_I N);
+	void next(); // m_ptr += m_N
+	void last(); // m_ptr -= m_N
+	void shift(Long_I N); // m_ptr += N;
 	
 	~Svector();
 };
@@ -170,6 +173,24 @@ template<class T>
 inline void Svector<T>::set(const T * ptr, Long_I N)
 {
 	m_p = (T *)ptr; m_N = N;
+}
+
+template<class T>
+inline void Svector<T>::next()
+{
+	m_p += m_N;
+}
+
+template<class T>
+inline void Svector<T>::last()
+{
+	m_p -= m_N;
+}
+
+template<class T>
+inline void Svector<T>::shift(Long_I N)
+{
+	m_p += N;
 }
 
 template<class T>
@@ -324,5 +345,34 @@ inline void Scmat<T>::set(const T * ptr, Long_I Nr, Long_I Nc)
 
 template<class T>
 inline Scmat<T>::~Scmat() {}
+
+
+// === arithmetics ===
+
+// slice a row from a matrix
+template <class Tmat, class T = contain_type<Tmat>,
+	SLS_IF(is_dense_mat<Tmat>() && Tmat::major() == 'r')>
+inline Svector<T> slice_row(const Tmat &a, Long_I row)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (row < 0 || row >= a.nrows())
+		SLS_ERR("out of bound!");
+#endif
+	Long Nc = a.ncols();
+	return Svector<T>(a.ptr() + row * Nc, Nc);
+}
+
+// slice a col from a matrix
+template <class Tmat, class T = contain_type<Tmat>,
+	SLS_IF(is_dense_mat<Tmat>() && Tmat::major() == 'c')>
+	inline Svector<T> slice_col(const Tmat &a, Long_I col)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (col < 0 || col >= a.ncols())
+		SLS_ERR("out of bound!");
+#endif
+	Long Nr = a.nrows();
+	return Svector<T>(a.ptr() + col * Nr, Nr);
+}
 
 } // namespace slisc

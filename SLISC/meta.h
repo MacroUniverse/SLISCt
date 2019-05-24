@@ -333,6 +333,12 @@ template <class T> constexpr Bool is_dense_mat()
 	return is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>();
 }
 
+// check if is dense 3D array
+template <class T> constexpr Bool is_dense_mat3()
+{
+	return is_Mat3d<T>() || is_Cmat3d<T>();
+}
+
 // check if is dense container (including fixed-size)
 template <class T> constexpr Bool is_dense()
 {

@@ -30,6 +30,17 @@ inline void veccpy(T *dest, const T1 *src, Long_I n)
 		dest[i] = src[i];
 }
 
+template <class Tv, class Tv1, SLS_IF(
+	is_dense<Tv>() && is_dense<Tv1>())>
+inline void copy(Tv &v, const Tv1 &v1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		SLS_ERR("wrong shape!");
+#endif
+	veccpy(v.ptr(), v1.ptr(), v.size());
+}
+
 // Base Class for vector/matrix
 template <class T>
 class Vbase
@@ -60,8 +71,8 @@ public:
 	T& end(Long_I i);
 	const T& end(Long_I i) const;
 	Vbase & operator=(const Vbase &rhs);
-	template <class T1>
-	Vbase & operator=(const Vbase<T1> &rhs);
+	template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+	Vbase & operator=(const Tv &rhs);
 	Vbase & operator=(const T &rhs); // for scalar
 	void operator<<(Vbase &rhs); // move data
 	~Vbase();
@@ -184,23 +195,22 @@ inline const T & Vbase<T>::operator()(Long_I i) const
 
 template <class T>
 inline Vbase<T> & Vbase<T>::operator=(const Vbase<T> &rhs)
-{ return operator=<T>(rhs); }
+{
+	veccpy(m_p, rhs.ptr(), m_N);
+	return *this;
+}
+
+template <class T> template <class Tv, SLS_IF0(is_dense_vec<Tv>())>
+inline Vbase<T> & Vbase<T>::operator=(const Tv &rhs)
+{
+	veccpy(m_p, rhs.ptr(), m_N);
+	return *this;
+}
 
 template <class T>
 inline Vbase<T> & Vbase<T>::operator=(const T &rhs)
 {
 	vecset(m_p, rhs, m_N);
-	return *this;
-}
-
-template <class T> template <class T1>
-inline Vbase<T> & Vbase<T>::operator=(const Vbase<T1> &rhs)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (rhs.size() != m_N)
-		SLS_ERR("wrong shape!");
-#endif
-	veccpy(m_p, rhs.ptr(), m_N);
 	return *this;
 }
 
@@ -271,8 +281,8 @@ public:
 	Vector(const Vector &rhs);	// copy constructor
 	static constexpr Int ndims(); // dimension
 	Vector &operator=(const Vector &rhs);
-	template <class T1>
-	Vector &operator=(const Vector<T1> &rhs);
+	/*template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+	Vector &operator=(const Tv &rhs);*/
 	void operator<<(Vector &rhs); // move data and rhs.resize(0)
 	template <class T1>
 	void resize(const Vector<T1> &v);
@@ -313,13 +323,7 @@ inline constexpr Int Vector<T>::ndims()
 template <class T>
 Vector<T> &Vector<T>::operator=(const Vector<T> &rhs)
 {
-	return operator=<T>(rhs);
-}
-
-template <class T> template <class T1>
-Vector<T> &Vector<T>::operator=(const Vector<T1> &rhs)
-{
-	Base::operator=(rhs);
+	copy(*this, rhs);
 	return *this;
 }
 
