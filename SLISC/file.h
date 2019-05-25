@@ -1,5 +1,5 @@
 #pragma once
-#include "global.h"
+#include "scalar_arith.h"
 #include <sstream>
 #include <fstream>
 #include <codecvt>
