@@ -14,6 +14,97 @@ inline void test_arithmetic()
 		if (!shape_cmp(CmatInt(3, 4), FixCmat<Char, 3, 4>())) SLS_ERR("failed!");
 	}
 
+	// copy from column major matrix to vector
+	{
+		CmatInt a(3, 4);
+		linspace(a, 1, 12);
+		VecInt vc(3), vr(4);
+		for (Long i = 0; i < 3; ++i) {
+			copy_row(vr, a, i);
+			for (Long j = 0; j < 4; ++j) {
+				if (vr[j] != a(i, j))
+					SLS_ERR("failed!");
+			}
+		}
+		for (Long j = 0; j < 4; ++j) {
+			copy_col(vc, a, j);
+			for (Long i = 0; i < 3; ++i) {
+				if (vc[i] != a(i, j))
+					SLS_ERR("failed!");
+			}
+		}
+	}
+	// copy from row major matrix to vector
+	{
+		MatInt a(3, 4);
+		linspace(a, 1, 12);
+		VecInt vc(3), vr(4);
+		for (Long i = 0; i < 3; ++i) {
+			copy_row(vr, a, i);
+			for (Long j = 0; j < 4; ++j) {
+				if (vr[j] != a(i, j))
+					SLS_ERR("failed!");
+			}
+		}
+		for (Long j = 0; j < 4; ++j) {
+			copy_col(vc, a, j);
+			for (Long i = 0; i < 3; ++i) {
+				if (vc[i] != a(i, j))
+					SLS_ERR("failed!");
+			}
+		}
+	}
+	// copy from vector to column major matrix
+	{
+		CmatInt a(3, 4, 0);
+		linspace(a, 1, 12);
+		VecInt vc(3), vr(4);
+		linspace(vc, 1, 3);
+		linspace(vr, 1, 4);
+		for (Long i = 0; i < 3; ++i) {
+			copy_row(a, vr, i);
+			for (Long j = 0; j < 4; ++j) {
+				if (vr[j] != a(i, j))
+					SLS_ERR("failed!");
+			}
+			vr += 10;
+		}
+		a = 0;
+		for (Long j = 0; j < 4; ++j) {
+			copy_col(a, vc, j);
+			for (Long i = 0; i < 3; ++i) {
+				if (vc[i] != a(i, j))
+					SLS_ERR("failed!");
+			}
+			vc += 10;
+		}
+	}
+	// copy from vector to row major matrix
+	{
+		MatInt a(3, 4, 0);
+		linspace(a, 1, 12);
+		VecInt vc(3), vr(4);
+		linspace(vc, 1, 3);
+		linspace(vr, 1, 4);
+		for (Long i = 0; i < 3; ++i) {
+			copy_row(a, vr, i);
+			for (Long j = 0; j < 4; ++j) {
+				if (vr[j] != a(i, j))
+					SLS_ERR("failed!");
+			}
+			vr += 10;
+		}
+		a = 0;
+		for (Long j = 0; j < 4; ++j) {
+			copy_col(a, vc, j);
+			for (Long i = 0; i < 3; ++i) {
+				if (vc[i] != a(i, j))
+					SLS_ERR("failed!");
+			}
+			vc += 10;
+		}
+	}
+	
 	// sum, max, max_abs, norm2
 	{
 		Long ind;

@@ -93,10 +93,35 @@ inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 		SLS_ERR("unknown!");
 }
 
+// copy a dense vector to one row of dense matrix
+template <class Tvec, class Tmat,
+	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
+	inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
+{
+	Long Nr = a.nrows(), Nc = a.ncols();
+#ifdef SLS_CHECK_SHAPE
+	if (v.size() != Nc) {
+		SLS_ERR("wrong shape!");
+	}
+#endif
+	if constexpr (major<Tmat>() == 'r') { // row major
+		veccpy(a.ptr() + Nc * row, v.ptr(), Nc);
+	}
+	else if constexpr (major<Tmat>() == 'c') { // column major
+		auto p = a.ptr() + row;
+		for (Long i = 0; i < Nc; ++i) {
+			*p = v[i];
+			p += Nr;
+		}
+	}
+	else
+		SLS_ERR("unknown!");
+}
+
 // copy one column of dense matrix to a dense vector
 template <class Tvec, class Tmat,
 	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
-	inline void copy_col(Tvec &v, const Tmat &a, Long_I col)
+inline void copy_col(Tvec &v, const Tmat &a, Long_I col)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (v.size() != a.nrows()) {
@@ -111,6 +136,31 @@ template <class Tvec, class Tmat,
 		auto p = a.ptr() + col;
 		for (Long i = 0; i < Nr; ++i) {
 			v[i] = *p;
+			p += Nc;
+		}
+	}
+	else
+		SLS_ERR("unknown!");
+}
+
+// copy a dense vector to one column of dense matrix
+template <class Tvec, class Tmat,
+	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
+inline void copy_col(Tmat &a, const Tvec &v, Long_I col)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (v.size() != a.nrows()) {
+		SLS_ERR("wrong shape!");
+	}
+#endif
+	Long Nr = a.nrows(), Nc = a.ncols();
+	if constexpr (major<Tmat>() == 'c') { // column major
+		veccpy(a.ptr() + Nr * col, v.ptr(), Nr);
+	}
+	else if constexpr (major<Tmat>() == 'r') { // row major
+		auto p = a.ptr() + col;
+		for (Long i = 0; i < Nr; ++i) {
+			*p = v[i];
 			p += Nc;
 		}
 	}
