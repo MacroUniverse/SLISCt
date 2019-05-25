@@ -54,13 +54,21 @@ inline Dvector<T>::Dvector(const T *ptr, Long_I N, Long_I step)
 template<class T>
 inline T * Dvector<T>::ptr()
 {
-	return ;
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("using ptr() for empty container!");
+#endif
+	return m_p;
 }
 
 template<class T>
 inline const T * Dvector<T>::ptr() const
 {
-	return ;
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("using ptr() for empty container!");
+#endif
+	return m_p;
 }
 
 template<class T>

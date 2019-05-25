@@ -276,12 +276,28 @@ constexpr Bool is_Dvector()
 	return is_Dvector_imp<T>();
 }
 
+template <class T> struct is_Smat_imp : false_type {};
+template <class T> struct is_Smat_imp<Smat<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Smat()
+{
+	return is_Smat_imp<T>();
+}
+
 template <class T> struct is_Scmat_imp : false_type {};
 template <class T> struct is_Scmat_imp<Scmat<T>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>
 constexpr Bool is_Scmat()
 {
 	return is_Scmat_imp<T>();
+}
+
+template <class T> struct is_Dmat_imp : false_type {};
+template <class T> struct is_Dmat_imp<Dmat<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Dmat()
+{
+	return is_Dmat_imp<T>();
 }
 
 template <class T> struct is_Dcmat_imp : false_type {};

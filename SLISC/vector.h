@@ -1,45 +1,8 @@
 // vector container
 #pragma once
-#include "meta.h"
-
-#ifndef NDEBUG
-#define SLS_CHECK_BOUNDS
-#define SLS_CHECK_SHAPE
-#endif
+#include "copy.h"
 
 namespace slisc {
-
-// memory set and copy
-template<class T>
-inline void vecset(T *dest, const T &val, Long_I n)
-{
-	for (Long i = 0; i < n; ++i)
-		dest[i] = val;
-}
-
-template<class T>
-inline void veccpy(T *dest, const T *src, Long_I n)
-{
-	memcpy(dest, src, n * sizeof(T));
-}
-
-template<class T, class T1, SLS_IF(is_promo<T,T1>())>
-inline void veccpy(T *dest, const T1 *src, Long_I n)
-{
-	for (Long i = 0; i < n; ++i)
-		dest[i] = src[i];
-}
-
-template <class Tv, class Tv1, SLS_IF(
-	is_dense<Tv>() && is_dense<Tv1>())>
-inline void copy(Tv &v, const Tv1 &v1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(v, v1))
-		SLS_ERR("wrong shape!");
-#endif
-	veccpy(v.ptr(), v1.ptr(), v.size());
-}
 
 // Base Class for vector/matrix
 template <class T>

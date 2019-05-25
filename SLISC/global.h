@@ -7,6 +7,11 @@
 #define SLS_USE_MKL // use Intel MKL when possible
 #define SLS_FP_EXCEPT // turn on floating point exception
 
+#ifndef NDEBUG
+#define SLS_CHECK_BOUNDS
+#define SLS_CHECK_SHAPE
+#endif
+
 #ifdef SLS_USE_MKL
 #include <mkl.h>
 #endif
@@ -125,7 +130,9 @@ template <class T> class Mat3d;
 template <class T> class Cmat3d;
 template <class T> class Svector;
 template <class T> class Dvector;
+template <class T> class Smat;
 template <class T> class Scmat;
+template <class T> class Dmat;
 template <class T> class Dcmat;
 template <class T> class Scmat3d;
 template <class T> class Diag;
@@ -331,6 +338,22 @@ typedef Dvector<Comp> DvecComp;
 typedef const DvecComp &DvecComp_I;
 typedef DvecComp &DvecComp_O, &DvecComp_IO;
 
+typedef Smat<Int> SmatInt;
+typedef const SmatInt &SmatInt_I;
+typedef SmatInt &SmatInt_O, &SmatInt_IO;
+
+typedef Smat<Long> SmatLong;
+typedef const SmatLong &SmatLong_I;
+typedef SmatInt &SmatLong_O, &SmatLong_IO;
+
+typedef Smat<Doub> SmatDoub;
+typedef const SmatDoub &SmatDoub_I;
+typedef SmatDoub &SmatDoub_O, &SmatDoub_IO;
+
+typedef Smat<Comp> SmatComp;
+typedef const SmatComp &SmatComp_I;
+typedef SmatComp &SmatComp_O, &SmatComp_IO;
+
 typedef Scmat<Int> ScmatInt;
 typedef const ScmatInt &ScmatInt_I;
 typedef ScmatInt &ScmatInt_O, &ScmatInt_IO;
@@ -346,6 +369,22 @@ typedef ScmatDoub &ScmatDoub_O, &ScmatDoub_IO;
 typedef Scmat<Comp> ScmatComp;
 typedef const ScmatComp &ScmatComp_I;
 typedef ScmatComp &ScmatComp_O, &ScmatComp_IO;
+
+typedef Dmat<Int> DmatInt;
+typedef const DmatInt &DmatInt_I;
+typedef DmatInt &DmatInt_O, &DmatInt_IO;
+
+typedef Dmat<Long> DmatLong;
+typedef const DmatLong &DmatLong_I;
+typedef DmatInt &DmatLong_O, &DmatLong_IO;
+
+typedef Dmat<Doub> DmatDoub;
+typedef const DmatDoub &DmatDoub_I;
+typedef DmatDoub &DmatDoub_O, &DmatDoub_IO;
+
+typedef Dmat<Comp> DmatComp;
+typedef const DmatComp &DmatComp_I;
+typedef DmatComp &DmatComp_O, &DmatComp_IO;
 
 typedef Dcmat<Int> DcmatInt;
 typedef const DcmatInt &DcmatInt_I;

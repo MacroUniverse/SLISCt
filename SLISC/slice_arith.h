@@ -77,5 +77,4 @@ inline void slice_mat12(Tmat &a, const Tmat3 &a3, Long_I i3)
 #endif
 	a.set(a.ptr(), a.dim1(), a.dim2());
 }
-
 } // namespace slisc
