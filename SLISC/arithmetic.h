@@ -79,10 +79,10 @@ inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	if constexpr (Tmat::major() == 'r') { // row major
+	if constexpr (major<Tmat>() == 'r') { // row major
 		veccpy(v.ptr(), a.ptr() + Nc*row, Nc);
 	}
-	else if constexpr (Tmat::major() == 'c') { // column major
+	else if constexpr (major<Tmat>() == 'c') { // column major
 		auto p = a.ptr() + row;
 		for (Long i = 0; i < Nc; ++i) {
 			v[i] = *p;
@@ -104,10 +104,10 @@ template <class Tvec, class Tmat,
 	}
 #endif
 	Long Nr = a.nrows(), Nc = a.ncols();
-	if constexpr (Tmat::major() == 'c') { // column major
+	if constexpr (major<Tmat>() == 'c') { // column major
 		veccpy(v.ptr(), a.ptr() + Nr*col, Nr);
 	}
-	else if constexpr (Tmat::major() == 'r') { // row major
+	else if constexpr (major<Tmat>() == 'r') { // row major
 		auto p = a.ptr() + col;
 		for (Long i = 0; i < Nr; ++i) {
 			v[i] = *p;

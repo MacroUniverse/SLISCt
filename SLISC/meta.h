@@ -402,6 +402,7 @@ constexpr Char major()
 	else {
 		cout << contain_num<T>() << endl;
 		SLS_ERR("unknown!");
+		return 'e';
 	}
 }
 
@@ -414,8 +415,10 @@ constexpr Int ndims()
 		return 2;
 	else if (is_Mat3d<T>() || is_Cmat3d<T>())
 		return 3;
-	else
+	else {
 		SLS_ERR("unknown!");
+		return 'e';
+	}
 }
 
 template <class T, SLS_IF(is_contain<T>())>
