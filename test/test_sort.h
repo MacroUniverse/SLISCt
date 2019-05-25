@@ -7,7 +7,7 @@ inline void test_sort()
 	using namespace slisc;
 
 	// test sort2()
-	Long N = 10;
+	Long N = 100;
 	VecInt a(N), a0(N), order(N);
 	for (Long i = 0; i < N; ++i) {
 		a0[i] = randInt(N);
@@ -15,9 +15,6 @@ inline void test_sort()
 	a = a0;
 	linspace(order, 0, N - 1);
 	sort2(a, order);
-	disp(a);
-	disp(a0);
-	disp(order);
 	
 	for (Long i = 1; i < N; ++i) {
 		if (a[i] < a[i-1])

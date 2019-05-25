@@ -61,8 +61,6 @@ public:
 	Matrix(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Matrix(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Matrix(const Matrix &rhs);		// Copy constructor
-	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'r'; } // row major memory
 	Matrix & operator=(const Matrix &rhs);
 	template <class Tmat, SLS_IF(is_dense_mat<Tmat>())>
 	Matrix & operator=(const Tmat &rhs);	// copy assignment

@@ -23,8 +23,6 @@ public:
 	Mat3d(Long_I N1, Long_I N2, Long_I N3);
 	Mat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Mat3d(const Mat3d &rhs);   // Copy constructor
-	static constexpr Int ndims() { return 3; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'r'; } // row major memory
 	Mat3d & operator=(const Mat3d &rhs);	// copy assignment
 	template <class Tmat3, SLS_IF(is_dense_mat3<Tmat3>())>
 	Mat3d & operator=(const Tmat3 &rhs);

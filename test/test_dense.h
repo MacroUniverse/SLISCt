@@ -8,11 +8,11 @@ void test_dense()
 
 	// static or constexpr members
 	{
-		if (VecInt::ndims() != 1) SLS_ERR("failed!");
-		if (MatInt::ndims() != 2 || MatInt::major() != 'r') SLS_ERR("failed!");
-		if (CmatInt::ndims() != 2 || CmatInt::major() != 'c') SLS_ERR("failed!");
-		if (Mat3Doub::ndims() != 3 || Mat3Doub::major() != 'r') SLS_ERR("failed!");
-		if (Cmat3Doub::ndims() != 3 || Cmat3Doub::major() != 'c') SLS_ERR("failed!");
+		if (ndims<VecInt>() != 1) SLS_ERR("failed!");
+		if (ndims<MatInt>() != 2 || major<MatInt>() != 'r') SLS_ERR("failed!");
+		if (ndims<CmatInt>() != 2 || major<CmatInt>() != 'c') SLS_ERR("failed!");
+		if (ndims<Mat3Doub>() != 3 || major<Mat3Doub>() != 'r') SLS_ERR("failed!");
+		if (ndims<Cmat3Doub>() != 3 || major<Cmat3Doub>() != 'c') SLS_ERR("failed!");
 	}
 
 	// size initialize

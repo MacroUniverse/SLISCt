@@ -24,8 +24,6 @@ public:
 	Cmat(Long_I Nr, Long_I Nc, const T &s);	//Initialize to constant
 	Cmat(Long_I Nr, Long_I Nc, const T *ptr);	// Initialize to array
 	Cmat(const Cmat &rhs);		// Copy constructor
-	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'c'; } // row major memory
 	Cmat & operator=(const Cmat &rhs);	// copy assignment
 	template <class Tmat, SLS_IF(is_dense_mat<Tmat>())>
 	Cmat & operator=(const Tmat &rhs);

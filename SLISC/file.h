@@ -4,9 +4,10 @@
 #include <fstream>
 #include <codecvt>
 #include <filesystem>
-#include "unicode.h"
 
 namespace slisc {
+
+using std::stringstream;
 
 inline void file_list(vector_O<Str> names, Str_I path);
 
@@ -48,11 +49,6 @@ inline Bool file_exist(Str_I fname, Bool_I case_sens = true) {
 #endif
 }
 
-// not case sensitive on Windows, see file_exist_case()
-inline Bool file_exist(Str32_I fname) {
-	return file_exist(utf32to8(fname));
-}
-
 // read whole file to Str
 inline void read_file(Str_O str, Str_I fname)
 {
@@ -62,32 +58,6 @@ inline void read_file(Str_O str, Str_I fname)
 	stringstream ss;
 	ss << fin.rdbuf();
 	str = ss.str();
-}
-
-// read a UTF-8 file into UTF-32 Str32
-inline void read_file(Str32_O str32, Str_I fname)
-{
-	Str str;
-	read_file(str, fname);
-	utf8to32(str32, str);
-}
-
-inline void read_file(Str32_O str32, Str32_I fname)
-{
-	read_file(str32, utf32to8(fname));
-}
-
-// write UTF-32 Str32 into a UTF-8 file
-inline void write_file(Str32_I str32, Str_I fname)
-{
-	Str str;
-	utf32to8(str, str32);
-	write_file(str, fname);
-}
-
-inline void write_file(Str32_I str32, Str32_I fname)
-{
-	write_file(str32, utf32to8(fname));
 }
 
 inline void file_rm(Str_I wildcard_name) {
@@ -175,15 +145,4 @@ inline void file_list_ext(vector_O<Str> fnames, Str_I path, Str_I ext, Bool_I ke
 	file_list(fnames0, path);
 	file_ext(fnames, fnames0, ext, keep_ext);
 }
-
-// list all files in current directory, with a given extension
-inline void file_list_ext(vector_O<Str32> fnames, Str32_I path, Str32_I ext, Bool_I keep_ext = true)
-{
-	vector<Str> fnames8;
-	fnames.resize(0);
-	file_list_ext(fnames8, utf32to8(path), utf32to8(ext), keep_ext);
-	for (Long i = 0; i < Size(fnames8); ++i)
-		fnames.push_back(utf8to32(fnames8[i]));
-}
-
 } // namespace slisc

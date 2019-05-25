@@ -10,6 +10,7 @@
 #undef min
 #endif
 #include "string.h"
+#include "file.h"
 #include "utfcpp/utf8.h"
 
 #ifdef _MSC_VER
@@ -20,8 +21,6 @@ namespace slisc {
 
 using std::stringstream;
 
-inline void read_file(Str32_O str32, Str32_I fname);
-inline void write_file(Str32_I str32, Str32_I fname);
 inline Long CRLF_to_LF(Str32_IO str);
 
 // set windows console to display utf-8
@@ -32,7 +31,7 @@ struct set_windows_console_utf8 {
 	}
 };
 // in case of ODR error, put this in main function;
-inline set_windows_console_utf8 yes_set_windows_console_utf8;
+set_windows_console_utf8 yes_set_windows_console_utf8;
 #endif
 
 // write Str to file
@@ -89,18 +88,6 @@ inline Str utf32to8(Str32_I str32)
 	return str;
 }
 
-inline void write_file(Str_I str, Str32_I name)
-{
-	ofstream fout(utf32to8(name), std::ios::binary);
-	fout << str;
-	fout.close();
-}
-
-inline void read_file(Str_O str, Str32_I fname)
-{
-	read_file(str, fname);
-}
-
 // display Str32
 inline std::ostream &operator<<(std::ostream &out, Str32_I str32)
 {
@@ -119,6 +106,11 @@ inline Str32 operator+(Str32_I str32, Str_I str)
 inline Str32 operator+(Str_I str, Str32_I str32)
 {
 	return utf8to32(str) + str32;
+}
+
+// not case sensitive on Windows, see file_exist_case()
+inline Bool file_exist(Str32_I fname) {
+	return file_exist(utf32to8(fname));
 }
 
 // read a line from a string, convert to UTF-32
@@ -143,6 +135,32 @@ inline Long skip_line(Str32_I &str, Long_I start)
 	if (ind < 0 || ind == str.size() - 1)
 		return -1;
 	return ind + 1;
+}
+
+// read a UTF-8 file into UTF-32 Str32
+inline void read_file(Str32_O str32, Str_I fname)
+{
+	Str str;
+	read_file(str, fname);
+	utf8to32(str32, str);
+}
+
+inline void read_file(Str32_O str32, Str32_I fname)
+{
+	read_file(str32, utf32to8(fname));
+}
+
+// write UTF-32 Str32 into a UTF-8 file
+inline void write_file(Str32_I str32, Str_I fname)
+{
+	Str str;
+	utf32to8(str, str32);
+	write_file(str, fname);
+}
+
+inline void write_file(Str32_I str32, Str32_I fname)
+{
+	write_file(str32, utf32to8(fname));
 }
 
 // write a vector of strings to file
@@ -609,4 +627,13 @@ inline Long MatchBraces(vector_O<Long> ind_left, vector_O<Long> ind_right,
 	return Nleft;
 }
 
+// list all files in current directory, with a given extension
+inline void file_list_ext(vector_O<Str32> fnames, Str32_I path, Str32_I ext, Bool_I keep_ext = true)
+{
+	vector<Str> fnames8;
+	fnames.resize(0);
+	file_list_ext(fnames8, utf32to8(path), utf32to8(ext), keep_ext);
+	for (Long i = 0; i < Size(fnames8); ++i)
+		fnames.push_back(utf8to32(fnames8[i]));
+}
 } // namespace slisc

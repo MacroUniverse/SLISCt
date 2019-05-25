@@ -23,8 +23,6 @@ public:
 	Cmat3d(Long_I N1, Long_I N2, Long_I N3);
 	Cmat3d(Long_I N1, Long_I N2, Long_I N3, const T &a);
 	Cmat3d(const Cmat3d &rhs);   // Copy constructor
-	static constexpr Int ndims() { return 3; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'c'; } // row major memory
 	Cmat3d & operator=(const Cmat3d &rhs);	// copy assignment
 	template <class T1>
 	Cmat3d & operator=(const Cmat3d<T1> &rhs);

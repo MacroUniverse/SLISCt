@@ -16,7 +16,6 @@ public:
 	FixVec(const T &s) { *this = s; }
 	T* ptr() { return m_data; } // get pointer
 	const T* ptr() const { return m_data; }
-	static constexpr Int ndims() { return 1; }
 	static constexpr Long size() { return N; }
 	T & operator[](Long_I i);
 	const T & operator[](Long_I i) const;
@@ -119,8 +118,6 @@ public:
 	FixCmat() {}
 	FixCmat(const T &s); //Initialize to constant
 	FixCmat(const FixCmat &rhs); // Copy constructor
-	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'c'; } // row major memory
 	static constexpr Long nrows();
 	static constexpr Long ncols();
 	FixCmat & operator=(const T &rhs);

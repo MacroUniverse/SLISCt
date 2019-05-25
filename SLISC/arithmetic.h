@@ -17,13 +17,13 @@ namespace slisc {
 template <class T1, class T2, SLS_IF(is_contain<T1>() && is_contain<T2>())>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
-	if constexpr (T1::ndims() == 1 && T2::ndims() == 1) {
+	if constexpr (ndims<T1>() == 1 && ndims<T2>() == 1) {
 		return v1.size() == v2.size();
 	}
-	else if constexpr (T1::ndims() == 2 && T2::ndims() == 2) {
+	else if constexpr (ndims<T1>() == 2 && ndims<T2>() == 2) {
 		return v1.nrows() == v2.nrows() && v1.ncols() == v2.ncols();
 	}
-	else if constexpr (T1::ndims() == 3 && T2::ndims() == 3) {
+	else if constexpr (ndims<T1>() == 3 && ndims<T2>() == 3) {
 		return v1.dim1() == v2.dim1() && v1.dim2() == v2.dim2()
 			&& v1.dim3() == v2.dim3();
 	}

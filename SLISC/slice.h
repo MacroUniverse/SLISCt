@@ -215,8 +215,6 @@ public:
 	Scmat(const T *ptr, Long_I Nr, Long_I Nc);
 
 	// === Cmat functions ===
-	static constexpr Int ndims() { return 2; } // matrix is 2 dimensional
-	static constexpr Char major() { return 'c'; } // row major memory
 	Scmat & operator=(const Scmat &rhs);	// copy assignment
 	template <class T1>
 	Scmat & operator=(const Scmat<T1> &rhs);
@@ -351,7 +349,7 @@ inline Scmat<T>::~Scmat() {}
 
 // slice a row from a matrix
 template <class Tmat, class T = contain_type<Tmat>,
-	SLS_IF(is_dense_mat<Tmat>() && Tmat::major() == 'r')>
+	SLS_IF(is_dense_mat<Tmat>() && major<Tmat>() == 'r')>
 inline Svector<T> slice_row(const Tmat &a, Long_I row)
 {
 #ifdef SLS_CHECK_BOUNDS
@@ -364,7 +362,7 @@ inline Svector<T> slice_row(const Tmat &a, Long_I row)
 
 // slice a col from a matrix
 template <class Tmat, class T = contain_type<Tmat>,
-	SLS_IF(is_dense_mat<Tmat>() && Tmat::major() == 'c')>
+	SLS_IF(is_dense_mat<Tmat>() && major<Tmat>() == 'c')>
 	inline Svector<T> slice_col(const Tmat &a, Long_I col)
 {
 #ifdef SLS_CHECK_BOUNDS

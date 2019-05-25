@@ -41,7 +41,6 @@ public:
 	Long nnz() const { return Base::size(); }
 	Long nrows() const { return Base::size(); }
 	Long ncols() const { return Base::size(); }
-	static constexpr Int ndims() { return 2; }
 	Diag &operator=(const Diag &rhs)
 	{ Base::operator=(rhs); return *this; }
 	Diag &operator=(const Vector<T> &rhs)
@@ -94,7 +93,6 @@ public:
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	Long nrows() const { return m_Nr; }
 	Long ncols() const { return m_Nc; }
-	static constexpr Int ndims() { return 2; }
 	Long size() const {
 		SLS_ERR("use nnz() or capacity() instead!");
 	}

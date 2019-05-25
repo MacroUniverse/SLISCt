@@ -279,7 +279,6 @@ public:
 	Vector(Long_I N, const T *a); // copy from existing memory
 
 	Vector(const Vector &rhs);	// copy constructor
-	static constexpr Int ndims(); // dimension
 	Vector &operator=(const Vector &rhs);
 	/*template <class Tv, SLS_IF(is_dense_vec<Tv>())>
 	Vector &operator=(const Tv &rhs);*/
@@ -313,12 +312,6 @@ inline Vector<T>::Vector(Long_I N, const T * a) : Vector(N)
 template <class T>
 Vector<T>::Vector(const Vector<T> &rhs) : Base(rhs)
 {}
-
-template<class T>
-inline constexpr Int Vector<T>::ndims()
-{
-	return 1;
-}
 
 template <class T>
 Vector<T> &Vector<T>::operator=(const Vector<T> &rhs)

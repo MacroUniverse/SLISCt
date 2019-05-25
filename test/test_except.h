@@ -8,7 +8,7 @@ void test_except()
 	if (!ISNAN(NaN)) SLS_ERR("failed!");
 	if (ISNAN(0)) SLS_ERR("failed!");
 	
-	Int i; Doub x;
+	Doub x;
 
 	SLS_WARN("comment out the following lines one by one");
 	x = exp(1e10); SLS_ERR("failed!"); // test overflow

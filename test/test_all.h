@@ -12,6 +12,7 @@
 #include "test_interp1.h"
 #include "test_fft.h"
 #include "test_random.h"
+#include "test/test_sort.h"
 //#include "test_eigen_basics.h"
 //#include "test_eigen_linsolve.h"
 //#include "test_eigen_fft.h"
@@ -72,6 +73,8 @@ inline void test_all()
 	test_fft();
 	cout << "test_rand()" << endl;
 	test_random();
+	cout << "test_sort()" << endl;
+	test_sort();
 	cout << "test_time()" << endl;
 	test_time();
 	cout << "test_coulomb()" << endl;

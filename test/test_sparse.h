@@ -109,7 +109,8 @@ inline void test_sparse()
 
 	{
 		// copy assignment
-		Long i, j, k = 0;
+		Long i, j;
+		Doub k = 0;
 		McooDoub a(4, 4, 16), a1(0,0);
 		McoohComp b(4, 4, 10), b1(0,0);
 		for (i = 0; i < 4; ++i)
