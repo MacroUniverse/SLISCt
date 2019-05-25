@@ -109,6 +109,10 @@ inline T * Vbase<T>::ptr()
 template<class T>
 inline const T * Vbase<T>::ptr() const
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("using ptr() for empty container!");
+#endif
 	return m_p;
 }
 

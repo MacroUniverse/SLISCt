@@ -7,9 +7,6 @@ namespace slisc {
 template <class T>
 class Svector
 {
-protected:
-	Vector<T> &cast();
-	const Vector<T> &cast() const;
 public:
 	typedef T value_type;
 	T *m_p;
@@ -32,8 +29,8 @@ public:
 	T& end(Long_I i);
 	const T& end(Long_I i) const;
 	Svector & operator=(const Svector &rhs);
-	template <class T1>
-	Svector & operator=(const Svector<T1> &rhs);
+	template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+	Svector & operator=(const Tv &rhs);
 	Svector & operator=(const T &rhs); // for scalar
 
 	// === other member functions ===
@@ -48,18 +45,6 @@ public:
 	~Svector();
 };
 
-template<class T>
-inline Vector<T>& Svector<T>::cast()
-{
-	return *reinterpret_cast<Vector<T>*>(this);
-}
-
-template<class T>
-inline const Vector<T>& Svector<T>::cast() const
-{
-	return *reinterpret_cast<const Vector<T>*>(this);
-}
-
 template <class T>
 inline Svector<T>::Svector() {}
 
@@ -73,13 +58,21 @@ inline Svector<T>::Svector(const T *ptr, Long_I N)
 template<class T>
 inline T * Svector<T>::ptr()
 {
-	return cast().ptr();
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("using ptr() for empty container!");
+#endif
+	return m_p;
 }
 
 template<class T>
 inline const T * Svector<T>::ptr() const
 {
-	return cast().ptr();
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("using ptr() for empty container!");
+#endif
+	return m_p;
 }
 
 template<class T>
@@ -91,67 +84,94 @@ inline Long Svector<T>::size() const
 template<class T>
 inline T & Svector<T>::operator[](Long_I i)
 {
-	return cast()[i];
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_N)
+		SLS_ERR("Vbase subscript out of bounds");
+#endif
+	return m_p[i];
 }
 
 template<class T>
 inline const T & Svector<T>::operator[](Long_I i) const
 {
-	return cast()[i];
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_N)
+		SLS_ERR("Vbase subscript out of bounds");
+#endif
+	return m_p[i];
 }
 
 template<class T>
 inline T & Svector<T>::operator()(Long_I i)
 {
-	return cast()(i);
+	return (*this)[i];
 }
 
 template<class T>
 inline const T & Svector<T>::operator()(Long_I i) const
 {
-	return cast()(i);
+	return (*this)[i];
 }
 
 template<class T>
 inline T & Svector<T>::end()
 {
-	return cast().end();
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("tring to use end() on empty vector!");
+#endif
+	return m_p[m_N - 1];
 }
 
 template<class T>
 inline const T & Svector<T>::end() const
 {
-	return cast().end();
+#ifdef SLS_CHECK_BOUNDS
+	if (m_N == 0)
+		SLS_ERR("tring to use end() on empty vector!");
+#endif
+	return m_p[m_N - 1];
 }
 
 template<class T>
 inline T & Svector<T>::end(Long_I i)
 {
-	return cast().end(i);
+#ifdef SLS_CHECK_BOUNDS
+	if (i <= 0 || i > m_N)
+		SLS_ERR("index out of bound");
+#endif
+	return m_p[m_N - i];
 }
 
 template<class T>
 inline const T & Svector<T>::end(Long_I i) const
 {
-	return cast().end(i);
+#ifdef SLS_CHECK_BOUNDS
+	if (i <= 0 || i > m_N)
+		SLS_ERR("index out of bound");
+#endif
+	return m_p[m_N - i];
 }
 
 template <class T>
 inline Svector<T> & Svector<T>::operator=(const Svector<T> &rhs)
 {
-	return cast() = rhs;
+	veccpy(m_p, rhs.ptr(), m_N);
+	return *this;
+}
+
+template <class T> template <class Tv, SLS_IF0(is_dense_vec<Tv>())>
+inline Svector<T> & Svector<T>::operator=(const Tv &rhs)
+{
+	veccpy(m_p, rhs.ptr(), m_N);
+	return *this;
 }
 
 template <class T>
 inline Svector<T> & Svector<T>::operator=(const T &rhs)
 {
-	return cast() = rhs;
-}
-
-template <class T> template <class T1>
-inline Svector<T> & Svector<T>::operator=(const Svector<T1> &rhs)
-{
-	return cast() = rhs;
+	vecset(m_p, rhs, m_N);
+	return *this;
 }
 
 template<class T>
@@ -201,9 +221,6 @@ inline Svector<T>::~Svector()
 template <class T>
 class Scmat : public Svector<T>
 {
-private:
-	Cmat<T> &cast();
-	const Cmat<T> &cast() const;
 public:
 	typedef Svector<T> Base;
 	using Base::value_type;
@@ -216,8 +233,8 @@ public:
 
 	// === Cmat functions ===
 	Scmat & operator=(const Scmat &rhs);	// copy assignment
-	template <class T1>
-	Scmat & operator=(const Scmat<T1> &rhs);
+	template <class Tmat, SLS_IF(is_dense_mat<Tmat>())>
+	Scmat & operator=(const Tmat &rhs);
 	Scmat & operator=(const T &rhs);
 	template <class T1>
 	Scmat & operator=(const MatCoo<T1> &rhs);
@@ -240,26 +257,12 @@ public:
 	~Scmat();
 };
 
-template<class T>
-inline Cmat<T>& Scmat<T>::cast()
-{
-	return *reinterpret_cast<Cmat<T>*>(this);
-}
-
-template<class T>
-inline const Cmat<T>& Scmat<T>::cast() const
-{
-	return *reinterpret_cast<const Cmat<T>*>(this);
-}
-
 template <class T>
-inline Scmat<T>::Scmat()
-{}
+inline Scmat<T>::Scmat() {}
 
 template <class T>
 inline Scmat<T>::Scmat(Long_I Nr, Long_I Nc)
-	: m_Nr(Nr), m_Nc(Nc), Base(Nr*Nc)
-{}
+	: m_Nr(Nr), m_Nc(Nc), Base(Nr*Nc) {}
 
 template <class T>
 inline Scmat<T>::Scmat(const T *ptr, Long_I Nr, Long_I Nc)
@@ -271,43 +274,52 @@ inline Scmat<T>::Scmat(const T *ptr, Long_I Nr, Long_I Nc)
 template <class T>
 inline Scmat<T> & Scmat<T>::operator=(const Scmat<T> &rhs)
 {
-	return cast() = rhs;
+	copy(*this, rhs);
+	return *this;
 }
 
-template <class T> template <class T1>
-inline Scmat<T> & Scmat<T>::operator=(const Scmat<T1> &rhs)
+template <class T> template <class Tmat, SLS_IF0(is_dense_mat<Tmat>())>
+inline Scmat<T> & Scmat<T>::operator=(const Tmat &rhs)
 {
-	return cast() = rhs;
+	copy(*this, rhs);
+	return *this;
 }
 
 template <class T>
 inline Scmat<T> & Scmat<T>::operator=(const T &rhs)
 {
-	return cast() = rhs;
 }
 
 template <class T> template <class T1>
 inline Scmat<T> & Scmat<T>::operator=(const MatCoo<T1> &rhs)
 {
-	return cast() = rhs;
+	return coo2dense(*this, rhs);
 }
 
 template <class T> template <class T1>
 inline Scmat<T> & Scmat<T>::operator=(const MatCooH<T1> &rhs)
 {
-	return cast() = rhs;
+	return cooh2dense(*this, rhs);
 }
 
 template <class T>
 inline T & Scmat<T>::operator()(Long_I i, Long_I j)
 {
-	return cast()(i, j);
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		SLS_ERR("Matrix subscript out of bounds");
+#endif
+	return m_p[i + m_Nr * j];
 }
 
 template <class T>
 inline const T & Scmat<T>::operator()(Long_I i, Long_I j) const
 {
-	return cast()(i, j);
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		SLS_ERR("Matrix subscript out of bounds");
+#endif
+	return m_p[i + m_Nr * j];
 }
 
 template <class T>
