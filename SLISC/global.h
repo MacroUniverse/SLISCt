@@ -124,7 +124,10 @@ template <class T, Long Nr, Long Nc> class FixCmat;
 template <class T> class Mat3d;
 template <class T> class Cmat3d;
 template <class T> class Svector;
+template <class T> class Dvector;
 template <class T> class Scmat;
+template <class T> class Dcmat;
+template <class T> class Scmat3d;
 template <class T> class Diag;
 template <class T> class MatCoo;
 template <class T> class MatCooH;
@@ -312,6 +315,22 @@ typedef Svector<Comp> SvecComp;
 typedef const SvecComp &SvecComp_I;
 typedef SvecComp &SvecComp_O, &SvecComp_IO;
 
+typedef Dvector<Int> DvecInt;
+typedef const DvecInt &DvecInt_I;
+typedef DvecInt &DvecInt_O, &DvecInt_IO;
+
+typedef Dvector<Long> DvecLong;
+typedef const DvecLong &DvecLong_I;
+typedef DvecLong &DvecLong_O, &DvecLong_IO;
+
+typedef Dvector<Doub> DvecDoub;
+typedef const DvecDoub &DvecDoub_I;
+typedef DvecDoub &DvecDoub_O, &DvecDoub_IO;
+
+typedef Dvector<Comp> DvecComp;
+typedef const DvecComp &DvecComp_I;
+typedef DvecComp &DvecComp_O, &DvecComp_IO;
+
 typedef Scmat<Int> ScmatInt;
 typedef const ScmatInt &ScmatInt_I;
 typedef ScmatInt &ScmatInt_O, &ScmatInt_IO;
@@ -327,6 +346,38 @@ typedef ScmatDoub &ScmatDoub_O, &ScmatDoub_IO;
 typedef Scmat<Comp> ScmatComp;
 typedef const ScmatComp &ScmatComp_I;
 typedef ScmatComp &ScmatComp_O, &ScmatComp_IO;
+
+typedef Dcmat<Int> DcmatInt;
+typedef const DcmatInt &DcmatInt_I;
+typedef DcmatInt &DcmatInt_O, &DcmatInt_IO;
+
+typedef Dcmat<Long> DcmatLong;
+typedef const DcmatLong &DcmatLong_I;
+typedef DcmatInt &DcmatLong_O, &DcmatLong_IO;
+
+typedef Dcmat<Doub> DcmatDoub;
+typedef const DcmatDoub &DcmatDoub_I;
+typedef DcmatDoub &DcmatDoub_O, &DcmatDoub_IO;
+
+typedef Dcmat<Comp> DcmatComp;
+typedef const DcmatComp &DcmatComp_I;
+typedef DcmatComp &DcmatComp_O, &DcmatComp_IO;
+
+typedef Scmat3d<Int> Scmat3Int;
+typedef const Scmat3Int &Scmat3Int_I;
+typedef Scmat3Int &Scmat3Int_O, &Scmat3Int_IO;
+
+typedef Scmat3d<Long> Scmat3Long;
+typedef const Scmat3Long &Scmat3Long_I;
+typedef Scmat3Long &Scmat3Long_O, &Scmat3Long_IO;
+
+typedef Scmat3d<Doub> Scmat3Doub;
+typedef const Scmat3Doub &Scmat3Doub_I;
+typedef Scmat3Doub &Scmat3Doub_O, &Scmat3Doub_IO;
+
+typedef Scmat3d<Comp> Scmat3Comp;
+typedef const Scmat3Comp &Scmat3Comp_I;
+typedef Scmat3Comp &Scmat3Comp_O, &Scmat3Comp_IO;
 
 // fixed-size containers
 

@@ -234,6 +234,9 @@ public:
 	void set_size(Long_I Nr, Long_I Nc);
 	void set_ptr(const T *ptr);
 	void set(const T *ptr, Long_I Nr, Long_I Nc);
+	void next(); // m_ptr += m_N
+	void last(); // m_ptr -= m_N
+	void shift(Long_I N); // m_ptr += N;
 	~Scmat();
 };
 
@@ -295,31 +298,31 @@ inline Scmat<T> & Scmat<T>::operator=(const MatCooH<T1> &rhs)
 	return cast() = rhs;
 }
 
-template<class T>
+template <class T>
 inline T & Scmat<T>::operator()(Long_I i, Long_I j)
 {
 	return cast()(i, j);
 }
 
-template<class T>
+template <class T>
 inline const T & Scmat<T>::operator()(Long_I i, Long_I j) const
 {
 	return cast()(i, j);
 }
 
-template<class T>
+template <class T>
 inline Long Scmat<T>::nrows() const
 {
 	return m_Nr;
 }
 
-template<class T>
+template <class T>
 inline Long Scmat<T>::ncols() const
 {
 	return m_Nc;
 }
 
-template<class T>
+template <class T>
 inline void Scmat<T>::set_size(Long_I Nr, Long_I Nc)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -328,49 +331,192 @@ inline void Scmat<T>::set_size(Long_I Nr, Long_I Nc)
 	m_Nr = Nr; m_Nc = Nc; m_N = Nr * Nc;
 }
 
-template<class T>
+template <class T>
 inline void Scmat<T>::set_ptr(const T * ptr)
 {
 	m_p = (T *)ptr;
 }
 
-template<class T>
+template <class T>
 inline void Scmat<T>::set(const T * ptr, Long_I Nr, Long_I Nc)
 {
 	m_p = (T *)ptr;
 	m_Nr = Nr; m_Nc = Nc; m_N = Nr * Nc;
 }
 
-template<class T>
+template <class T>
+inline void Scmat<T>::next()
+{
+	m_p += m_N;
+}
+
+template <class T>
+inline void Scmat<T>::last()
+{
+	m_p -= m_N;
+}
+
+template <class T>
+inline void Scmat<T>::shift(Long_I N)
+{
+	m_p += N;
+}
+
+template <class T>
 inline Scmat<T>::~Scmat() {}
 
+template <class T>
+class Dcmat
+{
+private:
+	T *m_p;
+	Long m_N;
+	Long m_Nr, m_Nc;
+	Long m_lda;
+public:
+	Dcmat();
+	Dcmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda);
+	void set(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda);
+
+	// === Cmat member functions ===
+	//Cmat & operator=(const Cmat &rhs);	// copy assignment
+	//template <class Tmat, SLS_IF(is_dense_mat<Tmat>())>
+	//Cmat & operator=(const Tmat &rhs);
+	//Cmat & operator=(const T &rhs);
+	//template <class T1>
+	//Cmat & operator=(const MatCoo<T1> &rhs);
+	//template <class T1>
+	//Cmat & operator=(const MatCooH<T1> &rhs);
+	T& operator()(Long_I i, Long_I j);	// double indexing
+	const T& operator()(Long_I i, Long_I j) const;
+	Long nrows() const;
+	Long ncols() const;
+	Long lda() const;
+};
+
+template <class T>
+Dcmat<T>::Dcmat() {}
+
+template <class T>
+Dcmat<T>::Dcmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda)
+	: m_p(ptr), m_Nr(Nr), m_Nc(Nc), m_lda(lda)
+{}
+
+template <class T>
+void Dcmat<T>::set(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda)
+{
+	m_p = ptr; m_Nr = Nr; m_Nc = Nc; m_lda = lda;
+}
+
+template <class T>
+inline T & Dcmat<T>::operator()(Long_I i, Long_I j)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		SLS_ERR("Matrix subscript out of bounds");
+#endif
+	return m_p[i + m_lda * j];
+}
+
+template <class T>
+inline const T & Dcmat<T>::operator()(Long_I i, Long_I j) const
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		SLS_ERR("Matrix subscript out of bounds");
+#endif
+	return m_p[i + m_lda * j];
+}
+
+template <class T>
+inline Long Dcmat<T>::nrows() const
+{
+	return m_Nr;
+}
+
+template <class T>
+inline Long Dcmat<T>::ncols() const
+{
+	return m_Nc;
+}
+
+template <class T>
+inline Long Dcmat<T>::lda() const
+{
+	return m_lda;
+}
 
 // === arithmetics ===
 
 // slice a row from a matrix
 template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat<Tmat>() && major<Tmat>() == 'r')>
-inline Svector<T> slice_row(const Tmat &a, Long_I row)
+inline void slice_row(Svector<T> &slice, const Tmat &a, Long_I row)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (row < 0 || row >= a.nrows())
 		SLS_ERR("out of bound!");
 #endif
 	Long Nc = a.ncols();
-	return Svector<T>(a.ptr() + row * Nc, Nc);
+	slice.set(a.ptr() + row * Nc, Nc);
+}
+
+// note that `slice1 = slice2` will copy data instead of copying slice object
+template <class Tmat, class T = contain_type<Tmat>,
+	SLS_IF(is_dense_mat<Tmat>() && major<Tmat>() == 'r')>
+inline Svector<T> slice_row(const Tmat &a, Long_I row)
+{
+	Svector<T> slice;
+	slice_row(slice, a, row);
+	return slice;
 }
 
 // slice a col from a matrix
 template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat<Tmat>() && major<Tmat>() == 'c')>
-	inline Svector<T> slice_col(const Tmat &a, Long_I col)
+inline void slice_col(Svector<T> &slice, const Tmat &a, Long_I col)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (col < 0 || col >= a.ncols())
 		SLS_ERR("out of bound!");
 #endif
 	Long Nr = a.nrows();
-	return Svector<T>(a.ptr() + col * Nr, Nr);
+	slice.set(a.ptr() + col * Nr, Nr);
+}
+
+// note that `slice1 = slice2` will copy data instead of copying slice object
+template <class Tmat, class T = contain_type<Tmat>,
+	SLS_IF(is_dense_mat<Tmat>() && major<Tmat>() == 'c')>
+inline Svector<T> slice_col(const Tmat &a, Long_I col)
+{
+	Svector<T> slice;
+	slice_col(slice, a, col);
+	return slice;
+}
+
+// slice a Dmat from a mat
+// only works for column major for now
+template <class Tsmat, class Tmat, SLS_IF(
+	is_slice_mat<Tsmat>() && major<Tsmat>() == 'c' &&
+	is_dense_mat<Tmat>() && major<Tmat>() == 'c')>
+inline void slice_mat(Tsmat &slice, const Tmat &a,
+	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
+{
+	Tsmat slice_mat(&a(i, j), Nr, Nc, a.nrows());
+}
+
+// slice a3(:,:,i3)
+// only supports Cmat<> and Cmat3<> for now
+template <class Tmat, class Tmat3, SLS_IF(
+	is_same<contain_type<Tmat>, contain_type<Tmat3>>() &&
+	is_Scmat<Tmat>() && is_Cmat3d<Tmat3>())>
+inline void slice_mat12(Tmat &a, const Tmat3 &a3, Long_I i3)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i3 < 0 || i3 >= a.dim3())
+		SLS_ERR("out of bound!");
+#endif
+	a.set(a.ptr(), a.dim1(), a.dim2());
 }
 
 } // namespace slisc
