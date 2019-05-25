@@ -1,7 +1,7 @@
 #include "../SLISC/disp.h"
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/time.h"
-#include "../SLISC/slice.h"
+#include "../SLISC/slice_arith.h"
 
 void test_disp()
 {

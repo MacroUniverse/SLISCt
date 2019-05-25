@@ -1,4 +1,4 @@
-#include "../SLISC/slice.h"
+#include "../SLISC/slice_arith.h"
 #include "../SLISC/disp.h"
 
 void test_slice()

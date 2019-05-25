@@ -48,12 +48,8 @@ template <class T>
 inline Dvector<T>::Dvector() {}
 
 template <class T>
-inline Dvector<T>::Dvector(Long_I N, Long_I step)
-	: m_N(N), m_step(step) {}
-
-template <class T>
-inline Dvector<T>::Dvector(const T *ptr, Long_I N)
-	: m_p((T *)ptr), m_N(N) {}
+inline Dvector<T>::Dvector(const T *ptr, Long_I N, Long_I step)
+	: m_p((T *)ptr), m_N(N), m_step(step) {}
 
 template<class T>
 inline T * Dvector<T>::ptr()
@@ -108,7 +104,7 @@ inline T & Dvector<T>::end()
 	if (m_N == 0)
 		SLS_ERR("tring to use end() on empty vector!");
 #endif
-	return m_p[step*m_N - 1];
+	return m_p[m_step*m_N - 1];
 }
 
 template<class T>
@@ -118,7 +114,7 @@ inline const T & Dvector<T>::end() const
 	if (m_N == 0)
 		SLS_ERR("tring to use end() on empty vector!");
 #endif
-	return m_p[step*m_N - 1];
+	return m_p[m_step*m_N - 1];
 }
 
 template<class T>
