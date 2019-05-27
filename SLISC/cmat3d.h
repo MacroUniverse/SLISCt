@@ -10,7 +10,6 @@ class Cmat3d : public Vbase<T>
 {
 private:
 	typedef Vbase<T> Base;
-	typedef T value_type;
 	using Base::m_p;
 	using Base::m_N;
 	Long m_N1;
@@ -18,6 +17,7 @@ private:
 	Long m_N3;
 	Cmat3d(); // default constructor: uninitialized
 public:
+	typedef T value_type;
 	using Base::operator();
 	using Base::ptr;
 	using Base::operator=;

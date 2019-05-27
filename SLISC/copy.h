@@ -5,36 +5,104 @@
 #include "meta.h"
 
 namespace slisc {
-// memory set and copy
+//  === pointer interface ===
+
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
-inline void vecset(T *dest, const T1 &val, Long_I n)
+inline void vecset(T *v, const T1 &val, Long_I n)
 {
 	T val0 = (T)val;
-	for (T *p = dest; p < dest + n; ++p)
+	for (T *p = v; p < v + n; ++p)
 		*p = val0;
 }
 
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
-inline void vecset(T *dest, const T1 &val, Long_I n, Long_I step)
+inline void vecset(T *v, const T1 &val, Long_I n, Long_I step)
 {
 	T val0 = (T)val;
-	for (T *p = dest; p < dest + n*step; p += step)
+	for (T *p = v; p < v + n*step; p += step)
 		*p = val0;
 }
 
 template<class T>
-inline void veccpy(T *dest, const T *src, Long_I n)
+inline void veccpy(T *v, const T *v1, Long_I n)
 {
-	memcpy(dest, src, n * sizeof(T));
+	memcpy(v, v1, n * sizeof(T));
 }
 
 template<class T, class T1, SLS_IF(is_promo<T,T1>())>
-inline void veccpy(T *dest, const T1 *src, Long_I n)
+inline void veccpy(T *v, const T1 *v1, Long_I n)
 {
 	for (Long i = 0; i < n; ++i)
-		dest[i] = src[i];
+		v[i] = v1[i];
 }
 
+template<class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void veccpy(T *v, const T1 *v1, Long_I step1, Long_I n)
+{
+	const T1 *p1 = v1;
+	for (T *p = v; p < v + n; ++p) {
+		*p = *p1;
+		p1 += step1;
+	}
+}
+
+template<class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void veccpy(T *v, Long_I step, const T1 *v1, Long_I n)
+{
+	T1 *p1 = v1;
+	for (T *p = v; p < v + n*step; p += step) {
+		*p = *p1;
+		++p1;
+	}
+}
+
+template<class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void veccpy(T *v, Long_I step, const T1 *v1, Long_I step1, Long_I n)
+{
+	T1 *p1 = v1;
+	for (T *p = v; p < v + n*step; p += step) {
+		*p = *p1;
+		p1 += step1;
+	}
+}
+
+template<class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void matcpy(T *v, Long_I lda, const T1 *v1, Long_I lda1, Long_I Nr, Long_I Nc)
+{
+	T *p = v, *p1 = v1;
+	for (Long j = 0; j < Nr; ++j) {
+		veccpy(p, p1, Nc);
+		p += lda; p1 += lda1;
+	}
+}
+
+// copy matrix with different majors
+// N1 is the leading dimension of `v`
+// leading dimension is equal to the number of elements in major dimension
+
+// equivalent to the following code
+
+//for (j = 0; j < N1; ++j)
+//	for (i = 0; i < N2; ++i)
+//		v[j + N1 * i] = v1[j * N2 + i];
+
+template<class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void matcpy_2_major(T *a, const T1 *a1, Long_I N1, Long_I N2)
+{
+	Long k1 = 0;
+	for (Long i2 = 0; i2 < N2; ++i2) {
+		Long k = i2;
+		for (Long i1 = 0; i1 < N1; ++i1) {
+			a[k] = a1[k1];
+			k += N1; ++k1;
+		}
+	}
+}
+
+// === container interface ===
+// must use pointer version
+
+// contiguous copy
 template <class T, class T1, SLS_IF(
 	is_dense_vec<T>() && is_dense_vec<T1>() ||
 	is_dense<T>() && is_dense<T1>() &&
@@ -48,80 +116,7 @@ inline void copy(T &v, const T1 &v1)
 	veccpy(v.ptr(), v1.ptr(), v.size());
 }
 
-// copy from row-major to col-major
-template <class T, class T1, SLS_IF(
-	is_dense_mat<T>() && is_dense_mat<T1>() &&
-	is_cmajor<T>() && is_rmajor<T1>())>
-inline void copy(T &a, const T1 &a1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(a, a1))
-		SLS_ERR("wrong shape!");
-#endif
-	Long Nr = a.nrows(), Nc = a.ncols(), k1 = 0;
-	for (Long i = 0; i < Nr; ++i) {
-		Long k = i;
-		for (Long j = 0; j < Nc; ++j) {
-			a[k] = a1[k1];
-			k += Nc; ++k1;
-		}
-	}
-}
-
-// copy from col-major to row-major
-template <class T, class T1, SLS_IF(
-	is_dense_mat<T>() && is_dense_mat<T1>() &&
-	is_rmajor<T>() && is_cmajor<T1>())>
-inline void copy(T &a, const T1 &a1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(a, a1))
-		SLS_ERR("wrong shape!");
-#endif
-	Long Nr = a.nrows(), Nc = a.ncols(), k1 = 0;
-	for (Long j = 0; j < Nc; ++j) {
-		Long k = j;
-		for (Long i = 0; i < Nr; ++i) {
-			a[k] = a1[k1];
-			k += Nr; ++k1;
-		}
-	}
-}
-
-template <class T, class T1, SLS_IF(
-	is_Dmat<T>() && is_Dmat<T1>())>
-inline void copy(T &a, const T1 &a1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(a, a1))
-		SLS_ERR("wrong shape!");
-#endif
-	T *p = a.ptr(), *p1 = a1.ptr();
-	Long lda = a.lda(), lda1 = a1.lda();
-	Long Nr = a.nrows(), Nc = a.ncols();
-	for (Long j = 0; j < Nr; ++j) {
-		veccpy(p, p1, Nc);
-		p += lda; p1 += lda1;
-	}
-}
-
-template <class T, class T1, SLS_IF(
-	is_Dcmat<T>() && is_Dcmat<T1>())>
-inline void copy(T &a, const T1 &a1)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (!shape_cmp(a, a1))
-		SLS_ERR("wrong shape!");
-#endif
-	T *p = a.ptr(), *p1 = a1.ptr();
-	Long lda = a.lda(), lda1 = a1.lda();
-	Long Nr = a.nrows(), Nc = a.ncols();
-	for (Long j = 0; j < Nc; ++j) {
-		veccpy(p, p1, Nr);
-		p += lda; p1 += lda1;
-	}
-}
-
+// from Dvector<> to Dvector<>
 template <class T, class T1, SLS_IF(
 	is_Dvector<T>() && is_Dvector<T1>() &&
 	is_promo<contain_type<T>, contain_type<T1>>())>
@@ -131,15 +126,10 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	T *p_end = &v.end();
-	T1 *p1 = v1.ptr();
-	Long step = v.step(), step1 = v1.step();
-	for (T *p = v.ptr(); p <= p_end; p += step) {
-		*p = *p1;
-		p1 += step1;
-	}
+	veccpy(v.ptr(), v.step(), v1.ptr(), v1.step(), v.size());
 }
 
+// from dense vector to Dvector<>
 template <class T, class T1, SLS_IF(
 	is_dense_vec<T>() && is_Dvector<T1>() &&
 	is_promo<contain_type<T>, contain_type<T1>>())>
@@ -149,15 +139,10 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	auto *p_end = &v.end();
-	auto *p1 = v1.ptr();
-	Long step1 = v1.step();
-	for (auto p = v.ptr(); p <= p_end; ++p) {
-		*p = *p1;
-		p1 += step1;
-	}
+	veccpy(v.ptr(), v1.ptr(), v1.step(), v1.size());
 }
 
+// from Dvector<> to dense vector
 template <class T, class T1, SLS_IF(
 	is_Dvector<T>() && is_dense_vec<T1>() &&
 	is_promo<contain_type<T>, contain_type<T1>>())>
@@ -167,13 +152,36 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	T *p1_end = &v1.end();
-	T1 *p = v.ptr();
-	Long step = v.step();
-	for (T *p1 = v1.ptr(); p1 <= p1_end; ++p1) {
-		*p = *p1;
-		p += step;
-	}
+	veccpy(v.ptr(), v.step(), v1.ptr(), v1.size());
 }
 
+// copy dense matrix with different major
+template <class T, class T1, SLS_IF(
+	is_dense_mat<T>() && is_dense_mat<T1>() &&
+	is_diff_major<T, T1>())>
+inline void copy(T &a, const T1 &a1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(a, a1))
+		SLS_ERR("wrong shape!");
+#endif
+	if constexpr (is_cmajor<T>())
+		matcpy_2_major(a.ptr(), a1.ptr(), a.ncols(), a.nrows());
+	else
+		matcpy_2_major(a.ptr(), a1.ptr(), a.nrows(), a.ncols());
+}
+
+// from Dmat<> to Dmat<>
+// from cDmat<> to Dcmat<>
+template <class T, class T1, SLS_IF(
+	is_Dmat<T>() && is_Dmat<T1>() ||
+	is_Dcmat<T>() && is_Dcmat<T1>())>
+inline void copy(T &a, const T1 &a1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(a, a1))
+		SLS_ERR("wrong shape!");
+#endif
+	matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.nrows(), a.ncols());
+}
 } // namespace slisc

@@ -10,7 +10,7 @@ private:
 	T *m_p;
 	Long m_N;
 	Long m_Nr, m_Nc;
-	Long m_lda;
+	Long m_lda; // leading dimension (here is m_Nr of host matrix)
 public:
 	Dcmat();
 	Dcmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda);
