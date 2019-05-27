@@ -20,47 +20,103 @@ private:
 public:
 	using Base::operator();
 	using Base::operator=;
-	Diag(Long_I N) : Base(N) {}
-	Diag(Long_I N, const T &s) : Base(N, s) {}
-	Diag(Long_I Nr, Long_I Nc) : Base(Nr)
-	{
-#ifdef SLS_CHECK_SHAPE
-		if (Nr != Nc) SLS_ERR("must be a square matrix!");
-#endif
-	}
-	Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
-	{ *this = s; }
-	Diag(const Vector<T> &v) : Base(v.size())
-	{
-		*this = v;
-	}
-	Long size() const
-	{
-		SLS_ERR("use nnz() instead!");
-	}
-	Long nnz() const { return Base::size(); }
-	Long nrows() const { return Base::size(); }
-	Long ncols() const { return Base::size(); }
-	Diag &operator=(const Diag &rhs)
-	{ Base::operator=(rhs); return *this; }
-	Diag &operator=(const Vector<T> &rhs)
-	{ Base::operator=(rhs); return *this; }
-	T &operator()(Long_I i, Long_I j)
-	{
-		if (i == j) return (*this)[i];
-		return T();
-	}
-	const T &operator()(Long_I i, Long_I j) const
-	{
-		if (i == j) return (*this)[i];
-		return T();
-	}
+	Diag(Long_I N);
+	Diag(Long_I N, const T &s);
+	Diag(Long_I Nr, Long_I Nc);
+	Diag(Long_I Nr, Long_I Nc, const T &s);
+	Diag(const Vector<T> &v);
+	Long size() const;
+	Long nnz() const;
+	Long nrows() const;
+	Long ncols() const;
+	Diag &operator=(const Diag &rhs);
+	Diag &operator=(const Vector<T> &rhs);
+	T &operator()(Long_I i, Long_I j);
+	const T &operator()(Long_I i, Long_I j) const;
 };
+
+template <class T>
+Diag<T>::Diag(Long_I N) : Base(N) {}
+
+template <class T>
+Diag<T>::Diag(Long_I N, const T &s) : Base(N, s) {}
+
+template <class T>
+Diag<T>::Diag(Long_I Nr, Long_I Nc) : Base(Nr)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (Nr != Nc) SLS_ERR("must be a square matrix!");
+#endif
+}
+
+template <class T>
+Diag<T>::Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
+{
+	*this = s;
+}
+
+template <class T>
+Diag<T>::Diag(const Vector<T> &v) : Base(v.size())
+{
+	*this = v;
+}
+
+template <class T>
+Long Diag<T>::size() const
+{
+	SLS_ERR("use nnz() instead!");
+}
+
+template <class T>
+Long Diag<T>::nnz() const
+{
+	return Base::size();
+}
+
+template <class T>
+Long Diag<T>::nrows() const
+{
+	return Base::size();
+}
+
+template <class T>
+Long Diag<T>::ncols() const
+{
+	return Base::size();
+}
+
+template <class T>
+Diag<T> &Diag<T>::operator=(const Diag &rhs)
+{
+	Base::operator=(rhs); return *this;
+}
+
+template <class T>
+Diag<T> &Diag<T>::operator=(const Vector<T> &rhs)
+{
+	Base::operator=(rhs); return *this;
+}
+
+template <class T>
+T &Diag<T>::operator()(Long_I i, Long_I j)
+{
+	if (i == j) return (*this)[i];
+	return T();
+}
+
+template <class T>
+const T &Diag<T>::operator()(Long_I i, Long_I j) const
+{
+	if (i == j) return (*this)[i];
+	return T();
+}
 
 // convert vector to diagonal matrix
 template <class T>
 const Diag<T> &diag(const Vector<T> &v)
-{ return (Diag<T>&)v; }
+{
+	return (Diag<T>&)v;
+}
 
 // COO sparse matrix
 template <class T>
@@ -72,50 +128,56 @@ private:
 	using Base::m_N;
 	Long m_Nr, m_Nc, m_Nnz;
 	VecLong m_row, m_col;
-	T m_zero; // TODO: this could be static inline variable for c++17
-	MatCoo() : m_zero(T()) {} // default constructor: uninitialized
+	static inline T m_zero = (T)0; // TODO: this could be static inline variable for c++17
+	MatCoo() {} // default constructor: uninitialized
 public:
 	using Base::ptr;
-	MatCoo(Long_I Nr, Long_I Nc) : m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_zero(T()), m_row(0), m_col(0)
-	{ m_N = 0; }
-	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz):
-		Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz), m_zero(T()) {}
+	MatCoo(Long_I Nr, Long_I Nc);
+	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz);
 	MatCoo(const MatCoo &rhs);		// Copy constructor
-	const Long *row_ptr() const { return m_row.ptr(); }
-	const Long *col_ptr() const { return m_col.ptr(); }
+	const Long *row_ptr() const;
+	const Long *col_ptr() const;
 	MatCoo & operator=(const MatCoo &rhs);
 	template <class T1>
 	MatCoo & operator=(const MatCoo<T1> &rhs);	// copy assignment (do resize(rhs))
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
-	T& ref(Long_I i, Long_I j);	// reference to an element
-	const T& operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
-	Long nrows() const { return m_Nr; }
-	Long ncols() const { return m_Nc; }
-	Long size() const {
-		SLS_ERR("use nnz() or capacity() instead!");
-	}
-	Long nnz() const { return m_Nnz; } // return number of non-zero elements
-	Long capacity() const { return Base::size(); }
+	Long nrows() const;
+	Long ncols() const;
+	Long size() const; // forbidden
+	Long nnz() const; // return number of non-zero elements
+	Long capacity() const;
+	// get single index using double index, return -1 if not found
+	Long find(Long_I i, Long_I j) const;
+	// reference to an element (element must exist)
+	T& ref(Long_I i, Long_I j);
+	// double indexing (element need not exist)
+	const T& operator()(Long_I i, Long_I j) const;
 	T &operator()(Long_I ind); // return element
 	const T &operator()(Long_I ind) const;
 	Long row(Long_I ind) const; // row index
 	Long col(Long_I ind) const; // column index
 	void trim(Long_I Nnz); // decrease m_Nnz to Nnz
-	void resize(Long_I N)
-	{
-		SLS_ERR("use reserve instead!");
-	}
-	void reserve(Long_I N) // reallocate memory, data will be lost
-	{ Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0; }
-	void reshape(Long_I Nr, Long_I Nc) // change matrix shape
-	{ m_Nr = Nr; m_Nc = Nc; }
+	void resize(Long_I N); // forbidden
+	void reserve(Long_I N); // reallocate memory, data will be lost
+	void reshape(Long_I Nr, Long_I Nc); // change matrix shape
 	template <class T1>
 	void reserve(const MatCoo<T1> &a);
 	template <class T1>
 	void reshape(const MatCoo<T1> &a);
 };
+
+template <class T>
+MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc)
+	: m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(0), m_col(0)
+{
+	m_N = 0;
+}
+
+template <class T>
+MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz) :
+	Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz) {}
 
 template <class T>
 MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
@@ -125,13 +187,25 @@ MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
 }
 
 template <class T>
-inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
+const Long *MatCoo<T>::row_ptr() const
+{
+	return m_row.ptr();
+}
+
+template <class T>
+const Long *MatCoo<T>::col_ptr() const
+{
+	return m_col.ptr();
+}
+
+template <class T>
+MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
 {
 	return operator=<T>(rhs);
 }
 
 template <class T> template <class T1>
-inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
+MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
 	if ((void*)this == (void*)&rhs) SLS_ERR("self assignment is forbidden!");
 	reshape(rhs); reserve(rhs);
@@ -145,38 +219,43 @@ inline MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 }
 
 template <class T>
-inline T& MatCoo<T>::ref(Long_I i, Long_I j)
+Long MatCoo<T>::find(Long_I i, Long_I j) const
 {
-#ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
-		SLS_ERR("MatCoo::operator()(i,j): index out of bounds!");
-#endif
-	Long n;
-	for (n = 0; n < m_Nnz; ++n) {
+	for (Long n = 0; n < m_Nnz; ++n) {
 		if (row(n) == i && col(n) == j)
-			return m_p[n];
+			return n;
 	}
-	SLS_ERR("MatCoo::operator()(i,j): element does not exist!");
-	return m_p[0];
+	return -1;
 }
 
 template <class T>
-inline const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
+T& MatCoo<T>::ref(Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
 		SLS_ERR("MatCoo::operator()(i,j): index out of bounds!");
 #endif
-	Long n;
-	for (n = 0; n < m_Nnz; ++n)
-		if (row(n) == i && col(n) == j)
-			return m_p[n];
-	// never return a (const) reference to a temporary
-	return m_zero;
+	Long n = find(i, j);
+	if (n < 0)
+		SLS_ERR("MatCoo::operator()(i,j): element does not exist!");
+	return m_p[n];
 }
 
 template <class T>
-inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
+const T &MatCoo<T>::operator()(Long_I i, Long_I j) const
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_Nr || j < 0 || j >= m_Nc)
+		SLS_ERR("MatCoo::operator()(i,j): index out of bounds!");
+#endif
+	Long n = find(i, j);
+	if (n < 0)
+		return m_zero; // never return a (const) reference to a temporary
+	return m_p[n];
+}
+
+template <class T>
+void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i<0 || i>=m_Nr || j<0 || j>=m_Nc)
@@ -195,7 +274,7 @@ inline void MatCoo<T>::push(const T &s, Long_I i, Long_I j)
 }
 
 template <class T>
-inline void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
+void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
 {
 	Long n;
 	// change
@@ -211,7 +290,37 @@ inline void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
 }
 
 template <class T>
-inline T & MatCoo<T>::operator()(Long_I ind)
+Long MatCoo<T>::nrows() const
+{
+	return m_Nr;
+}
+
+template <class T>
+Long MatCoo<T>::ncols() const
+{
+	return m_Nc;
+}
+
+template <class T>
+Long MatCoo<T>::size() const
+{
+	SLS_ERR("use nnz() or capacity() instead!");
+}
+
+template <class T>
+Long MatCoo<T>::nnz() const
+{
+	return m_Nnz;
+}
+
+template <class T>
+Long MatCoo<T>::capacity() const
+{
+	return Base::size();
+}
+
+template <class T>
+T & MatCoo<T>::operator()(Long_I ind)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
@@ -221,7 +330,7 @@ inline T & MatCoo<T>::operator()(Long_I ind)
 }
 
 template <class T>
-inline const T & MatCoo<T>::operator()(Long_I ind) const
+const T & MatCoo<T>::operator()(Long_I ind) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
@@ -231,7 +340,7 @@ inline const T & MatCoo<T>::operator()(Long_I ind) const
 }
 
 template <class T>
-inline Long MatCoo<T>::row(Long_I ind) const
+Long MatCoo<T>::row(Long_I ind) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind<0 || ind>=m_Nnz)
@@ -241,7 +350,7 @@ inline Long MatCoo<T>::row(Long_I ind) const
 }
 
 template <class T>
-inline Long MatCoo<T>::col(Long_I ind) const
+Long MatCoo<T>::col(Long_I ind) const
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (ind < 0 || ind >= m_Nnz)
@@ -251,7 +360,7 @@ inline Long MatCoo<T>::col(Long_I ind) const
 }
 
 template <class T>
-inline void MatCoo<T>::trim(Long_I Nnz)
+void MatCoo<T>::trim(Long_I Nnz)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (Nnz < 0)
@@ -262,15 +371,33 @@ inline void MatCoo<T>::trim(Long_I Nnz)
 }
 
 template <class T>
+void MatCoo<T>::resize(Long_I N)
+{
+	SLS_ERR("use reserve instead!");
+}
+
+template <class T>
+void MatCoo<T>::reserve(Long_I N)
+{
+	Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0;
+}
+
+template <class T>
+void MatCoo<T>::reshape(Long_I Nr, Long_I Nc)
+{
+	m_Nr = Nr; m_Nc = Nc;
+}
+
+template <class T>
 template <class T1>
-inline void MatCoo<T>::reshape(const MatCoo<T1> &a)
+void MatCoo<T>::reshape(const MatCoo<T1> &a)
 {
 	reshape(a.nrows(), a.ncols());
 }
 
 template <class T>
 template <class T1>
-inline void MatCoo<T>::reserve(const MatCoo<T1> &a)
+void MatCoo<T>::reserve(const MatCoo<T1> &a)
 {
 	reserve(a.capacity());
 }
@@ -292,18 +419,11 @@ public:
 	const T operator()(Long_I i, Long_I j) const; // double indexing (element need not exist)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
-	void reshape(Long_I Nr, Long_I Nc)
-	{
-#ifdef SLS_CHECK_SHAPE
-		if (Nr != Nc) SLS_ERR("must be a square matrix!");
-#endif
-		Base::reshape(Nr, Nc);
-	} // change matrix shape
+	void reshape(Long_I Nr, Long_I Nc); // change matrix shape
 	template <class T1>
 	void reshape(const MatCoo<T1> &a);
 	template <class T1>
-	MatCooH &operator=(const MatCooH<T1> &rhs)
-	{ Base(*this) = Base(rhs); }
+	MatCooH &operator=(const MatCooH<T1> &rhs);
 };
 
 template <class T>
@@ -324,7 +444,7 @@ MatCooH<T>::MatCooH(Long_I Nr, Long_I Nc, Long_I Nnz) : Base(Nr, Nc, Nnz)
 
 // cannot return a const reference since conj() might create a temporary
 template <class T>
-inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
+const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 {
 	if (i > j) {
 		if constexpr (is_comp<T>())
@@ -337,7 +457,7 @@ inline const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T>
-inline T &MatCooH<T>::ref(Long_I i, Long_I j)
+T &MatCooH<T>::ref(Long_I i, Long_I j)
 {
 	if (i > j)
 		SLS_ERR("lower triangle is empty!");
@@ -363,6 +483,15 @@ void MatCooH<T>::set(const T &s, Long_I i, Long_I j)
 		Base::set(s, i, j);
 }
 
+template <class T>
+void MatCooH<T>::reshape(Long_I Nr, Long_I Nc)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (Nr != Nc) SLS_ERR("must be a square matrix!");
+#endif
+	Base::reshape(Nr, Nc);
+}
+
 template <class T> template <class T1>
 void MatCooH<T>::reshape(const MatCoo<T1> &a)
 {
@@ -371,6 +500,12 @@ void MatCooH<T>::reshape(const MatCoo<T1> &a)
 		SLS_ERR("a is not square matrix!");
 #endif
 	reshape(a.nrows());
+}
+
+template <class T> template <class T1>
+MatCooH<T> &MatCooH<T>::operator=(const MatCooH<T1> &rhs)
+{
+	Base(*this) = Base(rhs);
 }
 
 } // namespace slisc
