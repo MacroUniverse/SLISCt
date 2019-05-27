@@ -1,7 +1,7 @@
 // evaluate (radial) coulomb wavefunctions and their derivatives
 // Note that F, dF could be calculated simultaneously with no extra cost
 // TODO : implement G, dG
-
+#pragma once
 #include "slisc.h"
 #include "cwfcomp/cwfcomp.h"
 

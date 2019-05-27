@@ -26,10 +26,16 @@ template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
 template<class T, SLS_IF(is_floating_point<T>())>
-constexpr const T ABS2(const T &a) { return a * a; }
+constexpr const T ABS2(const T &a)
+{
+	return a * a;
+}
 
 template<class T, SLS_IF(is_comp<T>())>
-constexpr const rm_comp<T> ABS2(const T &a) { return SQR(real(a)) + SQR(imag(a)); }
+constexpr const rm_comp<T> ABS2(const T &a)
+{
+	return SQR(real(a)) + SQR(imag(a));
+}
 
 constexpr Float SIGN(Float_I s)
 { return s > 0.f ? 1.f : (s < 0.f ? -1.f : 0.f); }

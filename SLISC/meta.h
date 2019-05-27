@@ -325,7 +325,7 @@ template <class T> struct is_Scmat3d_imp<Scmat3d<T>> : integral_constant<Bool, i
 template<class T>
 constexpr Bool is_Scmat3d()
 {
-	return is_Scmat_imp<T>();
+	return is_Scmat3d_imp<T>();
 }
 
 template <class T> constexpr Bool is_dense_vec()
@@ -428,7 +428,11 @@ constexpr Int contain_num()
 	else if (is_MatCooH<T>()) return 33;
 
 	else if (is_Svector<T>()) return 40;
-	// TODO: Scmat return ?
+	else if (is_Dvector<T>()) return 41;
+	else if (is_Smat<T>()) return 42;
+	else if (is_Scmat<T>()) return 43;
+	else if (is_Dmat<T>()) return 44;
+	else if (is_Dcmat<T>()) return 45;
 
 	return -1;
 }
@@ -445,23 +449,51 @@ template <class T, SLS_IF(!is_contain<T>())>
 constexpr T contain_type_fun() { return T(); };
 
 template <class T>
-constexpr Char major()
+constexpr Bool is_cmajor()
 {
-	if (is_Cmat<T>() || is_FixCmat<T>() || is_Cmat3d<T>())
-		return 'c';
-	else if (is_Matrix<T>() || is_Mat3d<T>())
-		return 'r';
-	else {
-		cout << contain_num<T>() << endl;
-		SLS_ERR("unknown!");
-		return 'e';
-	}
+	if (is_Cmat<T>() || is_FixCmat<T>() || is_Cmat3d<T>() ||
+		is_Scmat<T>() || is_Dcmat<T>())
+		return true;
+	else
+		return false;
+}
+
+template <class T>
+constexpr Bool is_rmajor()
+{
+	if (is_Matrix<T>() || is_Mat3d<T>() ||
+		is_Smat<T>() || is_Dmat<T>())
+		return true;
+	else
+		return false;
+}
+
+template <class T, class U>
+constexpr Bool is_same_major()
+{
+	if (is_cmajor<T>() && is_cmajor<U>())
+		return true;
+	else if (is_rmajor<T>() && is_rmajor<U>())
+		return true;
+	else
+		return false;
+}
+
+template <class T, class U>
+constexpr Bool is_diff_major()
+{
+	if (is_cmajor<T>() && is_rmajor<U>())
+		return true;
+	else if (is_rmajor<T>() && is_cmajor<U>())
+		return true;
+	else
+		return false;
 }
 
 template <class T>
 constexpr Int ndims()
 {
-	if (is_dense_vec<T>() || is_FixVec<T>() || is_Svector<T>())
+	if (is_dense_vec<T>() || is_FixVec<T>() || is_Svector<T>() || is_Dvector<T>())
 		return 1;
 	else if (is_dense_mat<T>() || is_sparse_mat<T>() || is_Scmat<T>())
 		return 2;
@@ -504,6 +536,11 @@ template <class T> constexpr Bool is_comp_contain()
 template <class T1, class T2> constexpr Bool is_same_contain()
 {
 	return is_contain<T1>() && contain_num<T1>() == contain_num<T2>();
+}
+
+template <class T1, class T2> constexpr Bool is_same_contain_type()
+{
+	return is_same<contain_type<T1>, contain_type<T1>>();
 }
 
 // for Tc = complex<Tr>

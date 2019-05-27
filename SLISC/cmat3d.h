@@ -10,6 +10,7 @@ class Cmat3d : public Vbase<T>
 {
 private:
 	typedef Vbase<T> Base;
+	typedef T value_type;
 	using Base::m_p;
 	using Base::m_N;
 	Long m_N1;
@@ -72,7 +73,7 @@ inline Cmat3d<T> & Cmat3d<T>::operator=(const Cmat3d<T1> &rhs)
 	if (m_N1 != rhs.dim1() || m_N2 != rhs.dim2() || m_N3 != rhs.dim3())
 		SLS_ERR("wrong shape!");
 #endif
-	Base::operator=(rhs);
+	copy(*this, rhs);
 	return *this;
 }
 

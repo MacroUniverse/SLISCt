@@ -9,7 +9,7 @@ class Scmat : public Svector<T>
 {
 public:
 	typedef Svector<T> Base;
-	using Base::value_type;
+	typedef T value_type;
 	using Base::m_p;
 	using Base::m_N;
 	Long m_Nr, m_Nc;
@@ -74,6 +74,7 @@ inline Scmat<T> & Scmat<T>::operator=(const Tmat &rhs)
 template <class T>
 inline Scmat<T> & Scmat<T>::operator=(const T &rhs)
 {
+	vecset(m_p, rhs, m_N);
 }
 
 template <class T> template <class T1>

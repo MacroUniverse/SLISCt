@@ -18,6 +18,7 @@ public:
 	T* ptr(); // get pointer
 	const T* ptr() const;
 	Long size() const;
+	Long step() const;
 	// resize() is a bad idea, don't try to create it!
 	T & operator[](Long_I i);
 	const T & operator[](Long_I i) const;
@@ -36,7 +37,7 @@ public:
 	// There is no bound checking, use with care
 	void set_size(Long_I N);
 	void set_ptr(const T *ptr);
-	void set(const T *ptr, Long_I N);
+	void set(const T *ptr, Long_I N, Long_I step);
 	void next(); // m_ptr += m_N
 	void last(); // m_ptr -= m_N
 	void shift(Long_I N); // m_ptr += N;
@@ -78,6 +79,12 @@ inline Long Dvector<T>::size() const
 }
 
 template<class T>
+inline Long Dvector<T>::step() const
+{
+	return m_step;
+}
+
+template<class T>
 inline T & Dvector<T>::operator[](Long_I i)
 {
 #ifdef SLS_CHECK_BOUNDS
@@ -112,7 +119,7 @@ inline T & Dvector<T>::end()
 	if (m_N == 0)
 		SLS_ERR("tring to use end() on empty vector!");
 #endif
-	return m_p[m_step*m_N - 1];
+	return m_p[m_step*(m_N - 1)];
 }
 
 template<class T>
@@ -122,32 +129,37 @@ inline const T & Dvector<T>::end() const
 	if (m_N == 0)
 		SLS_ERR("tring to use end() on empty vector!");
 #endif
-	return m_p[m_step*m_N - 1];
+	return m_p[m_step*(m_N - 1)];
 }
 
 template<class T>
 inline T & Dvector<T>::end(Long_I i)
 {
+	return m_p[m_step*(m_N - 1)];
 }
 
 template<class T>
 inline const T & Dvector<T>::end(Long_I i) const
 {
+	return m_p[m_step*(m_N - i)];
 }
 
 template <class T>
 inline Dvector<T> & Dvector<T>::operator=(const Dvector<T> &rhs)
 {
+	copy(*this, rhs);
 }
 
 template <class T>
 inline Dvector<T> & Dvector<T>::operator=(const T &rhs)
 {
+	vecset(m_p, rhs, m_N, m_step);
 }
 
 template <class T> template <class T1>
 inline Dvector<T> & Dvector<T>::operator=(const Dvector<T1> &rhs)
 {
+	copy(*this, rhs);
 }
 
 template<class T>
@@ -166,9 +178,9 @@ inline void Dvector<T>::set_ptr(const T * ptr)
 }
 
 template<class T>
-inline void Dvector<T>::set(const T * ptr, Long_I N)
+inline void Dvector<T>::set(const T * ptr, Long_I N, Long_I step)
 {
-	m_p = (T *)ptr; m_N = N;
+	m_p = (T *)ptr; m_N = N; m_step = step;
 }
 
 template<class T>
@@ -190,6 +202,5 @@ inline void Dvector<T>::shift(Long_I N)
 }
 
 template<class T>
-inline Dvector<T>::~Dvector()
-{}
+inline Dvector<T>::~Dvector() {}
 } // namespace slisc

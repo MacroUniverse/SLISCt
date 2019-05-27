@@ -8,7 +8,7 @@ namespace slisc {
 // x is in [-1,1]
 // data from https://keisan.casio.com/exec/system/1280801905
 // use 38 digits data in case long double is needed
-inline void GaussLobatto(VecDoub_O &x, VecDoub_O &w)
+inline void GaussLobatto(VecDoub_O x, VecDoub_O w)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (x.size() != w.size())
@@ -115,7 +115,7 @@ inline void GaussLobatto(VecDoub_O &x, VecDoub_O &w)
 // get derivatives of legendre interpolation polynomials t abscissas
 // df is an NxN matrix
 // f'_i(x_j) = df(j,i)
-inline void legendre_interp_der(CmatDoub_O &df, VecDoub_I &x)
+inline void legendre_interp_der(CmatDoub_O df, VecDoub_I x)
 {
 	Long i, j, k, N{ x.size() };
 	Doub t;
@@ -155,7 +155,7 @@ inline Long indFEDVR(Long_I i, Long_I j, Long_I Ngs)
 // 'x0','w0' are grid points and weights in [-1,1]
 // 'x','w' are the global grid points and weights
 
-inline void FEDVR_grid(VecDoub_O &x, VecDoub_O &w, VecDoub_I &wFE, VecDoub_I &xFE, VecDoub_I &x0, VecDoub_I &w0)
+inline void FEDVR_grid(VecDoub_O x, VecDoub_O w, VecDoub_I wFE, VecDoub_I xFE, VecDoub_I x0, VecDoub_I w0)
 {
 	Long i, j, k = 0;
 	Long Ngs = x0.size();
@@ -176,8 +176,8 @@ inline void FEDVR_grid(VecDoub_O &x, VecDoub_O &w, VecDoub_I &wFE, VecDoub_I &xF
 	}
 }
 
-// generate dense kinetic matrix
-inline void D2_matrix(McooDoub_O &D2, VecDoub_I &w0, VecDoub_I &wFE, CmatDoub_I &df)
+// sparse second derivative matrix for normalized FEDVR basis
+inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 {
 	Long i, j, k, m, n, mm, nn;
 	Long Nfe = wFE.size();
@@ -251,6 +251,8 @@ inline void D2_matrix(McooDoub_O &D2, VecDoub_I &w0, VecDoub_I &wFE, CmatDoub_I 
 
 // bounds: FE boundaries, size = Nfe + 1
 // Ngs: grid points per finite element (including boundaries)
+// `x`, `w` are the global grid points and weights
+// `u` is the maximum value of each basis
 void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I bounds, Int_I Ngs)
 {
 	Int i, j;

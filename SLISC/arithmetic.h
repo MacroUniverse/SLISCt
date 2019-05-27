@@ -79,10 +79,10 @@ inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	if constexpr (major<Tmat>() == 'r') { // row major
+	if constexpr (is_rmajor<Tmat>()) { // row major
 		veccpy(v.ptr(), a.ptr() + Nc*row, Nc);
 	}
-	else if constexpr (major<Tmat>() == 'c') { // column major
+	else if constexpr (is_cmajor<Tmat>()) { // column major
 		auto p = a.ptr() + row;
 		for (Long i = 0; i < Nc; ++i) {
 			v[i] = *p;
@@ -104,10 +104,10 @@ template <class Tvec, class Tmat,
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	if constexpr (major<Tmat>() == 'r') { // row major
+	if constexpr (is_rmajor<Tmat>()) { // row major
 		veccpy(a.ptr() + Nc * row, v.ptr(), Nc);
 	}
-	else if constexpr (major<Tmat>() == 'c') { // column major
+	else if constexpr (is_cmajor<Tmat>()) { // column major
 		auto p = a.ptr() + row;
 		for (Long i = 0; i < Nc; ++i) {
 			*p = v[i];
@@ -129,10 +129,10 @@ inline void copy_col(Tvec &v, const Tmat &a, Long_I col)
 	}
 #endif
 	Long Nr = a.nrows(), Nc = a.ncols();
-	if constexpr (major<Tmat>() == 'c') { // column major
+	if constexpr (is_cmajor<Tmat>()) { // column major
 		veccpy(v.ptr(), a.ptr() + Nr*col, Nr);
 	}
-	else if constexpr (major<Tmat>() == 'r') { // row major
+	else if constexpr (is_rmajor<Tmat>()) { // row major
 		auto p = a.ptr() + col;
 		for (Long i = 0; i < Nr; ++i) {
 			v[i] = *p;
@@ -154,10 +154,10 @@ inline void copy_col(Tmat &a, const Tvec &v, Long_I col)
 	}
 #endif
 	Long Nr = a.nrows(), Nc = a.ncols();
-	if constexpr (major<Tmat>() == 'c') { // column major
+	if constexpr (is_cmajor<Tmat>()) { // column major
 		veccpy(a.ptr() + Nr * col, v.ptr(), Nr);
 	}
-	else if constexpr (major<Tmat>() == 'r') { // row major
+	else if constexpr (is_rmajor<Tmat>()) { // row major
 		auto p = a.ptr() + col;
 		for (Long i = 0; i < Nr; ++i) {
 			*p = v[i];

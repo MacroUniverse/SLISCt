@@ -31,11 +31,9 @@ public:
 	const T & operator()(Long_I i) const;
 	T& end();
 	const T& end() const;
-	T& end(Long_I i);
+	T& end(Long_I i); // i = 1 for the last, i = 2 for the second last...
 	const T& end(Long_I i) const;
 	Vbase & operator=(const Vbase &rhs);
-	template <class Tv, SLS_IF(is_dense_vec<Tv>())>
-	Vbase & operator=(const Tv &rhs);
 	Vbase & operator=(const T &rhs); // for scalar
 	void operator<<(Vbase &rhs); // move data
 	~Vbase();
@@ -163,14 +161,7 @@ inline const T & Vbase<T>::operator()(Long_I i) const
 template <class T>
 inline Vbase<T> & Vbase<T>::operator=(const Vbase<T> &rhs)
 {
-	veccpy(m_p, rhs.ptr(), m_N);
-	return *this;
-}
-
-template <class T> template <class Tv, SLS_IF0(is_dense_vec<Tv>())>
-inline Vbase<T> & Vbase<T>::operator=(const Tv &rhs)
-{
-	veccpy(m_p, rhs.ptr(), m_N);
+	SLS_ERR("Vbase: copy assignment forbidden!");
 	return *this;
 }
 
@@ -247,8 +238,10 @@ public:
 
 	Vector(const Vector &rhs);	// copy constructor
 	Vector &operator=(const Vector &rhs);
-	/*template <class Tv, SLS_IF(is_dense_vec<Tv>())>
-	Vector &operator=(const Tv &rhs);*/
+	template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+	Vector &operator=(const Tv &rhs);
+	template <class Tv, SLS_IF(is_Dvector<Tv>())>
+	Vector &operator=(const Tv &rhs);
 	void operator<<(Vector &rhs); // move data and rhs.resize(0)
 	template <class T1>
 	void resize(const Vector<T1> &v);
@@ -282,6 +275,22 @@ Vector<T>::Vector(const Vector<T> &rhs) : Base(rhs)
 
 template <class T>
 Vector<T> &Vector<T>::operator=(const Vector<T> &rhs)
+{
+	copy(*this, rhs);
+	return *this;
+}
+
+template <class T>
+template <class Tv, SLS_IF0(is_dense_vec<Tv>())>
+Vector<T> &Vector<T>::operator=(const Tv &rhs)
+{
+	copy(*this, rhs);
+	return *this;
+}
+
+template <class T>
+template <class Tv, SLS_IF0(is_Dvector<Tv>())>
+Vector<T> &Vector<T>::operator=(const Tv &rhs)
 {
 	copy(*this, rhs);
 	return *this;
