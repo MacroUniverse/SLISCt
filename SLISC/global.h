@@ -128,6 +128,7 @@ template <class T, Long Nr> class FixVec;
 template <class T, Long Nr, Long Nc> class FixCmat;
 template <class T> class Mat3d;
 template <class T> class Cmat3d;
+template <class T> class Cmat4d;
 template <class T> class Svector;
 template <class T> class Dvector;
 template <class T> class Smat;
@@ -250,9 +251,9 @@ typedef Cmat<Uint> CmatUint;
 typedef const CmatUint &CmatUint_I;
 typedef CmatUint &CmatUint_O, &CmatUint_IO;
 
-typedef Cmat<Llong> CmatLlong;
-typedef const CmatLlong &CmatLlong_I;
-typedef CmatLlong &CmatLlong_O, &CmatLlong_IO;
+typedef Cmat<Long> CmatLong;
+typedef const CmatLong &CmatLong_I;
+typedef CmatLong &CmatLong_O, &CmatLong_IO;
 
 typedef Cmat<Ullong> CmatUllong;
 typedef const CmatUllong &CmatUllong_I;
@@ -305,6 +306,22 @@ typedef Cmat3Doub &Cmat3Doub_O, &Cmat3Doub_IO;
 typedef Cmat3d<Comp> Cmat3Comp;
 typedef const Cmat3Comp &Cmat3Comp_I;
 typedef Cmat3Comp &Cmat3Comp_O, &Cmat3Comp_IO;
+
+typedef Cmat4d<Int> Cmat4Int;
+typedef const Cmat4Int &Cmat4Int_I;
+typedef Cmat4Int &Cmat4Int_O, &Cmat4Int_IO;
+
+typedef Cmat4d<Long> Cmat4Long;
+typedef const Cmat4Long &Cmat4Long_I;
+typedef Cmat4Long &Cmat4Long_O, &Cmat4Long_IO;
+
+typedef Cmat4d<Doub> Cmat4Doub;
+typedef const Cmat4Doub &Cmat4Doub_I;
+typedef Cmat4Doub &Cmat4Doub_O, &Cmat4Doub_IO;
+
+typedef Cmat4d<Comp> Cmat4Comp;
+typedef const Cmat4Comp &Cmat4Comp_I;
+typedef Cmat4Comp &Cmat4Comp_O, &Cmat4Comp_IO;
 
 typedef Svector<Int> SvecInt;
 typedef const SvecInt &SvecInt_I;

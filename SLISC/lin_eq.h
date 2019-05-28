@@ -4,16 +4,16 @@
 
 namespace slisc {
 
-inline void inv_mat(CmatDoub_I A)
+inline void inv_mat(CmatDoub_IO A)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (A.nrows() != A.ncols())
 		SLS_ERR("wrong shape!");
 #endif
 	Long N = A.nrows();
-	VecLong ipiv(N);
-	LAPACKE_dgetrf(LAPACK_COL_MAJOR, N, N, A.ptr(), N, ipiv);
-	LAPACKE_dgetri(LAPACK_COL_MAJOR, N, A.ptr(), N, ipiv);
+	VecInt ipiv(N);
+	LAPACKE_dgetrf(LAPACK_COL_MAJOR, N, N, A.ptr(), N, ipiv.ptr());
+	LAPACKE_dgetri(LAPACK_COL_MAJOR, N, A.ptr(), N, ipiv.ptr());
 }
 	
 } // namespace slisc

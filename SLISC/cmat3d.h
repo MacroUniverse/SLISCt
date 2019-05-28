@@ -37,8 +37,6 @@ public:
 	void resize(const Cmat3d<T1> &a);
 	T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
 	const T & operator()(Long_I i, Long_I j, Long_I k) const;
-	const T* ptr(Long_I i, Long_I j) const;
-	T* ptr(Long_I i, Long_I j);
 	Long dim1() const;
 	Long dim2() const;
 	Long dim3() const;
@@ -116,26 +114,6 @@ inline const T & Cmat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
 	return m_p[i + m_N1*j + m_N1*m_N2*k];
-}
-
-template <class T>
-inline const T * Cmat3d<T>::ptr(Long_I j, Long_I k) const
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_N1*j + m_N1*m_N2*k;
-}
-
-template <class T>
-inline T *Cmat3d<T>::ptr(Long_I j, Long_I k)
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (j < 0 || j >= m_N2 || k < 0 || k >= m_N3)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_N3*j + m_N2*m_N3*k;
 }
 
 template <class T>

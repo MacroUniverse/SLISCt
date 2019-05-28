@@ -36,8 +36,6 @@ public:
 	void resize(const Mat3d<T1> &a);
 	T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
 	const T & operator()(Long_I i, Long_I j, Long_I k) const;
-	const T* ptr(Long_I i, Long_I j) const;
-	T* ptr(Long_I i, Long_I j);
 	Long dim1() const;
 	Long dim2() const;
 	Long dim3() const;
@@ -115,26 +113,6 @@ inline const T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 }
 
 template <class T>
-inline const T * Mat3d<T>::ptr(Long_I i, Long_I j) const
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_N2*m_N3*i + m_N3*j;
-}
-
-template <class T>
-inline T *Mat3d<T>::ptr(Long_I i, Long_I j)
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N2)
-		SLS_ERR("Matrix subscript out of bounds");
-#endif
-	return m_p + m_N2*m_N3*i + m_N3*j;
-}
-
-template <class T>
 inline Long Mat3d<T>::dim1() const { return m_N1; }
 
 template <class T>
@@ -142,4 +120,4 @@ inline Long Mat3d<T>::dim2() const { return m_N2; }
 
 template <class T>
 inline Long Mat3d<T>::dim3() const { return m_N3; }
-}
+} // namespace slisc

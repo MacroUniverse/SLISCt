@@ -31,15 +31,15 @@ inline void test_meta()
 	if (is_integral<Doub>()) SLS_ERR("failed!");
 	if (is_integral<Ldoub>()) SLS_ERR("failed!");
 
-	// is_floating_point
-	if (!is_floating_point<Float>()) SLS_ERR("failed!");
-	if (!is_floating_point<Doub>()) SLS_ERR("failed!");
-	if (!is_floating_point<Ldoub>()) SLS_ERR("failed!");
-	if (is_floating_point<Char>()) SLS_ERR("failed!");
-	if (is_floating_point<Uchar>()) SLS_ERR("failed!");
-	if (is_floating_point<Int>()) SLS_ERR("failed!");
-	if (is_floating_point<Long>()) SLS_ERR("failed!");
-	if (is_floating_point<Llong>()) SLS_ERR("failed!");
+	// is_fpt
+	if (!is_fpt<Float>()) SLS_ERR("failed!");
+	if (!is_fpt<Doub>()) SLS_ERR("failed!");
+	if (!is_fpt<Ldoub>()) SLS_ERR("failed!");
+	if (is_fpt<Char>()) SLS_ERR("failed!");
+	if (is_fpt<Uchar>()) SLS_ERR("failed!");
+	if (is_fpt<Int>()) SLS_ERR("failed!");
+	if (is_fpt<Long>()) SLS_ERR("failed!");
+	if (is_fpt<Llong>()) SLS_ERR("failed!");
 
 	// is_arithmetic
 	if (!is_arithmetic<Char>()) SLS_ERR("failed!");

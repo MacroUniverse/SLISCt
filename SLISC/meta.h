@@ -39,7 +39,7 @@ constexpr Bool is_integral()
 
 // is_floating_point<T> checks if T = float, double, long double
 template <class T>
-constexpr Bool is_floating_point()
+constexpr Bool is_fpt()
 {
 	return std::is_floating_point<T>::value;
 }
@@ -357,6 +357,14 @@ constexpr Bool is_Cmat3d()
 	return is_Cmat3d_imp<T>();
 }
 
+template <class T> struct is_Cmat4d_imp : false_type {};
+template <class T> struct is_Cmat4d_imp<Cmat4d<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Cmat4d()
+{
+	return is_Cmat4d_imp<T>();
+}
+
 template <class T> struct is_Diag_imp : false_type {};
 template <class T> struct is_Diag_imp<Diag<T>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>
@@ -390,7 +398,8 @@ template <class T> constexpr Bool is_fixed()
 // check if is dense matrix (2D)
 template <class T> constexpr Bool is_dense_mat()
 {
-	return is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>() || is_Scmat<T>();
+	return is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>()
+		|| is_Scmat<T>() || is_Smat<T>();
 }
 
 // check if is dense 3D array
@@ -402,7 +411,8 @@ template <class T> constexpr Bool is_dense_mat3()
 // check if is dense container (including fixed-size)
 template <class T> constexpr Bool is_dense()
 {
-	return is_dense_vec<T>() || is_dense_mat<T>() || is_Mat3d<T>() || is_Cmat3d<T>();
+	return is_dense_vec<T>() || is_dense_mat<T>() || is_Mat3d<T>() ||
+		is_Cmat3d<T>() || is_Cmat4d<T>();
 }
 
 // check if is sparse vector/matrix
@@ -419,6 +429,8 @@ constexpr Int contain_num()
 	else if (is_Cmat<T>()) return 2;
 	else if (is_Mat3d<T>()) return 3;
 	else if (is_Cmat3d<T>()) return 4;
+	// else if (is_Mat4d<T>()) return 5;
+	else if (is_Cmat4d<T>()) return 6;
 
 	else if (is_FixVec<T>()) return 20;
 	else if (is_FixCmat<T>()) return 22;
@@ -513,6 +525,11 @@ template <class T> using contain_type = decltype(contain_type_fun<T>());
 template <class T> constexpr Bool is_real_dense()
 {
 	return is_dense<T>() && is_real<contain_type<T>>();
+}
+
+template <class T> constexpr Bool is_fpt_dense()
+{
+	return is_dense<T>() && is_fpt<contain_type<T>>();
 }
 
 template <class T> constexpr Bool is_comp_dense()

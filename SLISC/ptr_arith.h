@@ -433,7 +433,7 @@ inline Long sum_v(const T *v, Long_I N)
 }
 
 template <class T, SLS_IF(
-	is_floating_point<T>() || is_comp<T>()
+	is_fpt<T>() || is_comp<T>()
 )>
 inline T sum_v(const T *v, Long_I N)
 {
@@ -541,7 +541,7 @@ inline void linspace_vss(T *v, const T &first, const T &last, Long N)
 }
 
 // v = sqrt(v)
-template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline void sqrt_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -550,16 +550,24 @@ inline void sqrt_vv(T *v, const T *v1, Long_I N)
 
 // v = 1/sqrt(v)
 
-template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline void invSqrt_vv(T *v, const T *v1, Long_I N)
 {
+	SLS_ERR("use pow_vvs instead!");
+}
+
+// v = v1^s
+template <class T, class T1, class Ts, SLS_IF(
+	is_promo<T, T1>() && is_promo<T, Ts>())>
+inline void	pow_vvs(T *v, const T1 *v1, const Ts &s, Long_I N)
+{
 	for (Long i = 0; i < N; ++i)
-		v[i] = pow(v1[i], rm_comp<T>(-0.5));
+		v[i] = pow(v1[i], s);
 }
 
 // v = sin(v)
 
-template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline void sin_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -568,7 +576,7 @@ inline void sin_vv(T *v, const T *v1, Long_I N)
 
 // v = cos(v)
 
-template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline void cos_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -577,7 +585,14 @@ inline void cos_vv(T *v, const T *v1, Long_I N)
 
 // v = exp(v)
 
-template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
+inline void exp_v(T *v, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = exp(v[i]);
+}
+
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline void exp_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -586,7 +601,7 @@ inline void exp_vv(T *v, const T *v1, Long_I N)
 
 // v = tan(v)
 
-template <class T, SLS_IF(is_floating_point<T>() || is_comp<T>())>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline void tan_vv(T *v, const T *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)

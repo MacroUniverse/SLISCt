@@ -56,7 +56,7 @@ inline Dvector<T> slice_row(const Tmat &a, Long_I row)
 // slice a row from a col-major 3d array
 template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
-inline void slice_row(Dvector<T> &slice, const Tmat &a, Long_I row, Long_I i3 = 0)
+inline void slice_row(Dvector<T> &slice, const Tmat &a, Long_I row, Long_I k = 0)
 {
 	Long Nr = a.dim1(), Nc = a.dim2();
 #ifdef SLS_CHECK_BOUNDS
@@ -64,15 +64,15 @@ inline void slice_row(Dvector<T> &slice, const Tmat &a, Long_I row, Long_I i3 = 
 		SLS_ERR("out of bound!");
 #endif
 	
-	slice.set(a.ptr() + Nr*Nc*i3 + row, Nc, Nr);
+	slice.set(a.ptr() + Nr*Nc*k + row, Nc, Nr);
 }
 
 template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
-inline Dvector<T> slice_row(const Tmat &a, Long_I row, Long_I i3 = 0)
+inline Dvector<T> slice_row(const Tmat &a, Long_I row, Long_I k = 0)
 {
 	Dvector<T> slice;
-	slice_row(slice, a, row, i3);
+	slice_row(slice, a, row, k);
 	return slice;
 }
 
@@ -125,22 +125,22 @@ inline Dvector<T> slice_col(const Tmat &a, Long_I col)
 // slice a col from a col-major 3d array
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
 	is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
-inline void slice_col(Svector<T> &slice, const Tmat &a, Long_I col, Long_I i3 = 0)
+inline void slice_col(Svector<T> &slice, const Tmat &a, Long_I col, Long_I k = 0)
 {
 	Long Nr = a.dim1(), Nc = a.dim2();
 #ifdef SLS_CHECK_BOUNDS
 	if (col < 0 || col >= Nc)
 		SLS_ERR("out of bound!");
 #endif
-	slice.set(a.ptr() + Nr*Nc*i3 + Nr*col, Nc);
+	slice.set(a.ptr() + Nr*Nc*k + Nr*col, Nc);
 }
 
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
 	is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
-inline Svector<T> slice_col(const Tmat &a, Long_I col, Long_I i3 = 0)
+inline Svector<T> slice_col(const Tmat &a, Long_I col, Long_I k = 0)
 {
 	Svector<T> slice;
-	slice_col(slice, a, col, i3);
+	slice_col(slice, a, col, k);
 	return slice;
 }
 
@@ -156,24 +156,45 @@ inline void slice_mat(Tsmat &slice, const Tmat &a,
 	Tsmat slice_mat(&a(i, j), Nr, Nc, a.nrows());
 }
 
-// slice a3(:,:,i3)
+// slice a3(:,:,k)
 // only supports Cmat<> and Cmat3<> for now
 template <class T, SLS_IF(is_scalar<T>())>
-inline void slice_mat12(Scmat<T> &a, const Cmat3d<T> &a3, Long_I i3)
+inline void slice_mat12(Scmat<T> &a, const Cmat3d<T> &a3, Long_I k)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i3 < 0 || i3 >= a3.dim3())
+	if (k < 0 || k >= a3.dim3())
 		SLS_ERR("out of bound!");
 #endif
 	a.set_size(a3.dim1(), a3.dim2());
-	a.set_ptr(a3.ptr() + a.size() * i3);
+	a.set_ptr(a3.ptr() + a.size() * k);
 }
 
 template <class T, SLS_IF(is_scalar<T>())>
-inline Scmat<T> slice_mat12(const Cmat3d<T> &a3, Long_I i3)
+inline Scmat<T> slice_mat12(const Cmat3d<T> &a3, Long_I k)
 {
 	Scmat<T> slice;
-	slice_mat12(slice, a3, i3);
+	slice_mat12(slice, a3, k);
+	return slice;
+}
+
+// slice a4(:,:,k,i4)
+// only supports Cmat<> and Cmat3<> for now
+template <class T, SLS_IF(is_scalar<T>())>
+inline void slice_mat12(Scmat<T> &a, const Cmat4d<T> &a4, Long_I k, Long_I l)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (k < 0 || k >= a4.dim3())
+		SLS_ERR("out of bound!");
+#endif
+	a.set_size(a4.dim1(), a4.dim2());
+	a.set_ptr(a4.ptr() + a.size() * (a4.dim3()*l  + k));
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+inline Scmat<T> slice_mat12(const Cmat4d<T> &a4, Long_I k, Long_I l)
+{
+	Scmat<T> slice;
+	slice_mat12(slice, a4, k, l);
 	return slice;
 }
 

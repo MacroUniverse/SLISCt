@@ -25,7 +25,7 @@ constexpr const T &MAX(const T &a, const T &b)
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
-template<class T, SLS_IF(is_floating_point<T>())>
+template<class T, SLS_IF(is_fpt<T>())>
 constexpr const T ABS2(const T &a)
 {
 	return a * a;
@@ -56,7 +56,7 @@ inline Long Size(const T &v)
 
 // for SWAP, use std::swap instead
 
-template <class T, SLS_IF(is_floating_point<T>())>
+template <class T, SLS_IF(is_fpt<T>())>
 inline T INV(const T &x)
 { return 1 / x; }
 
@@ -125,7 +125,7 @@ inline Long rsub2ind(Long_I Nc, Long_I i, Long_I j)
 
 using std::min; using std::max; using std::swap;
 using std::abs; using std::real; using std::imag;
-using std::conj;
+using std::conj; using std::pow;
 using std::sqrt; using std::sin; using std::cos; using std::tan;
 using std::exp; using std::log; using std::log10;
 using std::expm1; using std::log1p; using std::hypot;

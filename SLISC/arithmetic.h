@@ -227,6 +227,12 @@ inline void linspace(Tv &v, const T1 &first, const T2 &last)
 
 // === vectorized math functions ===
 
+template <class T, SLS_IF(is_dense<T>())>
+void sqrt(T &v)
+{
+	sqrt_v(v.ptr(), v.size());
+}
+
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
 void sqrt(T &v, const T1 &v1)
 {
@@ -237,14 +243,22 @@ void sqrt(T &v, const T1 &v1)
 	sqrt_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void invSqrt(T &v, const T1 &v1)
+template <class T, class Ts, SLS_IF(
+	is_dense<T>() && is_scalar<Ts>())>
+void pow(T &v, const Ts &s)
+{
+	pow_vs(v.ptr(), s, v.size());
+}
+
+template <class T, class T1, class T2, SLS_IF(
+	is_dense<T>() && is_same_contain<T, T1>() && is_scalar<T2>())>
+void pow(T &v, const T1 &v1, const T2 &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong size!");
 #endif
-	invSqrt_vv(v.ptr(), v1.ptr(), v1.size());
+	pow_vvs(v.ptr(), v1.ptr(), s, v1.size());
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
@@ -267,6 +281,12 @@ void cos(T &v, const T1 &v1)
 	cos_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
+template <class T, SLS_IF(is_fpt_dense<T>())>
+void exp(T &v)
+{
+	exp_v(v.ptr(), v.size());
+}
+
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
 void exp(T &v, const T1 &v1)
 {
@@ -274,7 +294,7 @@ void exp(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong size!");
 #endif
-	v.resize(v1); exp_vv(v.ptr(), v1.ptr(), v1.size());
+	exp_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
@@ -325,6 +345,7 @@ inline void trans(T &v)
 }
 
 // v = trans(v)
+// TODO: this is inefficient
 template <class T, class T1, SLS_IF(
 	is_dense_mat<T>() && is_dense_mat<T1>()
 )>
@@ -364,7 +385,7 @@ inline void her(T &v)
 // v = her(v)
 template <class T, class T1, SLS_IF(
 	is_dense_mat<T>() && is_dense_mat<T1>() &&
-	is_comp_dense<T1>() &&
+	is_comp_dense<T>() && is_comp_dense<T1>() &&
 	type_num<contain_type<T>>() >= type_num<contain_type<T1>>()
 )>
 inline void her(T &v, const T1 &v1)
