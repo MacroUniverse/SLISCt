@@ -24,9 +24,9 @@ void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
 	mul(out, temp, eigVec);
 }
 
-// calculate exp(A) * v by U * D * UH;
+// calculate exp(A*t) * v by U * exp(D*t) * Uh * v;
+// where A = U * D * Uh
 // A must be symmetric or hermitian
-// diagonalize a matrix A = U * D * UH
 template <class T>
 class ExpA
 {};
@@ -35,22 +35,26 @@ template <>
 class ExpA<Doub>
 {
 public:
-	VecDoub m_expD;
+	VecDoub m_diag;
 	MatDoub m_U;
 	MatDoub m_Uh;
 	// must be symmetric
 	Long size() const;
-	ExpA(const CmatDoub &A);
-	VecComp mul(VecComp_I v);
+	ExpA(const CmatDoub &A, Doub_I t);
+	template <class Tv, class Tv1, SLS_IF(
+		is_dense_vec<Tv>() && is_dense_vec<Tv1>()
+	)>
+	void mul(Tv &v, const Tv1 &v1);
 };
 
 inline Long ExpA<Doub>::size() const
 {
-	return m_expD.size();
+	return m_diag.size();
 }
 
-inline ExpA<Doub>::ExpA(const CmatDoub & A)
-	: m_expD(A.nrows()), m_U(A.nrows(), A.ncols()),
+// A is symmetric matrix, only upper triangle is used
+inline ExpA<Doub>::ExpA(const CmatDoub & A, Doub_I t)
+	: m_diag(A.nrows()), m_U(A.nrows(), A.ncols()),
 	m_Uh(A.nrows(), A.ncols())
 {
 	Long N = A.nrows();
@@ -59,20 +63,26 @@ inline ExpA<Doub>::ExpA(const CmatDoub & A)
 		SLS_ERR("A must be square matrix!");
 #endif
 	CmatDoub eigVec(N, N);
-	eig_sym(m_expD, eigVec, A);
-	exp(m_expD);
+	eig_sym(m_diag, eigVec, A);
+	m_diag *= t;
+	exp(m_diag);
 	m_U = eigVec;
 	trans(m_Uh, eigVec);
 }
 
-inline VecComp ExpA<Doub>::mul(VecComp_I v)
+template <class Tv, class Tv1, SLS_IF0(
+	is_dense_vec<Tv>() && is_dense_vec<Tv1>()
+)>
+inline void ExpA<Doub>::mul(Tv &v, const Tv1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (size() != v.size())
 		SLS_ERR("A must be square matrix!");
 #endif
-	VecComp u(v.size());
-	slisc::mul(u, m_Uh, v);
+	VecComp u(v1.size());
+	slisc::mul(u, m_Uh, v1);
+	u *= m_diag;
+	slisc::mul(v, m_U, u);
 }
 
 } // namespace slisc

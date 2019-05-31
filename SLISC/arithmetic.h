@@ -841,6 +841,7 @@ inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 	}*/
 }
 
+// matrix-vector multiplication
 template <class T, class T1, class T2, SLS_IF(
 	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>()
 )>
