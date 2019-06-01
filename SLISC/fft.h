@@ -99,7 +99,7 @@ void fftshift(Vector<T> &v)
 template <class T>
 void fftshift(Matrix<T> &a, Int_I dim = 1)
 {
-	Long m{ a.nrows() }, n{ a.ncols() };
+	Long m{ a.n1() }, n{ a.ncols() };
 	if (dim == 1) {
 		if (isodd(m)) SLS_ERR("fftshift only supports even rows!");
 			Long halfm = m / 2;
@@ -186,7 +186,7 @@ inline void ifft(VecComp_IO data)
 // not optimized, very slow
 inline void fft(MatComp_IO data)
 {
-	Long i, j, m{ data.nrows() }, n{ data.ncols() };
+	Long i, j, m{ data.n1() }, n{ data.ncols() };
 	VecComp column(m);
 	for (j = 0; j < n; ++j) {
 		for (i = 0; i < m; ++i)
@@ -199,7 +199,7 @@ inline void fft(MatComp_IO data)
 
 inline void ifft(MatComp_IO data)
 {
-	Long i, j, m{ data.nrows() }, n{ data.ncols() };
+	Long i, j, m{ data.n1() }, n{ data.ncols() };
 	VecComp column(m);
 	for (j = 0; j < n; ++j) {
 		for (i = 0; i < m; ++i)
@@ -527,7 +527,7 @@ inline void ifft4x(VecComp_O data4, VecComp_I data)
 
 inline void dft(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax)
 {
-	Long i, j, k, Nx = X.nrows(), Nc = X.ncols();
+	Long i, j, k, Nx = X.n1(), Nc = X.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
 	const Comp *pxi;
 	Comp *pyj, factor, expo, dexpo;
@@ -548,7 +548,7 @@ inline void dft(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub 
 // parallel version
 inline void dft_par(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, Doub xmin, Doub xmax)
 {
-	Long j, Nx = X.nrows(), Nc = X.ncols();
+	Long j, Nx = X.n1(), Nc = X.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
 	Y.resize(Nk, Nc); Y = 0.;
 #pragma omp parallel for
@@ -570,7 +570,7 @@ inline void dft_par(MatComp_O Y, Doub kmin, Doub kmax, Long_I Nk, MatComp_I X, D
 
 inline void idft(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub kmin, Doub kmax)
 {
-	Long i, j, k, Nk = Y.nrows(), Nc = Y.ncols();
+	Long i, j, k, Nk = Y.n1(), Nc = Y.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
 	const Comp *pyi;
 	Comp *pxj, factor, expo, dexpo;
@@ -590,7 +590,7 @@ inline void idft(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub
 
 inline void idft_par(MatComp_O X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I Y, Doub kmin, Doub kmax)
 {
-	Long j, Nk = Y.nrows(), Nc = Y.ncols();
+	Long j, Nk = Y.n1(), Nc = Y.ncols();
 	Doub dk = (kmax - kmin) / (Nk - 1), dx = (xmax - xmin) / (Nx - 1);
 	X.resize(Nx, Nc); X = 0.;
 #pragma omp parallel for

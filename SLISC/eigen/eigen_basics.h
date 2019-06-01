@@ -23,11 +23,11 @@ inline void mul(MatDoub_O &v, MatDoub_I &v1, MatDoub_I &v2)
 {
 	using Eigen::Map;
 #ifdef SLS_CHECK_BOUNDS
-	if (v1.ncols() != v2.nrows()) SLS_ERR("wrong size!");
+	if (v1.ncols() != v2.n1()) SLS_ERR("wrong size!");
 #endif
 	v.resize(v1);
-	Map<const RMatrixXd> map_v1(v1.ptr(), v1.nrows(), v1.ncols()), map_v2(v2.ptr(), v2.nrows(), v2.ncols());
-	Map<RMatrixXd> map_v(v.ptr(), v.nrows(), v.ncols());
+	Map<const RMatrixXd> map_v1(v1.ptr(), v1.n1(), v1.ncols()), map_v2(v2.ptr(), v2.n1(), v2.ncols());
+	Map<RMatrixXd> map_v(v.ptr(), v.n1(), v.ncols());
 	map_v = map_v1 * map_v2;
 }
 
@@ -35,11 +35,11 @@ inline void mul(MatComp_O &v, MatComp_I &v1, MatComp_I &v2)
 {
 	using Eigen::Map;
 #ifdef SLS_CHECK_BOUNDS
-	if (v1.ncols() != v2.nrows()) SLS_ERR("wrong size!");
+	if (v1.ncols() != v2.n1()) SLS_ERR("wrong size!");
 #endif
 	v.resize(v1);
-	Map<const RMatrixXcd> map_v1(v1.ptr(), v1.nrows(), v1.ncols()), map_v2(v2.ptr(), v2.nrows(), v2.ncols());
-	Map<RMatrixXcd> map_v(v.ptr(), v.nrows(), v.ncols());
+	Map<const RMatrixXcd> map_v1(v1.ptr(), v1.n1(), v1.ncols()), map_v2(v2.ptr(), v2.n1(), v2.ncols());
+	Map<RMatrixXcd> map_v(v.ptr(), v.n1(), v.ncols());
 	map_v = map_v1 * map_v2;
 }
 

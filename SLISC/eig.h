@@ -10,8 +10,8 @@ namespace slisc {
 void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (A.nrows() != A.ncols() || !shape_cmp(eigVec, A)
-		|| eigVal.size() != eigVec.nrows())
+	if (A.n1() != A.ncols() || !shape_cmp(eigVec, A)
+		|| eigVal.size() != eigVec.n1())
 		SLS_ERR("wrong shape!");
 #endif
 	eigVec = A;
@@ -26,8 +26,8 @@ void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 void eig_her(VecDoub_O eigVal, CmatComp_O eigVec, CmatComp_I A)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (A.nrows() != A.ncols() || !shape_cmp(eigVec, A)
-		|| eigVal.size() != eigVec.nrows())
+	if (A.n1() != A.ncols() || !shape_cmp(eigVec, A)
+		|| eigVal.size() != eigVec.n1())
 		SLS_ERR("wrong shape!");
 #endif
 	eigVec = A;

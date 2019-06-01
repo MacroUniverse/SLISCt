@@ -13,7 +13,7 @@ template <class Tmat, class T = contain_type<Tmat>,
 void slice_row(Svector<T> &slice, const Tmat &a, Long_I row)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (row < 0 || row >= a.nrows())
+	if (row < 0 || row >= a.n1())
 		SLS_ERR("out of bound!");
 #endif
 	Long Nc = a.ncols();
@@ -35,7 +35,7 @@ template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat<Tmat>() && is_cmajor<Tmat>())>
 void slice_row(Dvector<T> &slice, const Tmat &a, Long_I row)
 {
-	Long Nr = a.nrows(), Nc = a.ncols();
+	Long Nr = a.n1(), Nc = a.ncols();
 #ifdef SLS_CHECK_BOUNDS
 	if (row < 0 || row >= Nr)
 		SLS_ERR("out of bound!");
@@ -85,7 +85,7 @@ void slice_col(Svector<T> &slice, const Tmat &a, Long_I col)
 	if (col < 0 || col >= a.ncols())
 		SLS_ERR("out of bound!");
 #endif
-	Long Nr = a.nrows();
+	Long Nr = a.n1();
 	slice.set(a.ptr() + col * Nr, Nr);
 }
 
@@ -104,7 +104,7 @@ template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
 	is_dense_mat<Tmat>() && is_rmajor<Tmat>())>
 void slice_col(Dvector<T> &slice, const Tmat &a, Long_I col)
 {
-	Long Nr = a.nrows(), Nc = a.ncols();
+	Long Nr = a.n1(), Nc = a.ncols();
 #ifdef SLS_CHECK_BOUNDS
 	if (col < 0 || col >= Nc)
 		SLS_ERR("out of bound!");
@@ -153,7 +153,7 @@ template <class Tsmat, class Tmat, SLS_IF(
 void slice_mat(Tsmat &slice, const Tmat &a,
 	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
 {
-	Tsmat slice_mat(&a(i, j), Nr, Nc, a.nrows());
+	Tsmat slice_mat(&a(i, j), Nr, Nc, a.n1());
 }
 
 // slice a3(i,j,:)

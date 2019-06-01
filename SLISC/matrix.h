@@ -30,7 +30,7 @@ template <class T, class T1, SLS_IF(
 )>
 inline T &cooh2dense(T &lhs, const MatCooH<T1> &rhs)
 {
-	lhs.resize(rhs.nrows(), rhs.ncols());
+	lhs.resize(rhs.n1(), rhs.ncols());
 	lhs = contain_type<T>(0);
 	for (Long i = 0; i < rhs.nnz(); ++i) {
 		Long r = rhs.row(i), c = rhs.col(i);
@@ -75,7 +75,7 @@ public:
 	void operator<<(Matrix &rhs); // move data and rhs.resize(0, 0)
 	T& operator()(Long_I i, Long_I j); // double indexing
 	const T& operator()(Long_I i, Long_I j) const;
-	Long nrows() const;
+	Long n1() const;
 	Long ncols() const;
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
 	template <class T1>
@@ -157,7 +157,7 @@ inline const T & Matrix<T>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T>
-inline Long Matrix<T>::nrows() const
+inline Long Matrix<T>::n1() const
 { return m_Nr; }
 
 template <class T>
@@ -176,5 +176,5 @@ inline void Matrix<T>::resize(Long_I Nr, Long_I Nc)
 template <class T>
 template <class T1>
 inline void Matrix<T>::resize(const Matrix<T1> &a)
-{ resize(a.nrows(), a.ncols()); }
+{ resize(a.n1(), a.ncols()); }
 }

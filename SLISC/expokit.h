@@ -9,13 +9,13 @@ namespace slisc {
 template <class T, SLS_IF(is_scalar<T>())>
 void mul(Comp *y, const MatCoo<T> &a, Comp *x)
 {
-	mul_v_coo_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
+	mul_v_coo_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
 }
 
 template <class T, SLS_IF(is_scalar<T>())>
 void mul(Comp *y, const MatCooH<T> &a, Comp *x)
 {
-	mul_v_cooh_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
+	mul_v_cooh_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
 }
 
 // expv()
@@ -31,11 +31,11 @@ inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov)
 {
 	const Doub tol = 0.; // set tolerance here
 #ifdef SLS_CHECK_SHAPE
-	if (mat.nrows() != mat.ncols() || mat.ncols() != v.size())
+	if (mat.n1() != mat.ncols() || mat.ncols() != v.size())
 		SLS_ERR("wrong shape!");
 #endif
 	Int iflag;
-	VecComp wsp(MAX(Long(10), SQR(mat.nrows()*(Nkrylov + 2) + 5 * (Nkrylov + 2)) + 7));
+	VecComp wsp(MAX(Long(10), SQR(mat.n1()*(Nkrylov + 2) + 5 * (Nkrylov + 2)) + 7));
 	VecInt iwsp(MAX(Nkrylov + 2, 7));
 
 	if constexpr (Option == 'G' || Option == 0 && is_MatCoo<Tmat>()) {

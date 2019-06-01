@@ -53,7 +53,7 @@ inline void test_D2_mat()
 		y[i] = test_fedvr_fun(x[i], 2);
 	}
 	y /= u;
-	VecDoub d2y(D2s.nrows()); // second derivative
+	VecDoub d2y(D2s.n1()); // second derivative
 	mul(d2y, D2s, y);
 	d2y *= u;
 	d2y -= 2;
@@ -75,11 +75,11 @@ inline void test_inf_sqr_well()
 	VecDoub x(0), w(0), u(0);
 	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
-	H.resize(Hs.nrows(), Hs.ncols()); H = Hs;
+	H.resize(Hs.n1(), Hs.ncols()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// solve eigen states
-	VecDoub eigVal(H.nrows()); // eigen values / bound state energies
+	VecDoub eigVal(H.n1()); // eigen values / bound state energies
 	CmatDoub eigVec(0, 0); eigVec.resize(H); // eigen vectors / bound states wave functions
 	eig_sym(eigVal, eigVec, H);
 
@@ -110,7 +110,7 @@ inline void test_SHO()
 	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 
-	H.resize(Hs.nrows(), Hs.ncols()); H = Hs;
+	H.resize(Hs.n1(), Hs.ncols()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// add potential to Hamiltonian
@@ -119,7 +119,7 @@ inline void test_SHO()
 	}
 
 	// solve eigen states
-	VecDoub eigVal(H.nrows()); // eigen values / bound state energies
+	VecDoub eigVal(H.n1()); // eigen values / bound state energies
 	CmatDoub eigVec(0, 0); eigVec.resize(H); // eigen vectors / bound states wave functions
 	eig_sym(eigVal, eigVec, H);
 

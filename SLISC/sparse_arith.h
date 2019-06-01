@@ -107,7 +107,7 @@ template <class T, SLS_IF(
 )>
 inline rm_comp<T> norm_inf(const MatCoo<T> &A)
 {
-	Vector<rm_comp<T>> abs_sum(A.nrows(), 0.);
+	Vector<rm_comp<T>> abs_sum(A.n1(), 0.);
 	for (Long i = 0; i < A.nnz(); ++i) {
 		abs_sum(A.row(i)) += abs(A[i]);
 	}
@@ -119,7 +119,7 @@ template <class T, SLS_IF(
 )>
 inline rm_comp<T> norm_inf(const MatCooH<T> &A)
 {
-	Vector<rm_comp<T>> abs_sum(A.nrows(), 0.);
+	Vector<rm_comp<T>> abs_sum(A.n1(), 0.);
 	for (Long i = 0; i < A.nnz(); ++i) {
 		Long r = A.row(i), c = A.col(i);
 		auto val = abs(A[i]);
@@ -138,10 +138,10 @@ template <class Ta, class Tx, class Ty, SLS_IF(
 void mul(Ty &y, const Ta &a, const Tx &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size() || a.nrows() != y.size())
+	if (a.ncols() != x.size() || a.n1() != y.size())
 		SLS_ERR("wrong shape!");
 #endif
-	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
+	mul_v_coo_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
 }
 
 template <class Ta, class Tx, class Ty, SLS_IF(
@@ -152,7 +152,7 @@ void mul(Ty &y, const Ta &a, const Tx &x)
 #ifdef SLS_CHECK_SHAPE
 	if (a.ncols() != x.size() || a.rows() != y.size()) SLS_ERR("wrong shape!");
 #endif
-	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.nrows(), a.nnz());
+	mul_v_cooh_v(y.ptr(), x.ptr(), a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
 }
 
 // matrix matrix multiplication
@@ -164,11 +164,11 @@ template <class T, class T1, class T2, SLS_IF(
 void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != b.nrows()) SLS_ERR("illegal shape!");
-	if (c.nrows() != a.nrows() || c.ncols() != b.ncols())
+	if (a.ncols() != b.n1()) SLS_ERR("illegal shape!");
+	if (c.n1() != a.n1() || c.ncols() != b.ncols())
 		SLS_ERR("illegal shape!");
 #endif
-	mul_cmat_cmat_diag(c.ptr(), a.ptr(), a.nrows(), a.ncols(), b.ptr());
+	mul_cmat_cmat_diag(c.ptr(), a.ptr(), a.n1(), a.ncols(), b.ptr());
 }
 
 // mul(Cmat, Diag, Cmat)
@@ -178,10 +178,10 @@ template <class T, class T1, class T2, SLS_IF(
 void mul(Cmat<T> &c, const Diag<T2> &a, const Cmat<T1> &b)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != b.nrows()) SLS_ERR("illegal shape!");
+	if (a.ncols() != b.n1()) SLS_ERR("illegal shape!");
 #endif
 	c.resize(b);
-	mul_cmat_diag_cmat(c.ptr(), a.ptr(), b.ptr(), b.nrows(), b.ncols());
+	mul_cmat_diag_cmat(c.ptr(), a.ptr(), b.ptr(), b.n1(), b.ncols());
 }
 
 } // namespace slisc

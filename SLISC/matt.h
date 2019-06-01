@@ -267,7 +267,7 @@ inline void save(const Tm &a, Str_I varname, Matt_IO matt,
 	// write data type info
 	fout << type_num<T>() << Matt::dlm;
 	// write dimension info
-	m = (a.nrows() + step1 - 1) / step1; n = (a.ncols() + step2 - 1) / step2;
+	m = (a.n1() + step1 - 1) / step1; n = (a.ncols() + step2 - 1) / step2;
 	fout << 2 << Matt::dlm << m << Matt::dlm << n << Matt::dlm;
 	// write matrix data
 	for (j = 0; j < n; ++j)

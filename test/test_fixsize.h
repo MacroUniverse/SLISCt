@@ -61,14 +61,14 @@ inline void test_fixsize()
 		FcmatDoub<7, 9> v;
 		if (v.size() != 63) SLS_ERR("failed!");
 		if (sizeof(v) / sizeof(Doub) != 63) SLS_ERR("failed!");
-		if (v.nrows() != 7 || v.ncols() != 9) SLS_ERR("failed!");
+		if (v.n1() != 7 || v.ncols() != 9) SLS_ERR("failed!");
 	}
 	// constant constructor
 	{
 		FcmatDoub<3, 4> v(3.14);
 		if (v.size() != 12) SLS_ERR("failed!");
 		if (sizeof(v) / sizeof(Doub) != 12) SLS_ERR("failed!");
-		if (v.nrows() != 3 || v.ncols() != 4) SLS_ERR("failed!");
+		if (v.n1() != 3 || v.ncols() != 4) SLS_ERR("failed!");
 		if (v != 3.14) SLS_ERR("failed!");
 	}
 	// test ptr(), operator(i), operator[j], end(), end(i)

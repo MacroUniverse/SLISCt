@@ -27,7 +27,7 @@ public:
 	Diag(const Vector<T> &v);
 	Long size() const;
 	Long nnz() const;
-	Long nrows() const;
+	Long n1() const;
 	Long ncols() const;
 	Diag &operator=(const Diag &rhs);
 	Diag &operator=(const Vector<T> &rhs);
@@ -74,7 +74,7 @@ Long Diag<T>::nnz() const
 }
 
 template <class T>
-Long Diag<T>::nrows() const
+Long Diag<T>::n1() const
 {
 	return Base::size();
 }
@@ -143,7 +143,7 @@ public:
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
-	Long nrows() const;
+	Long n1() const;
 	Long ncols() const;
 	Long size() const; // forbidden
 	Long nnz() const; // return number of non-zero elements
@@ -209,7 +209,7 @@ MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
 	if ((void*)this == (void*)&rhs) SLS_ERR("self assignment is forbidden!");
 	reshape(rhs); reserve(rhs);
-	m_row = rhs.nrows();
+	m_row = rhs.n1();
 	m_col = rhs.ncols();
 	m_Nnz = rhs.nnz();
 	veccpy(ptr(), rhs.ptr(), m_Nnz);
@@ -290,7 +290,7 @@ void MatCoo<T>::set(const T &s, Long_I i, Long_I j)
 }
 
 template <class T>
-Long MatCoo<T>::nrows() const
+Long MatCoo<T>::n1() const
 {
 	return m_Nr;
 }
@@ -392,7 +392,7 @@ template <class T>
 template <class T1>
 void MatCoo<T>::reshape(const MatCoo<T1> &a)
 {
-	reshape(a.nrows(), a.ncols());
+	reshape(a.n1(), a.ncols());
 }
 
 template <class T>
@@ -496,10 +496,10 @@ template <class T> template <class T1>
 void MatCooH<T>::reshape(const MatCoo<T1> &a)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.nrows() != a.ncols())
+	if (a.n1() != a.ncols())
 		SLS_ERR("a is not square matrix!");
 #endif
-	reshape(a.nrows());
+	reshape(a.n1());
 }
 
 template <class T> template <class T1>

@@ -98,6 +98,5 @@ void test_slice()
 		slice /= 2;
 		if (slice[0] != 2 || slice[1] != 4)
 			SLS_ERR("failed!");
-		disp(slice);
 	}
 }

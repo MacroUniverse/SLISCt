@@ -118,7 +118,7 @@ public:
 	FixCmat() {}
 	FixCmat(const T &s); //Initialize to constant
 	FixCmat(const FixCmat &rhs); // Copy constructor
-	static constexpr Long nrows();
+	static constexpr Long n1();
 	static constexpr Long ncols();
 	FixCmat & operator=(const T &rhs);
 	FixCmat & operator=(const FixCmat &rhs); // copy assignment
@@ -149,7 +149,7 @@ template <class T, Long Nr, Long Nc>
 template <class T1, Long Nr1, Long Nc1>
 inline FixCmat<T, Nr, Nc> & FixCmat<T, Nr, Nc>::operator=(const FixCmat<T1, Nr1, Nc1> &rhs)
 {
-	Nr = rhs.nrows();
+	Nr = rhs.n1();
 	Nc = rhs.ncols();
 	Base::operator=(rhs);
 	return *this;
@@ -183,7 +183,7 @@ inline const T & FixCmat<T, Nr, Nc>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T, Long Nr, Long Nc>
-constexpr Long FixCmat<T, Nr, Nc>::nrows()
+constexpr Long FixCmat<T, Nr, Nc>::n1()
 { return Nr; }
 
 template <class T, Long Nr, Long Nc>

@@ -166,9 +166,9 @@ inline void copy(T &a, const T1 &a1)
 		SLS_ERR("wrong shape!");
 #endif
 	if constexpr (is_cmajor<T>())
-		matcpy_2_major(a.ptr(), a1.ptr(), a.ncols(), a.nrows());
+		matcpy_2_major(a.ptr(), a1.ptr(), a.ncols(), a.n1());
 	else
-		matcpy_2_major(a.ptr(), a1.ptr(), a.nrows(), a.ncols());
+		matcpy_2_major(a.ptr(), a1.ptr(), a.n1(), a.ncols());
 }
 
 // from Dmat<> to Dmat<>
@@ -182,6 +182,6 @@ inline void copy(T &a, const T1 &a1)
 	if (!shape_cmp(a, a1))
 		SLS_ERR("wrong shape!");
 #endif
-	matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.nrows(), a.ncols());
+	matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.n1(), a.ncols());
 }
 } // namespace slisc

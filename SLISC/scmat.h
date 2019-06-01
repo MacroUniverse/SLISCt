@@ -28,7 +28,7 @@ public:
 	Scmat & operator=(const MatCooH<T1> &rhs);
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
-	Long nrows() const;
+	Long n1() const;
 	Long ncols() const;
 
 	// resize() is a bad idea, don't try to create it!
@@ -110,7 +110,7 @@ inline const T & Scmat<T>::operator()(Long_I i, Long_I j) const
 }
 
 template <class T>
-inline Long Scmat<T>::nrows() const
+inline Long Scmat<T>::n1() const
 {
 	return m_Nr;
 }

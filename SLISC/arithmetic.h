@@ -21,7 +21,7 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 		return v1.size() == v2.size();
 	}
 	else if constexpr (ndims<T1>() == 2 && ndims<T2>() == 2) {
-		return v1.nrows() == v2.nrows() && v1.ncols() == v2.ncols();
+		return v1.n1() == v2.n1() && v1.ncols() == v2.ncols();
 	}
 	else if constexpr (ndims<T1>() == 3 && ndims<T2>() == 3) {
 		return v1.dim1() == v2.dim1() && v1.dim2() == v2.dim2()
@@ -44,7 +44,7 @@ template <class T1, class T2, SLS_IF(
 Bool operator==(const T1 &v1, const T2 &v2)
 {
 	if (!shape_cmp(v1, v2)) return false;
-	for (Long i = 0; i < v1.nrows(); ++i)
+	for (Long i = 0; i < v1.n1(); ++i)
 		for (Long j = 0; j < v1.ncols(); ++j)
 			if (v1(i, j) != v2(i, j))
 				return false;
@@ -73,7 +73,7 @@ template <class Tvec, class Tmat,
 	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
 inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 {
-	Long Nr = a.nrows(), Nc = a.ncols();
+	Long Nr = a.n1(), Nc = a.ncols();
 #ifdef SLS_CHECK_SHAPE
 	if (v.size() != Nc) {
 		SLS_ERR("wrong shape!");
@@ -98,7 +98,7 @@ template <class Tvec, class Tmat,
 	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
 	inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
 {
-	Long Nr = a.nrows(), Nc = a.ncols();
+	Long Nr = a.n1(), Nc = a.ncols();
 #ifdef SLS_CHECK_SHAPE
 	if (v.size() != Nc) {
 		SLS_ERR("wrong shape!");
@@ -124,11 +124,11 @@ template <class Tvec, class Tmat,
 inline void copy_col(Tvec &v, const Tmat &a, Long_I col)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.size() != a.nrows()) {
+	if (v.size() != a.n1()) {
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	Long Nr = a.nrows(), Nc = a.ncols();
+	Long Nr = a.n1(), Nc = a.ncols();
 	if constexpr (is_cmajor<Tmat>()) { // column major
 		veccpy(v.ptr(), a.ptr() + Nr*col, Nr);
 	}
@@ -149,11 +149,11 @@ template <class Tvec, class Tmat,
 inline void copy_col(Tmat &a, const Tvec &v, Long_I col)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.size() != a.nrows()) {
+	if (v.size() != a.n1()) {
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	Long Nr = a.nrows(), Nc = a.ncols();
+	Long Nr = a.n1(), Nc = a.ncols();
 	if constexpr (is_cmajor<Tmat>()) { // column major
 		veccpy(a.ptr() + Nr * col, v.ptr(), Nr);
 	}
@@ -336,10 +336,10 @@ template <class T, SLS_IF(is_dense_mat<T>())>
 inline void trans(T &v)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.nrows() != v.ncols())
+	if (v.n1() != v.ncols())
 		SLS_ERR("illegal shape!");
 #endif
-	for (Long i = 0; i < v.nrows(); ++i)
+	for (Long i = 0; i < v.n1(); ++i)
 		for (Long j = 0; j < i; ++j)
 			swap(v(i, j), v(j, i));
 }
@@ -352,10 +352,10 @@ template <class T, class T1, SLS_IF(
 inline void trans(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.nrows() != v1.ncols() || v.ncols() != v1.nrows())
+	if (v.n1() != v1.ncols() || v.ncols() != v1.n1())
 		SLS_ERR("wrong size!");
 #endif
-	for (Long i = 0; i < v.nrows(); ++i)
+	for (Long i = 0; i < v.n1(); ++i)
 		for (Long j = 0; j < v.ncols(); ++j)
 			v(i, j) = v1(j, i);
 }
@@ -367,13 +367,13 @@ template <class T, SLS_IF(is_comp_dense<T>() && is_dense_mat<T>())>
 inline void her(T &v)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.nrows() != v.ncols()) SLS_ERR("illegal shape!");
+	if (v.n1() != v.ncols()) SLS_ERR("illegal shape!");
 #endif
 	// diagonal
-	for (Long i = 0; i < v.nrows(); ++i)
+	for (Long i = 0; i < v.n1(); ++i)
 		v(i, i) = conj(v(i, i));
 	// off-diagonal
-	for (Long i = 0; i < v.nrows(); ++i) {
+	for (Long i = 0; i < v.n1(); ++i) {
 		for (Long j = 0; j < i; ++j) {
 			contain_type<T> temp = v(i, j);
 			v(i, j) = conj(v(j, i));
@@ -391,10 +391,10 @@ template <class T, class T1, SLS_IF(
 inline void her(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (v.nrows() != v1.ncols() || v.ncols() != v1.nrows())
+	if (v.n1() != v1.ncols() || v.ncols() != v1.n1())
 		SLS_ERR("wrong shape!");
 #endif
-	for (Long i = 0; i < v.nrows(); ++i) {
+	for (Long i = 0; i < v.n1(); ++i) {
 		for (Long j = 0; j < v.ncols(); ++j)
 			v(i, j) = conj(v1(j, i));
 	}
@@ -854,10 +854,10 @@ template <class T, class T1, class T2, SLS_IF(
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size() || y.size() != a.nrows())
+	if (a.ncols() != x.size() || y.size() != a.n1())
 		SLS_ERR("illegal shape!");
 #endif
-	Long i, j, Nr_a = a.nrows(), Nc_a = a.ncols();
+	Long i, j, Nr_a = a.n1(), Nc_a = a.ncols();
 	vecset(y.ptr(), contain_type<T>(), Nr_a);
 	for (i = 0; i < Nr_a; ++i) {
 		for (j = 0; j < Nc_a; ++j)
@@ -872,10 +872,10 @@ template <class T, class T1, class T2, SLS_IF(
 inline void mul_par(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.size() || y.size() != a.nrows())
+	if (a.ncols() != x.size() || y.size() != a.n1())
 		SLS_ERR("illegal shape!");
 #endif
-	Long Nr_a = a.nrows(), Nc_a = a.ncols();
+	Long Nr_a = a.n1(), Nc_a = a.ncols();
 	vecset(y.ptr(), contain_type<T>(), Nr_a);
 #pragma omp parallel for
 	for (Long i = 0; i < Nr_a; ++i) {
@@ -890,9 +890,9 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul(T &y, const T1 &x, const T2 &a)
 {
-	Long Nr_a = a.nrows(), Nc_a = a.ncols();
+	Long Nr_a = a.n1(), Nc_a = a.ncols();
 #ifdef SLS_CHECK_SHAPE
-	if (x.size() != a.nrows() || y.size() != Nc_a)
+	if (x.size() != a.n1() || y.size() != Nc_a)
 		SLS_ERR("illegal shape!");
 #endif
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
@@ -908,9 +908,9 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul_par(T &y, const T1 &x, const T2 &a)
 {
-	Long Nr_a = a.nrows(), Nc_a = a.ncols();
+	Long Nr_a = a.n1(), Nc_a = a.ncols();
 #ifdef SLS_CHECK_SHAPE
-	if (x.size() != a.nrows() || y.size() != Nc_a)
+	if (x.size() != a.n1() || y.size() != Nc_a)
 		SLS_ERR("illegal shape!");
 #endif
 	vecset(y.ptr(), contain_type<T>(), Nc_a);
@@ -928,9 +928,9 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
-	Long Nr_a = a.nrows(), Nc_a = a.ncols(), Nc_x = x.ncols();
+	Long Nr_a = a.n1(), Nc_a = a.ncols(), Nc_x = x.ncols();
 #ifdef SLS_CHECK_SHAPE
-	if (a.ncols() != x.nrows() || y.nrows() != Nr_a || y.ncols() != Nc_x)
+	if (a.ncols() != x.n1() || y.n1() != Nr_a || y.ncols() != Nc_x)
 		SLS_ERR("illegal shape!");
 #endif
 	vecset(y.ptr(), contain_type<T>(), Nr_a*Nc_x);
