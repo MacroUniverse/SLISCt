@@ -7,7 +7,7 @@ namespace slisc {
 inline void inv_mat(CmatDoub_IO A)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (A.n1() != A.ncols())
+	if (A.n1() != A.n2())
 		SLS_ERR("wrong shape!");
 #endif
 	Long N = A.n1();

@@ -37,13 +37,13 @@ public:
 
 HouseholderQrDoub::HouseholderQrDoub(MatDoub_I &a)
 {
-	Eigen::Map<const RMatrixXd> map_a(a.ptr(), a.n1(), a.ncols());
+	Eigen::Map<const RMatrixXd> map_a(a.ptr(), a.n1(), a.n2());
 	qr.compute(map_a);
 }
 
 void HouseholderQrDoub::compute(MatDoub_I &a)
 {
-	Eigen::Map<const RMatrixXd> map_a(a.ptr(), a.n1(), a.ncols());
+	Eigen::Map<const RMatrixXd> map_a(a.ptr(), a.n1(), a.n2());
 	qr.compute(map_a);
 }
 
@@ -57,13 +57,13 @@ void HouseholderQrDoub::solve(VecDoub_O &x, VecDoub_I &y)
 
 HouseholderQrComp::HouseholderQrComp(MatComp_I &a)
 {
-	Eigen::Map<const RMatrixXcd> map_a(a.ptr(), a.n1(), a.ncols());
+	Eigen::Map<const RMatrixXcd> map_a(a.ptr(), a.n1(), a.n2());
 	qr.compute(map_a);
 }
 
 void HouseholderQrComp::compute(MatComp_I &a)
 {
-	Eigen::Map<const RMatrixXcd> map_a(a.ptr(), a.n1(), a.ncols());
+	Eigen::Map<const RMatrixXcd> map_a(a.ptr(), a.n1(), a.n2());
 	qr.compute(map_a);
 }
 

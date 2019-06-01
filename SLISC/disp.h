@@ -34,7 +34,7 @@ void disp(const Tv &v, Int_I precision = def_disp_prec)
 template <class T, SLS_IF(ndims<T>() == 2)>
 void disp(const T &a, Int_I precision = def_disp_prec)
 {
-	Long i, j, m{ a.n1() }, n{ a.ncols() };
+	Long i, j, m{ a.n1() }, n{ a.n2() };
 	auto oldPrecision = cout.precision();
 	cout.precision(precision);
 	if (a.size() == 0) cout << "empty";

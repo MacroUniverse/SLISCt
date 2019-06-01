@@ -9,36 +9,36 @@ inline void test_sparse()
 	// default constructor
 	{
 		McooDoub a(0,0);
-		if (a.nnz() != 0 || a.n1() != 0 || a.ncols() != 0 || a.nnz() != 0)
+		if (a.nnz() != 0 || a.n1() != 0 || a.n2() != 0 || a.nnz() != 0)
 			SLS_ERR("failed!");
 		McoohComp b(0,0);
-		if (b.nnz() != 0 || b.n1() != 0 || b.ncols() != 0 || b.nnz() != 0)
+		if (b.nnz() != 0 || b.n1() != 0 || b.n2() != 0 || b.nnz() != 0)
 			SLS_ERR("failed!");
 		DiagInt c(0);
-		if (c.nnz() != 0 || c.n1() != 0 || c.ncols() != 0)
+		if (c.nnz() != 0 || c.n1() != 0 || c.n2() != 0)
 			SLS_ERR("failed!");
 	}
 
 	// 1 arg constructor
 	{
 		DiagInt c(4);
-		if (c.nnz() != 4 || c.n1() != 4 || c.ncols() != 4)
+		if (c.nnz() != 4 || c.n1() != 4 || c.n2() != 4)
 			SLS_ERR("failed!");
 	}
 
 	// 2 arg constructor
 	{
 		McooDoub a(3, 4);
-		if (a.n1() != 3 || a.ncols() != 4 || a.capacity() != 0 || a.nnz() != 0)
+		if (a.n1() != 3 || a.n2() != 4 || a.capacity() != 0 || a.nnz() != 0)
 			SLS_ERR("failed!");
 		McoohComp b(4, 4);
-		if (b.n1() != 4 || b.ncols() != 4 || b.capacity() != 0 || b.nnz() != 0)
+		if (b.n1() != 4 || b.n2() != 4 || b.capacity() != 0 || b.nnz() != 0)
 			SLS_ERR("failed!");
 		DiagComp c(4, 4);
-		if (c.n1() != 4 || c.ncols() != 4 || c.nnz() != 4)
+		if (c.n1() != 4 || c.n2() != 4 || c.nnz() != 4)
 			SLS_ERR("failed!");
 		DiagComp d(4, Comp(1,-3));
-		if (d.n1() != 4 || d.ncols() != 4 || d.nnz() != 4)
+		if (d.n1() != 4 || d.n2() != 4 || d.nnz() != 4)
 			SLS_ERR("failed!");
 		if ((VecComp&)d != Comp(1, -3))
 			SLS_ERR("failed!");
@@ -47,13 +47,13 @@ inline void test_sparse()
 	// 3 arg constructor
 	{
 		McooDoub a(3, 4, 5);
-		if (a.n1() != 3 || a.ncols() != 4 || a.capacity() != 5 || a.nnz() != 0)
+		if (a.n1() != 3 || a.n2() != 4 || a.capacity() != 5 || a.nnz() != 0)
 			SLS_ERR("failed!");
 		McoohComp b(3, 3, 5);
-		if (b.n1() != 3 || b.ncols() != 3 || b.capacity() != 5 || b.nnz() != 0)
+		if (b.n1() != 3 || b.n2() != 3 || b.capacity() != 5 || b.nnz() != 0)
 			SLS_ERR("failed!");
 		DiagInt c(5, 5, 1);
-		if (c.n1() != 5 || c.ncols() != 5 || c.nnz() != 5)
+		if (c.n1() != 5 || c.n2() != 5 || c.nnz() != 5)
 			SLS_ERR("failed!");
 		if ((VecInt&)c != 1)
 			SLS_ERR("failed!");
@@ -124,10 +124,10 @@ inline void test_sparse()
 				SLS_ERR("failed!");
 		}
 		a1 = a; b1 = b;
-		if (a1.n1() != a.n1() || a1.ncols() != a.ncols() ||
+		if (a1.n1() != a.n1() || a1.n2() != a.n2() ||
 			a1.nnz() != a.nnz() || a1.capacity() != a.capacity())
 			SLS_ERR("failed!");
-		if (b1.n1() != b.n1() || b1.ncols() != b.ncols() ||
+		if (b1.n1() != b.n1() || b1.n2() != b.n2() ||
 			b1.nnz() != b.nnz() || b1.capacity() != b.capacity())
 			SLS_ERR("failed!");
 		for (i = 0; i < a.nnz(); ++i) {
@@ -144,9 +144,9 @@ inline void test_sparse()
 		}
 
 		// copy from sparse to dense matrix
-		MatDoub c(a.n1(), a.ncols()); MatComp d(b.n1(), b.ncols());
+		MatDoub c(a.n1(), a.n2()); MatComp d(b.n1(), b.n2());
 		c = a; d = b;
-		CmatDoub e(a.n1(), a.ncols()); CmatComp f(b.n1(),b.ncols());
+		CmatDoub e(a.n1(), a.n2()); CmatComp f(b.n1(),b.n2());
 		e = a; f = b;
 		for (i = 0; i < 4; ++i) {
 			for (j = 0; j < 4; ++j) {
@@ -168,7 +168,7 @@ inline void test_sparse()
 			for (Int i = 0; i < 16; ++i) {
 				a.push(i, i % 4, i / 4);
 			}
-			CmatDoub a1(a.n1(), a.ncols()); a1 = a;
+			CmatDoub a1(a.n1(), a.n2()); a1 = a;
 			VecDoub v(a.n1()), v1(a1.n1()), x(4);
 			linspace(x, 1., 4.);
 			mul(v, a, x); mul(v1, a1, x);
@@ -182,7 +182,7 @@ inline void test_sparse()
 			for (Int i = 0; i < 16; ++i) {
 				b.push(Comp(i, i + 1), i % 4, i / 4);
 			}
-			MatComp b1(b.n1(), b.ncols()); b1 = b;
+			MatComp b1(b.n1(), b.n2()); b1 = b;
 			VecComp v(b.n1()), v1(b1.n1()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, b, x); mul(v1, b1, x);
@@ -195,7 +195,7 @@ inline void test_sparse()
 			for (Int i = 0; i < 16; ++i) {
 				c.push(Imag(i), i % 4, i / 4);
 			}
-			CmatImag c1(c.n1(), c.ncols()); c1 = c;
+			CmatImag c1(c.n1(), c.n2()); c1 = c;
 			VecComp v(c.n1()), v1(c1.n1()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, c, x); mul(v1, c1, x);

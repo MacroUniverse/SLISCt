@@ -32,7 +32,7 @@ public:
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
 	Long n1() const;
-	Long ncols() const;
+	Long n2() const;
 	Long lda() const;
 };
 
@@ -126,7 +126,7 @@ inline Long Dcmat<T>::n1() const
 }
 
 template <class T>
-inline Long Dcmat<T>::ncols() const
+inline Long Dcmat<T>::n2() const
 {
 	return m_Nc;
 }

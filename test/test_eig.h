@@ -26,7 +26,7 @@ void test_eig()
 				a(i, i) = 20 * rand() - 10;
 
 			eig_sym(eigVal, eigVec, a);
-			eigVec1.resize(a.n1(), eigVec.ncols());
+			eigVec1.resize(a.n1(), eigVec.n2());
 			mul(eigVec1, a, eigVec);
 			eigVec2.resize(eigVec);
 			mul(eigVec2, eigVec, diag(eigVal));
@@ -58,7 +58,7 @@ void test_eig()
 				a(i, i) = 20 * rand() - 10;
 
 			eig_her(eigVal, eigVec, a);
-			eigVec1.resize(a.n1(), eigVec.ncols());
+			eigVec1.resize(a.n1(), eigVec.n2());
 			mul(eigVec1, a, eigVec);
 			eigVec2.resize(eigVec);
 			mul(eigVec2, eigVec, diag(eigVal));

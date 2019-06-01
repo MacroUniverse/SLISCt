@@ -10,7 +10,7 @@ namespace slisc {
 void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.ncols() || !shape_cmp(out, a))
+	if (a.n1() != a.n2() || !shape_cmp(out, a))
 		SLS_ERR("not a square matrix!");
 #endif
 	Long N = a.n1();
@@ -54,12 +54,12 @@ inline Long ExpA<Doub>::size() const
 
 // A is symmetric matrix, only upper triangle is used
 inline ExpA<Doub>::ExpA(const CmatDoub & A, Doub_I t)
-	: m_diag(A.n1()), m_U(A.n1(), A.ncols()),
-	m_Uh(A.n1(), A.ncols())
+	: m_diag(A.n1()), m_U(A.n1(), A.n2()),
+	m_Uh(A.n1(), A.n2())
 {
 	Long N = A.n1();
 #ifdef SLS_CHECK_SHAPE
-	if (N != A.ncols())
+	if (N != A.n2())
 		SLS_ERR("A must be square matrix!");
 #endif
 	CmatDoub eigVec(N, N);

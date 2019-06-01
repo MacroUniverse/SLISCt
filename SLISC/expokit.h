@@ -31,7 +31,7 @@ inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov)
 {
 	const Doub tol = 0.; // set tolerance here
 #ifdef SLS_CHECK_SHAPE
-	if (mat.n1() != mat.ncols() || mat.ncols() != v.size())
+	if (mat.n1() != mat.n2() || mat.n2() != v.size())
 		SLS_ERR("wrong shape!");
 #endif
 	Int iflag;

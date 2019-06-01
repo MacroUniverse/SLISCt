@@ -9,7 +9,7 @@ namespace slisc {
 template <class T>
 void shift(Matrix<T> &a, Llong nshift, Int_I dim = 1)
 {
-	Long Nr = a.n1(), Nc = a.ncols(), n;
+	Long Nr = a.n1(), Nc = a.n2(), n;
 	if (dim == 2) {
 		// I actually want n to be shift to the left
 		if (nshift < 0)
@@ -52,7 +52,7 @@ void shift(Matrix<T> &a, Llong nshift, Int_I dim = 1)
 template <class T>
 void diagonals(Matrix<T> &a)
 {
-	Long i, Nr{ a.n1() }, Nc{ a.ncols() };
+	Long i, Nr{ a.n1() }, Nc{ a.n2() };
 	T *temp = new T[Nc];
 	Long szT = sizeof(T);
 	for (i = 1; i < Nr; ++i) {
@@ -68,7 +68,7 @@ template <class T>
 void diagonals_par(Matrix<T> &a)
 {
 	SLS_ERR("TODO");
-	/*Long i, Nr{ a.n1() }, Nc{ a.ncols() };
+	/*Long i, Nr{ a.n1() }, Nc{ a.n2() };
 	Long szT = sizeof(T);
 #pragma omp parallel for
 	for (i = 1; i < Nr; ++i) {
@@ -83,7 +83,7 @@ void diagonals_par(Matrix<T> &a)
 template <class T>
 void idiagonals(Matrix<T> &a)
 {
-	Long i, Nr{ a.n1() }, Nc{ a.ncols() };
+	Long i, Nr{ a.n1() }, Nc{ a.n2() };
 	T *temp = new T[Nc];
 	Long szT = sizeof(T);
 	for (i = 1; i < Nr; ++i) {
@@ -99,7 +99,7 @@ template <class T>
 void idiagonals_par(Matrix<T> &a)
 {
 	SLS_ERR("TODO");
-	/*Long i, Nr{ a.n1() }, Nc{ a.ncols() };
+	/*Long i, Nr{ a.n1() }, Nc{ a.n2() };
 	Long szT = sizeof(T);
 #pragma omp parallel for
 	for (i = 1; i < Nr; ++i) {

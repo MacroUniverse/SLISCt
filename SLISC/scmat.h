@@ -29,7 +29,7 @@ public:
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
 	Long n1() const;
-	Long ncols() const;
+	Long n2() const;
 
 	// resize() is a bad idea, don't try to create it!
 
@@ -116,7 +116,7 @@ inline Long Scmat<T>::n1() const
 }
 
 template <class T>
-inline Long Scmat<T>::ncols() const
+inline Long Scmat<T>::n2() const
 {
 	return m_Nc;
 }

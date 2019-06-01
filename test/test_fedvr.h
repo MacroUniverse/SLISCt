@@ -75,7 +75,7 @@ inline void test_inf_sqr_well()
 	VecDoub x(0), w(0), u(0);
 	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
-	H.resize(Hs.n1(), Hs.ncols()); H = Hs;
+	H.resize(Hs.n1(), Hs.n2()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// solve eigen states
@@ -110,7 +110,7 @@ inline void test_SHO()
 	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 
-	H.resize(Hs.n1(), Hs.ncols()); H = Hs;
+	H.resize(Hs.n1(), Hs.n2()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
 
 	// add potential to Hamiltonian

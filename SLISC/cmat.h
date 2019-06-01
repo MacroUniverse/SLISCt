@@ -36,7 +36,7 @@ public:
 	T& operator()(Long_I i, Long_I j);	// double indexing
 	const T& operator()(Long_I i, Long_I j) const;
 	Long n1() const;
-	Long ncols() const;
+	Long n2() const;
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
 	template <class T1>
 	void resize(const Cmat<T1> &a);
@@ -129,7 +129,7 @@ inline Long Cmat<T>::n1() const
 { return m_Nr; }
 
 template <class T>
-inline Long Cmat<T>::ncols() const
+inline Long Cmat<T>::n2() const
 { return m_Nc; }
 
 template <class T>
@@ -144,6 +144,6 @@ inline void Cmat<T>::resize(Long_I Nr, Long_I Nc)
 template <class T>
 template <class T1>
 inline void Cmat<T>::resize(const Cmat<T1> &a)
-{ resize(a.n1(), a.ncols()); }
+{ resize(a.n1(), a.n2()); }
 
 }
