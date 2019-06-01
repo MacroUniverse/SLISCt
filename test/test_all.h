@@ -14,6 +14,7 @@
 #include "test_fft.h"
 #include "test_random.h"
 #include "test/test_sort.h"
+#include "test/test_lin_eq.h"
 //#include "test_eigen_basics.h"
 //#include "test_eigen_linsolve.h"
 //#include "test_eigen_fft.h"
@@ -78,6 +79,8 @@ inline void test_all()
 	test_random();
 	cout << "test_sort()" << endl;
 	test_sort();
+	cout << "test_lin_eq()" << endl;
+	test_lin_eq();
 	cout << "test_time()" << endl;
 	test_time();
 	cout << "test_coulomb()" << endl;
