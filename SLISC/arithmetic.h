@@ -24,8 +24,8 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 		return v1.n1() == v2.n1() && v1.n2() == v2.n2();
 	}
 	else if constexpr (ndims<T1>() == 3 && ndims<T2>() == 3) {
-		return v1.dim1() == v2.dim1() && v1.dim2() == v2.dim2()
-			&& v1.dim3() == v2.dim3();
+		return v1.n1() == v2.n1() && v1.n2() == v2.n2()
+			&& v1.n3() == v2.n3();
 	}
 	return false;
 }

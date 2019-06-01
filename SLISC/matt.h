@@ -294,8 +294,8 @@ inline void save(const Mat3d<T> &a, Str_I varname, Matt_IO matt,
 	// write data type info
 	fout << type_num<T>() << Matt::dlm;
 	// write dimension info
-	m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
-	q = (a.dim3() + step3 - 1) / step3;
+	m = (a.n1() + step1 - 1) / step1; n = (a.n2() + step2 - 1) / step2;
+	q = (a.n3() + step3 - 1) / step3;
 	fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << q << Matt::dlm;
 	// write matrix data
 	for (k = 0; k < q; ++k)
@@ -321,7 +321,7 @@ inline void save(Mat3Doub_I &a, Str_I varname, Matt_IO matt,
 	fout << type_num<Doub>() << Matt::dlm;
 	if (xyz == 'x') {
 		// write dimension info
-		m = (a.dim2() + step1 - 1) / step1; n = (a.dim3() + step2 - 1) / step2;
+		m = (a.n2() + step1 - 1) / step1; n = (a.n3() + step2 - 1) / step2;
 		fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << Nslice << Matt::dlm;
 		// write matrix data
 		for (i = 0; i < Nslice; ++i) {
@@ -333,7 +333,7 @@ inline void save(Mat3Doub_I &a, Str_I varname, Matt_IO matt,
 	}
 	else if (xyz == 'y') {
 		// write dimension info
-		m = (a.dim3() + step1 - 1) / step1; n = (a.dim1() + step2 - 1) / step2;
+		m = (a.n3() + step1 - 1) / step1; n = (a.n1() + step2 - 1) / step2;
 		fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << Nslice << Matt::dlm;
 		// write matrix data
 		for (j = 0; j < Nslice; ++j) {
@@ -345,7 +345,7 @@ inline void save(Mat3Doub_I &a, Str_I varname, Matt_IO matt,
 	}
 	else if (xyz == 'z') {
 		// write dimension info
-		m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
+		m = (a.n1() + step1 - 1) / step1; n = (a.n2() + step2 - 1) / step2;
 		fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << Nslice << Matt::dlm;
 		// write matrix data
 		for (k = 0; k < Nslice; ++k) {
@@ -375,7 +375,7 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 	fout << type_num<Comp>() << Matt::dlm;
 	if (xyz == 'x') {
 		// write dimension info
-		m = (a.dim2() + step1 - 1) / step1; n = (a.dim3() + step2 - 1) / step2;
+		m = (a.n2() + step1 - 1) / step1; n = (a.n3() + step2 - 1) / step2;
 		fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << Nslice << Matt::dlm;
 		// write matrix data
 		for (i = 0; i < Nslice; ++i) {
@@ -387,7 +387,7 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 	}
 	else if (xyz == 'y') {
 		// write dimension info
-		m = (a.dim3() + step1 - 1) / step1; n = (a.dim1() + step2 - 1) / step2;
+		m = (a.n3() + step1 - 1) / step1; n = (a.n1() + step2 - 1) / step2;
 		fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << Nslice << Matt::dlm;
 		// write matrix data
 		for (j = 0; j < Nslice; ++j) {
@@ -400,7 +400,7 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 	}
 	else if (xyz == 'z') {
 		// write dimension info
-		m = (a.dim1() + step1 - 1) / step1; n = (a.dim2() + step2 - 1) / step2;
+		m = (a.n1() + step1 - 1) / step1; n = (a.n2() + step2 - 1) / step2;
 		fout << 3 << Matt::dlm << m << Matt::dlm << n << Matt::dlm << Nslice << Matt::dlm;
 		// write matrix data
 		for (k = 0; k < Nslice; ++k) {

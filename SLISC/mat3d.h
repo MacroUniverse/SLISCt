@@ -36,9 +36,9 @@ public:
 	void resize(const Mat3d<T1> &a);
 	T & operator()(Long_I i, Long_I j, Long_I k);	//subscripting: pointer to row i
 	const T & operator()(Long_I i, Long_I j, Long_I k) const;
-	Long dim1() const;
-	Long dim2() const;
-	Long dim3() const;
+	Long n1() const;
+	Long n2() const;
+	Long n3() const;
 };
 
 template <class T>
@@ -90,7 +90,7 @@ inline void Mat3d<T>::resize(Long_I N1, Long_I N2, Long_I N3)
 
 template <class T>
 template <class T1>
-inline void Mat3d<T>::resize(const Mat3d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
+inline void Mat3d<T>::resize(const Mat3d<T1> &a) { resize(a.n1(), a.n2(), a.n3()); }
 
 template <class T>
 inline T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k)
@@ -113,11 +113,11 @@ inline const T & Mat3d<T>::operator()(Long_I i, Long_I j, Long_I k) const
 }
 
 template <class T>
-inline Long Mat3d<T>::dim1() const { return m_N1; }
+inline Long Mat3d<T>::n1() const { return m_N1; }
 
 template <class T>
-inline Long Mat3d<T>::dim2() const { return m_N2; }
+inline Long Mat3d<T>::n2() const { return m_N2; }
 
 template <class T>
-inline Long Mat3d<T>::dim3() const { return m_N3; }
+inline Long Mat3d<T>::n3() const { return m_N3; }
 } // namespace slisc

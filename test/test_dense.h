@@ -27,15 +27,15 @@ void test_dense()
 	if (aDoub.ptr() != &aDoub(0, 0)) SLS_ERR("failed!");
 	Mat3Doub a3Doub(3, 3, 3);
 	if (a3Doub.size() != 27) SLS_ERR("failed!");
-	if (a3Doub.dim1() != 3) SLS_ERR("failed!");
-	if (a3Doub.dim2() != 3) SLS_ERR("failed!");
-	if (a3Doub.dim3() != 3) SLS_ERR("failed!");
+	if (a3Doub.n1() != 3) SLS_ERR("failed!");
+	if (a3Doub.n2() != 3) SLS_ERR("failed!");
+	if (a3Doub.n3() != 3) SLS_ERR("failed!");
 	if (a3Doub.ptr() != &a3Doub(0,0,0)) SLS_ERR("failed!");
 	Cmat3Doub c3Doub(3, 3, 3);
 	if (c3Doub.size() != 27) SLS_ERR("failed!");
-	if (c3Doub.dim1() != 3) SLS_ERR("failed!");
-	if (c3Doub.dim2() != 3) SLS_ERR("failed!");
-	if (c3Doub.dim3() != 3) SLS_ERR("failed!");
+	if (c3Doub.n1() != 3) SLS_ERR("failed!");
+	if (c3Doub.n2() != 3) SLS_ERR("failed!");
+	if (c3Doub.n3() != 3) SLS_ERR("failed!");
 	if (c3Doub.ptr() != &c3Doub(0, 0, 0)) SLS_ERR("failed!");
 	}
 
@@ -72,9 +72,9 @@ void test_dense()
 	if (a3Doub.size() != 0) SLS_ERR("failed!");
 	a3Doub.resize(4, 4, 4);
 	if (a3Doub.size() != 64) SLS_ERR("failed!");
-	if (a3Doub.dim1() != 4) SLS_ERR("failed!");
-	if (a3Doub.dim2() != 4) SLS_ERR("failed!");
-	if (a3Doub.dim3() != 4) SLS_ERR("failed!");
+	if (a3Doub.n1() != 4) SLS_ERR("failed!");
+	if (a3Doub.n2() != 4) SLS_ERR("failed!");
+	if (a3Doub.n3() != 4) SLS_ERR("failed!");
 	if (a3Doub.ptr() != &a3Doub(0,0,0)) SLS_ERR("failed!");
 	c3Doub.resize(0, 0, 4);
 	if (c3Doub.size() != 0) SLS_ERR("failed!");
@@ -84,9 +84,9 @@ void test_dense()
 	if (c3Doub.size() != 0) SLS_ERR("failed!");
 	c3Doub.resize(4, 4, 4);
 	if (c3Doub.size() != 64) SLS_ERR("failed!");
-	if (c3Doub.dim1() != 4) SLS_ERR("failed!");
-	if (c3Doub.dim2() != 4) SLS_ERR("failed!");
-	if (c3Doub.dim3() != 4) SLS_ERR("failed!");
+	if (c3Doub.n1() != 4) SLS_ERR("failed!");
+	if (c3Doub.n2() != 4) SLS_ERR("failed!");
+	if (c3Doub.n3() != 4) SLS_ERR("failed!");
 	if (c3Doub.ptr() != &c3Doub(0, 0, 0)) SLS_ERR("failed!");
 
 	// resize and copy old data
@@ -138,15 +138,15 @@ void test_dense()
 	a3Doub2 << a3Doub;
 	if (a3Doub2 != a3Doub1) SLS_ERR("failed!");
 	if (a3Doub.size() != 0) SLS_ERR("failed!");
-	if (a3Doub.dim1() != 0) SLS_ERR("failed!");
-	if (a3Doub.dim2() != 0) SLS_ERR("failed!");
-	if (a3Doub.dim3() != 0) SLS_ERR("failed!");
+	if (a3Doub.n1() != 0) SLS_ERR("failed!");
+	if (a3Doub.n2() != 0) SLS_ERR("failed!");
+	if (a3Doub.n3() != 0) SLS_ERR("failed!");
 	c3Doub2 << c3Doub;
 	if (c3Doub2 != c3Doub1) SLS_ERR("failed!");
 	if (a3Doub.size() != 0) SLS_ERR("failed!");
-	if (a3Doub.dim1() != 0) SLS_ERR("failed!");
-	if (a3Doub.dim2() != 0) SLS_ERR("failed!");
-	if (a3Doub.dim3() != 0) SLS_ERR("failed!");
+	if (a3Doub.n1() != 0) SLS_ERR("failed!");
+	if (a3Doub.n2() != 0) SLS_ERR("failed!");
+	if (a3Doub.n3() != 0) SLS_ERR("failed!");
 
 	// end()
 	vDoub1[vDoub1.size()-1] = 3.1;
@@ -177,8 +177,8 @@ void test_dense()
 	aDoub1(aDoub1.n1()-1, aDoub1.n2()-1) = 5.5;
 	if ( aDoub1(aDoub1.n1()-1, aDoub1.n2()-1) != 5.5 ) SLS_ERR("failed!");
 	if (aDoub1.end() != 5.5)  SLS_ERR("failed!");
-	a3Doub1(a3Doub1.dim1()-1, a3Doub1.dim2()-1, a3Doub1.dim3()-1) = 5.5;
-	if ( a3Doub1(a3Doub1.dim1()-1, a3Doub1.dim2()-1, a3Doub1.dim3()-1) != 5.5 ) SLS_ERR("failed!");
+	a3Doub1(a3Doub1.n1()-1, a3Doub1.n2()-1, a3Doub1.n3()-1) = 5.5;
+	if ( a3Doub1(a3Doub1.n1()-1, a3Doub1.n2()-1, a3Doub1.n3()-1) != 5.5 ) SLS_ERR("failed!");
 	if (a3Doub1.end() != 5.5)  SLS_ERR("failed!");
 
 	Cmat3Doub c3d(2, 3, 4);

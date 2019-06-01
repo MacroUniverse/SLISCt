@@ -52,7 +52,7 @@ void disp(const T &a, Int_I precision = def_disp_prec)
 // display 3d array
 template <class T, SLS_IF(ndims<T>() == 3)>
 void disp(const T &a, Int_I precision = def_disp_prec) {
-	Long i, j, k, m{ a.dim1() }, n{ a.dim2() }, q{ a.dim3() };
+	Long i, j, k, m{ a.n1() }, n{ a.n2() }, q{ a.n3() };
 	auto oldPrecision = cout.precision();
 	cout.precision(precision);
 	if (a.size() == 0) cout << "empty";

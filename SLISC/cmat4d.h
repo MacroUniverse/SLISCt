@@ -35,10 +35,10 @@ public:
 	void resize(const Cmat4d<T1> &a);
 	T & operator()(Long_I i, Long_I j, Long_I k, Long_I l);
 	const T & operator()(Long_I i, Long_I j, Long_I k, Long_I l) const;
-	Long dim1() const;
-	Long dim2() const;
-	Long dim3() const;
-	Long dim4() const;
+	Long n1() const;
+	Long n2() const;
+	Long n3() const;
+	Long n4() const;
 };
 
 template <class T>
@@ -70,7 +70,7 @@ template <class T> template <class T1>
 inline Cmat4d<T> & Cmat4d<T>::operator=(const Cmat4d<T1> &rhs)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (m_N1 != rhs.dim1() || m_N2 != rhs.dim2() || m_N3 != rhs.dim3())
+	if (m_N1 != rhs.n1() || m_N2 != rhs.n2() || m_N3 != rhs.n3())
 		SLS_ERR("wrong shape!");
 #endif
 	copy(*this, rhs);
@@ -96,7 +96,7 @@ inline void Cmat4d<T>::resize(Long_I N1, Long_I N2, Long_I N3, Long_I N4)
 
 template <class T>
 template <class T1>
-inline void Cmat4d<T>::resize(const Cmat4d<T1> &a) { resize(a.dim1(), a.dim2(), a.dim3()); }
+inline void Cmat4d<T>::resize(const Cmat4d<T1> &a) { resize(a.n1(), a.n2(), a.n3()); }
 
 template <class T>
 inline T & Cmat4d<T>::operator()(Long_I i, Long_I j, Long_I k, Long_I l)
@@ -123,22 +123,22 @@ inline const T & Cmat4d<T>::operator()(Long_I i, Long_I j, Long_I k, Long_I l) c
 }
 
 template <class T>
-inline Long Cmat4d<T>::dim1() const {
+inline Long Cmat4d<T>::n1() const {
 	return m_N1;
 }
 
 template <class T>
-inline Long Cmat4d<T>::dim2() const {
+inline Long Cmat4d<T>::n2() const {
 	return m_N2;
 }
 
 template <class T>
-inline Long Cmat4d<T>::dim3() const {
+inline Long Cmat4d<T>::n3() const {
 	return m_N3;
 }
 
 template <class T>
-inline Long Cmat4d<T>::dim4() const {
+inline Long Cmat4d<T>::n4() const {
 	return m_N4;
 }
 } // namespace slisc

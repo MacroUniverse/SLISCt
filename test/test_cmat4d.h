@@ -7,8 +7,8 @@ void test_cmat4d()
 	using namespace slisc;
 	Cmat4Int a(2, 3, 4, 5);
 	linspace(a, 1, a.size());
-	if (a.dim1() != 2 || a.dim2() != 3 ||
-		a.dim3() != 4 || a.dim4() != 5)
+	if (a.n1() != 2 || a.n2() != 3 ||
+		a.n3() != 4 || a.n4() != 5)
 		SLS_ERR("failed!");
 
 	Long ind = 0;

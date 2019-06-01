@@ -58,7 +58,7 @@ template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
 void slice_row(Dvector<T> &slice, const Tmat &a, Long_I row, Long_I k = 0)
 {
-	Long Nr = a.dim1(), Nc = a.dim2();
+	Long Nr = a.n1(), Nc = a.n2();
 #ifdef SLS_CHECK_BOUNDS
 	if (row < 0 || row >= Nr)
 		SLS_ERR("out of bound!");
@@ -127,7 +127,7 @@ template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
 	is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
 void slice_col(Svector<T> &slice, const Tmat &a, Long_I col, Long_I k = 0)
 {
-	Long Nr = a.dim1(), Nc = a.dim2();
+	Long Nr = a.n1(), Nc = a.n2();
 #ifdef SLS_CHECK_BOUNDS
 	if (col < 0 || col >= Nc)
 		SLS_ERR("out of bound!");
@@ -159,24 +159,24 @@ void slice_mat(Tsmat &slice, const Tmat &a,
 // slice a3(i,j,:)
 template <class Tmat3, class T = contain_type<Tmat3>,
 	SLS_IF(is_Cmat3d<Tmat3>())>
-void slice_dim3(Dvector<T> &slice, const Tmat3 &a,
+void slice_n3(Dvector<T> &slice, const Tmat3 &a,
 	Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= a.dim1() || j < 0 || j >= a.dim2())
+	if (i < 0 || i >= a.n1() || j < 0 || j >= a.n2())
 		SLS_ERR("index out of bound!");
 #endif
-	Long N1N2 = a.dim1()*a.dim2();
-	slice.set(a.ptr() + i + a.dim1()*j, a.dim3(), a.dim1()*a.dim2());
+	Long N1N2 = a.n1()*a.n2();
+	slice.set(a.ptr() + i + a.n1()*j, a.n3(), a.n1()*a.n2());
 }
 
 template <class Tmat3, class T = contain_type<Tmat3>,
 	SLS_IF(is_Cmat3d<Tmat3>())>
-Dvector<T> slice_dim3(const Tmat3 &a,
+Dvector<T> slice_n3(const Tmat3 &a,
 		Long_I i, Long_I j)
 {
 	Dvector<T> slice;
-	slice_dim3(slice, a, i, j);
+	slice_n3(slice, a, i, j);
 	return slice;
 }
 
@@ -186,10 +186,10 @@ template <class T, SLS_IF(is_scalar<T>())>
 void slice_mat12(Scmat<T> &a, const Cmat3d<T> &a3, Long_I k)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (k < 0 || k >= a3.dim3())
+	if (k < 0 || k >= a3.n3())
 		SLS_ERR("out of bound!");
 #endif
-	a.set_size(a3.dim1(), a3.dim2());
+	a.set_size(a3.n1(), a3.n2());
 	a.set_ptr(a3.ptr() + a.size() * k);
 }
 
@@ -207,11 +207,11 @@ template <class T, SLS_IF(is_scalar<T>())>
 void slice_mat12(Scmat<T> &a, const Cmat4d<T> &a4, Long_I k, Long_I l)
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (k < 0 || k >= a4.dim3())
+	if (k < 0 || k >= a4.n3())
 		SLS_ERR("out of bound!");
 #endif
-	a.set_size(a4.dim1(), a4.dim2());
-	a.set_ptr(a4.ptr() + a.size() * (a4.dim3()*l  + k));
+	a.set_size(a4.n1(), a4.n2());
+	a.set_ptr(a4.ptr() + a.size() * (a4.n3()*l  + k));
 }
 
 template <class T, SLS_IF(is_scalar<T>())>
