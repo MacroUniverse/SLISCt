@@ -480,6 +480,12 @@ inline void operator/=(T &v, const Ts &s)
 	divide_equals_vs(v.ptr(), s, v.size());
 }
 
+template <class T, class Ts, SLS_IF(is_Dvector<T>() && is_scalar<Ts>())>
+inline void operator/=(T &v, const Ts &s)
+{
+	divide_equals_vs(v.ptr(), s, v.size(), v.step());
+}
+
 // v %= s
 template <class T, class Ts, SLS_IF(is_dense<T>() && is_scalar<Ts>())>
 inline void rem(T &v, const Ts &s)

@@ -162,6 +162,10 @@ template <class Tmat3, class T = contain_type<Tmat3>,
 void slice_dim3(Dvector<T> &slice, const Tmat3 &a,
 	Long_I i, Long_I j)
 {
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= a.dim1() || j < 0 || j >= a.dim2())
+		SLS_ERR("index out of bound!");
+#endif
 	Long N1N2 = a.dim1()*a.dim2();
 	slice.set(a.ptr() + i + a.dim1()*j, a.dim3(), a.dim1()*a.dim2());
 }

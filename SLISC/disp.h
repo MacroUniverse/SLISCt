@@ -15,7 +15,7 @@ namespace slisc {
 const Int def_disp_prec = 4;
 
 // display vector
-template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+template <class Tv, SLS_IF(ndims<Tv>() == 1)>
 void disp(const Tv &v, Int_I precision = def_disp_prec)
 {
 	auto oldPrecision = cout.precision();

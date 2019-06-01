@@ -88,4 +88,16 @@ void test_slice()
 			}
 		}
 	}
+	{
+		Cmat3Int a3(2, 2, 2);
+		linspace(a3, 1, 8);
+		DvecInt slice;
+		slice_dim3(slice, a3, 1, 1);
+		if (slice[0] != 4 || slice[1] != 8)
+			SLS_ERR("failed!");
+		slice /= 2;
+		if (slice[0] != 2 || slice[1] != 4)
+			SLS_ERR("failed!");
+		disp(slice);
+	}
 }

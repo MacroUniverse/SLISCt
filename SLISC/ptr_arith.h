@@ -75,6 +75,14 @@ inline void times_equals_vs(T *v, const T1 &s, Long N)
 		v[i] *= s1;
 }
 
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void times_equals_vs(T *v, const T1 &s, Long N, Long step)
+{
+	T s1 = T(s);
+	for (Long i = 0; i < N*step; i += step)
+		v[i] *= s1;
+}
+
 // v *= v
 
 template <class T, class T1, SLS_IF(is_promo<T, T1>())>
@@ -86,26 +94,32 @@ inline void times_equals_vv(T *v, const T1 *v1, Long_I N)
 
 // v /= s
 
-template <class T, class T1, SLS_IF(
-	is_Char<T>() && is_Char<T1>() ||
-	is_Int<T>() && is_Int<T1>() ||
-	is_Llong<T>() && is_Llong<T1>()
-)>
-inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
+template <class T, class Ts, SLS_IF(is_promo<T, Ts>() && is_integral<T>())>
+inline void divide_equals_vs(T *v, const Ts &s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
 		v[i] /= s;
 }
 
-template <class T, class T1, SLS_IF(
-	is_Float<T>() && is_Float<T1>() ||
-	is_Doub<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Doub<T1>() ||
-	is_Comp<T>() && is_Comp<T1>()
-)>
-inline void divide_equals_vs(T *v, const T1 &s, Long_I N)
+template <class T, class Ts, SLS_IF(is_promo<T, Ts>() && is_integral<T>())>
+inline void divide_equals_vs(T *v, const Ts &s, Long_I N, Long_I step)
 {
-	times_equals_vs(v, INV(s), N);
+	for (Long i = 0; i < N*step; i += step)
+		v[i] /= s;
+}
+
+template <class T, class Ts, SLS_IF(is_promo<T, Ts>() && is_fpt<Ts>())>
+inline void divide_equals_vs(T *v, const Ts &s, Long_I N)
+{
+	T s1 = T(s);
+	times_equals_vs(v, INV(s1), N);
+}
+
+template <class T, class Ts, SLS_IF(is_promo<T, Ts>() && is_fpt<T>())>
+inline void divide_equals_vs(T *v, const Ts &s, Long_I N, Long_I step)
+{
+	T s1 = T(s);
+	times_equals_vs(v, INV(s1), N, step);
 }
 
 // v /= v
@@ -321,7 +335,8 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void divide_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 {
-	times_vvs(v, v1, INV(s), N);
+	T1 s1 = T1(s);
+	times_vvs(v, v1, INV(s1), N);
 }
 
 // v = s / v
