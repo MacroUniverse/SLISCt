@@ -15,7 +15,7 @@ void eig_sym(VecDoub_O eigVal, CmatDoub_O eigVec, CmatDoub_I A)
 		SLS_ERR("wrong shape!");
 #endif
 	eigVec = A;
-	Long N = A.n2();
+	Int N = (Int)A.n2();
 	eigVal.resize(N);
 	Int ret = LAPACKE_dsyev(LAPACK_COL_MAJOR, 'V', 'U',N, eigVec.ptr(), N, eigVal.ptr());
 	if (ret != 0) SLS_ERR("failed!");
@@ -31,7 +31,7 @@ void eig_her(VecDoub_O eigVal, CmatComp_O eigVec, CmatComp_I A)
 		SLS_ERR("wrong shape!");
 #endif
 	eigVec = A;
-	Long N = A.n2();
+	Int N = (Int)A.n2();
 	eigVal.resize(N);
 	Int ret = LAPACKE_zheev(LAPACK_COL_MAJOR, 'V', 'U', N,
 		(MKL_Complex16 *)eigVec.ptr(), N, eigVal.ptr());

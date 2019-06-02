@@ -11,7 +11,7 @@
 namespace slisc {
 
 // matt file object
-struct Matt;
+class Matt;
 
 // ========== Implementation ============
 
@@ -437,7 +437,7 @@ template <class T, SLS_IF(
 )>
 inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
 {
-	Long i, n, dim;
+	Long i, n;
 	ifstream &fin = matt.m_in;
 	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);
@@ -458,7 +458,7 @@ template <class Tm, class T = contain_type<Tm>, SLS_IF(
 )>
 inline void load(Tm &a, Str_I varname, Matt_IO matt)
 {
-	Long i, j, dim, m, n;
+	Long i, j, m, n;
 	ifstream &fin = matt.m_in;
 	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);
@@ -480,7 +480,7 @@ template <class Tm, class T = contain_type<Tm>, SLS_IF(
 )>
 inline void load(Tm &a, Str_I varname, Matt_IO matt)
 {
-	Long i, j, k, dim, m, n, q;
+	Long i, j, k, m, n, q;
 	ifstream &fin = matt.m_in;
 	i = matt.search(varname);
 	fin.seekg(matt.m_ind[i]);

@@ -48,7 +48,15 @@ namespace slisc
 
 	// generate random Int in {0,1,2,...,N-1}
 	inline Int randInt(Int N)
-	{ return Int(round(N*randDoub() - 0.5)); }
+	{
+		return Int(round(N*randDoub() - 0.5));
+	}
+
+	// generate random Long in {0,1,2,...,N-1}
+	inline Long randLong(Long N)
+	{
+		return Long(round(N*randDoub() - 0.5));
+	}
 
 	// generate a random permutation of {0,1,2,...,N-1}
 	inline void randPerm(VecInt_O perm, Int_I N)

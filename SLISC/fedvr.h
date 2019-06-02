@@ -15,7 +15,7 @@ inline void GaussLobatto(VecDoub_O x, VecDoub_O w)
 		SLS_ERR("wrong shape!");
 #endif
 	Long_I N = x.size();
-	Int i, N2 = N/2;
+	Long N2 = N/2;
 	x[0] = -1; x[N - 1] = 1;
 	// only set 0 <= x < 1 and w for x >= 0! Others will be calculated. index is 0 based!
 	if (N == 4) {
@@ -105,9 +105,9 @@ inline void GaussLobatto(VecDoub_O x, VecDoub_O w)
 	else {
 		SLS_ERR("no data!");
 	}
-	for (i = 1; i < N2; ++i)
+	for (Long i = 1; i < N2; ++i)
 		x[i] = -x[N - i - 1];
-	for (i = 0; i < N2; ++i)
+	for (Long i = 0; i < N2; ++i)
 		w[i] = w[N - i - 1];
 }
 
@@ -253,11 +253,10 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 // Ngs: grid points per finite element (including boundaries)
 // `x`, `w` are the global grid points and weights
 // `u` is the maximum value of each basis
-void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I bounds, Int_I Ngs)
+void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I bounds, Long_I Ngs)
 {
-	Int i, j;
-	Int Nfe = bounds.size() - 1; // number of finite elements
-	Int Nx = (Ngs - 1)*Nfe - 1; // total grid points
+	Long Nfe = bounds.size() - 1; // number of finite elements
+	Long Nx = (Ngs - 1)*Nfe - 1; // total grid points
 
 	// grid points, weights, base function values in [-1, 1]
 	VecDoub x0(Ngs), w0(Ngs), f0(Ngs);
@@ -265,14 +264,14 @@ void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I b
 	pow(f0, w0, -0.5);
 	CmatDoub df(Ngs, Ngs); // df(i, j) = f_j(x_i)
 	legendre_interp_der(df, x0);
-	for (i = 0; i < Ngs; ++i)
-		for (j = 0; j < Ngs; ++j)
+	for (Long i = 0; i < Ngs; ++i)
+		for (Long j = 0; j < Ngs; ++j)
 			df(j, i) *= f0(i);
 
 	// midpoints, widths and bounds of finite elements
 	VecDoub xFE(Nfe), wFE(Nfe);
 
-	for (i = 0; i < Nfe; ++i) {
+	for (Long i = 0; i < Nfe; ++i) {
 		wFE(i) = 0.5*(bounds(i + 1) - bounds(i));
 		xFE(i) = 0.5*(bounds(i) + bounds(i + 1));
 	}

@@ -10,7 +10,7 @@ inline void inv_mat(CmatDoub_IO A)
 	if (A.n1() != A.n2())
 		SLS_ERR("wrong shape!");
 #endif
-	Long N = A.n1();
+	Int N = (Int)A.n1();
 	VecInt ipiv(N);
 	LAPACKE_dgetrf(LAPACK_COL_MAJOR, N, N, A.ptr(), N, ipiv.ptr());
 	LAPACKE_dgetri(LAPACK_COL_MAJOR, N, A.ptr(), N, ipiv.ptr());

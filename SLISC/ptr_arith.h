@@ -115,7 +115,7 @@ inline void divide_equals_vs(T *v, const Ts &s, Long_I N)
 	times_equals_vs(v, INV(s1), N);
 }
 
-template <class T, class Ts, SLS_IF(is_promo<T, Ts>() && is_fpt<T>())>
+template <class T, class Ts, SLS_IF(is_promo<T, Ts>() && is_fpt<Ts>())>
 inline void divide_equals_vs(T *v, const Ts &s, Long_I N, Long_I step)
 {
 	T s1 = T(s);
@@ -469,7 +469,7 @@ inline T max_v(const T *v, Long_I N)
 #ifdef SLS_CHECK_BOUNDS
 	if (N <= 0) SLS_ERR("illegal length!");
 #endif
-	T s = v[0], val;
+	T s = v[0];
 	for (Long i = 1; i < N; ++i) {
 		if (s < v[i])
 			s = v[i];
@@ -550,9 +550,10 @@ inline void flip(T *v, const T1 *v1, Long_I N)
 template <class T, SLS_IF(is_scalar<T>())>
 inline void linspace_vss(T *v, const T &first, const T &last, Long N)
 {
-	T delta = (last - first) / (N - 1);
+	typedef rm_comp<T> Tr;
+	T delta = (last - first) / ((Tr)N - 1);
 	for (Long i = 0; i < N; ++i)
-		v[i] = first + delta * i;
+		v[i] = first + delta * (Tr)i;
 }
 
 // v = sqrt(v)

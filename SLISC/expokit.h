@@ -39,14 +39,14 @@ inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov)
 	VecInt iwsp(MAX(Nkrylov + 2, 7));
 
 	if constexpr (Option == 'G' || Option == 0 && is_MatCoo<Tmat>()) {
-		ZGEXPV(v.size(), Nkrylov, t, v.ptr(),
-			tol, norm_inf(mat), wsp.ptr(), wsp.size(),
-			iwsp.ptr(), iwsp.size(), mat, 0, iflag);
+		ZGEXPV((Int)v.size(), Nkrylov, t, v.ptr(),
+			tol, norm_inf(mat), wsp.ptr(), (Int)wsp.size(),
+			iwsp.ptr(), (Int)iwsp.size(), mat, 0, iflag);
 	}
 	else if constexpr (Option == 'H' || Option == 0 && is_MatCooH<Tmat>()) {
-		ZHEXPV(v.size(), Nkrylov, t, v.ptr(),
-			tol, norm_inf(mat), wsp.ptr(), wsp.size(),
-			iwsp.ptr(), iwsp.size(), mat, 0, iflag);
+		ZHEXPV((Int)v.size(), Nkrylov, t, v.ptr(),
+			tol, norm_inf(mat), wsp.ptr(), (Int)wsp.size(),
+			iwsp.ptr(), (Int)iwsp.size(), mat, 0, iflag);
 	}
 	else SLS_ERR("unknown!");
 }

@@ -9,33 +9,31 @@ namespace slisc {
 // anglib.f90: angular momentum coupling coefficients in Fortran 90
 // Copyright (C) 1998  Paul Stevenson
 
-inline Doub factorial(Int_I n) {
-	Doub res;
+inline Doub factorial(Long_I n) {
 	if (n == 0 || n == 1)
 		return 1.;
 	else
 		return n * factorial(n - 1);
 }
 
-inline Doub binom(Int_I n, Int_I r) {
-	Doub res;
+inline Doub binom(Long_I n, Long_I r) {
 	if (n == r || r == 0)
 		return 1.;
 	else if (r == 1)
-		return n;
+		return (Doub)n;
 	else
 		return n / Doub(n - r)*binom(n - 1, r);
 }
 
 // clebsch gordan coefficient [j1/2,m1/2,j2/2,m2/2,j/2,m/2]
-inline Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
+inline Doub cleb(Long_I j1, Long_I m1, Long_I j2, Long_I m2, Long_I j, Long_I m) {
 
 	Doub cleb, factor, sum;
-	Int par, z, zmin, zmax;
+	Long par, z, zmin, zmax;
 
-	if (2 * (j1 / 2) - Int(2 * (j1 / 2.0)) != 2 * (abs(m1) / 2) - Int(2 * (abs(m1) / 2.0)) ||
-		2 * (j2 / 2) - Int(2 * (j2 / 2.0)) != 2 * (abs(m2) / 2) - Int(2 * (abs(m2) / 2.0)) ||
-		2 * (j / 2) - Int(2 * (j / 2.0)) != 2 * (abs(m) / 2) - Int(2 * (abs(m) / 2.0)) ||
+	if (2 * (j1 / 2) - Long(2 * (j1 / 2.0)) != 2 * (abs(m1) / 2) - Long(2 * (abs(m1) / 2.0)) ||
+		2 * (j2 / 2) - Long(2 * (j2 / 2.0)) != 2 * (abs(m2) / 2) - Long(2 * (abs(m2) / 2.0)) ||
+		2 * (j / 2) - Long(2 * (j / 2.0)) != 2 * (abs(m) / 2) - Long(2 * (abs(m) / 2.0)) ||
 		j1<0 || j2<0  || j<0 || abs(m1)>j1 || abs(m2)>j2 ||
 		abs(m)>j || j1 + j2<j || abs(j1 - j2)>j || m1 + m2 != m) {
 		cleb = 0.;
@@ -47,7 +45,7 @@ inline Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
 		factor = factor / binom(j2, (j2 - m2) / 2) / binom(j, (j - m) / 2);
 		factor = sqrt(factor);
 
-		zmin = max(0, max(j2 + (j1 - m1) / 2 - (j1 + j2 + j) / 2, j1 + (j2 + m2) / 2 - (j1 + j2 + j) / 2));
+		zmin = MAX(0, max(j2 + (j1 - m1) / 2 - (j1 + j2 + j) / 2, j1 + (j2 + m2) / 2 - (j1 + j2 + j) / 2));
 		zmax = min((j1 + j2 - j) / 2, min((j1 - m1) / 2, (j2 + m2) / 2));
 
 		sum = 0.0;
@@ -65,7 +63,7 @@ inline Doub cleb(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j, Int_I m) {
 
 // 3j symbol [j1/2,m1/2,j2/2,m2/2,j/2,m/2]
 // written by me
-inline Doub threej(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j3, Int_I m3)
+inline Doub threej(Long_I j1, Long_I m1, Long_I j2, Long_I m2, Long_I j3, Long_I m3)
 {
 #ifndef NDEBUG
 	if (isodd(j1 - j2 - m3)) SLS_ERR("unknown!");
@@ -73,7 +71,7 @@ inline Doub threej(Int_I j1, Int_I m1, Int_I j2, Int_I m2, Int_I j3, Int_I m3)
 	return pow(-1, (j1 -j2 -m3)/2) / sqrt(j3+1.) * cleb(j1, m1, j2, m2, j3, -m3);
 }
 
-inline Doub angdelta(Int_I a, Int_I b, Int_I c) {
+inline Doub angdelta(Long_I a, Long_I b, Long_I c) {
 	Doub angdelta, scr1;
 	scr1 = factorial((a + b - c) / 2);
 	scr1 = scr1 / factorial((a + b + c) / 2 + 1);
@@ -84,10 +82,10 @@ inline Doub angdelta(Int_I a, Int_I b, Int_I c) {
 }
 
 // 6j symbol [a/2,b/2,c/2; d/2,e/2,f/2]
-inline Doub sixj(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f)
+inline Doub sixj(Long_I a, Long_I b, Long_I c, Long_I d, Long_I e, Long_I f)
 {
 	Doub sixj;
-	Int  nlo, nhi, n;
+	Long  nlo, nhi, n;
 
 	Doub outfactors, sum, sumterm;
 
@@ -122,9 +120,9 @@ inline Doub sixj(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f)
 }
 
 // 9j symbol [a/2,b/2,c/2; d/2,e/2,f/2; g/2,h/2,i/2]
-inline Doub ninej(Int_I a, Int_I b, Int_I c, Int_I d, Int_I e, Int_I f, Int_I g, Int_I h, Int_I i) {
+inline Doub ninej(Long_I a, Long_I b, Long_I c, Long_I d, Long_I e, Long_I f, Long_I g, Long_I h, Long_I i) {
 	Doub ninej, sum;
-	Int xlo, xhi, x;
+	Long xlo, xhi, x;
 
     if(abs(a-b)>c || a+b<c) return 0;
     if(abs(d-e)>f || d+e<f) return 0;

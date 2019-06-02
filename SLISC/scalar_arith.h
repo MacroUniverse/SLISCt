@@ -22,6 +22,12 @@ constexpr const T &MAX(const T &a, const T &b)
 	return a < b ? b : a;
 }
 
+template<class T1, class T2, SLS_IF(!is_same<T1, T2>())>
+constexpr auto MAX(const T1 &a, const T2 &b)
+{
+	return a < b ? b : a;
+}
+
 template<class T>
 constexpr const T SQR(const T &a) { return a * a; }
 
@@ -75,7 +81,7 @@ inline Lcomp INV(Lcomp_I x)
 template <class T1, class T2>
 inline Bool is_in(const T1 &elm, const T2 &vec)
 {
-	for (Long i = 0; i < vec.size(); ++i)
+	for (Long i = 0; i < Size(vec); ++i)
 		if (elm == vec[i])
 			return true;
 	return false;
@@ -110,8 +116,9 @@ inline Bool ispow2(Int_I n) { return (n&(n-1)) == 0; }
 inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
 
 // return the positive modulus (use "%" when i >= 0)
-inline Int mod(Int_I i, Int_I n) { return (i % n + n) % n; }
-inline Long mod(Long_I i, Long_I n) { return (i % n + n) % n; }
+template <class T1, class T2, SLS_IF(
+	is_integral<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
+inline T1 mod(const T1 &i, const T2 &n) { return (i % n + n) % n; }
 
 // matrix double index to single index conversion
 

@@ -26,7 +26,7 @@ int main()
 	a(0, 0) = 1.1; // access element by row and column indices
 	a[3] = 9.9; // access element by a single index
 	a.end() = 5.5; // last element
-	cout << "a has " << a.nrows() << " rows and " << a.ncols()
+	cout << "a has " << a.n1() << " rows and " << a.n2()
 	<< " columns, and a total of " << a.size() << " elements." << endl;
 	disp(a);
 }
@@ -142,7 +142,7 @@ TODO...
 
 ### Common Members for Vector, Matrix, Mat3d Templates
 * `size()`: return total number of elements.
-* `nrows(), ncols()`: return number of rows or columns.
+* `n1(), n2()`: return number of rows or columns.
 * `operator[][i], operator()(i)` : return a reference for the i-th element.
 * `operator()(i,j), (i,j,k)` : return a reference for an element.
 * `end()` : return a reference for the last element.
