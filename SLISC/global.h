@@ -283,6 +283,10 @@ typedef Cmat<Bool> CmatBool;
 typedef const CmatBool &CmatBool_I;
 typedef CmatBool &CmatBool_O, &CmatBool_IO;
 
+typedef Mat3d<Int> Mat3Int;
+typedef const Mat3Int &Mat3Int_I;
+typedef Mat3Int &Mat3Int_O, &Mat3Int_IO;
+
 typedef Mat3d<Doub> Mat3Doub;
 typedef const Mat3Doub &Mat3Doub_I;
 typedef Mat3Doub &Mat3Doub_O, &Mat3Doub_IO;
@@ -491,6 +495,10 @@ typedef Diag<Comp> DiagComp;
 typedef const DiagComp &DiagComp_I;
 typedef DiagComp &DiagComp_O, &DiagComp_IO;
 
+typedef MatCoo<Int> McooInt;
+typedef const McooInt &McooInt_I;
+typedef McooInt &McooInt_O, &McooInt_IO;
+
 typedef MatCoo<Doub> McooDoub;
 typedef const McooDoub &McooDoub_I;
 typedef McooDoub &McooDoub_O, &McooDoub_IO;
@@ -548,7 +556,7 @@ struct turn_on_floating_exceptions {
 	}
 };
 // in case of ODR error, put this in main function;
-// turn_on_floating_exceptions yes_turn_on_floating_exceptions;
+// turn_on_floating_exceptions yes_turn_on_floating_exceptions;turn_on_floating_exceptions yes_turn_on_floating_exceptions;
 #endif
 #endif
 

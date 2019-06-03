@@ -3,7 +3,8 @@
 #include "svector.h"
 #include "dvector.h"
 #include "scmat.h"
-#include "Dcmat.h"
+#include "cmat4d.h"
+#include "dcmat.h"
 
 namespace slisc {
 

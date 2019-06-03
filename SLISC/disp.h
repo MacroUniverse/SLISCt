@@ -70,4 +70,26 @@ void disp(const T &a, Int_I precision = def_disp_prec) {
 		}
 	cout.precision(oldPrecision);
 }
+
+// display 4d array
+template <class T, SLS_IF(ndims<T>() == 4)>
+void disp(const T &a, Int_I precision = def_disp_prec) {
+	Long i, j, k, l, N1 = a.n1(), N2 = a.n2(), N3 = a.n3(), N4 = a.n4();
+	auto oldPrecision = cout.precision();
+	cout.precision(precision);
+	if (a.size() == 0) cout << "empty";
+	else
+		for (l = 0; l < N4; ++l)
+		for (k = 0; k < N3; ++k) {
+			cout << "(:, :, " << k << ", " << l << ")" << endl;
+			for (i = 0; i < N1; ++i) {
+				for (j = 0; j < N2; ++j) {
+					cout << to_num(a(i, j, k, l)) << "   ";
+				}
+				cout << endl;
+			}
+			cout << endl;
+		}
+	cout.precision(oldPrecision);
+}
 } // namespace slisc

@@ -512,6 +512,8 @@ constexpr Int ndims()
 		return 2;
 	else if (is_Mat3d<T>() || is_Cmat3d<T>())
 		return 3;
+	else if (is_Cmat4d<T>())
+		return 4;
 	else {
 		SLS_ERR("unknown!");
 		return 'e';

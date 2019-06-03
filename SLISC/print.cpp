@@ -27,14 +27,33 @@ void print(CmatDoub_I v) { disp(v); }
 
 void print(CmatComp_I v) { disp(v); }
 
-void print(Cmat3Doub_I v) { disp(v); }
+void print(Mat3Int_I v) { disp(v); }
+
+void print(Mat3Doub_I v) { disp(v); }
 
 void print(Mat3Comp_I v) { disp(v); }
+
+void print(Cmat3Int_I v) { disp(v); }
+
+void print(Cmat3Doub_I v) { disp(v); }
+
+void print(Cmat3Comp_I v) { disp(v); }
+
+//void print(Mat4Int_I v) { disp(v); }
+//
+//void print(Mat4Doub_I v) { disp(v); }
+//
+//void print(Mat4Comp_I v) { disp(v); }
+
+void print(Cmat4Int_I v) { disp(v); }
+
+void print(Cmat4Doub_I v) { disp(v); }
+
+void print(Cmat4Comp_I v) { disp(v); }
 
 
 
 // version 2
-
 
 #ifdef _MSC_VER
 // VS supports calling overloaded functions when debugging
@@ -52,9 +71,29 @@ void print(MatDoub_I v, Int_I precision) { disp(v, precision); }
 
 void print(MatComp_I v, Int_I precision) { disp(v, precision); }
 
+void print(CmatInt_I v, Int_I precision) { disp(v, precision); }
+
+void print(CmatDoub_I v, Int_I precision) { disp(v, precision); }
+
+void print(CmatComp_I v, Int_I precision) { disp(v, precision); }
+
+void print(Mat3Int_I v, Int_I precision) { disp(v, precision); }
+
 void print(Mat3Doub_I v, Int_I precision) { disp(v, precision); }
 
 void print(Mat3Comp_I v, Int_I precision) { disp(v, precision); }
+
+void print(Cmat3Int_I v, Int_I precision) { disp(v, precision); }
+
+void print(Cmat3Doub_I v, Int_I precision) { disp(v, precision); }
+
+void print(Cmat3Comp_I v, Int_I precision) { disp(v, precision); }
+
+void print(Cmat4Int_I v, Int_I precision) { disp(v, precision); }
+
+void print(Cmat4Doub_I v, Int_I precision) { disp(v, precision); }
+
+void print(Cmat4Comp_I v, Int_I precision) { disp(v, precision); }
 
 // version 3
 
@@ -88,11 +127,35 @@ void print(CmatDoub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
 void print(CmatComp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
 { disp(slice_mat(v, start1, n1, start2, n2)); }
 
-//void print(Cmat3Doub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
-//{ disp(slice_mat3(v, start1, start2, start3, n1, n2, n3)); }
-//
-//void print(Cmat3Comp_I v, Long_I start1, Long_I start2, Long_I start3, Long_I n1, Long_I n2, Long_I n3)
-//{ disp(v, start1, start2, start3, n1, n2, n3); }
+void print(Cmat3Int_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
+{
+	disp(slice_mat(slice_mat12(v, k), start1, n1, start2, n2));
+}
+
+void print(Cmat3Doub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
+{
+	disp(slice_mat(slice_mat12(v, k), start1, n1, start2, n2));
+}
+
+void print(Cmat3Comp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
+{
+	disp(slice_mat(slice_mat12(v, k), start1, n1, start2, n2));
+}
+
+void print(Cmat4Int_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k, Long_I l)
+{
+	disp(slice_mat(slice_mat12(v, k, l), start1, n1, start2, n2));
+}
+
+void print(Cmat4Doub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k, Long_I l)
+{
+	disp(slice_mat(slice_mat12(v, k, l), start1, n1, start2, n2));
+}
+
+void print(Cmat4Comp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k, Long_I l)
+{
+	disp(slice_mat(slice_mat12(v, k, l), start1, n1, start2, n2));
+}
 
 // version 4
 
