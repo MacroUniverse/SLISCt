@@ -202,7 +202,7 @@ inline const auto max(Long_O ind, const T &v)
 
 // s = norm2(v)  (|v1|^2 + |v2|^2 + ...)
 template <class T, SLS_IF(is_dense<T>())>
-const auto norm2(T &v)
+const auto norm2(const T &v)
 {
 	Long i, N{ v.size() };
 	auto s2 = ABS2(v[0]);
@@ -212,8 +212,10 @@ const auto norm2(T &v)
 }
 
 template <class T>
-const auto norm(T &v, SLS_IF(is_dense<T>()))
-{ return sqrt(norm2(v)); }
+const auto norm(const T &v, SLS_IF(is_dense<T>()))
+{
+	return sqrt(norm2(v));
+}
 
 // === matrix manipulation ===
 

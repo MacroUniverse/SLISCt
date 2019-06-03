@@ -507,7 +507,8 @@ constexpr Int ndims()
 {
 	if (is_dense_vec<T>() || is_FixVec<T>() || is_Svector<T>() || is_Dvector<T>())
 		return 1;
-	else if (is_dense_mat<T>() || is_sparse_mat<T>() || is_Scmat<T>())
+	else if (is_dense_mat<T>() || is_sparse_mat<T>() || is_Scmat<T>() ||
+		is_Dcmat<T>())
 		return 2;
 	else if (is_Mat3d<T>() || is_Cmat3d<T>())
 		return 3;

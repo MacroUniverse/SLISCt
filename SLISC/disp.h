@@ -7,6 +7,7 @@
 #include "matrix.h"
 #include "cmat.h"
 #include "mat3d.h"
+#include "cmat3d.h"
 #include "fixsize.h"
 #include "sparse.h"
 

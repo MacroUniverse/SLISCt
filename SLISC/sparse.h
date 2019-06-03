@@ -145,7 +145,7 @@ public:
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
 	Long n1() const;
 	Long n2() const;
-	Long size() const; // forbidden
+	Long size() const; // return m_Nr * m_Nc
 	Long nnz() const; // return number of non-zero elements
 	Long capacity() const;
 	// get single index using double index, return -1 if not found
@@ -304,7 +304,7 @@ Long MatCoo<T>::n2() const
 template <class T>
 Long MatCoo<T>::size() const
 {
-	SLS_ERR("use nnz() or capacity() instead!");
+	return m_Nr * m_Nc;
 }
 
 template <class T>

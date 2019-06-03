@@ -34,6 +34,7 @@ public:
 	Long n1() const;
 	Long n2() const;
 	Long lda() const;
+	Long size() const;
 };
 
 template <class T>
@@ -47,13 +48,22 @@ Dcmat<T>::Dcmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda)
 template <class T>
 void Dcmat<T>::set(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda)
 {
-	m_p = ptr; m_Nr = Nr; m_Nc = Nc; m_lda = lda;
+	m_p = (T *)ptr; m_Nr = Nr; m_Nc = Nc; m_lda = lda;
 }
 
 template <class T>
 inline Dcmat<T> & Dcmat<T>::operator=(const Dcmat<T> &rhs)
 {
 	copy(*this, rhs);
+	return *this;
+}
+
+template <class T>
+template <class Tmat, SLS_IF0(is_dense_mat<Tmat>())>
+Dcmat<T> & Dcmat<T>::operator=(const Tmat &rhs)
+{
+	copy(*this, rhs);
+	return *this;
 }
 
 template <class T>
@@ -135,5 +145,10 @@ template <class T>
 inline Long Dcmat<T>::lda() const
 {
 	return m_lda;
+}
+template<class T>
+inline Long Dcmat<T>::size() const
+{
+	return m_N;
 }
 } // namespace slisc

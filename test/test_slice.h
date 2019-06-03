@@ -26,6 +26,20 @@ void test_slice()
 	v += 3;
 	if (sum(v) !=33) SLS_ERR("failed!");
 
+	// slice Svector<> or Dvector<> from dense container
+	{
+		VecInt v(10);
+		linspace(v, 1, 10);
+		SvecInt sv;
+		slice_vec(sv, v, 2, 3);
+		if (sv[0] != 3 || sv[1] != 4 || sv[2] != 5)
+			SLS_ERR("failed!");
+		DvecInt dv;
+		slice_vec(dv, v, 2, 3, 2);
+		if (dv[0] != 3 || dv[1] != 5 || dv[2] != 7)
+			SLS_ERR("failed!");
+	}
+
 	// slice column from column major matrix
 	{
 		CmatInt a(3, 4);

@@ -7,6 +7,40 @@
 
 namespace slisc {
 
+// slice a vector from any dense container using single index
+template <class Tdens, class T = contain_type<Tdens>,
+	SLS_IF(is_dense<Tdens>())>
+void slice_vec(Svector<T> &slice, const Tdens &a, Long_I start, Long_I n)
+{
+	slice.set(a.ptr() + start, n);
+}
+
+template <class Tdens, class T = contain_type<Tdens>,
+	SLS_IF(is_dense<Tdens>())>
+Svector<T> slice_vec(const Tdens &a, Long_I start, Long_I n)
+{
+	Svector<T> slice;
+	slice_vec(slice, a, start, n);
+	return slice;
+}
+
+// slice a Dvector<> from any dense container using single index
+template <class Tdens, class T = contain_type<Tdens>,
+	SLS_IF(is_dense<Tdens>())>
+void slice_vec(Dvector<T> &slice, const Tdens &a, Long_I start, Long_I n, Long_I step)
+{
+	slice.set(a.ptr() + start, n, step);
+}
+
+template <class Tdens, class T = contain_type<Tdens>,
+	SLS_IF(is_dense<Tdens>())>
+Dvector<T> slice_vec(const Tdens &a, Long_I start, Long_I n, Long_I step)
+{
+	Dvector<T> slice;
+	slice_vec(slice, a, start, n, step);
+	return slice;
+}
+
 // slice a row from a row-major matrix
 template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_dense_mat<Tmat>() && is_rmajor<Tmat>())>
@@ -132,7 +166,7 @@ void slice_col(Svector<T> &slice, const Tmat &a, Long_I col, Long_I k = 0)
 	if (col < 0 || col >= Nc)
 		SLS_ERR("out of bound!");
 #endif
-	slice.set(a.ptr() + Nr*Nc*k + Nr*col, Nc);
+	slice.set(a.ptr() + Nr*Nc*k + Nr*col, Nr);
 }
 
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
@@ -146,14 +180,22 @@ Svector<T> slice_col(const Tmat &a, Long_I col, Long_I k = 0)
 
 // slice a Dmat from a mat
 // only works for column major for now
-template <class Tsmat, class Tmat, SLS_IF(
-	is_slice_mat<Tsmat>() && is_cmajor<Tsmat>() &&
-	is_dense_mat<Tmat>() && is_cmajor<Tmat>() &&
-	is_same_contain_type<Tsmat, Tmat>())>
-void slice_mat(Tsmat &slice, const Tmat &a,
+template <class Tmat, class T = contain_type<Tmat>,
+	SLS_IF(is_cmajor<Tmat>() &&is_dense_mat<Tmat>())>
+void slice_mat(Dcmat<T> &slice, const Tmat &a,
 	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
 {
-	Tsmat slice_mat(&a(i, j), Nr, Nc, a.n1());
+	slice.set(&a(i, j), Nr, Nc, a.n1());
+}
+
+template <class Tmat, class T = contain_type<Tmat>,
+	SLS_IF(is_cmajor<Tmat>() &&is_dense_mat<Tmat>())>
+Dcmat<T> slice_mat(const Tmat &a,
+	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
+{
+	Dcmat<T> slice;
+	slice_mat(slice, a, i, Nr, j, Nc);
+	return slice;
 }
 
 // slice a3(i,j,:)
