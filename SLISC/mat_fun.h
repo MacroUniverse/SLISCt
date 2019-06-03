@@ -6,8 +6,8 @@
 
 namespace slisc {
 
-// out = exp(a*t)
-void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
+// out = exp(a*s)
+void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.n1() != a.n2() || !shape_cmp(out, a))
@@ -16,7 +16,7 @@ void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
 	Long N = a.n1();
 	VecDoub eigVal(N); CmatDoub eigVec(N, N);
 	eig_sym(eigVal, eigVec, a);
-	eigVal *= t;
+	eigVal *= s;
 	exp(eigVal, eigVal);
 	CmatDoub temp(N, N);
 	mul(temp, eigVec, diag(eigVal));
@@ -24,8 +24,8 @@ void exp_mat_sym(CmatDoub_O out, CmatDoub_I a, Doub_I t)
 	mul(out, temp, eigVec);
 }
 
-// calculate exp(A*t) * v by U * exp(D*t) * Uh * v;
-// where A = U * D * Uh
+// calculate exp(A*s) * v by U * exp(D*s) * Uh * v;
+// where s is a scalar, matrix A = U * D * Uh
 // A must be symmetric or hermitian
 template <class T>
 class ExpA
@@ -40,11 +40,11 @@ public:
 	MatDoub m_Uh;
 	// must be symmetric
 	Long size() const;
-	ExpA(const CmatDoub &A, Doub_I t);
-	template <class Tv, class Tv1, SLS_IF(
-		is_dense_vec<Tv>() && is_dense_vec<Tv1>()
+	ExpA(const CmatDoub &A);
+	template <class Tv, class Ts, class Tv1, SLS_IF(
+		is_dense_vec<Tv>() && is_scalar<Ts>() && is_dense_vec<Tv1>()
 	)>
-	void mul(Tv &v, const Tv1 &v1);
+	void mul(Tv &v, const Ts &s, const Tv1 &v1);
 };
 
 inline Long ExpA<Doub>::size() const
@@ -53,7 +53,7 @@ inline Long ExpA<Doub>::size() const
 }
 
 // A is symmetric matrix, only upper triangle is used
-inline ExpA<Doub>::ExpA(const CmatDoub & A, Doub_I t)
+inline ExpA<Doub>::ExpA(const CmatDoub & A)
 	: m_diag(A.n1()), m_U(A.n1(), A.n2()),
 	m_Uh(A.n1(), A.n2())
 {
@@ -64,16 +64,14 @@ inline ExpA<Doub>::ExpA(const CmatDoub & A, Doub_I t)
 #endif
 	CmatDoub eigVec(N, N);
 	eig_sym(m_diag, eigVec, A);
-	m_diag *= t;
-	exp(m_diag);
 	m_U = eigVec;
 	trans(m_Uh, eigVec);
 }
 
-template <class Tv, class Tv1, SLS_IF0(
-	is_dense_vec<Tv>() && is_dense_vec<Tv1>()
+template <class Tv, class Ts, class Tv1, SLS_IF0(
+	is_dense_vec<Tv>() && is_scalar<Ts>() && is_dense_vec<Tv1>()
 )>
-inline void ExpA<Doub>::mul(Tv &v, const Tv1 &v1)
+inline void ExpA<Doub>::mul(Tv &v, const Ts &s, const Tv1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (size() != v.size())
@@ -81,7 +79,9 @@ inline void ExpA<Doub>::mul(Tv &v, const Tv1 &v1)
 #endif
 	VecComp u(v1.size());
 	slisc::mul(u, m_Uh, v1);
-	u *= m_diag;
+	for (Long i = 0; i < size(); ++i) {
+		u[i] *= exp(m_diag[i] * s);
+	}
 	slisc::mul(v, m_U, u);
 }
 

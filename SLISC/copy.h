@@ -39,40 +39,37 @@ inline void veccpy(T *v, const T1 *v1, Long_I n)
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void veccpy(T *v, const T1 *v1, Long_I step1, Long_I n)
 {
-	const T1 *p1 = v1;
 	for (T *p = v; p < v + n; ++p) {
-		*p = *p1;
-		p1 += step1;
+		*p = *v1;
+		v1 += step1;
 	}
 }
 
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void veccpy(T *v, Long_I step, const T1 *v1, Long_I n)
 {
-	T1 *p1 = v1;
 	for (T *p = v; p < v + n*step; p += step) {
-		*p = *p1;
-		++p1;
+		*p = *v1;
+		++v1;
 	}
 }
 
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void veccpy(T *v, Long_I step, const T1 *v1, Long_I step1, Long_I n)
 {
-	T1 *p1 = v1;
-	for (T *p = v; p < v + n*step; p += step) {
-		*p = *p1;
-		p1 += step1;
+	T *end = v + n * step;
+	for (; v < end; v += step) {
+		*v = *v1;
+		v1 += step1;
 	}
 }
 
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
 inline void matcpy(T *v, Long_I lda, const T1 *v1, Long_I lda1, Long_I Nr, Long_I Nc)
 {
-	T *p = v, *p1 = v1;
 	for (Long j = 0; j < Nr; ++j) {
-		veccpy(p, p1, Nc);
-		p += lda; p1 += lda1;
+		veccpy(v, v1, Nc);
+		v += lda; v1 += lda1;
 	}
 }
 

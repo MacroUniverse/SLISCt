@@ -159,7 +159,7 @@ void slice_mat(Tsmat &slice, const Tmat &a,
 // slice a3(i,j,:)
 template <class Tmat3, class T = contain_type<Tmat3>,
 	SLS_IF(is_Cmat3d<Tmat3>())>
-void slice_n3(Dvector<T> &slice, const Tmat3 &a,
+void slice_dim3(Dvector<T> &slice, const Tmat3 &a,
 	Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
@@ -172,11 +172,11 @@ void slice_n3(Dvector<T> &slice, const Tmat3 &a,
 
 template <class Tmat3, class T = contain_type<Tmat3>,
 	SLS_IF(is_Cmat3d<Tmat3>())>
-Dvector<T> slice_n3(const Tmat3 &a,
+Dvector<T> slice_dim3(const Tmat3 &a,
 		Long_I i, Long_I j)
 {
 	Dvector<T> slice;
-	slice_n3(slice, a, i, j);
+	slice_dim3(slice, a, i, j);
 	return slice;
 }
 

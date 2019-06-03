@@ -30,14 +30,14 @@ void test_mat_fun()
 
 		// test ExpA
 		{
-			ExpA<Doub> expA(a, 1.);
+			ExpA<Doub> expA(a);
 			VecComp v1(3);
 			CmatComp out(3, 3); out = 0;
 			SvecComp v;
 			for (Long j = 0; j < 3; ++j) {
 				slice_col(v, out, j);
 				v1 = 0.; v1[j] = 1;
-				expA.mul(v, v1);
+				expA.mul(v, 1., v1);
 			}
 			out -= out0;
 			if (max_abs(out) > 5e-13) SLS_ERR("failed!");

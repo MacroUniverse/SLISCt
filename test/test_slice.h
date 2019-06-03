@@ -70,6 +70,13 @@ void test_slice()
 				if (v[j] != a(i, j))
 					SLS_ERR("failed!");
 			}
+			v *= 2;
+			DvecInt slice; slice_row(slice, a, i);
+			slice = v;
+			for (Long j = 0; j < 4; ++j) {
+				if (v[j] != a(i, j))
+					SLS_ERR("failed!");
+			}
 		}
 	}
 
@@ -80,7 +87,7 @@ void test_slice()
 		DvecInt slice;
 		for (Long i = 0; i < 2; ++i) {
 			for (Long j = 0; j < 3; ++j) {
-				slice_n3(slice, a3, i, j);
+				slice_dim3(slice, a3, i, j);
 				for (Long k = 0; k < 4; ++k) {
 					if (slice[k] != a3(i, j, k))
 						SLS_ERR("failed!");
@@ -92,7 +99,7 @@ void test_slice()
 		Cmat3Int a3(2, 2, 2);
 		linspace(a3, 1, 8);
 		DvecInt slice;
-		slice_n3(slice, a3, 1, 1);
+		slice_dim3(slice, a3, 1, 1);
 		if (slice[0] != 4 || slice[1] != 8)
 			SLS_ERR("failed!");
 		slice /= 2;
