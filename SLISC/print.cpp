@@ -1,11 +1,90 @@
-// display a vector or matrix
-// should only be called in debugger
+// real-time debug utilities
+// these functions can be called in debugger
 // DON'T MOVE INTO HEADER file or change anything unless you can call them in debuggers
 
 #include "disp.h"
 #include "slice_arith.h"
 using namespace slisc;
 using std::cout; using std::endl; using std::vector;
+
+// print 1 element
+Int elm(VecInt_I v, Long_I i)
+{ return v(i); }
+
+Doub elm(VecDoub_I v, Long_I i)
+{ return v(i); }
+
+Comp elm(VecComp_I v, Long_I i)
+{ return v(i); }
+
+Int elm(MatInt_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Doub elm(MatDoub_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Comp elm(MatComp_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Int elm(CmatInt_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Doub elm(CmatDoub_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Comp elm(CmatComp_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Int elm(McooInt_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Doub elm(McooDoub_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Comp elm(McooComp_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Int elm(McoohInt_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Doub elm(McoohDoub_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Comp elm(McoohComp_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Int elm(Mat3Int_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+Doub elm(Mat3Doub_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+Comp elm(Mat3Comp_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+Int elm(Cmat3Int_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+Doub elm(Cmat3Doub_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+Comp elm(Cmat3Comp_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+//void elm(Mat4Int_I v) { disp(v); }
+//
+//void elm(Mat4Doub_I v) { disp(v); }
+//
+//void elm(Mat4Comp_I v) { disp(v); }
+
+Int elm(Cmat4Int_I v, Long_I i, Long_I j, Long_I k, Long_I l)
+{ return v(i, j, k, l); }
+
+Doub elm(Cmat4Doub_I v, Long_I i, Long_I j, Long_I k, Long_I l)
+{ return v(i, j, k, l); }
+
+Comp elm(Cmat4Comp_I v, Long_I i, Long_I j, Long_I k, Long_I l)
+{ return v(i, j, k, l); }
 
 // version 1
 

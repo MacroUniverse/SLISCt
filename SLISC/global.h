@@ -511,6 +511,10 @@ typedef MatCoo<Comp> McooComp;
 typedef const McooComp &McooComp_I;
 typedef McooComp &McooComp_O, &McooComp_IO;
 
+typedef MatCooH<Int> McoohInt;
+typedef const McoohInt &McoohInt_I;
+typedef McoohInt &McoohInt_O, &McoohInt_IO;
+
 typedef MatCooH<Doub> McoohDoub;
 typedef const McoohDoub &McoohDoub_I;
 typedef McoohDoub &McoohDoub_O, &McoohDoub_IO;

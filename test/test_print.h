@@ -5,18 +5,34 @@
 void test_print()
 {
 	using namespace slisc;
-	VecChar v8(3);
-	linspace(v8, 1, 3);
-	VecInt vi(3);
-	linspace(vi, 1, 3);
-	MatChar A8(2, 3);
-	linspace(A8, 1, 6);
-	MatInt AI(2, 3);
-	linspace(AI, 1, 6);
-	Mat3Doub A3(2, 2, 2);
-	linspace(A3, 1., 8.);
-	Mat3Comp C3(2, 2, 2);
-	linspace(C3, Comp(0, 1), Comp(14, 15));
-	printf("set breakpoint here and try print() in debugger!\n");
+	VecInt v(10);
+	linspace(v, 1, 10);
+	disp(v);
+
+	CmatInt a(4, 4);
+	linspace(a, 1, 16);
+	disp(a);
+
+	Cmat3Int a3(4, 4, 2);
+	linspace(a3, 1, 32);
+	disp(a3);
+
+	Cmat4Int a4(4, 4, 2, 2);
+	linspace(a4, 1, 64);
+	disp(a4);
+
+	McooInt coo(5, 5, 25);
+	coo.push(1., 0, 0);
+	coo.push(2., 1, 1);
+	coo.push(3., 2, 2);
+	disp(coo);
+
+	McoohInt cooh(5, 5, 25);
+	cooh.push(1., 0, 0);
+	cooh.push(2., 1, 1);
+	cooh.push(3., 2, 2);
+	disp(cooh);
+
+	cout << "set breakpoint here and try print() in debugger!" << endl;
 	pause();
 }
