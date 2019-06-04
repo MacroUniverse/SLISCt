@@ -119,7 +119,10 @@ inline void legendre_interp_der(CmatDoub_O df, VecDoub_I x)
 {
 	Long i, j, k, N{ x.size() };
 	Doub t;
-	df.resize(N,N);
+#ifdef SLS_CHECK_SHAPE
+	if (df.n1() != N || df.n2() != N)
+		SLS_ERR("wrong shape!");
+#endif
 	for (i = 0; i < N; ++i)
 		for (j = 0; j < N; ++j) {
 			if (j != i) {
@@ -161,8 +164,11 @@ inline void FEDVR_grid(VecDoub_O x, VecDoub_O w, VecDoub_I wFE, VecDoub_I xFE, V
 	Long Ngs = x0.size();
 	Long Nfe = wFE.size();
 	Long Nx = Nfe * (Ngs - 1) - 1;
+#ifdef SLS_CHECK_SHAPE
+	if (x.size() != Nx || w.size() != Nx)
+		SLS_ERR("wrong shape!");
+#endif
 	Doub a, b;
-	x.resize(Nx); w.resize(Nx);
 	for (i = 0; i < Nfe; ++i) {
 		a = wFE(i);
 		b = xFE(i);
@@ -197,7 +203,6 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 	}
 
 	// calculate Kinetic matrix T
-	D2.reshape(N, N);
 	D2.reserve((Ngs*Ngs - 1)*Nfe - 4 * Ngs + 3); // # non-zero elements
 	for (i = 0; i < Nfe; ++i) {
 		// blocks without boundary
@@ -256,7 +261,11 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I bounds, Long_I Ngs)
 {
 	Long Nfe = bounds.size() - 1; // number of finite elements
-	Long Nx = (Ngs - 1)*Nfe - 1; // total grid points
+	Long Nx = Nfe * (Ngs - 1) - 1;
+#ifdef SLS_CHECK_SHAPE
+	if (w.size() != Nx)
+		SLS_ERR("wrong shape!");
+#endif
 
 	// grid points, weights, base function values in [-1, 1]
 	VecDoub x0(Ngs), w0(Ngs), f0(Ngs);
@@ -277,7 +286,7 @@ void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I b
 	}
 
 	FEDVR_grid(x, w, wFE, xFE, x0, w0);
-	u.resize(w); pow(u, w, -0.5);
+	pow(u, w, -0.5);
 
 	// Sparse Hamiltonian
 	D2_matrix(D2, w0, wFE, df);
