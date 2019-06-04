@@ -211,9 +211,9 @@ typedef Matrix<Uint> MatUint;
 typedef const MatUint &MatUint_I;
 typedef MatUint &MatUint_O, &MatUint_IO;
 
-typedef Matrix<Llong> MatLlong;
-typedef const MatLlong &MatLlong_I;
-typedef MatLlong &MatLlong_O, &MatLlong_IO;
+typedef Matrix<Long> MatLong;
+typedef const MatLong &MatLong_I;
+typedef MatInt &MatLong_O, &MatLong_IO;
 
 typedef Matrix<Ullong> MatUllong;
 typedef const MatUllong &MatUllong_I;
@@ -286,6 +286,10 @@ typedef CmatBool &CmatBool_O, &CmatBool_IO;
 typedef Mat3d<Int> Mat3Int;
 typedef const Mat3Int &Mat3Int_I;
 typedef Mat3Int &Mat3Int_O, &Mat3Int_IO;
+
+typedef Mat3d<Long> Mat3Long;
+typedef const Mat3Long &Mat3Long_I;
+typedef Mat3Long &Mat3Long_O, &Mat3Long_IO;
 
 typedef Mat3d<Doub> Mat3Doub;
 typedef const Mat3Doub &Mat3Doub_I;
@@ -498,6 +502,10 @@ typedef DiagComp &DiagComp_O, &DiagComp_IO;
 typedef MatCoo<Int> McooInt;
 typedef const McooInt &McooInt_I;
 typedef McooInt &McooInt_O, &McooInt_IO;
+
+typedef MatCoo<Long> McooLong;
+typedef const McooLong &McooLong_I;
+typedef McooLong &McooLong_O, &McooLong_IO;
 
 typedef MatCoo<Doub> McooDoub;
 typedef const McooDoub &McooDoub_I;

@@ -11,6 +11,9 @@ using std::cout; using std::endl; using std::vector;
 Int elm(VecInt_I v, Long_I i)
 { return v(i); }
 
+Long elm(VecLong_I v, Long_I i)
+{ return v(i); }
+
 Doub elm(VecDoub_I v, Long_I i)
 { return v(i); }
 
@@ -19,6 +22,10 @@ Comp elm(VecComp_I v, Long_I i)
 
 Int elm(MatInt_I v, Long_I i, Long_I j)
 { return v(i, j); }
+
+Long elm(MatLong_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
 
 Doub elm(MatDoub_I v, Long_I i, Long_I j)
 { return v(i, j); }
@@ -29,6 +36,9 @@ Comp elm(MatComp_I v, Long_I i, Long_I j)
 Int elm(CmatInt_I v, Long_I i, Long_I j)
 { return v(i, j); }
 
+Long elm(CmatLong_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
 Doub elm(CmatDoub_I v, Long_I i, Long_I j)
 { return v(i, j); }
 
@@ -36,6 +46,9 @@ Comp elm(CmatComp_I v, Long_I i, Long_I j)
 { return v(i, j); }
 
 Int elm(McooInt_I v, Long_I i, Long_I j)
+{ return v(i, j); }
+
+Long elm(McooLong_I v, Long_I i, Long_I j)
 { return v(i, j); }
 
 Doub elm(McooDoub_I v, Long_I i, Long_I j)
@@ -56,6 +69,9 @@ Comp elm(McoohComp_I v, Long_I i, Long_I j)
 Int elm(Mat3Int_I v, Long_I i, Long_I j, Long_I k)
 { return v(i, j, k); }
 
+Long elm(Mat3Long_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
 Doub elm(Mat3Doub_I v, Long_I i, Long_I j, Long_I k)
 { return v(i, j, k); }
 
@@ -63,6 +79,9 @@ Comp elm(Mat3Comp_I v, Long_I i, Long_I j, Long_I k)
 { return v(i, j, k); }
 
 Int elm(Cmat3Int_I v, Long_I i, Long_I j, Long_I k)
+{ return v(i, j, k); }
+
+Long elm(Cmat3Long_I v, Long_I i, Long_I j, Long_I k)
 { return v(i, j, k); }
 
 Doub elm(Cmat3Doub_I v, Long_I i, Long_I j, Long_I k)
@@ -78,6 +97,9 @@ Comp elm(Cmat3Comp_I v, Long_I i, Long_I j, Long_I k)
 //void elm(Mat4Comp_I v) { disp(v); }
 
 Int elm(Cmat4Int_I v, Long_I i, Long_I j, Long_I k, Long_I l)
+{ return v(i, j, k, l); }
+
+Long elm(Cmat4Long_I v, Long_I i, Long_I j, Long_I k, Long_I l)
 { return v(i, j, k, l); }
 
 Doub elm(Cmat4Doub_I v, Long_I i, Long_I j, Long_I k, Long_I l)
