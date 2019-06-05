@@ -26,7 +26,6 @@ Int elm(MatInt_I v, Long_I i, Long_I j)
 Long elm(MatLong_I v, Long_I i, Long_I j)
 { return v(i, j); }
 
-
 Doub elm(MatDoub_I v, Long_I i, Long_I j)
 { return v(i, j); }
 
@@ -220,13 +219,19 @@ void print(VecComp_I v, Long_I start, Long_I n) { disp(slice_vec(v, start, n)); 
 //{ disp(v, start1, start2, start3, n1, n2, n3); }
 
 void print(CmatInt_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
-{ disp(slice_mat(v, start1, n1, start2, n2)); }
+{
+	disp(slice_mat(v, start1, n1, start2, n2));
+}
 
 void print(CmatDoub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
-{ disp(slice_mat(v, start1, n1, start2, n2)); }
+{
+	disp(slice_mat(v, start1, n1, start2, n2));
+}
 
 void print(CmatComp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
-{ disp(slice_mat(v, start1, n1, start2, n2)); }
+{
+	disp(slice_mat(v, start1, n1, start2, n2));
+}
 
 void print(Cmat3Int_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
 {

@@ -42,14 +42,15 @@ inline void test_D2_mat()
 	using namespace slisc;
 	Doub xmin = -1., xmax = 1.;
 	Int Nfe = 2, Ngs = 10;
+	Long Nx = Nfe * (Ngs - 1) - 1;
 	VecDoub bounds(Nfe + 1); linspace(bounds, -1., 1.);
 
 	// second derivative matrix
-	McooDoub D2s(0,0);
-	VecDoub x(0), w(0), u(0);
+	McooDoub D2s(Nx, Nx);
+	VecDoub x(Nx), w(Nx), u(Nx);
 	D2_matrix(D2s, x, w, u, bounds, Ngs);
-	VecDoub y(x.size());
-	for (Long i = 0; i < x.size(); ++i) {
+	VecDoub y(Nx);
+	for (Long i = 0; i < Nx; ++i) {
 		y[i] = test_fedvr_fun(x[i], 2);
 	}
 	y /= u;
@@ -70,10 +71,11 @@ inline void test_inf_sqr_well()
 	Int Ngs = 10, Nfe = 5; // grid points per finite element (including boundaries)
 	// =============
 
+	Long Nx = Nfe * (Ngs - 1) - 1;
 	VecDoub bounds(Nfe + 1); linspace(bounds, xmin, xmax);
 
-	VecDoub x(0), w(0), u(0);
-	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
+	VecDoub x(Nx), w(Nx), u(Nx);
+	CmatDoub H(Nx, Nx); McooDoub Hs(Nx, Nx); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 	H.resize(Hs.n1(), Hs.n2()); H = Hs;
 	H *= -0.5; Hs *= -0.5;
@@ -104,10 +106,11 @@ inline void test_SHO()
 	Int Ngs = 10, Nfe = 10; // grid points per finite element (including boundaries)
 	// ==============
 
+	Long Nx = Nfe * (Ngs - 1) - 1;
 	VecDoub bounds(Nfe + 1); linspace(bounds, xmin, xmax);
 
-	VecDoub x(0), w(0), u(0);
-	CmatDoub H(0, 0); McooDoub Hs(0,0); // dense and sparse Hamiltonian
+	VecDoub x(Nx), w(Nx), u(Nx);
+	CmatDoub H(Nx, Nx); McooDoub Hs(Nx, Nx); // dense and sparse Hamiltonian
 	D2_matrix(Hs, x, w, u, bounds, Ngs);
 
 	H.resize(Hs.n1(), Hs.n2()); H = Hs;

@@ -135,6 +135,7 @@ template <class T> class Smat;
 template <class T> class Scmat;
 template <class T> class Dmat;
 template <class T> class Dcmat;
+template <class T> class Jcmat;
 template <class T> class Scmat3d;
 template <class T> class Diag;
 template <class T> class MatCoo;
@@ -426,6 +427,22 @@ typedef DcmatDoub &DcmatDoub_O, &DcmatDoub_IO;
 typedef Dcmat<Comp> DcmatComp;
 typedef const DcmatComp &DcmatComp_I;
 typedef DcmatComp &DcmatComp_O, &DcmatComp_IO;
+
+typedef Jcmat<Int> JcmatInt;
+typedef const JcmatInt &JcmatInt_I;
+typedef JcmatInt &JcmatInt_O, &JcmatInt_IO;
+
+typedef Jcmat<Long> JcmatLong;
+typedef const JcmatLong &JcmatLong_I;
+typedef JcmatInt &JcmatLong_O, &JcmatLong_IO;
+
+typedef Jcmat<Doub> JcmatDoub;
+typedef const JcmatDoub &JcmatDoub_I;
+typedef JcmatDoub &JcmatDoub_O, &JcmatDoub_IO;
+
+typedef Jcmat<Comp> JcmatComp;
+typedef const JcmatComp &JcmatComp_I;
+typedef JcmatComp &JcmatComp_O, &JcmatComp_IO;
 
 typedef Scmat3d<Int> Scmat3Int;
 typedef const Scmat3Int &Scmat3Int_I;

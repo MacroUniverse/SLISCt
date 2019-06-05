@@ -120,4 +120,44 @@ void test_slice()
 		if (slice[0] != 2 || slice[1] != 4)
 			SLS_ERR("failed!");
 	}
+
+	// slice a3(i,:,:)
+	{
+		Cmat3Int a3(2, 3, 4);
+		linspace(a3, 1, 24);
+		JcmatInt slice;
+		slice_mat23(slice, a3, 0);
+		if (slice.n1() != 3 || slice.n2() != 4)
+			SLS_ERR("failed!");
+		if (slice.step1() != 2 || slice.step2() != 6)
+			SLS_ERR("failed!");
+		if (slice.size() != 12)
+			SLS_ERR("failed!");
+		for (Long j = 0; j < 3; ++j) {
+			for (Long k = 0; k < 4; ++k) {
+				if (slice(j, k) != a3(0, j, k))
+					SLS_ERR("failed!");
+			}
+		}
+	}
+
+	// slice a4(i,j,:,:)
+	{
+		Cmat4Int a4(2, 3, 4, 5);
+		linspace(a4, 1, 120);
+		JcmatInt slice;
+		slice_mat34(slice, a4, 1, 0);
+		if (slice.n1() != 4 || slice.n2() != 5)
+			SLS_ERR("failed!");
+		if (slice.step1() != 6 || slice.step2() != 24)
+			SLS_ERR("failed!");
+		if (slice.size() != 20)
+			SLS_ERR("failed!");
+		for (Long k = 0; k < 4; ++k) {
+			for (Long l = 0; l < 5; ++l) {
+				if (slice(k, l) != a4(1, 0, k, l))
+					SLS_ERR("failed!");
+			}
+		}
+	}
 }

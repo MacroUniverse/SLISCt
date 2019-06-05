@@ -13,7 +13,7 @@
 
 namespace slisc {
 
-const Int def_disp_prec = 4;
+const Int def_disp_prec = 8;
 
 // display vector
 template <class Tv, SLS_IF(ndims<Tv>() == 1)>

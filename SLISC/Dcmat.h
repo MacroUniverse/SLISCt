@@ -42,13 +42,13 @@ Dcmat<T>::Dcmat() {}
 
 template <class T>
 Dcmat<T>::Dcmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda)
-	: m_p(ptr), m_Nr(Nr), m_Nc(Nc), m_lda(lda)
+	: m_p((T *)ptr), m_Nr(Nr), m_Nc(Nc), m_N(Nr*Nc), m_lda(lda)
 {}
 
 template <class T>
 void Dcmat<T>::set(const T *ptr, Long_I Nr, Long_I Nc, Long_I lda)
 {
-	m_p = (T *)ptr; m_Nr = Nr; m_Nc = Nc; m_lda = lda;
+	m_p = (T *)ptr; m_Nr = Nr; m_Nc = Nc; m_N = Nr * Nc; m_lda = lda;
 }
 
 template <class T>

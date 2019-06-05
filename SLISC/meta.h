@@ -308,6 +308,14 @@ constexpr Bool is_Dcmat()
 	return is_Dcmat_imp<T>();
 }
 
+template <class T> struct is_Jcmat_imp : false_type {};
+template <class T> struct is_Jcmat_imp<Jcmat<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Jcmat()
+{
+	return is_Jcmat_imp<T>();
+}
+
 template <class T>
 constexpr Bool is_slice_vec()
 {
@@ -508,7 +516,7 @@ constexpr Int ndims()
 	if (is_dense_vec<T>() || is_FixVec<T>() || is_Svector<T>() || is_Dvector<T>())
 		return 1;
 	else if (is_dense_mat<T>() || is_sparse_mat<T>() || is_Scmat<T>() ||
-		is_Dcmat<T>())
+		is_Dcmat<T>() || is_Jcmat<T>())
 		return 2;
 	else if (is_Mat3d<T>() || is_Cmat3d<T>())
 		return 3;
