@@ -365,12 +365,28 @@ constexpr Bool is_Cmat3d()
 	return is_Cmat3d_imp<T>();
 }
 
+template <class T> struct is_Jcmat3d_imp : false_type {};
+template <class T> struct is_Jcmat3d_imp<Jcmat3d<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Jcmat3d()
+{
+	return is_Jcmat3d_imp<T>();
+}
+
 template <class T> struct is_Cmat4d_imp : false_type {};
 template <class T> struct is_Cmat4d_imp<Cmat4d<T>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>
 constexpr Bool is_Cmat4d()
 {
 	return is_Cmat4d_imp<T>();
+}
+
+template <class T> struct is_Jcmat4d_imp : false_type {};
+template <class T> struct is_Jcmat4d_imp<Jcmat4d<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Jcmat4d()
+{
+	return is_Jcmat4d_imp<T>();
 }
 
 template <class T> struct is_Diag_imp : false_type {};
@@ -518,9 +534,9 @@ constexpr Int ndims()
 	else if (is_dense_mat<T>() || is_sparse_mat<T>() || is_Scmat<T>() ||
 		is_Dcmat<T>() || is_Jcmat<T>())
 		return 2;
-	else if (is_Mat3d<T>() || is_Cmat3d<T>())
+	else if (is_Mat3d<T>() || is_Cmat3d<T>() || is_Jcmat3d<T>())
 		return 3;
-	else if (is_Cmat4d<T>())
+	else if (is_Cmat4d<T>() || is_Jcmat4d<T>())
 		return 4;
 	else {
 		SLS_ERR("unknown!");

@@ -136,6 +136,8 @@ template <class T> class Scmat;
 template <class T> class Dmat;
 template <class T> class Dcmat;
 template <class T> class Jcmat;
+template <class T> class Jcmat3d;
+template <class T> class Jcmat4d;
 template <class T> class Scmat3d;
 template <class T> class Diag;
 template <class T> class MatCoo;
@@ -443,6 +445,38 @@ typedef JcmatDoub &JcmatDoub_O, &JcmatDoub_IO;
 typedef Jcmat<Comp> JcmatComp;
 typedef const JcmatComp &JcmatComp_I;
 typedef JcmatComp &JcmatComp_O, &JcmatComp_IO;
+
+typedef Jcmat3d<Int> Jcmat3Int;
+typedef const Jcmat3Int &Jcmat3Int_I;
+typedef Jcmat3Int &Jcmat3Int_O, &Jcmat3Int_IO;
+
+typedef Jcmat3d<Long> Jcmat3Long;
+typedef const Jcmat3Long &Jcmat3Long_I;
+typedef Jcmat3Int &Jcmat3Long_O, &Jcmat3Long_IO;
+
+typedef Jcmat3d<Doub> Jcmat3Doub;
+typedef const Jcmat3Doub &Jcmat3Doub_I;
+typedef Jcmat3Doub &Jcmat3Doub_O, &Jcmat3Doub_IO;
+
+typedef Jcmat3d<Comp> Jcmat3Comp;
+typedef const Jcmat3Comp &Jcmat3Comp_I;
+typedef Jcmat3Comp &Jcmat3Comp_O, &Jcmat3Comp_IO;
+
+typedef Jcmat4d<Int> Jcmat4Int;
+typedef const Jcmat4Int &Jcmat4Int_I;
+typedef Jcmat4Int &Jcmat4Int_O, &Jcmat4Int_IO;
+
+typedef Jcmat4d<Long> Jcmat4Long;
+typedef const Jcmat4Long &Jcmat4Long_I;
+typedef Jcmat4Int &Jcmat4Long_O, &Jcmat4Long_IO;
+
+typedef Jcmat4d<Doub> Jcmat4Doub;
+typedef const Jcmat4Doub &Jcmat4Doub_I;
+typedef Jcmat4Doub &Jcmat4Doub_O, &Jcmat4Doub_IO;
+
+typedef Jcmat4d<Comp> Jcmat4Comp;
+typedef const Jcmat4Comp &Jcmat4Comp_I;
+typedef Jcmat4Comp &Jcmat4Comp_O, &Jcmat4Comp_IO;
 
 typedef Scmat3d<Int> Scmat3Int;
 typedef const Scmat3Int &Scmat3Int_I;

@@ -1,4 +1,5 @@
-// matrix slicing with both inner `rstep` and `cstep`
+// matrix slicing with both `step1` and `step2`
+// Jcmat can be used for both col and row major
 #pragma once
 #include "vector.h"
 

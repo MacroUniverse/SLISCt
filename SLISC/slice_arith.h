@@ -6,6 +6,8 @@
 #include "cmat4d.h"
 #include "dcmat.h"
 #include "jcmat.h"
+#include "jcmat3d.h"
+#include "jcmat4d.h"
 
 namespace slisc {
 
@@ -180,7 +182,7 @@ Svector<T> slice_col(const Tmat &a, Long_I col, Long_I k = 0)
 	return slice;
 }
 
-// slice a Dmat from a mat
+// slice a Dmat from a dense mat
 // only works for column major for now
 template <class Tmat, class T = contain_type<Tmat>,
 	SLS_IF(is_cmajor<Tmat>() &&is_dense_mat<Tmat>())>
@@ -196,6 +198,41 @@ Dcmat<T> slice_mat(const Tmat &a,
 	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
 {
 	Dcmat<T> slice;
+	slice_mat(slice, a, i, Nr, j, Nc);
+	return slice;
+}
+
+// slice a Dcmat from a Dcmat
+// only works for column major for now
+template <class T, SLS_IF(is_scalar<T>())>
+void slice_mat(Dcmat<T> &slice, const Dcmat<T> &a,
+		Long_I i, Long_I Nr, Long_I j, Long_I Nc)
+{
+	slice.set(&a(i, j), Nr, Nc, a.lda());
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+Dcmat<T> slice_mat(const Dcmat<T> &a,
+		Long_I i, Long_I Nr, Long_I j, Long_I Nc)
+{
+	Dcmat<T> slice;
+	slice_mat(slice, a, i, Nr, j, Nc);
+	return slice;
+}
+
+// slice a Jcmat from a Jcmat
+template <class T, SLS_IF(is_scalar<T>())>
+void slice_mat(Jcmat<T> &slice, const Jcmat<T> &a,
+	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
+{
+	slice.set(&a(i, j), Nr, Nc, a.step1(), a.step2());
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+Jcmat<T> slice_mat(const Jcmat<T> &a,
+	Long_I i, Long_I Nr, Long_I j, Long_I Nc)
+{
+	Jcmat<T> slice;
 	slice_mat(slice, a, i, Nr, j, Nc);
 	return slice;
 }
@@ -245,6 +282,46 @@ Scmat<T> slice_mat12(const Cmat3d<T> &a3, Long_I k)
 	return slice;
 }
 
+// slice a3(i,:,:)
+template <class T, SLS_IF(is_scalar<T>())>
+void slice_mat23(Jcmat<T> &slice, const Cmat3d<T> &a3, Long_I i)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= a3.n1())
+		SLS_ERR("out of bound!");
+#endif
+	slice.set(a3.ptr() + i, a3.n2(), a3.n3(), a3.n1(), a3.n1()*a3.n2());
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+Jcmat<T> slice_mat23(const Cmat3d<T> &a3, Long_I i)
+{
+	Jcmat<T> slice;
+	slice_mat23(slice, a3, i);
+	return slice;
+}
+
+// slice a4(i,:,:,l)
+template <class T, SLS_IF(is_scalar<T>())>
+void slice_mat23(Jcmat<T> &slice, const Cmat4d<T> &a4, Long_I i, Long_I l)
+{
+	Long N1 = a4.n1(), N2 = a4.n2(), N3 = a4.n3(), N4 = a4.n4();
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= N1 || l < 0 || l > N4)
+		SLS_ERR("out of bound!");
+#endif
+	Long N1N2 = N1 * N2;
+	slice.set(a4.ptr() + i + N1N2*N3*l, N2, N3, N1, N1N2);
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+Jcmat<T> slice_mat23(const Cmat4d<T> &a4, Long_I i, Long_I l)
+{
+	Jcmat<T> slice;
+	slice_mat23(slice, a4, i, l);
+	return slice;
+}
+
 // slice a4(:,:,k,l)
 // only supports Cmat<> and Cmat3<> for now
 template <class T, SLS_IF(is_scalar<T>())>
@@ -266,25 +343,6 @@ Scmat<T> slice_mat12(const Cmat4d<T> &a4, Long_I k, Long_I l)
 	return slice;
 }
 
-// slice a3(i,:,:)
-template <class T, SLS_IF(is_scalar<T>())>
-void slice_mat23(Jcmat<T> &slice, const Cmat3d<T> &a3, Long_I i)
-{
-#ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= a3.n1())
-		SLS_ERR("out of bound!");
-#endif
-	slice.set(a3.ptr() + i, a3.n2(), a3.n3(), a3.n1(), a3.n1()*a3.n2());
-}
-
-template <class T, SLS_IF(is_scalar<T>())>
-Jcmat<T> slice_mat23(const Cmat3d<T> &a3, Long_I i)
-{
-	Jcmat<T> slice;
-	slice_mat23(slice, a3, i);
-	return slice;
-}
-
 // slice a4(i,j,:,:)
 template <class T, SLS_IF(is_scalar<T>())>
 void slice_mat34(Jcmat<T> &slice, const Cmat4d<T> &a4, Long_I i, Long_I j)
@@ -303,6 +361,51 @@ Jcmat<T> slice_mat34(const Cmat4d<T> &a4, Long_I i, Long_I j)
 {
 	Jcmat<T> slice;
 	slice_mat34(slice, a4, i, j);
+	return slice;
+}
+
+// slice Jmat3d from Cmat3d
+template <class T, SLS_IF(is_scalar<T>())>
+void slice_mat3(Jcmat3d<T> &slice, const Cmat3d<T> &a3,
+	Long_I i, Long_I N1, Long_I j, Long_I N2, Long_I k, Long_I N3)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i + N1 > a3.n1() || j < 0 ||
+		j + N2 > a3.n2() || k < 0 || k + N2 > a3.n3())
+		SLS_ERR("out of bound!");
+#endif
+	slice.set(&a3(i, j, k), N1, N2, N3, 1, a3.n1()*j, a3.n1()*a3.n2()*k);
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+Jcmat3d<T> slice_mat3(const Cmat3d<T> &a3,
+	Long_I i, Long_I N1, Long_I j, Long_I N2, Long_I k, Long_I N3)
+{
+	Jcmat3d<T> slice;
+	slice_mat3(slice, a3, i, N1, j, N2, k, N3);
+	return slice;
+}
+
+// slice Jcmat4d from Cmat4d
+template <class T, SLS_IF(is_scalar<T>())>
+void slice_mat4(Jcmat4d<T> &slice, const Cmat4d<T> &a4,
+	Long_I i, Long_I N1, Long_I j, Long_I N2, Long_I k, Long_I N3, Long_I l, Long_I N4)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i + N1 > a4.n1() || j < 0 || j + N2 > a4.n2() ||
+		k < 0 || k + N3 > a4.n3() || l < 0 || l + N4 > a4.n4())
+		SLS_ERR("out of bound!");
+#endif
+	Long n1n2 = a4.n1() * a4.n2();
+	slice.set(&a4(i, j, k, l), N1, N2, N3, N4, 1, a4.n1(), n1n2, n1n2*a4.n3());
+}
+
+template <class T, SLS_IF(is_scalar<T>())>
+Jcmat4d<T> slice_mat4(const Cmat4d<T> &a4,
+	Long_I i, Long_I N1, Long_I j, Long_I N2, Long_I k, Long_I N3, Long_I l, Long_I N4)
+{
+	Jcmat4d<T> slice;
+	slice_mat4(slice, a4, i, N1, j, N2, k, N3, l, N4);
 	return slice;
 }
 

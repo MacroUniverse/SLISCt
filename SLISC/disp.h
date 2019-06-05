@@ -77,7 +77,8 @@ void disp(const T &a, Int_I precision = def_disp_prec) {
 	Long i, j, k, l, N1 = a.n1(), N2 = a.n2(), N3 = a.n3(), N4 = a.n4();
 	auto oldPrecision = cout.precision();
 	cout.precision(precision);
-	if (a.size() == 0) cout << "empty";
+	if (a.size() == 0)
+		cout << "empty";
 	else
 		for (l = 0; l < N4; ++l)
 		for (k = 0; k < N3; ++k) {
