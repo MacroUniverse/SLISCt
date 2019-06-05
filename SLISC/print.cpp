@@ -204,7 +204,7 @@ void print(VecDoub_I v, Long_I start, Long_I n) { disp(slice_vec(v, start, n)); 
 void print(VecComp_I v, Long_I start, Long_I n) { disp(slice_vec(v, start, n)); }
 
 //void print(MatInt_I v, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
-//{ disp(slice_mat(v, start1, start2, n1, n2)); }
+//{ disp(slice(v, start1, start2, n1, n2)); }
 //
 //void print(MatDoub_I v, Long_I start1, Long_I start2, Long_I n1, Long_I n2)
 //{ disp(v, start1, start2, n1, n2); }
@@ -220,82 +220,47 @@ void print(VecComp_I v, Long_I start, Long_I n) { disp(slice_vec(v, start, n)); 
 
 void print(CmatInt_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
 {
-	disp(slice_mat(v, start1, n1, start2, n2));
+	disp(slice(v, start1, n1, start2, n2));
 }
 
 void print(CmatDoub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
 {
-	disp(slice_mat(v, start1, n1, start2, n2));
+	disp(slice(v, start1, n1, start2, n2));
 }
 
 void print(CmatComp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
 {
-	disp(slice_mat(v, start1, n1, start2, n2));
+	disp(slice(v, start1, n1, start2, n2));
 }
 
-void print12(Cmat3Int_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
+void print(Cmat3Int_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3)
 {
-	disp(slice_mat(slice_mat12(v, k), start1, n1, start2, n2));
+	disp(slice(v, i, n1, j, n2, k, n3));
 }
 
-void print12(Cmat3Doub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
+void print(Cmat3Doub_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3)
 {
-	disp(slice_mat(slice_mat12(v, k), start1, n1, start2, n2));
+	disp(slice(v, i, n1, j, n2, k, n3));
 }
 
-void print12(Cmat3Comp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k)
+void print(Cmat3Comp_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3)
 {
-	disp(slice_mat(slice_mat12(v, k), start1, n1, start2, n2));
+	disp(slice(v, i, n1, j, n2, k, n3));
 }
 
-void print23(Cmat3Int_I v, Long_I i, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
+void print(Cmat4Int_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3, Long_I l, Long_I n4)
 {
-	disp(slice_mat(slice_mat23(v, i), start2, n2, start3, n3));
+	disp(slice(v, i, n1, j, n2, k, n3, l, n4));
 }
 
-void print23(Cmat3Doub_I v, Long_I i, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
+void print(Cmat4Doub_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3, Long_I l, Long_I n4)
 {
-	disp(slice_mat(slice_mat23(v, i), start2, n2, start3, n3));
+	disp(slice(v, i, n1, j, n2, k, n3, l, n4));
 }
 
-void print23(Cmat3Comp_I v, Long_I i, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
+void print(Cmat4Comp_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3, Long_I l, Long_I n4)
 {
-	disp(slice_mat(slice_mat23(v, i), start2, n2, start3, n3));
-}
-
-void print12(Cmat4Int_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k, Long_I l)
-{
-	disp(slice_mat(slice_mat12(v, k, l), start1, n1, start2, n2));
-}
-
-void print12(Cmat4Doub_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k, Long_I l)
-{
-	disp(slice_mat(slice_mat12(v, k, l), start1, n1, start2, n2));
-}
-
-void print12(Cmat4Comp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2, Long_I k, Long_I l)
-{
-	disp(slice_mat(slice_mat12(v, k, l), start1, n1, start2, n2));
-}
-
-void print34(Cmat4Int_I v, Long_I i, Long_I j, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
-{
-	disp(slice_mat(slice_mat34(v, i, j), start2, n2, start3, n3));
-}
-
-void print34(Cmat4Long_I v, Long_I i, Long_I j, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
-{
-	disp(slice_mat(slice_mat34(v, i, j), start2, n2, start3, n3));
-}
-
-void print34(Cmat4Doub_I v, Long_I i, Long_I j, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
-{
-	disp(slice_mat(slice_mat34(v, i, j), start2, n2, start3, n3));
-}
-
-void print34(Cmat4Comp_I v, Long_I i, Long_I j, Long_I start2, Long_I n2, Long_I start3, Long_I n3)
-{
-	disp(slice_mat(slice_mat34(v, i, j), start2, n2, start3, n3));
+	disp(slice(v, i, n1, j, n2, k, n3, l, n4));
 }
 
 // version 4

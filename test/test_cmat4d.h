@@ -23,7 +23,7 @@ void test_cmat4d()
 
 	for (Long l = 0; l < 5; ++l) {
 		for (Long k = 0; k < 4; ++k) {
-			if (slice_mat12(a, k, l).ptr() != &a(0, 0, k, l))
+			if (slice12(a, k, l).ptr() != &a(0, 0, k, l))
 				SLS_ERR("failed!");
 		}
 	}

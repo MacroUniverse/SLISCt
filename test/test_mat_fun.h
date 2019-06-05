@@ -35,7 +35,7 @@ void test_mat_fun()
 			CmatComp out(3, 3); out = 0;
 			SvecComp v;
 			for (Long j = 0; j < 3; ++j) {
-				slice_col(v, out, j);
+				slice1(v, out, j);
 				v1 = 0.; v1[j] = 1;
 				expA.mul(v, 1., v1);
 			}

@@ -46,7 +46,7 @@ void test_slice()
 		VecInt vc(3);
 		SvecInt svc;
 		for (Long j = 1; j < 4; ++j) {
-			slice_col(svc, a, j);
+			slice1(svc, a, j);
 			vc = svc;
 			for (Long i = 1; i < 3; ++i) {
 				if (svc[i] != a(i, j))
@@ -62,7 +62,7 @@ void test_slice()
 		VecInt vr(4);
 		SvecInt svr;
 		for (Long i = 1; i < 3; ++i) {
-			slice_row(svr, a, i);
+			slice2(svr, a, i);
 			vr = svr;
 			for (Long j = 1; j < 3; ++j) {
 				if (svr[j] != a(i, j))
@@ -79,14 +79,14 @@ void test_slice()
 		linspace(a, 1, 12);
 		VecInt v(4);
 		for (Long i = 0; i < 3; ++i) {
-			v = slice_row(a, i);
+			v = slice2(a, i);
 			for (Long j = 0; j < 4; ++j) {
 				if (v[j] != a(i, j))
 					SLS_ERR("failed!");
 			}
 			v *= 2;
-			DvecInt slice; slice_row(slice, a, i);
-			slice = v;
+			DvecInt sli; slice2(sli, a, i);
+			sli = v;
 			for (Long j = 0; j < 4; ++j) {
 				if (v[j] != a(i, j))
 					SLS_ERR("failed!");
@@ -98,12 +98,12 @@ void test_slice()
 	{
 		Cmat3Int a3(2, 3, 4);
 		linspace(a3, 1, 24);
-		DvecInt slice;
+		DvecInt sli;
 		for (Long i = 0; i < 2; ++i) {
 			for (Long j = 0; j < 3; ++j) {
-				slice_dim3(slice, a3, i, j);
+				slice_dim3(sli, a3, i, j);
 				for (Long k = 0; k < 4; ++k) {
-					if (slice[k] != a3(i, j, k))
+					if (sli[k] != a3(i, j, k))
 						SLS_ERR("failed!");
 				}
 			}
@@ -112,12 +112,12 @@ void test_slice()
 	{
 		Cmat3Int a3(2, 2, 2);
 		linspace(a3, 1, 8);
-		DvecInt slice;
-		slice_dim3(slice, a3, 1, 1);
-		if (slice[0] != 4 || slice[1] != 8)
+		DvecInt sli;
+		slice_dim3(sli, a3, 1, 1);
+		if (sli[0] != 4 || sli[1] != 8)
 			SLS_ERR("failed!");
-		slice /= 2;
-		if (slice[0] != 2 || slice[1] != 4)
+		sli /= 2;
+		if (sli[0] != 2 || sli[1] != 4)
 			SLS_ERR("failed!");
 	}
 
@@ -125,17 +125,17 @@ void test_slice()
 	{
 		Cmat3Int a3(2, 3, 4);
 		linspace(a3, 1, 24);
-		JcmatInt slice;
-		slice_mat23(slice, a3, 0);
-		if (slice.n1() != 3 || slice.n2() != 4)
+		JcmatInt sli;
+		slice23(sli, a3, 0);
+		if (sli.n1() != 3 || sli.n2() != 4)
 			SLS_ERR("failed!");
-		if (slice.step1() != 2 || slice.step2() != 6)
+		if (sli.step1() != 2 || sli.step2() != 6)
 			SLS_ERR("failed!");
-		if (slice.size() != 12)
+		if (sli.size() != 12)
 			SLS_ERR("failed!");
 		for (Long j = 0; j < 3; ++j) {
 			for (Long k = 0; k < 4; ++k) {
-				if (slice(j, k) != a3(0, j, k))
+				if (sli(j, k) != a3(0, j, k))
 					SLS_ERR("failed!");
 			}
 		}
@@ -145,17 +145,17 @@ void test_slice()
 	{
 		Cmat4Int a4(2, 3, 4, 5);
 		linspace(a4, 1, 120);
-		JcmatInt slice;
-		slice_mat34(slice, a4, 1, 0);
-		if (slice.n1() != 4 || slice.n2() != 5)
+		JcmatInt sli;
+		slice34(sli, a4, 1, 0);
+		if (sli.n1() != 4 || sli.n2() != 5)
 			SLS_ERR("failed!");
-		if (slice.step1() != 6 || slice.step2() != 24)
+		if (sli.step1() != 6 || sli.step2() != 24)
 			SLS_ERR("failed!");
-		if (slice.size() != 20)
+		if (sli.size() != 20)
 			SLS_ERR("failed!");
 		for (Long k = 0; k < 4; ++k) {
 			for (Long l = 0; l < 5; ++l) {
-				if (slice(k, l) != a4(1, 0, k, l))
+				if (sli(k, l) != a4(1, 0, k, l))
 					SLS_ERR("failed!");
 			}
 		}
