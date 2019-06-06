@@ -183,7 +183,7 @@ inline const auto max(const T &v)
 }
 
 // return max(abs(a(:))
-template <class T, SLS_IF(is_dense<T>())>
+template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
 inline const auto max_abs(const T &v)
 { return max_abs_v(v.ptr(), v.size()); }
 

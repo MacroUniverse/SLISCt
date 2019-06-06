@@ -25,7 +25,7 @@ public:
 	}
 };
 
-// timer for cpu time
+// timer for cpu time (scales with cpu cores)
 class CPUTimer
 {
 private:

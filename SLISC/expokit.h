@@ -20,7 +20,7 @@ void mul(Comp *y, const MatCooH<T> &a, Comp *x)
 
 // expv()
 // use ZGEXPV() for MatCoo<>, ZHEXPV() for MatCooH<>
-
+// v cannot be empty!
 template <Char Option = 0, class Tvec, class Tmat, SLS_IF(
 	is_dense_vec<Tvec>() &&
 	(is_Comp<contain_type<Tvec>>() || is_Doub<contain_type<Tvec>>()) &&
