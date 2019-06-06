@@ -1,5 +1,4 @@
 #pragma once
-#include "../SLISC/global.h"
 #include "../SLISC/scalar_arith.h"
 
 void test_scalar_arith()

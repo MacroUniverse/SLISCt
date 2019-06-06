@@ -35,6 +35,8 @@ public:
 	Long n2() const;
 	Long lda() const;
 	Long size() const;
+	const T *ptr() const;
+	T *ptr();
 };
 
 template <class T>
@@ -150,5 +152,15 @@ template<class T>
 inline Long Dcmat<T>::size() const
 {
 	return m_N;
+}
+template<class T>
+inline const T * Dcmat<T>::ptr() const
+{
+	return m_p;
+}
+template<class T>
+inline T * Dcmat<T>::ptr()
+{
+	return m_p;
 }
 } // namespace slisc

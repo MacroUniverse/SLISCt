@@ -103,13 +103,29 @@ inline Jcmat4d<T> & Jcmat4d<T>::operator=(const T &rhs)
 template <class T>
 inline T & Jcmat4d<T>::operator[](Long_I i)
 {
-	SLS_ERR("not implemented!");
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_N)
+		SLS_ERR("out of bound!");
+#endif
+	Long N1N2 = m_N1 * m_N2;
+	Long N1N2N3 = m_N1 * m_N2 * m_N3;
+	Long i3 = i % N1N2N3;
+	Long i2 = i3 % N1N2;
+	return operator()(i2 % m_N1, i2 / m_N1, i3 / N1N2, i / N1N2N3);
 }
 
 template <class T>
 inline const T & Jcmat4d<T>::operator[](Long_I i) const
 {
-	SLS_ERR("not implemented!");
+#ifdef SLS_CHECK_BOUNDS
+	if (i < 0 || i >= m_N)
+		SLS_ERR("out of bound!");
+#endif
+	Long N1N2 = m_N1 * m_N2;
+	Long N1N2N3 = m_N1 * m_N2 * m_N3;
+	Long i3 = i % N1N2N3;
+	Long i2 = i3 % N1N2;
+	return operator()(i2 % m_N1, i2 / m_N1, i3 / N1N2, i / N1N2N3);
 }
 
 template <class T>

@@ -32,18 +32,20 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 
 // operator== for slisc containers
 
-template <class T1, class T2, SLS_IF(is_dense<T1>() && is_same_contain<T1,T2>())>
+template <class T1, class T2, SLS_IF(
+	(is_dense<T1>() || is_Dcmat<T1>()) && is_same_contain<T1,T2>())>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
 	return shape_cmp(v1, v2) && equals_to_vv(v1.ptr(), v2.ptr(), v2.size());
 }
 
 template <class T1, class T2, SLS_IF(
-	is_dense_mat<T1>() && is_dense_mat<T2>() && !is_same_contain<T1, T2>()
+	ndims<T1>() == 2 && ndims<T2>() == 2 && !is_same_contain<T1, T2>()
 )>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
-	if (!shape_cmp(v1, v2)) return false;
+	if (!shape_cmp(v1, v2))
+		return false;
 	for (Long i = 0; i < v1.n1(); ++i)
 		for (Long j = 0; j < v1.n2(); ++j)
 			if (v1(i, j) != v2(i, j))
@@ -62,7 +64,10 @@ Bool operator==(const Ts &s, const Tv &v)
 { return v == s; }
 
 // operator!= for slisc containers
-template <class T1, class T2, SLS_IF(is_dense<T1>() || is_dense<T2>())>
+template <class T1, class T2, SLS_IF(
+	is_contain<T1>() && is_scalar<T2>() ||
+	is_contain<T2>() && is_scalar<T1>() ||
+	ndims<T1>() > 0 && ndims<T1>() == ndims<T2>())>
 Bool operator!=(const T1 &v1, const T2 &v2)
 {
 	return !(v1 == v2);
