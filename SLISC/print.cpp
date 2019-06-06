@@ -235,32 +235,62 @@ void print(CmatComp_I v, Long_I start1, Long_I n1, Long_I start2, Long_I n2)
 
 void print(Cmat3Int_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3)
 {
-	disp(slice(v, i, n1, j, n2, k, n3));
+	if (n3 == 1) // slice12
+		disp(slice(slice12(v, k), i, n1, j, n2));
+	else if (n1 == 1) // slice23
+		disp(slice(slice23(v, i), j, n2, k, n3));
+	else // slice
+		disp(slice(v, i, n1, j, n2, k, n3));
 }
 
 void print(Cmat3Doub_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3)
 {
-	disp(slice(v, i, n1, j, n2, k, n3));
+	if (n3 == 1) // slice12
+		disp(slice(slice12(v, k), i, n1, j, n2));
+	else if (n1 == 1) // slice23
+		disp(slice(slice23(v, i), j, n2, k, n3));
+	else // slice
+		disp(slice(v, i, n1, j, n2, k, n3));
 }
 
 void print(Cmat3Comp_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3)
 {
-	disp(slice(v, i, n1, j, n2, k, n3));
+	if (n3 == 1) // slice12
+		disp(slice(slice12(v, k), i, n1, j, n2));
+	else if (n1 == 1) // slice23
+		disp(slice(slice23(v, i), j, n2, k, n3));
+	else // slice
+		disp(slice(v, i, n1, j, n2, k, n3));
 }
 
 void print(Cmat4Int_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3, Long_I l, Long_I n4)
 {
-	disp(slice(v, i, n1, j, n2, k, n3, l, n4));
+	if (n3 == 1 && n4 == 1) // slice12
+		disp(slice(slice12(v, k, l), i, n1, j, n2));
+	else if (n1 == 1 && n2 == 1) // slice34
+		disp(slice(slice34(v, i, j), k, n3, l, n4));
+	else // slice
+		disp(slice(v, i, n1, j, n2, k, n3, l, n4));
 }
 
 void print(Cmat4Doub_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3, Long_I l, Long_I n4)
 {
-	disp(slice(v, i, n1, j, n2, k, n3, l, n4));
+	if (n3 == 1 && n4 == 1) // slice12
+		disp(slice(slice12(v, k, l), i, n1, j, n2));
+	else if (n1 == 1 && n2 == 1) // slice34
+		disp(slice(slice34(v, i, j), k, n3, l, n4));
+	else // slice
+		disp(slice(v, i, n1, j, n2, k, n3, l, n4));
 }
 
 void print(Cmat4Comp_I v, Long_I i, Long_I n1, Long_I j, Long_I n2, Long_I k, Long_I n3, Long_I l, Long_I n4)
 {
-	disp(slice(v, i, n1, j, n2, k, n3, l, n4));
+	if (n3 == 1 && n4 == 1) // slice12
+		disp(slice(slice12(v, k, l), i, n1, j, n2));
+	else if (n1 == 1 && n2 == 1) // slice34
+		disp(slice(slice34(v, i, j), k, n3, l, n4));
+	else // slice
+		disp(slice(v, i, n1, j, n2, k, n3, l, n4));
 }
 
 // version 4
