@@ -469,7 +469,7 @@ template <class T>
 void MatCooH<T>::push(const T &s, Long_I i, Long_I j)
 {
 	if (i > j)
-		Base::push(conj(s), j, i);
+		Base::push(CONJ(s), j, i);
 	else
 		Base::push(s, i, j);
 }

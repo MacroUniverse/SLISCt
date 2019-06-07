@@ -75,6 +75,12 @@ inline Comp INV(Comp_I x)
 inline Lcomp INV(Lcomp_I x)
 { return 1.l/x; }
 
+inline Comp CONJ(Comp_I x)
+{ return conj(x); }
+
+inline Doub CONJ(Doub_I x)
+{ return x; }
+
 // check if `elm` is one of `vec[i]`
 // `vec.size()` must be defined
 // if you need i, see `search()` in `search.h`

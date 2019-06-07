@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SLISC/imag.h"
+#include "../SLISC/imag.h"
 
 void test_imag()
 {

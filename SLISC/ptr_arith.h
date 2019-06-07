@@ -524,9 +524,9 @@ inline auto dot_vv(const T1 *v1, const T2 *v2, Long_I N)
 #ifdef SLS_CHECK_BOUNDS
 	if (N <= 0) SLS_ERR("illegal length!");
 #endif
-	auto s = conj(v1[0]) * v2[0];
+	auto s = CONJ(v1[0]) * v2[0];
 	for (Long i = 1; i < N; ++i) {
-			s += conj(v1[i]) * v2[i];
+			s += CONJ(v1[i]) * v2[i];
 	}
 	return s;
 }
