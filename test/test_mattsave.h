@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/matt.h"
 
 void test_mattsave()

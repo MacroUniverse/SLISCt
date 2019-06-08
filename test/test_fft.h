@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/fft.h"
 
 // test fft module

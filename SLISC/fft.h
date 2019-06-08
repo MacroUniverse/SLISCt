@@ -1,3 +1,4 @@
+#pragma once
 #include "arithmetic.h"
 
 namespace slisc {

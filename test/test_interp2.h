@@ -1,4 +1,4 @@
-
+#pragma once
 	// // test cubic spline interp 2D
 	// Int i, j, m{ 5 }, n{ 5 };
 	// MatComp Psi(m, n), Psi0(m, n);

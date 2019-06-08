@@ -1,5 +1,6 @@
 // do all available tests of SLISC
 // TODO: test mparith.h not finished
+#pragma once
 
 #include "test_meta.h"
 #include "test_scalar_arith.h"

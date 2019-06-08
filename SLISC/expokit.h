@@ -19,6 +19,7 @@ void mul(Comp *y, const MatCooH<T> &a, Comp *x)
 }
 
 // expv()
+// this function is extremely slow when used in a loop! due to dynamic memory allocation
 // use ZGEXPV() for MatCoo<>, ZHEXPV() for MatCooH<>
 // v cannot be empty!
 template <Char Option = 0, class Tvec, class Tmat, SLS_IF(
@@ -27,9 +28,8 @@ template <Char Option = 0, class Tvec, class Tmat, SLS_IF(
 	(is_MatCoo<Tmat>() || is_MatCooH<Tmat>()) &&
 	(is_Comp<contain_type<Tmat>>() || is_Doub<contain_type<Tmat>>())
 )>
-inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov)
+inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov, Doub_I mat_norm, Doub_I tol = 0)
 {
-	const Doub tol = 0.; // set tolerance here
 #ifdef SLS_CHECK_SHAPE
 	if (mat.n1() != mat.n2() || mat.n2() != v.size())
 		SLS_ERR("wrong shape!");
@@ -40,12 +40,12 @@ inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov)
 
 	if constexpr (Option == 'G' || Option == 0 && is_MatCoo<Tmat>()) {
 		ZGEXPV((Int)v.size(), Nkrylov, t, v.ptr(),
-			tol, norm_inf(mat), wsp.ptr(), (Int)wsp.size(),
+			tol, mat_norm, wsp.ptr(), (Int)wsp.size(),
 			iwsp.ptr(), (Int)iwsp.size(), mat, 0, iflag);
 	}
 	else if constexpr (Option == 'H' || Option == 0 && is_MatCooH<Tmat>()) {
 		ZHEXPV((Int)v.size(), Nkrylov, t, v.ptr(),
-			tol, norm_inf(mat), wsp.ptr(), (Int)wsp.size(),
+			tol, mat_norm, wsp.ptr(), (Int)wsp.size(),
 			iwsp.ptr(), (Int)iwsp.size(), mat, 0, iflag);
 	}
 	else SLS_ERR("unknown!");

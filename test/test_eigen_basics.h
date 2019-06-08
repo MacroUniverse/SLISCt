@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/eigen/eigen_basics.h"
 
 void test_eigen_basics()

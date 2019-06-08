@@ -53,6 +53,23 @@ Bool operator==(const T1 &v1, const T2 &v2)
 	return true;
 }
 
+template <class T1, class T2, SLS_IF(
+	is_sparse_mat<T1>() && is_sparse_mat<T2>())>
+Bool operator==(const T1 &v1, const T2 &v2)
+{
+	if (!shape_cmp(v1, v2) || v1.nnz() != v2.nnz())
+		return false;
+	T1 u1(v1.n1(), v1.n2()); u1 = v1;
+	T2 u2(v2.n1(), v2.n2()); u2 = v2;
+	u1.sort_r(); u2.sort_r();
+	for (Long i = 0; i < v1.nnz(); ++i) {
+		if (u1[i] != u2[i] || u1.row(i) != u2.row(i) ||
+			u1.col(i) != u2.col(i))
+			return false;
+	}
+	return true;
+}
+
 template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Tv &v, const Ts &s)
 {
@@ -206,7 +223,7 @@ inline const auto max(Long_O ind, const T &v)
 }
 
 // s = norm2(v)  (|v1|^2 + |v2|^2 + ...)
-template <class T, SLS_IF(is_dense<T>())>
+template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
 const auto norm2(const T &v)
 {
 	Long i, N{ v.size() };
@@ -230,6 +247,23 @@ template <class Tv, class T1, class T2, SLS_IF(is_dense<Tv>())>
 inline void linspace(Tv &v, const T1 &first, const T2 &last)
 {
 	linspace_vss(v.ptr(), (contain_type<Tv>)first, (contain_type<Tv>)last, v.size());
+}
+
+template <class Tv, SLS_IF(ndims<Tv>() == 1)>
+inline void reorder(Tv &v, VecLong_I order)
+{
+	Long N = v.size();
+#ifdef SLS_CHECK_SHAPE
+	if (order.size() != N)
+		SLS_ERR("wrong shape!");
+#endif
+	Vector<contain_type<Tv>> u(N);
+	for (Long i = 0; i < N; ++i) {
+		u[i] = v[order[i]];
+	}
+	for (Long i = 0; i < N; ++i) {
+		v[i] = u[i];
+	}
 }
 
 // === vectorized math functions ===

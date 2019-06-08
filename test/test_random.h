@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/random.h"
 #include "../SLISC/arithmetic.h"
 

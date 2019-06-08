@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/slice_arith.h"
 #include "../SLISC/disp.h"
 
@@ -167,20 +168,15 @@ void test_slice()
 		linspace(a, 1, 36);
 		DcmatInt sa, sa2;
 		slice(sa, a, 1, 4, 1, 4);
-		disp(a);
-		disp(sa);
 		slice(sa2, sa, 1, 2, 1, 2);
-		disp(sa2);
 		if (sa2 != slice(a, 2, 2, 2, 2))
 			SLS_ERR("failed!");
 
 		// slice Jcmat3d from Cmat3d
 		Cmat3Int a3(4, 4, 4);
 		linspace(a3, 1, 64);
-		disp(a3);
 		Jcmat3Int s3;
 		slice(s3, a3, 1, 2, 1, 2, 1, 2);
-		disp(s3);
 		if (s3[0] != 22 || s3[1] != 23 || s3[6] != 42 || s3[7] != 43)
 			SLS_ERR("failed!");
 

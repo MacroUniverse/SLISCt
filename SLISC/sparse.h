@@ -1,6 +1,8 @@
 // sparse matrix containers
 #pragma once
-#include "vector.h"
+#include "arithmetic.h"
+#include "sort.h"
+#include "svector.h"
 
 #ifndef NDEBUG
 // make sure (i,j) element doesn't exist when using MatCoo<T>::push(s,i,j) 
@@ -166,6 +168,7 @@ public:
 	void reserve(const MatCoo<T1> &a);
 	template <class T1>
 	void reshape(const MatCoo<T1> &a);
+	void sort_r(); // sort to row major
 };
 
 template <class T>
@@ -386,6 +389,25 @@ template <class T>
 void MatCoo<T>::reshape(Long_I Nr, Long_I Nc)
 {
 	m_Nr = Nr; m_Nc = Nc;
+}
+
+template<class T>
+inline void MatCoo<T>::sort_r()
+{
+	VecLong inds(m_Nnz), order(m_Nnz);
+	linspace(order, 0, m_Nnz - 1);
+	for (Long i = 0; i < m_Nnz; ++i) {
+		inds[i] = m_Nc * m_row[i] + m_col[i];
+	}
+	sort2(inds, order);
+	Svector<T> sli(m_p, m_Nnz);
+	reorder(sli, order);
+	Svector<Long> sli1;
+	sli1.set_size(m_Nnz);
+	sli1.set_ptr(m_row.ptr());
+	reorder(sli1, order);
+	sli1.set_ptr(m_col.ptr());
+	reorder(sli1, order);
 }
 
 template <class T>

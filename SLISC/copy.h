@@ -1,6 +1,7 @@
 // copy data from one container to another
 // includes container shape checking
 // all `container = container` should be implemented using copy
+#pragma once
 
 #include "meta.h"
 

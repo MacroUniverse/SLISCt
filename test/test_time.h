@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/time.h"
 
 #ifdef NDEBUG // release mode

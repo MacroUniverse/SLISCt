@@ -1,4 +1,5 @@
 // compile print.cpp to use in debugger
+#pragma once
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/time.h"
 

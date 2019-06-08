@@ -1,4 +1,5 @@
 // test floating point exception
+#pragma once
 #include "../SLISC/scalar_arith.h"
 
 void test_except()

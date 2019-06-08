@@ -1,3 +1,4 @@
+#pragma once
 #include "scalar_arith.h"
 #include "vector.h"
 

@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/eig.h"
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/sparse_arith.h"

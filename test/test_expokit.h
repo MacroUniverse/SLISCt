@@ -59,9 +59,9 @@ void test_expokit()
 
 		// expokit result
 		y1 = x;
-		expv<'G'>(y1, A, t, Nbase);
+		expv<'G'>(y1, A, t, Nbase, norm_inf(A));
 		y2 = x;
-		expv<'H'>(y2, A, t, Nbase);
+		expv<'H'>(y2, A, t, Nbase, norm_inf(A));
 		
 		y1 -= y0;
 		auto xerr = max_abs(y1);

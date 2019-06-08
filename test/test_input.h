@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/input.h"
 
 void test_input()

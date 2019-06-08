@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/interp1.h"
 
 void test_interp1()

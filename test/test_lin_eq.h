@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/lin_eq.h"
 
 void test_lin_eq()

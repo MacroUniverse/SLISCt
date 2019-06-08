@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/coulomb.h"
 #include "../SLISC/time.h"

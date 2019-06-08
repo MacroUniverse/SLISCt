@@ -1,4 +1,6 @@
+#pragma once
 #include "../SLISC/arithmetic.h"
+#include "../SLISC/random.h"
 #include "../SLISC/disp.h"
 
 inline void test_arithmetic()
@@ -105,6 +107,19 @@ inline void test_arithmetic()
 		}
 	}
 	
+	// reorder
+	{
+		Long N = 10;
+		VecLong v1(N), order(N), v2(N);
+		rand(v1, N);
+		v2 = v1;
+		linspace(order, 0, N - 1);
+		sort2(v1, order);
+		reorder(v2, order);
+		if (v1 != v2)
+			SLS_ERR("failed!");
+	}
+
 	// sum, max, max_abs, norm2
 	{
 		Long ind;

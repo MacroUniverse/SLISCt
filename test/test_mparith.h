@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/mparith.h"
 #include "../SLISC/disp.h"
 

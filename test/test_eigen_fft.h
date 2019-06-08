@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/eigen/eigen_fft.h"
 
 void test_eigen_fft()

@@ -103,6 +103,28 @@ inline void test_sparse()
 		if (b.row(1) != 1 || b.col(1) != 2) SLS_ERR("failed!");
 		a.trim(0); b.trim(0);
 		if (a.nnz() != 0 || b.nnz() != 0) SLS_ERR("failed!");
+
+		// test sort_r() and operator!=()
+		{
+			McooInt a(10, 10, 15), b(10, 10, 15);
+			a.push(1, 1, 1);
+			a.push(2, 2, 1);
+			a.push(3, 2, 4);
+			a.push(4, 4, 2);
+			a.push(5, 5, 5);
+			a.push(6, 1, 3);
+			b = a;
+			a.sort_r();
+			Long ind = 0, max = 0;
+			for (Long i = 0; i < a.nnz(); ++i) {
+				ind = a.n2() * a.row(i) + a.col(i);
+				if (ind < max)
+					SLS_ERR("failed!");
+				max = ind;
+			}
+			if (a != b)
+				SLS_ERR("failed!");
+		}
 	}
 	
 	// TODO: Diag

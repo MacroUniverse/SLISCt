@@ -53,7 +53,7 @@ namespace slisc
 	}
 
 	// generate random Long in {0,1,2,...,N-1}
-	inline Long randLong(Long N)
+	inline Long randLong(Long_I N)
 	{
 		return Long(round(N*randDoub() - 0.5));
 	}
@@ -75,6 +75,13 @@ namespace slisc
 
 	inline Comp randComp()
 	{ return Comp(randDoub(), randDoub()); }
+
+	inline void rand(Vbase<Long> &v, Long_I N)
+	{
+		Long i, Nv = v.size();
+		for (i = 0; i < Nv; ++i)
+			v[i] = randLong(N);
+	}
 
 	inline void rand(Vbase<Doub> &v)
 	{

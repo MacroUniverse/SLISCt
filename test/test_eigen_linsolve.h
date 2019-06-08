@@ -1,3 +1,4 @@
+#pragma once
 #include "../SLISC/eigen/eigen_linsolve.h"
 
 // using eigen_linsolve.h will cause gcc error????
