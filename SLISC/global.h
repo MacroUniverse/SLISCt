@@ -142,6 +142,7 @@ template <class T> class Scmat3d;
 template <class T> class Diag;
 template <class T> class MatCoo;
 template <class T> class MatCooH;
+template <class T> class CmatObd;
 template <class T> class Flm;
 class Matt;
 

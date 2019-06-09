@@ -462,15 +462,28 @@ inline void test_arithmetic()
 		}
 	}
 
-	// matrix-vector multiplication
+	// matrix-vector multiplication (row-major)
 	{
-		CmatComp a(4,7); linspace(a, Comp(1, -1), Comp(28, -28));
-		VecChar v(7); linspace(v, 1, 7);
+		MatComp a(4,7); linspace(a, Comp(1, -1), Comp(28, -28));
+		VecInt v(7); linspace(v, 1, 7);
 		Vector<Lcomp> v1(4), v2(a.n1());
-		v1[0] = Comp(476, -476); v1[1] = Comp(504, -504);
-		v1[2] = Comp(532, -532); v1[3] = Comp(560, -560);
+		v1[0] = Comp(140, -140); v1[1] = Comp(336, -336);
+		v1[2] = Comp(532, -532); v1[3] = Comp(728, -728);
 		mul(v2, a, v);
-		if (v2 != v1) SLS_ERR("failed!");
+		if (v2 != v1)
+			SLS_ERR("failed!");
+	}
+
+	// matrix-vector multiplication (column-major)
+	{
+		CmatInt a(3, 4);
+		linspace(a, 1, 12);
+		VecInt x(4), y(3);
+		linspace(x, 1, 4);
+		y = 1;
+		mul(y, a, x);
+		if (y[0] != 70 || y[1] != 80 || y[2] != 90)
+			SLS_ERR("failed!");
 	}
 
 	// vector-matrix multiplication

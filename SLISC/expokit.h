@@ -1,19 +1,26 @@
 #pragma once
 #include "expokit/zgexpv.h"
 #include "expokit/zhexpv.h"
+#include "cmatobd.h"
 
 namespace slisc {
 
 // matrix / vector multiplication
 
-template <class T, SLS_IF(is_scalar<T>())>
-void mul(Comp *y, const MatCoo<T> &a, Comp *x)
+template <class T1, class T2, SLS_IF(is_promo<T2, T1>())>
+void mul(T2 *y, const MatCoo<T1> &a, T2 *x)
 {
 	mul_v_coo_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
 }
 
-template <class T, SLS_IF(is_scalar<T>())>
-void mul(Comp *y, const MatCooH<T> &a, Comp *x)
+template <class T1, class T2, SLS_IF(is_promo<T2, T1>())>
+void mul(T2 *y, const MatCooH<T1> &a, T2 *x)
+{
+	mul_v_cooh_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
+}
+
+template <class T1, class T2, SLS_IF(is_promo<T2, T1>())>
+void mul(T2 *y, const CmatObd<T1> &a, T2 *x)
 {
 	mul_v_cooh_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
 }

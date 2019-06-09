@@ -208,7 +208,8 @@ inline void test_sparse()
 			VecComp v(b.n1()), v1(b1.n1()), x(4);
 			linspace(x, Comp(1.,-1.), Comp(4.,-4.));
 			mul(v, b, x); mul(v1, b1, x);
-			if (v != v1) SLS_ERR("failed!");
+			if (v != v1)
+				SLS_ERR("failed!");
 		}
 		
 		// for McooImag

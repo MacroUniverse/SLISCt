@@ -11,6 +11,7 @@
 #include "test_arithmetic.h"
 #include "test_fixsize.h"
 #include "test_sparse.h"
+#include "test_cmatobd.h"
 #include "test_interp1.h"
 #include "test_fft.h"
 #include "test_random.h"
@@ -62,6 +63,8 @@ inline void test_all()
 	test_fixsize();
 	cout << "test_sparse()" << endl;
 	test_sparse();
+	cout << "test_cmatobd()" << endl;
+	test_cmatobd();
 #ifdef SLS_USE_MKL
 	cout << "test_eig()" << endl;
 	test_eig();

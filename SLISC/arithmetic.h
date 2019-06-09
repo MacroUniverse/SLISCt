@@ -894,15 +894,20 @@ template <class T, class T1, class T2, SLS_IF(
 )>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
+	Long Nr = a.n1(), Nc = a.n2();
 #ifdef SLS_CHECK_SHAPE
-	if (a.n2() != x.size() || y.size() != a.n1())
+	if (Nc != x.size() || y.size() != Nr)
 		SLS_ERR("illegal shape!");
 #endif
-	Long i, j, Nr_a = a.n1(), Nc_a = a.n2();
-	vecset(y.ptr(), contain_type<T>(), Nr_a);
-	for (i = 0; i < Nr_a; ++i) {
-		for (j = 0; j < Nc_a; ++j)
-			y[i] += a(i, j) * x[j];
+	if constexpr (is_rmajor<T1>()) { // row major
+		vecset(y.ptr(), contain_type<T>(), Nr);
+		for (Long i = 0; i < Nr; ++i) {
+			for (Long j = 0; j < Nc; ++j)
+				y[i] += a(i, j) * x[j];
+		}
+	}
+	else { // col major
+		mul_v_cmat_v(y.ptr(), x.ptr(), a.ptr(), Nr, Nc);
 	}
 }
 

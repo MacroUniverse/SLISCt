@@ -2,6 +2,7 @@
 // use pointers for array input/output
 #pragma once
 #include "scalar_arith.h"
+#include "copy.h"
 
 namespace slisc {
 
@@ -531,6 +532,22 @@ inline auto dot_vv(const T1 *v1, const T2 *v2, Long_I N)
 	return s;
 }
 
+// mul(v, a, v)
+template <class T1, class T2, class T,
+	SLS_IF(is_promo<T1, T>() && is_promo<T1, T2>())>
+inline auto mul_v_cmat_v(T1 *y, const T2 *x, const T *a, Long_I Nr, Long_I Nc)
+{
+	vecset(y, T1(0), Nr);
+	for (Long j = 0; j < Nc; ++j) {
+		T2 s = x[j];
+		for (Long i = 0; i < Nr; ++i) {
+			y[i] += (*a) * s;
+			++a;
+		}
+	}
+}
+
+// flip avector
 template <class T>
 inline void flip_v(T *v, Long_I N)
 {

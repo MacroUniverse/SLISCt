@@ -61,6 +61,35 @@ void mul_v_cooh_v(Ty *y, const Tx *x, const T *a_ij, const Long *i, const Long *
 	}
 }
 
+// a(blk_size, blk_size, Nblk) is column major
+// overlapped element already divided by 2
+template <class T, class Tx, class Ty, SLS_IF(
+	is_scalar<T>() && is_scalar<Tx>() &&
+	is_same<Ty, promo_type<T, Tx>>()
+)>
+void mul_v_obd_v(Ty *y, const Tx *x, const T *a, Long_I blk_size, Long_I Nblk)
+{
+	vecset(y, Ty(0), (blk_size - 1) * Nblk + 1);
+	Long step = blk_size - 1;
+	for (Long blk = 0; blk < Nblk; ++blk) {
+		for (Long j = 0; j < blk_size; ++j) {
+			Tx s = x[j];
+			for (Long i = 0; i < blk_size; ++i) {
+				y[i] += (*a) * s;
+				++a;
+			}
+		}
+		x += step; y += step;
+	}
+}
+
+template <class Tx, class Ty, class Ta, SLS_IF(
+	is_dense_vec<Tx>() && is_dense_vec<Ty>() && is_CmatObd<Ta>())>
+void mul(Ty &y, const Ta &a, const Tx &x)
+{
+	mul_v_obd_v(y.ptr(), x.ptr(), a.ptr(), a.n0(), a.nblk());
+}
+
 // arithmetics
 
 template <class T, class Ts, SLS_IF(

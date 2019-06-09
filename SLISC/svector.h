@@ -29,7 +29,7 @@ public:
 	T& end(Long_I i);
 	const T& end(Long_I i) const;
 	Svector & operator=(const Svector &rhs);
-	template <class Tv, SLS_IF(is_dense_vec<Tv>())>
+	template <class Tv, SLS_IF(is_dense_vec<Tv>() || is_Dvector<Tv>())>
 	Svector & operator=(const Tv &rhs);
 	Svector & operator=(const T &rhs); // for scalar
 
@@ -156,14 +156,15 @@ inline const T & Svector<T>::end(Long_I i) const
 template <class T>
 inline Svector<T> & Svector<T>::operator=(const Svector<T> &rhs)
 {
-	veccpy(m_p, rhs.ptr(), m_N);
+	copy(*this, rhs);
 	return *this;
 }
 
-template <class T> template <class Tv, SLS_IF0(is_dense_vec<Tv>())>
+template <class T> template <class Tv, SLS_IF0(
+	is_dense_vec<Tv>() || is_Dvector<Tv>())>
 inline Svector<T> & Svector<T>::operator=(const Tv &rhs)
 {
-	veccpy(m_p, rhs.ptr(), m_N);
+	copy(*this, rhs);
 	return *this;
 }
 
