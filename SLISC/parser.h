@@ -2,7 +2,7 @@
 #pragma once
 #include "../SLISC/scalar_arith.h"
 #include "../SLISC/unicode.h"
-#include "../SLISC/inverv.h"
+#include "../SLISC/interv.h"
 
 namespace slisc {
 
