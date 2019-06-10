@@ -1,6 +1,7 @@
 // overlapping block diagonal matrix (overlap by one element)
 // such as the kinetic matrix for 1D FEDVR grid
-// assume it is hamiltonian
+// first block and last block has one less element in each dimension
+
 #pragma once
 #include "scmat.h"
 
@@ -11,17 +12,23 @@ class CmatObd
 {
 protected:
 	Cmat3d<T> m_data;
-	Long m_N1; // m_N2 = m_N2 = (blk_size - 1) * Nblk + 1
+	Long m_N1; // m_N2 = m_N2 = (blk_size - 1) * Nblk - 1
 	CmatObd() {}; // default constructor forbidden
 public:
 	CmatObd(Long_I blk_size, Long_I Nblk);
-	CmatObd(const MatCoo<T> &a, Long_I blk_size, Long_I Nblk);
-	CmatObd(const Cmat3d<T> &a);
-	const T * ptr() const;
+	const T &elm(Long_I i) const; // m_data[i]
+	T &elm(Long_I i);
+	Long find(Long_I i, Long_I j);
+	CmatObd &operator=(const MatCoo<T> &rhs);
+	CmatObd &operator=(const Cmat3d<T> &a);
+	const T * ptr() const; // not the first element!
 	T * ptr();
 	Long n1() const;
 	Long n2() const;
 	Long size() const;
+	Long nnz() const;
+	const Cmat3d<T> &cmat3() const;
+	Cmat3d<T> &cmat3();
 	Long n0() const; // n0() = m_data.n1() = m_data.n2()
 	Long nblk() const; // m_data.n3()
 	const T operator()(Long_I i, Long_I j) const;
@@ -29,20 +36,66 @@ public:
 
 template <class T>
 CmatObd<T>::CmatObd(Long_I blk_size, Long_I Nblk)
-	: m_data(blk_size, blk_size, Nblk), m_N1((blk_size - 1) * Nblk + 1)
-{}
+	: m_data(blk_size, blk_size, Nblk), m_N1((blk_size - 1) * Nblk - 1)
+{
+	Long step = SQR(n0());
+	// set the first overlapped element to 0
+	vecset(m_data.ptr() + step - 1, 0, Nblk - 1, step);
+}
+
+template<class T>
+const T & CmatObd<T>::elm(Long_I i) const
+{
+	return m_data[i];
+}
+
+template<class T>
+T & CmatObd<T>::elm(Long_I i)
+{
+	return m_data[i];
+}
+
+template<class T>
+inline Long CmatObd<T>::find(Long_I i1, Long_I i2)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (i1 < 0 || i1 >= m_N1 || i2 < 0 || i2 >= m_N1)
+		SLS_ERR("out of bound!");
+#endif
+	Long i = i1 + 1; Long j = i2 + 1;
+	Long N = n0() - 1, Nblk = m_data.n3();
+	Long iblk = i / N, jblk = j / N;
+	Long m = i % N;
+	Long step2 = n0(), step3 = step2 * step2;
+	if (iblk == jblk) {
+		if (iblk == Nblk)
+			return N + step2 * N + step3 * (Nblk - 1);
+		else if (i == j && m == 0 && iblk > 0)
+			return step3 * iblk;
+		return m + step2 * (j % N) + step3 * iblk;
+	}
+	else if (jblk == iblk - 1) {
+		if (m == 0)
+			return N + step2 * (j % N) + step3 * jblk;
+	}
+	else if (jblk == iblk + 1) {
+		Long n = j % N;
+		if (n == 0)
+			return m + step2 * N + step3 * iblk;
+	}
+	SLS_ERR("element out of block!");
+}
 
 // convert Mcoo matrix to MatOdb matrix
 template <class T>
-CmatObd<T>::CmatObd(const MatCoo<T> &a, Long_I blk_size, Long_I Nblk)
-	: CmatObd(blk_size, Nblk)
+CmatObd<T> &CmatObd<T>::operator=(const MatCoo<T> &a)
 {
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != m_N1 || a.n2() != m_N1)
+	if (!shape_cmp(*this, a))
 		SLS_ERR("wrong shape!");
 #endif
 	for (Long k = 0; k < a.nnz(); ++k) {
-		Long i = a.row(k), j = a.col(k);
+		Long i = a.row(k) + 1, j = a.col(k) + 1;
 		Long N = n0() - 1, Nblk = m_data.n3();
 		Long iblk = i / N, jblk = j / N;
 		Long m = i % N;
@@ -50,8 +103,7 @@ CmatObd<T>::CmatObd(const MatCoo<T> &a, Long_I blk_size, Long_I Nblk)
 			if (iblk == Nblk)
 				m_data(N, N, Nblk - 1) = a[k];
 			else if (i == j && m == 0 && iblk > 0)
-				 m_data(0, 0, iblk) =
-					 m_data(N, N, iblk - 1) = T(a[k] * 0.5);
+				 m_data(0, 0, iblk) = a[k];
 			else
 				m_data(m, j % N, iblk) = a[k];
 			continue;
@@ -69,24 +121,17 @@ CmatObd<T>::CmatObd(const MatCoo<T> &a, Long_I blk_size, Long_I Nblk)
 				continue;
 			}
 		}
-		SLS_ERR("element in a out of block!");
+		SLS_ERR("element out of block!");
 	}
 }
 
 template<class T>
-inline CmatObd<T>::CmatObd(const Cmat3d<T>& a)
-	: CmatObd(a.n1(), a.n3())
+CmatObd<T> &CmatObd<T>::operator=(const Cmat3d<T>& rhs)
 {
-#ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.n2())
-		SLS_ERR("input must be a square matrix!");
-	Long end = n0() - 1;
-	for (Long k = a.n3() - 2; k >= 0; --k) {
-		if (a(end, end, k) != a(0, 0, k+1))
-			SLS_ERR("overlapping elements not equal!");
-	}
-#endif
-	m_data = a;
+	m_data = rhs;
+	// set the first overlapped element to 0
+	Long step = SQR(n0());
+	vecset(m_data.ptr() + step - 1, 0, nblk() - 1, step);
 }
 
 template<class T>
@@ -120,6 +165,25 @@ Long CmatObd<T>::size() const
 }
 
 template<class T>
+Long CmatObd<T>::nnz() const
+{
+	Long N0 = n0(), Nblk = nblk();
+	return (N0*N0 - 1)*Nblk - 4 * N0 + 3;
+}
+
+template<class T>
+const Cmat3d<T>& CmatObd<T>::cmat3() const
+{
+	return m_data;
+}
+
+template<class T>
+Cmat3d<T>& CmatObd<T>::cmat3()
+{
+	return m_data;
+}
+
+template<class T>
 inline Long CmatObd<T>::n0() const
 {
 	return m_data.n1();
@@ -132,12 +196,13 @@ inline Long CmatObd<T>::nblk() const
 }
 
 template<class T>
-const T CmatObd<T>::operator()(Long_I i, Long_I j) const
+const T CmatObd<T>::operator()(Long_I i1, Long_I i2) const
 {
 #ifdef SLS_CHECK_BOUNDS
-	if (i < 0 || i >= m_N1 || j < 0 || j >= m_N1)
+	if (i1 < 0 || i1 >= m_N1 || i2 < 0 || i2 >= m_N1)
 		SLS_ERR("out of bound!");
 #endif
+	Long i = i1 + 1, j = i2 + 1;
 	Long N = n0() - 1, Nblk = m_data.n3();
 	Long iblk = i / N, jblk = j / N;
 	Long m = i % N;
@@ -145,7 +210,7 @@ const T CmatObd<T>::operator()(Long_I i, Long_I j) const
 		if (iblk == Nblk)
 			return m_data(N, N, Nblk - 1);
 		else if (i == j && m == 0 && iblk > 0)
-			return 2 * m_data(0, 0, iblk);
+			return m_data(0, 0, iblk);
 		return m_data(m, j % N, iblk);
 	}
 	else if (jblk == iblk - 1) {

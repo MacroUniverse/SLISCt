@@ -67,11 +67,25 @@ template <class T, class Tx, class Ty, SLS_IF(
 	is_scalar<T>() && is_scalar<Tx>() &&
 	is_same<Ty, promo_type<T, Tx>>()
 )>
-void mul_v_obd_v(Ty *y, const Tx *x, const T *a, Long_I blk_size, Long_I Nblk)
+void mul_v_cmatobd_v(Ty *y, const Tx *x, const T *a, Long_I blk_size, Long_I Nblk, Long_I N)
 {
-	vecset(y, Ty(0), (blk_size - 1) * Nblk + 1);
-	Long step = blk_size - 1;
-	for (Long blk = 0; blk < Nblk; ++blk) {
+	vecset(y, Ty(0), N);
+	Long step = blk_size - 1, step2 = blk_size - 2;
+	a += blk_size + 1; // move to first element
+
+	// first block
+	for (Long j = 0; j < step; ++j) {
+		Tx s = x[j];
+		for (Long i = 0; i < step; ++i) {
+			y[i] += (*a) * s;
+			++a;
+		}
+		++a;
+	}
+	x += step2; y += step2; --a;
+
+	// middle blocks
+	for (Long blk = 1; blk < Nblk - 1; ++blk) {
 		for (Long j = 0; j < blk_size; ++j) {
 			Tx s = x[j];
 			for (Long i = 0; i < blk_size; ++i) {
@@ -81,13 +95,27 @@ void mul_v_obd_v(Ty *y, const Tx *x, const T *a, Long_I blk_size, Long_I Nblk)
 		}
 		x += step; y += step;
 	}
+	
+	// last block
+	for (Long j = 0; j < step; ++j) {
+		Tx s = x[j];
+		for (Long i = 0; i < step; ++i) {
+			y[i] += (*a) * s;
+			++a;
+		}
+		++a;
+	}
 }
 
 template <class Tx, class Ty, class Ta, SLS_IF(
 	is_dense_vec<Tx>() && is_dense_vec<Ty>() && is_CmatObd<Ta>())>
 void mul(Ty &y, const Ta &a, const Tx &x)
 {
-	mul_v_obd_v(y.ptr(), x.ptr(), a.ptr(), a.n0(), a.nblk());
+#ifdef SLS_CHECK_SHAPE
+	if (y.size() != a.n1() || x.size() != a.n2())
+		SLS_ERR("wrong shape!");
+#endif
+	mul_v_cmatobd_v(y.ptr(), x.ptr(), a.ptr(), a.n0(), a.nblk(), a.n1());
 }
 
 // arithmetics
@@ -98,6 +126,14 @@ template <class T, class Ts, SLS_IF(
 inline void operator*=(T &v, const Ts &s)
 {
 	times_equals_vs(v.ptr(), s, v.nnz());
+}
+
+template <class T, class Ts, SLS_IF(
+	is_CmatObd<T>() && is_scalar<Ts>()
+)>
+inline void operator*=(T &v, const Ts &s)
+{
+	v.cmat3() *= s;
 }
 
 // dense matrix +=,-= MatCoo<>
@@ -130,7 +166,7 @@ inline void operator-=(T &v, const T1 &v1)
 	}
 }
 
-// infinite norm
+// infinite norm (maximum absolute sum of rows)
 template <class T, SLS_IF(
 	type_num<T>() >= 20
 )>
@@ -155,6 +191,39 @@ inline rm_comp<T> norm_inf(const MatCooH<T> &A)
 		abs_sum(r) += val;
 		if (r != c)
 			abs_sum(c) += val;
+	}
+	return max(abs_sum);
+}
+
+// (using maximum absolute sum of columns)
+template <class T, SLS_IF(is_scalar<T>())>
+inline rm_comp<T> norm_inf(const CmatObd<T> &A)
+{
+	const Cmat3d<T> &a3 = A.cmat3();
+	Long N0 = A.n0(), step = N0 * N0, N1 = N0 - 1, Nblk = A.nblk();
+	Vector<rm_comp<T>> abs_sum(A.n2(), 0.);
+	Long k = 0;
+	Svector<T> sli(A.ptr() + N0 + 1, N1);
+	// first block
+	for (Long j = 1; j < N0; ++j) {
+		abs_sum[k] += sum_abs(sli);
+		++k; sli.shift(N0);
+	}
+	--k;
+	// middle blocks
+	sli.set_size(N0); sli.shift(-1);
+	for (Long blk = 1; blk < Nblk - 1; ++blk) {
+		for (Long j = 0; j < N0; ++j) {
+			abs_sum[k] += sum_abs(sli);
+			++k; sli.next();
+		}
+		--k;
+	}
+	// last block
+	sli.set_size(N1);
+	for (Long j = 0; j < N1; ++j) {
+		abs_sum[k] += sum_abs(sli);
+		++k; sli.shift(N0);
 	}
 	return max(abs_sum);
 }

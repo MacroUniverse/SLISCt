@@ -450,7 +450,7 @@ template <class T> constexpr Bool is_dense()
 // check if is sparse vector/matrix
 template <class T> constexpr Bool is_sparse_mat()
 {
-	return is_Diag<T>() || is_MatCoo<T>() || is_MatCooH<T>();
+	return is_Diag<T>() || is_MatCoo<T>() || is_MatCooH<T>() || is_CmatObd<T>();
 }
 
 template <class T>
@@ -470,6 +470,7 @@ constexpr Int contain_num()
 	else if (is_Diag<T>()) return 31; // TODO: start from 30
 	else if (is_MatCoo<T>()) return 32;
 	else if (is_MatCooH<T>()) return 33;
+	else if (is_CmatObd<T>()) return 34;
 
 	else if (is_Svector<T>()) return 40;
 	else if (is_Dvector<T>()) return 41;

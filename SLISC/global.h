@@ -583,6 +583,18 @@ typedef MatCooH<Comp> McoohComp;
 typedef const McoohComp &McoohComp_I;
 typedef McoohComp &McoohComp_O, &McoohComp_IO;
 
+typedef CmatObd<Int> CmobdInt;
+typedef const CmobdInt &CmobdInt_I;
+typedef CmobdInt &CmobdInt_O, &CmobdInt_IO;
+
+typedef CmatObd<Doub> CmobdDoub;
+typedef const CmobdDoub &CmobdDoub_I;
+typedef CmobdDoub &CmobdDoub_O, &CmobdDoub_IO;
+
+typedef CmatObd<Comp> CmobdComp;
+typedef const CmobdComp &CmobdComp_I;
+typedef CmobdComp &CmobdComp_O, &CmobdComp_IO;
+
 typedef Flm<Doub> FlmDoub;
 typedef const FlmDoub &FlmDoub_I;
 typedef FlmDoub &FlmDoub_O, &FlmDoub_IO;

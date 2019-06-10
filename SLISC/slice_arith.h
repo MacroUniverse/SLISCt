@@ -175,7 +175,7 @@ void slice1(Svector<T> &sli, const Tmat &a, Long_I col, Long_I k = 0)
 
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
 	is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
-Svector<T> slice1(const Tmat &a, Long_I col, Long_I k = 0)
+Svector<T> slice1(const Tmat &a, Long_I col, Long_I k)
 {
 	Svector<T> sli;
 	slice1(sli, a, col, k);

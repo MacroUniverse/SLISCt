@@ -144,6 +144,12 @@ inline void test_arithmetic()
 		if (!is_equiv(max_abs(d), abs(Comp(9,9)))) SLS_ERR("failed!");
 		if (!is_equiv(norm2(d), 285.*2)) SLS_ERR("failed!");
 	}
+	// sum_abs
+	{
+		VecDoub v(10); linspace(v, -4, 5);
+		if (sum_abs(v) != 25)
+			SLS_ERR("failed!");
+	}
 
 	// flip
 	{

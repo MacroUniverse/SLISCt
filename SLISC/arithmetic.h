@@ -191,11 +191,17 @@ inline void copy_col(Tmat &a, const Tvec &v, Long_I col)
 }
 
 // sum of container elements
-
 template <class T, SLS_IF(is_dense<T>())>
 inline const auto sum(const T &v)
 {
 	return sum_v(v.ptr(), v.size());
+}
+
+// sum of abs of elements
+template <class T, SLS_IF(is_dense<T>())>
+inline const auto sum_abs(const T &v)
+{
+	return sum_abs_v(v.ptr(), v.size());
 }
 
 template <class T, SLS_IF(is_dense<T>())>

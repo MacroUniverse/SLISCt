@@ -22,7 +22,7 @@ void mul(T2 *y, const MatCooH<T1> &a, T2 *x)
 template <class T1, class T2, SLS_IF(is_promo<T2, T1>())>
 void mul(T2 *y, const CmatObd<T1> &a, T2 *x)
 {
-	mul_v_cooh_v(y, x, a.ptr(), a.row_ptr(), a.col_ptr(), a.n1(), a.nnz());
+	mul_v_cmatobd_v(y, x, a.ptr(), a.n0(), a.nblk());
 }
 
 // expv()

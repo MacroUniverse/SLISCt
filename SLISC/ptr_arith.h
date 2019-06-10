@@ -462,6 +462,34 @@ inline T sum_v(const T *v, Long_I N)
 	return s;
 }
 
+template <class T, SLS_IF(
+	is_Llong<Long>() && is_integral<T>()
+)>
+inline Long sum_abs_v(const T *v, Long_I N)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) SLS_ERR("illegal length!");
+#endif
+	Long s = v[0];
+	for (Long i = 1; i < N; ++i)
+		s += abs(v[i]);
+	return s;
+}
+
+template <class T, SLS_IF(
+	is_fpt<T>() || is_comp<T>()
+)>
+inline T sum_abs_v(const T *v, Long_I N)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) SLS_ERR("illegal length!");
+#endif
+	T s = abs(v[0]);
+	for (Long i = 1; i < N; ++i)
+		s += abs(v[i]);
+	return s;
+}
+
 // s = max(v)
 
 template <class T, SLS_IF(is_real<T>() && !is_Bool<T>())>
