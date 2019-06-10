@@ -2,6 +2,7 @@
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/sparse_arith.h"
 #include "../SLISC/cmatobd.h"
+#include "../SLISC/diag.h"
 #include "../SLISC/disp.h"
 
 inline void test_sparse()

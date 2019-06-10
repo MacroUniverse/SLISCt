@@ -4,7 +4,7 @@
 #include "../SLISC/cmat.h"
 #include "../SLISC/mat3d.h"
 #include "../SLISC/fixsize.h"
-#include "../SLISC/sparse.h"
+#include "../SLISC/matcooh.h"
 
 // #include "../SLISC/slisc.h"
 

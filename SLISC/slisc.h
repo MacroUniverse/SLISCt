@@ -33,7 +33,9 @@
 #include "ptr_arith.h"
 #include "arithmetic.h"
 
-#include "sparse.h"
+#include "matcoo.h"
+#include "matcooh.h"
+#include "cmatobd.h"
 #include "sparse_arith.h"
 
 #include "time.h"

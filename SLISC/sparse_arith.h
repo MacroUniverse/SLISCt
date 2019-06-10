@@ -1,7 +1,8 @@
 // arithmetics for sparse containers
 
 #pragma once
-#include "sparse.h"
+#include "matcooh.h"
+#include "cmatobd.h"
 #include "ptr_arith.h"
 
 namespace slisc {

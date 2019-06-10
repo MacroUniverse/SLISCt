@@ -9,7 +9,8 @@
 #include "mat3d.h"
 #include "cmat3d.h"
 #include "fixsize.h"
-#include "sparse.h"
+#include "matcooh.h"
+#include "cmatobd.h"
 
 namespace slisc {
 

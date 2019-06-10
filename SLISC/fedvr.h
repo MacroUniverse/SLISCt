@@ -1,6 +1,6 @@
 #pragma once
 #include "cmat.h"
-#include "sparse.h"
+#include "matcooh.h"
 
 namespace slisc {
 
