@@ -182,4 +182,51 @@ inline void copy(T &a, const T1 &a1)
 #endif
 	matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.n1(), a.n2());
 }
+
+// for sparse containers
+
+template <class T, class T1, SLS_IF(is_promo<T,T1>())>
+void copy(MatCoo<T> &v, const MatCoo<T1> &v1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		SLS_ERR("wrong shape!");
+	if (v.capacity() < v1.nnz())
+		SLS_ERR("not enough capacity!");
+#endif
+	if constexpr (is_same<T,T1>())
+	if (v.ptr() == v1.ptr())
+		SLS_ERR("self assignment is forbidden!");
+	Long Nnz = v1.nnz();
+	v.resize(Nnz);
+	veccpy(v.ptr(), v1.ptr(), Nnz);
+	veccpy(v.row_ptr(), v1.row_ptr(), Nnz);
+	veccpy(v.col_ptr(), v1.col_ptr(), Nnz);
+}
+
+template <class T, class T1, SLS_IF(is_promo<T, T1>())>
+void copy(MatCoo<T> &v, const CmatObd<T1> &v1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		SLS_ERR("wrong shape!");
+	if (v.capacity() < v1.nnz())
+		SLS_ERR("not enough capacity!");
+#endif
+	Long Nnz = v1.nnz(), N0 = v1.n0(), N1 = N0 - 1;
+	Long N = v1.n1();
+	Long k = 0;
+	for (Long blk = 0; blk < v1.nblk(); ++blk) {
+		for (Long j = 0; j < N0; ++j) {
+			for (Long i = 0; i < N0; ++i) {
+				Long shift = blk * N1 - 1;
+				Long ii = shift + i, jj = shift + j;
+				if (!(i == N1 && j == N1 || ii < 0 || jj < 0 || ii == N || jj == N))
+					v.push(v1(k), ii, jj);
+				++k;
+			}
+		}
+	}
+}
+
 } // namespace slisc

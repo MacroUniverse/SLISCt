@@ -135,13 +135,17 @@ private:
 public:
 	using Base::ptr;
 	MatCoo(Long_I Nr, Long_I Nc);
-	MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz);
+	MatCoo(Long_I Nr, Long_I Nc, Long_I Ncap); // reserve Ncap elements
 	MatCoo(const MatCoo &rhs);		// Copy constructor
+	Long *row_ptr();
 	const Long *row_ptr() const;
+	Long *col_ptr();
 	const Long *col_ptr() const;
 	MatCoo & operator=(const MatCoo &rhs);
-	template <class T1>
+	template <class T1, SLS_IF(is_promo<T, T1>())>
 	MatCoo & operator=(const MatCoo<T1> &rhs);	// copy assignment (do resize(rhs))
+	template <class T1, SLS_IF(is_promo<T, T1>())>
+	MatCoo & operator=(const CmatObd<T1> &rhs);
 	// inline void operator<<(MatCoo &rhs); // move data and rhs.resize(0, 0); rhs.resize(0)
 	void push(const T &s, Long_I i, Long_I j); // add one nonzero element
 	void set(const T &s, Long_I i, Long_I j); // change existing element or push new element
@@ -161,8 +165,8 @@ public:
 	Long row(Long_I ind) const; // row index
 	Long col(Long_I ind) const; // column index
 	void trim(Long_I Nnz); // decrease m_Nnz to Nnz
-	void resize(Long_I N); // forbidden
-	void reserve(Long_I N); // reallocate memory, data will be lost
+	void resize(Long_I N); // set m_Nz
+	void reserve(Long_I N); // reallocate memory, data will be lost m_Nz = 0
 	void reshape(Long_I Nr, Long_I Nc); // change matrix shape
 	template <class T1>
 	void reserve(const MatCoo<T1> &a);
@@ -179,8 +183,8 @@ MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc)
 }
 
 template <class T>
-MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc, Long_I Nnz) :
-	Base(Nnz), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Nnz), m_col(Nnz) {}
+MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc, Long_I Ncap) :
+	Base(Ncap), m_row(Ncap), m_col(Ncap), m_Nr(Nr), m_Nc(Nc), m_Nnz(0) {}
 
 template <class T>
 MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
@@ -189,10 +193,22 @@ MatCoo<T>::MatCoo(const MatCoo<T> &rhs)
 		 "argument for function input or output, and use \"=\" to copy!");
 }
 
+template<class T>
+Long * MatCoo<T>::row_ptr()
+{
+	return m_row.ptr();
+}
+
 template <class T>
 const Long *MatCoo<T>::row_ptr() const
 {
 	return m_row.ptr();
+}
+
+template<class T>
+Long * MatCoo<T>::col_ptr()
+{
+	return m_col.ptr();
 }
 
 template <class T>
@@ -207,17 +223,19 @@ MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T> &rhs)
 	return operator=<T>(rhs);
 }
 
-template <class T> template <class T1>
+template<class T>
+template<class T1, SLS_IF0(is_promo<T, T1>())>
+MatCoo<T> & MatCoo<T>::operator=(const CmatObd<T1>& rhs)
+{
+	copy(*this, rhs);
+	return *this;
+}
+
+template <class T>
+template <class T1, SLS_IF0(is_promo<T, T1>())>
 MatCoo<T> & MatCoo<T>::operator=(const MatCoo<T1> &rhs)
 {
-	if ((void*)this == (void*)&rhs) SLS_ERR("self assignment is forbidden!");
-	reshape(rhs); reserve(rhs);
-	m_row = rhs.n1();
-	m_col = rhs.n2();
-	m_Nnz = rhs.nnz();
-	veccpy(ptr(), rhs.ptr(), m_Nnz);
-	veccpy(m_row.ptr(), rhs.row_ptr(), m_Nnz);
-	veccpy(m_col.ptr(), rhs.col_ptr(), m_Nnz);
+	copy(*this, rhs);
 	return *this;
 }
 
@@ -376,13 +394,20 @@ void MatCoo<T>::trim(Long_I Nnz)
 template <class T>
 void MatCoo<T>::resize(Long_I N)
 {
-	SLS_ERR("use reserve instead!");
+#ifdef SLS_CHECK_BOUNDS
+	if (N > m_N)
+		SLS_ERR("not enough capacity!");
+#endif
+	m_Nnz = N;
 }
 
 template <class T>
 void MatCoo<T>::reserve(Long_I N)
 {
-	Base::resize(N); m_row.resize(N); m_col.resize(N); m_Nnz = 0;
+	Base::resize(N);
+	m_row.resize(N);
+	m_col.resize(N);
+	m_Nnz = 0;
 }
 
 template <class T>

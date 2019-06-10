@@ -67,10 +67,6 @@ inline Cmat3d<T> & Cmat3d<T>::operator=(const Cmat3d<T> &rhs)
 template <class T> template <class T1>
 inline Cmat3d<T> & Cmat3d<T>::operator=(const Cmat3d<T1> &rhs)
 {
-#ifdef SLS_CHECK_SHAPE
-	if (m_N1 != rhs.n1() || m_N2 != rhs.n2() || m_N3 != rhs.n3())
-		SLS_ERR("wrong shape!");
-#endif
 	copy(*this, rhs);
 	return *this;
 }

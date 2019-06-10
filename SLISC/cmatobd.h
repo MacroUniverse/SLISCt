@@ -15,12 +15,17 @@ protected:
 	Long m_N1; // m_N2 = m_N2 = (blk_size - 1) * Nblk - 1
 	CmatObd() {}; // default constructor forbidden
 public:
+	typedef T value_type;
 	CmatObd(Long_I blk_size, Long_I Nblk);
-	const T &elm(Long_I i) const; // m_data[i]
-	T &elm(Long_I i);
+	const T &operator()(Long_I i) const; // m_data[i]
+	T &operator()(Long_I i);
 	Long find(Long_I i, Long_I j);
-	CmatObd &operator=(const MatCoo<T> &rhs);
-	CmatObd &operator=(const Cmat3d<T> &a);
+	template <class T1, SLS_IF(is_promo<T, T1>())>
+	CmatObd &operator=(const CmatObd<T1> &rhs);
+	template <class T1, SLS_IF(is_promo<T, T1>())>
+	CmatObd &operator=(const MatCoo<T1> &rhs);
+	template <class T1, SLS_IF(is_promo<T, T1>())>
+	CmatObd &operator=(const Cmat3d<T1> &a);
 	const T * ptr() const; // not the first element!
 	T * ptr();
 	Long n1() const;
@@ -44,13 +49,13 @@ CmatObd<T>::CmatObd(Long_I blk_size, Long_I Nblk)
 }
 
 template<class T>
-const T & CmatObd<T>::elm(Long_I i) const
+const T & CmatObd<T>::operator()(Long_I i) const
 {
 	return m_data[i];
 }
 
 template<class T>
-T & CmatObd<T>::elm(Long_I i)
+T & CmatObd<T>::operator()(Long_I i)
 {
 	return m_data[i];
 }
@@ -86,14 +91,23 @@ inline Long CmatObd<T>::find(Long_I i1, Long_I i2)
 	SLS_ERR("element out of block!");
 }
 
+template <class T>
+template <class T1, SLS_IF0(is_promo<T, T1>())>
+CmatObd<T> &CmatObd<T>::operator=(const CmatObd<T1> &a)
+{
+	m_data = a.cmat3();
+}
+
 // convert Mcoo matrix to MatOdb matrix
 template <class T>
-CmatObd<T> &CmatObd<T>::operator=(const MatCoo<T> &a)
+template <class T1, SLS_IF0(is_promo<T, T1>())>
+CmatObd<T> &CmatObd<T>::operator=(const MatCoo<T1> &a)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(*this, a))
 		SLS_ERR("wrong shape!");
 #endif
+	m_data = 0;
 	for (Long k = 0; k < a.nnz(); ++k) {
 		Long i = a.row(k) + 1, j = a.col(k) + 1;
 		Long N = n0() - 1, Nblk = m_data.n3();
@@ -126,7 +140,8 @@ CmatObd<T> &CmatObd<T>::operator=(const MatCoo<T> &a)
 }
 
 template<class T>
-CmatObd<T> &CmatObd<T>::operator=(const Cmat3d<T>& rhs)
+template <class T1, SLS_IF0(is_promo<T, T1>())>
+CmatObd<T> &CmatObd<T>::operator=(const Cmat3d<T1>& rhs)
 {
 	m_data = rhs;
 	// set the first overlapped element to 0

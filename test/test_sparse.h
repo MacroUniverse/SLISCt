@@ -1,6 +1,7 @@
 #pragma once
 #include "../SLISC/arithmetic.h"
 #include "../SLISC/sparse_arith.h"
+#include "../SLISC/cmatobd.h"
 #include "../SLISC/disp.h"
 
 inline void test_sparse()
@@ -133,8 +134,8 @@ inline void test_sparse()
 		// copy assignment
 		Long i, j;
 		Doub k = 0;
-		McooDoub a(4, 4, 16), a1(0,0);
-		McoohComp b(4, 4, 10), b1(0,0);
+		McooDoub a(4, 4, 16), a1(4,4);
+		McoohComp b(4, 4, 10), b1(4,4);
 		for (i = 0; i < 4; ++i)
 			for (j = 0; j < 4; ++j) {
 				++k;
@@ -145,6 +146,7 @@ inline void test_sparse()
 			if (b.row(i) > b.col(i))
 				SLS_ERR("failed!");
 		}
+		a1.reserve(a.nnz()); b1.reserve(b.nnz());
 		a1 = a; b1 = b;
 		if (a1.n1() != a.n1() || a1.n2() != a.n2() ||
 			a1.nnz() != a.nnz() || a1.capacity() != a.capacity())
@@ -180,6 +182,36 @@ inline void test_sparse()
 				}
 			}
 		}
+	}
+
+	// copy between CmatObd<> and Mcoo
+	{
+		CmobdDoub a(3, 3);
+		McooDoub b(5, 5, 25);
+		for (Long i = 0; i < 5; ++i) {
+			b.push(randDoub(), i, i);
+		}
+		b.push(randDoub(), 1, 2);
+		b.push(randDoub(), 1, 3);
+		b.push(randDoub(), 2, 1);
+		b.push(randDoub(), 3, 1);
+		b.push(randDoub(), 3, 2);
+		b.push(randDoub(), 3, 4);
+		b.push(randDoub(), 4, 3);
+		a = b;
+		for (Long i = 0; i < 5; ++i)
+			for (Long j = 0; j < 5; ++j) {
+				if (a(i, j) != b(i, j))
+					SLS_ERR("failed!");
+			}
+
+		b.reserve(0); b.reserve(25);
+		b = a;
+		for (Long i = 0; i < 5; ++i)
+			for (Long j = 0; j < 5; ++j) {
+				if (a(i, j) != b(i, j))
+					SLS_ERR("failed!");
+			}
 	}
 
 	// matrix - vector multiplication

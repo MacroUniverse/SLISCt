@@ -479,12 +479,12 @@ inline Long sum_abs_v(const T *v, Long_I N)
 template <class T, SLS_IF(
 	is_fpt<T>() || is_comp<T>()
 )>
-inline T sum_abs_v(const T *v, Long_I N)
+inline rm_comp<T> sum_abs_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (N <= 0) SLS_ERR("illegal length!");
 #endif
-	T s = abs(v[0]);
+	rm_comp<T> s = abs(v[0]);
 	for (Long i = 1; i < N; ++i)
 		s += abs(v[i]);
 	return s;
@@ -573,6 +573,12 @@ inline auto mul_v_cmat_v(T1 *y, const T2 *x, const T *a, Long_I Nr, Long_I Nc)
 			++a;
 		}
 	}
+}
+
+inline void mul_plus_v_cmat_v(Comp *y, const Comp *x, const Comp *a, Int_I Nr, Int_I Nc)
+{
+	Comp one(1.);
+	cblas_zgemv(CblasColMajor, CblasNoTrans, Nr, Nc, &one, a, Nr, x, 1, &one, y, 1);
 }
 
 // flip avector

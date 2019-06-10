@@ -86,14 +86,21 @@ void mul_v_cmatobd_v(Ty *y, const Tx *x, const T *a, Long_I blk_size, Long_I Nbl
 
 	// middle blocks
 	for (Long blk = 1; blk < Nblk - 1; ++blk) {
-		for (Long j = 0; j < blk_size; ++j) {
-			Tx s = x[j];
-			for (Long i = 0; i < blk_size; ++i) {
-				y[i] += (*a) * s;
-				++a;
+		if constexpr (is_scalar<T>()) {
+			for (Long j = 0; j < blk_size; ++j) {
+				Tx s = x[j];
+				for (Long i = 0; i < blk_size; ++i) {
+					y[i] += (*a) * s;
+					++a;
+				}
 			}
+			x += step; y += step;
 		}
-		x += step; y += step;
+		else {
+			SLS_ERR("using mkl!");
+			mul_plus_v_cmat_v(y, x, a, blk_size, blk_size);
+			a += blk_size * blk_size; x += step; y += step;
+		}
 	}
 	
 	// last block

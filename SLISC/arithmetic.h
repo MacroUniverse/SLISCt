@@ -57,12 +57,15 @@ template <class T1, class T2, SLS_IF(
 	is_sparse_mat<T1>() && is_sparse_mat<T2>())>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
-	if (!shape_cmp(v1, v2) || v1.nnz() != v2.nnz())
+	Long Nnz = v1.nnz();
+	if (!shape_cmp(v1, v2) || Nnz != v2.nnz())
 		return false;
-	T1 u1(v1.n1(), v1.n2()); u1 = v1;
-	T2 u2(v2.n1(), v2.n2()); u2 = v2;
+	T1 u1(v1.n1(), v1.n2(), Nnz);
+	u1 = v1;
+	T2 u2(v2.n1(), v2.n2(), Nnz);
+	u2 = v2;
 	u1.sort_r(); u2.sort_r();
-	for (Long i = 0; i < v1.nnz(); ++i) {
+	for (Long i = 0; i < Nnz; ++i) {
 		if (u1[i] != u2[i] || u1.row(i) != u2.row(i) ||
 			u1.col(i) != u2.col(i))
 			return false;

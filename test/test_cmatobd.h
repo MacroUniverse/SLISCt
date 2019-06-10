@@ -53,17 +53,17 @@ void test_cmatobd()
 			Long ind0 = a.find(i, i);
 			if (ind0 != ind[i])
 				SLS_ERR("failed!");
-			if (a.elm(ind0) != diag[i])
+			if (a(ind0) != diag[i])
 				SLS_ERR("failed!");
 			if (i % 2 == 1) {
-				if (a.elm(ind0 - 1) != 0)
+				if (a(ind0 - 1) != 0)
 					SLS_ERR("failed!");
 			}
 		}
 
 		for (Long i = 0; i < 7; ++i) {
 			Long ind0 = a.find(i, i);
-			a.elm(ind0) = 100;
+			a(ind0) = 100;
 		}
 		for (Long i = 0; i < 7; ++i) {
 			if (a(i, i) != 100)
