@@ -82,7 +82,7 @@ inline void file_list(vector_O<Str> fnames, Str_I path)
 	}
 	
 	// save a list of all files (no folder) to temporary file
-	system(("ls -p " + path + " | grep -v / > " + temp_fname).c_str());
+	Int ret = system(("ls -p " + path + " | grep -v / > " + temp_fname).c_str());
 
 	// read the temporary file
 	ifstream fin(temp_fname);

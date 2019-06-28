@@ -137,6 +137,7 @@ CmatObd<T> &CmatObd<T>::operator=(const MatCoo<T1> &a)
 		}
 		SLS_ERR("element out of block!");
 	}
+	return *this;
 }
 
 template<class T>
@@ -147,6 +148,7 @@ CmatObd<T> &CmatObd<T>::operator=(const Cmat3d<T1>& rhs)
 	// set the first overlapped element to 0
 	Long step = SQR(n0());
 	vecset(m_data.ptr() + step - 1, 0, nblk() - 1, step);
+	return *this;
 }
 
 template<class T>

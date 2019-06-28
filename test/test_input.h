@@ -15,7 +15,7 @@ void test_input()
 	inp.newfile("input_test.txt");
 
 	for (i = 0; i < N; ++i) {
-		v(i) = inp.Bool("input a bool");
+		v(i) = inp.getBool("input a bool");
 		inp.num2(x(i), y(i), "input 2 numbers");
 	}
 
@@ -26,7 +26,7 @@ void test_input()
 	x.resize(N); y.resize(N);
 	inp.openfile("input_test.txt");
 	for (i = 0; i < N; ++i) {
-		v(i) = inp.Bool("input a bool");
+		v(i) = inp.getBool("input a bool");
 		inp.num2(x(i), y(i), "input 2 numbers");
 	}
 
@@ -36,7 +36,7 @@ void test_input()
 	x.resize(N); y.resize(N);
 	inp.openfile("input_test.txt");
 	for (i = 0; i < N; ++i) {
-		v(i) = inp.Bool("input a bool");
+		v(i) = inp.getBool("input a bool");
 		inp.num2(x(i), y(i), "input 2 numbers");
 	}
 }

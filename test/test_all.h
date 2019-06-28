@@ -107,14 +107,14 @@ inline void test_all()
 	cout << "auto test successful!\n" << endl;
 	Input inp;
 
-	if (inp.Bool("run optional tests?")) {
-		if (inp.Bool("test_disp() ?")) {
+	if (inp.getBool("run optional tests?")) {
+		if (inp.getBool("test_disp() ?")) {
 			test_disp();
 		}
-		if (inp.Bool("test_print() ?")) {
+		if (inp.getBool("test_print() ?")) {
 			test_print();
 		}
-		if (inp.Bool("test_except() ?")) {
+		if (inp.getBool("test_except() ?")) {
 			test_except();
 		}
 	}
