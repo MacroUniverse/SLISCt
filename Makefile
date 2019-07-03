@@ -8,7 +8,12 @@ eigenPath = ../EigenTest/Eigen/
 source = main.cpp #SLISC/print.cpp
 objects = main.o #print.o
 
-compiler = icc
+compiler = icpc
+# (NOTE:  The  icpc command uses the same compiler options as the icc com-
+# mand. Invoking the compiler using icpc compiles .c and .i files as C++.
+# Invoking  the  compiler  using icc compiles .c and .i files as C. Using
+# icpc always links in  C++  libraries.  Using  icc  only  links  in  C++
+# libraries if C++ source is provided on the command line.)
 
 flags =  -I $(eigenPath) -std=c++17 -g -mkl -fp-model precise -fp-model except
 # -O3
