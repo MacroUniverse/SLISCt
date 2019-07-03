@@ -59,6 +59,7 @@ Where `is_dense_vec<T>()` returns `true` if `T` is a dense vector (such as `Vect
 * gsl-2.5 has been included in SLISC (it's not header only), see `test/test_gsl.h` for an example.
 * Note that not all gsl source files are compiled in Visual Studio project and in Makefile currently
 * It takes some effor to figure out which gsl source files should be included in the project or makefile (unfortunately, some header files also has `.c` extension, if those are included, there will be an error).
+* The easiest way to add new source file to the project: `SLISC/gsl` already has all the source needed for gsl. To use a new function, just include the header and use it. If the linker says that function is not found, search it's definition, then add the `.c` file to the Visual Studio project and/or to the Makefile.
 
 ## Headers Introduction
 When using something in any header file, just including that header file will be enough. Header files can be included in any order. Here is some brief introduction for each header file:

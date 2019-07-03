@@ -48,6 +48,42 @@
     <ClCompile Include="SLISC\gsl\source\specfunc\zeta.c">
       <Filter>gsl</Filter>
     </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\legendre_poly.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_j.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\poch.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_amp_phase.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_temme.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_olver.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\airy.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\airy_der.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_J0.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_Jn.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_J1.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="gsl">

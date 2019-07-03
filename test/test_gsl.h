@@ -38,4 +38,13 @@ void test_gsl()
 	ret = legen_arr[gsl_sf_legendre_array_index(3, 2)];
 	if (abs(ret - 5.76) > 1e-14)
 		SLS_ERR("failed!");
+
+	// test legendre
+	{
+		Int l = 3, m = 2;
+		Doub x1 = 0.4, x2 = -0.2, x3 = 0.6;
+		cout << "Plm(x1) = " << gsl_sf_legendre_Plm(l, m, x1) << endl;
+		cout << "Plm(x2) = " << gsl_sf_legendre_Plm(l, m, x2) << endl;
+		cout << "Plm(x3) = " << gsl_sf_legendre_Plm(l, m, x3) << endl;
+	}
 }

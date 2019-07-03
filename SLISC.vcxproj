@@ -29,14 +29,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler 19.0</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler 19.0</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
@@ -44,14 +44,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler 19.0</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler 19.0</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
@@ -146,12 +146,24 @@
     <ClCompile Include="SLISC\gsl\source\complex\math.c" />
     <ClCompile Include="SLISC\gsl\source\err\error.c" />
     <ClCompile Include="SLISC\gsl\source\err\stream.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\airy.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\airy_der.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_amp_phase.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_j.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_J0.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_J1.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_Jn.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_olver.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\bessel_temme.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\coupling.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\elementary.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\exp.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\gamma.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\legendre_P.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\legendre_poly.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\log.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\poch.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\psi.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\trig.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\zeta.c" />
