@@ -1,33 +1,35 @@
 // pure imaginary scalar type and arithmetics
 
 #pragma once
-#include "global.h"
+#include "meta.h"
 
 namespace slisc {
 template <class T>
 class ImagNum
 {
 protected:
-	T m_x;
+	T m_s;
 public:
 	typedef T value_type;
 	ImagNum() {};
-	explicit ImagNum(const T &val);
-	operator complex<T>();
+	template <class Ts, SLS_IF(is_promo<T, Ts>())>
+	constexpr explicit ImagNum(const Ts &val);
+	operator complex<T>() const;
 	T real() const;
 	T imag() const;
 	void imag(const T &val);
 };
 
 template <class T>
-inline ImagNum<T>::ImagNum(const T &val) :
-	m_x(val)
+template <class Ts, SLS_IF0(is_promo<T, Ts>())>
+constexpr ImagNum<T>::ImagNum(const Ts &val) :
+	m_s(val)
 {}
 
 template <class T>
-inline ImagNum<T>::operator complex<T>()
+inline ImagNum<T>::operator complex<T>() const
 {
-	return complex<T>(0, imag());
+	return complex<T>(T(0), imag());
 }
 
 template <class T>
@@ -39,13 +41,13 @@ inline T ImagNum<T>::real() const
 template <class T>
 inline T ImagNum<T>::imag() const
 {
-	return m_x;
+	return m_s;
 }
 
 template <class T>
 inline void ImagNum<T>::imag(const T &val)
 {
-	m_x = val;
+	m_s = val;
 }
 
 // arithmetic
@@ -55,7 +57,7 @@ inline void ImagNum<T>::imag(const T &val)
 template <class T>
 inline T real(const ImagNum<T> &val)
 {
-	return 0;
+	return T(0);
 }
 
 template <class T>
@@ -64,46 +66,102 @@ inline T imag(const ImagNum<T> &val)
 	return val.imag();
 }
 
+template <class T>
+inline auto abs(const ImagNum<T> &val)
+{
+	return val.imag();
+}
+
 // operator+
-inline Imag operator+(Imag z1, Imag z2)
+inline Imag operator+(Imag_I z1, Imag_I z2)
 {
 	return Imag(imag(z1) + imag(z2));
 }
 
-inline Comp operator+(Imag z1, Comp z2)
+inline Comp operator+(Imag_I z1, Comp_I z2)
 {
 	return Comp(real(z2), imag(z1)+imag(z2));
 }
 
-inline Comp operator+(Comp z1, Imag z2)
+inline Comp operator+(Comp_I z1, Imag_I z2)
 {
 	return z2 + z1;
 }
 
+// operator-
+inline Imag operator-(Imag_I z)
+{
+	return Imag(-z.imag());
+}
+
+inline Imag operator-(Imag_I z1, Imag_I z2)
+{
+	return Imag(z1.imag() - z2.imag());
+}
+
+inline Comp operator-(Doub_I x, Imag_I z)
+{
+	return Comp(x, -z.imag());
+}
+
+inline Comp operator-(Imag_I z, Doub_I x)
+{
+	return Comp(-x, z.imag());
+}
+
+inline Comp operator-(Comp_I z1, Imag_I z2)
+{
+	return Comp(z1.real(), z1.imag() - z2.imag());
+}
+
+inline Comp operator-(Imag_I z1, Comp_I z2)
+{
+	return Comp(-z2.real(), z1.imag() - z2.imag());
+}
+
 // operator*
-inline Imag operator*(Imag z, Doub x)
+inline Imag operator*(Imag_I z, Doub_I x)
 {
 	return Imag(z.imag()*x);
 }
 
-inline Imag operator*(Doub x, Imag z)
+inline Imag operator*(Doub_I x, Imag_I z)
 {
 	return Imag(z.imag()*x);
 }
 
-inline Doub operator*(Imag z1, Imag z2)
+inline Doub operator*(Imag_I z1, Imag_I z2)
 {
 	return -z1.imag()*z2.imag();
 }
 
-inline Comp operator*(Imag z1, Comp z2)
+inline Comp operator*(Imag_I z1, Comp_I z2)
 {
 	return Comp(-z1.imag()*z2.imag(), z1.imag()*z2.real());
 }
 
-inline Comp operator*(Comp z1, Imag z2)
+inline Comp operator*(Comp_I z1, Imag_I z2)
 {
-	return z2 * z1;
+	return Comp(-z2.imag()*z1.imag(), z2.imag()*z1.real());
 }
+
+inline Imag operator/(Imag_I z, Doub_I x)
+{
+	return Imag(z.imag() / x);
+}
+
+inline Imag operator/(Doub_I x, Imag_I z)
+{
+	return Imag(-x / z.imag());
+}
+
+inline std::ostream &operator<<(std::ostream &out, Imag_I num)
+{
+	out << num.imag() << 'i';
+	return out;
+}
+
+// imaginary unit
+constexpr Imag I(1.);
 
 } // namespace slisc

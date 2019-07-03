@@ -815,7 +815,7 @@ inline void abs(T &v)
 }
 
 // v = abs(v)
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
 inline void abs(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -823,6 +823,17 @@ inline void abs(T &v, const T1 &v1)
 		SLS_ERR("wrong size!");
 #endif
 	abs_vv(v.ptr(), v1.ptr(), v1.size());
+}
+
+// v = abs(v)^2
+template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
+inline void abs2(T &v, const T1 &v1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		SLS_ERR("wrong size!");
+#endif
+	abs2_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
 // to_comp() deleted, use operator= instead

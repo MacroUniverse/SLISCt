@@ -131,7 +131,7 @@ void mul(Ty &y, const Ta &a, const Tx &x)
 template <class T, class Ts, SLS_IF(
 	is_MatCoo<T>() && is_scalar<Ts>()
 )>
-inline void operator*=(T &v, const Ts &s)
+void operator*=(T &v, const Ts &s)
 {
 	times_equals_vs(v.ptr(), s, v.nnz());
 }
@@ -139,9 +139,16 @@ inline void operator*=(T &v, const Ts &s)
 template <class T, class Ts, SLS_IF(
 	is_CmatObd<T>() && is_scalar<Ts>()
 )>
-inline void operator*=(T &v, const Ts &s)
+void operator*=(T &v, const Ts &s)
 {
 	v.cmat3() *= s;
+}
+
+template <class T, class T1, class Ts,
+	SLS_IF(is_CmatObd<T>() && is_CmatObd<T1>() && is_scalar<Ts>())>
+void Times(T &a, const T1 &a1, const Ts &s)
+{
+	times_vvs(a.ptr(), a1.ptr(), s, SQR(a.n0()) * a.nblk());
 }
 
 // dense matrix +=,-= MatCoo<>

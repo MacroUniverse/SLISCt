@@ -242,12 +242,7 @@ inline void minus_vv(T *v, const T1 *v1, Long_I N)
 // v = s - v
 
 template <class T, class T1, class T2, SLS_IF(
-	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
-	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>()
-)>
+	is_promo<T, T1>() && is_promo<T, T2>())>
 inline void minus_vsv(T *v, const T1 &s, const T2 *v1, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -256,13 +251,7 @@ inline void minus_vsv(T *v, const T1 &s, const T2 *v1, Long_I N)
 
 // v = v - s
 template <class T, class T1, class T2, SLS_IF(
-	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
-	is_Float<T>() && is_Float<T1>() && is_Float<T2>() ||
-	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>()
-)>
+	is_promo<T, T1>() && is_promo<T, T2>())>
 inline void minus_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -271,12 +260,7 @@ inline void minus_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 
 // v = v - v
 template <class T, class T1, class T2, SLS_IF(
-	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
-	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>()
-)>
+	is_promo<T, T1>() && is_promo<T, T2>())>
 inline void minus_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -285,13 +269,7 @@ inline void minus_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
 
 // v = v * s
 template <class T, class T1, class T2, SLS_IF(
-	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
-	is_Float<T>() && is_Float<T1>() && is_Float<T2>() ||
-	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>()
-)>
+	is_promo<T, T1>() && is_promo<T, T2>())>
 void times_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 {
 	for (Long i = 0; i < N; ++i) {
@@ -301,13 +279,7 @@ void times_vvs(T *v, const T1 *v1, const T2 &s, Long_I N)
 
 // v = v * v
 template <class T, class T1, class T2, SLS_IF(
-	is_Int<T>() && is_Int<T1>() && is_Int<T2>() ||
-	is_Float<T>() && is_Float<T1>() && is_Float<T2>() ||
-	is_Doub<T>() && is_Doub<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Doub<T1>() && is_Comp<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Doub<T2>() ||
-	is_Comp<T>() && is_Comp<T1>() && is_Comp<T2>()
-)>
+	is_promo<T, T1>() && is_promo<T, T2>())>
 inline void times_vvv(T *v, const T1 *v1, const T2 *v2, Long_I N)
 {
 	for (Long i = 0; i < N; ++i)
@@ -432,6 +404,19 @@ inline void abs_vv(T *v, const T1 *v1, Long_I N)
 		v[i] = abs(v1[i]);
 }
 
+// v = abs(v)^2
+
+template <class T, class T1, SLS_IF(
+	is_Int<T>() && is_Int<T1>() ||
+	is_Doub<T>() && is_Doub<T1>() ||
+	is_Doub<T>() && is_Comp<T1>()
+)>
+inline void abs2_vv(T *v, const T1 *v1, Long_I N)
+{
+	for (Long i = 0; i < N; ++i)
+		v[i] = ABS2(v1[i]);
+}
+
 // s = sum(v)
 
 template <class T, SLS_IF(
@@ -477,7 +462,7 @@ inline Long sum_abs_v(const T *v, Long_I N)
 }
 
 template <class T, SLS_IF(
-	is_fpt<T>() || is_comp<T>()
+	is_fpt<T>() || is_comp<T>() || is_imag<T>()
 )>
 inline rm_comp<T> sum_abs_v(const T *v, Long_I N)
 {

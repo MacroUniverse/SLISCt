@@ -32,7 +32,7 @@ public:
 	// open a file
 	void open(Str fname, Char_I *rw, Int_I precision = 17);
 
-	// close a file
+	// close a file, if not called, will be called in destructor
 	void close();	
 
 	// ===== internal functions =====
@@ -54,6 +54,8 @@ public:
 	// write a scalar to m_out
 	template <class T, SLS_IF(is_scalar<T>())>
 	void write(const T &s);
+
+	~Matt();
 };
 
 // read the next variable after previous delimiter
@@ -199,6 +201,14 @@ inline void Matt::readComplex(Comp &c)
 		ci *= -1.;
 	c = Comp(cr, ci);
 	m_in.ignore(100, Matt::dlm);
+}
+
+inline Matt::~Matt()
+{
+	if (m_in.is_open() != m_out.is_open())
+		close();
+	else if (m_in.is_open() && m_out.is_open())
+		SLS_ERR("unknown!");
 }
 
 template <class T, SLS_IF(

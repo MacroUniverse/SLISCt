@@ -134,9 +134,21 @@ constexpr Bool is_Lcomp()
 }
 
 template<class T>
+constexpr Bool is_Fimag()
+{
+	return is_same<T, Fimag>();
+}
+
+template<class T>
 constexpr Bool is_Imag()
 {
 	return is_same<T, Imag>();
+}
+
+template<class T>
+constexpr Bool is_Limag()
+{
+	return is_same<T, Limag>();
 }
 
 // type_num<T>() maps each scalr type to a unique number
@@ -162,7 +174,9 @@ constexpr Int type_num()
 	if (is_Comp<T>()) return 41;
 	if (is_Lcomp<T>()) return 42;
 
+	if (is_Fimag<T>()) return 60;
 	if (is_Imag<T>()) return 61;
+	if (is_Limag<T>()) return 62;
 
 	return -1;
 }
@@ -600,6 +614,7 @@ template <class T1, class T2> constexpr Bool is_same_contain_type()
 // rm_comp<Tc> is Tr
 template <class T> struct rm_comp_imp { typedef T type; };
 template <class T> struct rm_comp_imp<complex<T>> { typedef T type; };
+template <class T> struct rm_comp_imp<ImagNum<T>> { typedef T type; };
 template <class T> using rm_comp = typename rm_comp_imp<T>::type;
 
 // === get static constexpr values ===
@@ -634,13 +649,17 @@ struct Cconst
 // might be used to enable operator=,+=,-=,*=,/= etc.
 constexpr Bool is_promo(Int_I type_num1, Int_I type_num2)
 {
-	if (type_num2 >= 0 && type_num2 < 40) {
+	if (is_real(type_num2)) {
 		if (is_real(type_num1)) {
 			if (type_num1 >= type_num2)
 				return true;
 		}
-		else { // is_comp<T1>()
+		else if (is_comp(type_num1)) {
 			if (type_num1 - type_num2 >= 20)
+				return true;
+		}
+		else { // is_imag(type_num1)
+			if (type_num1 - type_num2 >= 40)
 				return true;
 		}
 	}

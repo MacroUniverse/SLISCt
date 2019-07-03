@@ -25,6 +25,21 @@ inline Doub binom(Long_I n, Long_I r) {
 		return n / Doub(n - r)*binom(n - 1, r);
 }
 
+// calc dimension of CG table and max(m1)
+// CGtableDim() in MyMatlabLibrary
+inline void cgTableDim(Long_O Ndim, Long_O m1_max, Long_I l1, Long_I l2, Long_I M)
+{
+	if (abs(M) > abs(l1 - l2))
+		Ndim = l1 + l2 - abs(M) + 1;
+	else
+		Ndim = 2 * min(l1, l2) + 1;
+
+	if (M >= l1 - l2)
+		m1_max = l1;
+	else
+		m1_max = l2 + M;
+}
+
 // clebsch gordan coefficient [j1/2,m1/2,j2/2,m2/2,j/2,m/2]
 inline Doub cleb(Long_I j1, Long_I m1, Long_I j2, Long_I m2, Long_I j, Long_I m) {
 

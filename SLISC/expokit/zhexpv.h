@@ -33,10 +33,14 @@ void ZHEXPV(Int_I n, Int_I m, Doub_I t, Comp *w, Doub tol, Doub_I anorm,
 	Comp hjj, temp;
 
 	iflag = 0;
-	if ( lwsp < SQR(n*(m+2)+5*(m+2))+ideg+1 ) iflag = -1;
-	if (liwsp < m + 2) iflag = -2;
-	if (m >= n || m <= 0) iflag = -3;
-	if (iflag != 0) SLS_ERR("bad sizes (in input of DHEXPV)");
+	if ( lwsp < SQR(n*(m+2)+5*(m+2))+ideg+1 )
+		iflag = -1;
+	if (liwsp < m + 2)
+		iflag = -2;
+	if (m >= n || m <= 0)
+		iflag = -3;
+	if (iflag != 0)
+		SLS_ERR("bad sizes (in input of DHEXPV)");
 
 	k1 = 2;
 	mh = m + 2;

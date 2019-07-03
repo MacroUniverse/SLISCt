@@ -240,7 +240,7 @@ Jcmat<T> slice(const Jcmat<T> &a,
 // slice a3(i,j,:)
 template <class Tmat3, class T = contain_type<Tmat3>,
 	SLS_IF(is_Cmat3d<Tmat3>())>
-void slice_dim3(Dvector<T> &sli, const Tmat3 &a,
+void slice3(Dvector<T> &sli, const Tmat3 &a,
 	Long_I i, Long_I j)
 {
 #ifdef SLS_CHECK_BOUNDS
@@ -253,11 +253,11 @@ void slice_dim3(Dvector<T> &sli, const Tmat3 &a,
 
 template <class Tmat3, class T = contain_type<Tmat3>,
 	SLS_IF(is_Cmat3d<Tmat3>())>
-Dvector<T> slice_dim3(const Tmat3 &a,
+Dvector<T> slice3(const Tmat3 &a,
 		Long_I i, Long_I j)
 {
 	Dvector<T> sli;
-	slice_dim3(sli, a, i, j);
+	slice3(sli, a, i, j);
 	return sli;
 }
 

@@ -102,7 +102,7 @@ void test_slice()
 		DvecInt sli;
 		for (Long i = 0; i < 2; ++i) {
 			for (Long j = 0; j < 3; ++j) {
-				slice_dim3(sli, a3, i, j);
+				slice3(sli, a3, i, j);
 				for (Long k = 0; k < 4; ++k) {
 					if (sli[k] != a3(i, j, k))
 						SLS_ERR("failed!");
@@ -114,7 +114,7 @@ void test_slice()
 		Cmat3Int a3(2, 2, 2);
 		linspace(a3, 1, 8);
 		DvecInt sli;
-		slice_dim3(sli, a3, 1, 1);
+		slice3(sli, a3, 1, 1);
 		if (sli[0] != 4 || sli[1] != 8)
 			SLS_ERR("failed!");
 		sli /= 2;

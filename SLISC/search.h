@@ -53,5 +53,6 @@ inline Int lookupInt(Long_O ind, const T1 &v, const T &s)
 		}
 	}
 	SLS_ERR("slisc::lookup(): unknown error!");
+	return 0;
 }
 } // namespace slisc

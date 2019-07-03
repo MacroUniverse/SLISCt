@@ -239,7 +239,7 @@ const T CmatObd<T>::operator()(Long_I i1, Long_I i2) const
 		if (n == 0)
 			return m_data(m, N, iblk);
 	}
-	return 0;
+	return T(0);
 }
 
 } // namespace slisc

@@ -1,6 +1,7 @@
 // scalar utilities
 #pragma once
 #include "complex_arith.h"
+#include "imag.h"
 
 namespace slisc {
 

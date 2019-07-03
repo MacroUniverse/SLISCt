@@ -182,6 +182,12 @@ inline void FEDVR_grid(VecDoub_O x, VecDoub_O w, VecDoub_I wFE, VecDoub_I xFE, V
 	}
 }
 
+// number of non-zero elements in fedvr second derivative matrix
+inline Long fedvr_d2_nnz(Long_I Ngs, Long_I Nfe)
+{
+	return (Ngs*Ngs - 1)*Nfe - 4 * Ngs + 3;
+}
+
 // sparse second derivative matrix for normalized FEDVR basis
 inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 {
@@ -208,7 +214,7 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 	}
 
 	// calculate Kinetic matrix T
-	D2.reserve((Ngs*Ngs - 1)*Nfe - 4 * Ngs + 3); // # non-zero elements
+	D2.reserve(fedvr_d2_nnz(Ngs, Nfe)); // # non-zero elements
 	for (i = 0; i < Nfe; ++i) {
 		// blocks without boundary
 		for (n = 1; n < Ngs - 1; ++n) {

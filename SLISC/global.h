@@ -22,7 +22,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <cstring>
 
@@ -155,9 +154,17 @@ template <class T> class Gmat3d;
 #endif
 
 // pure imaginary number
+typedef ImagNum<Float> Fimag;
+typedef const Fimag Fimag_I;
+typedef Fimag &Fimag_O, &Fimag_IO;
+
 typedef ImagNum<Doub> Imag;
 typedef const Imag Imag_I;
 typedef Imag &Imag_O, &Imag_IO;
+
+typedef ImagNum<Ldoub> Limag;
+typedef const Limag Limag_I;
+typedef Limag &Limag_O, &Limag_IO;
 
 // vector and matrix types
 typedef Vector<Int> VecInt;
@@ -199,6 +206,10 @@ typedef VecDoub &VecDoub_O, &VecDoub_IO;
 typedef Vector<Doub*> VecDoubp;
 typedef const VecDoubp &VecDoubp_I;
 typedef VecDoubp &VecDoubp_O, &VecDoubp_IO;
+
+typedef Vector<Imag> VecImag;
+typedef const VecImag &VecImag_I;
+typedef VecImag &VecImag_O, &VecImag_IO;
 
 typedef Vector<Comp> VecComp;
 typedef const VecComp &VecComp_I;
@@ -319,6 +330,10 @@ typedef Cmat3Doub &Cmat3Doub_O, &Cmat3Doub_IO;
 typedef Cmat3d<Comp> Cmat3Comp;
 typedef const Cmat3Comp &Cmat3Comp_I;
 typedef Cmat3Comp &Cmat3Comp_O, &Cmat3Comp_IO;
+
+typedef Cmat3d<Imag> Cmat3Imag;
+typedef const Cmat3Imag &Cmat3Imag_I;
+typedef Cmat3Imag &Cmat3Imag_O, &Cmat3Imag_IO;
 
 typedef Cmat4d<Int> Cmat4Int;
 typedef const Cmat4Int &Cmat4Int_I;
@@ -592,6 +607,10 @@ typedef CmatObd<Doub> CmobdDoub;
 typedef const CmobdDoub &CmobdDoub_I;
 typedef CmobdDoub &CmobdDoub_O, &CmobdDoub_IO;
 
+typedef CmatObd<Imag> CmobdImag;
+typedef const CmobdImag &CmobdImag_I;
+typedef CmobdImag &CmobdImag_O, &CmobdImag_IO;
+
 typedef CmatObd<Comp> CmobdComp;
 typedef const CmobdComp &CmobdComp_I;
 typedef CmobdComp &CmobdComp_O, &CmobdComp_IO;
@@ -639,9 +658,8 @@ struct turn_on_floating_exceptions {
 
 // === constants ===
 
-const Doub PI = 3.14159265358979323;
-const Doub E = 2.71828182845904524;
-const Comp I(0., 1.);
+constexpr Doub PI = 3.14159265358979323;
+constexpr Doub E = 2.71828182845904524;
 
 // report error and pause execution
 #define SLS_ERR(str) do{cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl; getchar();} while(0)
