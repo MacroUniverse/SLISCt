@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SLISC\print.cpp" />
+    <ClCompile Include="gsl\source\sys\coerce.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\coupling.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\elementary.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\err\error.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\exp.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\sys\fdiv.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\gamma.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\sys\infnan.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\legendre_P.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\log.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\complex\math.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\psi.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\err\stream.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\trig.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="gsl\source\specfunc\zeta.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="gsl">
+      <UniqueIdentifier>{df18dde9-54f2-4e14-b923-30fa7e5b72ea}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
