@@ -4,7 +4,7 @@ exe = main.x
 
 eigenPath = ../EigenTest/Eigen/
 
-Sdir = gsl/source/
+Sdir = SLISC/gsl/source/
 
 # this project requires "MatFile_linux" github repository
 
@@ -19,7 +19,7 @@ compiler = icpc
 # icpc always links in  C++  libraries.  Using  icc  only  links  in  C++
 # libraries if C++ source is provided on the command line.)
 
-flags = -Wall -I $(eigenPath) -I gsl/include -I gsl/source -std=c++17 -g -mkl -fp-model precise -fp-model except
+flags = -Wall -I $(eigenPath) -I SLISC/gsl/include -I SLISC/gsl/source -std=c++17 -g -mkl -fp-model precise -fp-model except
 # -O3
 
 $(exe):$(objects) $(gslobjects)
