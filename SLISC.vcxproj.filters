@@ -3,49 +3,49 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SLISC\print.cpp" />
-    <ClCompile Include="gsl\source\sys\coerce.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\coupling.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\coupling.c">
+    <ClCompile Include="SLISC\gsl\source\sys\coerce.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\elementary.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\elementary.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\err\error.c">
+    <ClCompile Include="SLISC\gsl\source\err\error.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\exp.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\exp.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\sys\fdiv.c">
+    <ClCompile Include="SLISC\gsl\source\sys\fdiv.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\gamma.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\gamma.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\sys\infnan.c">
+    <ClCompile Include="SLISC\gsl\source\sys\infnan.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\legendre_P.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\legendre_P.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\log.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\log.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\complex\math.c">
+    <ClCompile Include="SLISC\gsl\source\complex\math.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\psi.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\psi.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\err\stream.c">
+    <ClCompile Include="SLISC\gsl\source\err\stream.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\trig.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\trig.c">
       <Filter>gsl</Filter>
     </ClCompile>
-    <ClCompile Include="gsl\source\specfunc\zeta.c">
+    <ClCompile Include="SLISC\gsl\source\specfunc\zeta.c">
       <Filter>gsl</Filter>
     </ClCompile>
   </ItemGroup>

@@ -68,19 +68,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\source;C:\Users\Addis\Documents\GitHub\SLISC\SLISC\gsl\include;C:\Users\Addis\Documents\GitHub\EigenTest\Eigen;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,21 +143,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gsl\source\complex\math.c" />
-    <ClCompile Include="gsl\source\err\error.c" />
-    <ClCompile Include="gsl\source\err\stream.c" />
-    <ClCompile Include="gsl\source\specfunc\coupling.c" />
-    <ClCompile Include="gsl\source\specfunc\elementary.c" />
-    <ClCompile Include="gsl\source\specfunc\exp.c" />
-    <ClCompile Include="gsl\source\specfunc\gamma.c" />
-    <ClCompile Include="gsl\source\specfunc\legendre_P.c" />
-    <ClCompile Include="gsl\source\specfunc\log.c" />
-    <ClCompile Include="gsl\source\specfunc\psi.c" />
-    <ClCompile Include="gsl\source\specfunc\trig.c" />
-    <ClCompile Include="gsl\source\specfunc\zeta.c" />
-    <ClCompile Include="gsl\source\sys\coerce.c" />
-    <ClCompile Include="gsl\source\sys\fdiv.c" />
-    <ClCompile Include="gsl\source\sys\infnan.c" />
+    <ClCompile Include="SLISC\gsl\source\complex\math.c" />
+    <ClCompile Include="SLISC\gsl\source\err\error.c" />
+    <ClCompile Include="SLISC\gsl\source\err\stream.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\coupling.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\elementary.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\exp.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\gamma.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\legendre_P.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\log.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\psi.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\trig.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\zeta.c" />
+    <ClCompile Include="SLISC\gsl\source\sys\coerce.c" />
+    <ClCompile Include="SLISC\gsl\source\sys\fdiv.c" />
+    <ClCompile Include="SLISC\gsl\source\sys\infnan.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SLISC\print.cpp" />
   </ItemGroup>
