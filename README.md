@@ -55,6 +55,11 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 ```
 Where `is_dense_vec<T>()` returns `true` if `T` is a dense vector (such as `Vector<>`, `FixVec<>`, `Svector<>`), `is_dense_mat<T>()` returns `true` if `T` is a dense matrix (such as `Matrix<>`, `Cmat<>`, `FixCmat<>`). These function templates are also defined in "meta.h".
 
+## GSL (GNU Scientific Library)
+* gsl-2.5 has been included in SLISC (it's not header only), see `test/test_gsl.h` for an example.
+* Note that not all gsl source files are compiled in Visual Studio project and in Makefile currently
+* It takes some effor to figure out which gsl source files should be included in the project or makefile (unfortunately, some header files also has `.c` extension, if those are included, there will be an error).
+
 ## Headers Introduction
 When using something in any header file, just including that header file will be enough. Header files can be included in any order. Here is some brief introduction for each header file:
 * `slisc.h` is a shorthand for some of the most frequently used header files.
