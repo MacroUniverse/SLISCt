@@ -84,6 +84,9 @@
     <ClCompile Include="SLISC\gsl\source\specfunc\bessel_J1.c">
       <Filter>gsl</Filter>
     </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\pow_int.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="gsl">

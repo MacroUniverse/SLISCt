@@ -164,6 +164,7 @@
     <ClCompile Include="SLISC\gsl\source\specfunc\legendre_poly.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\log.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\poch.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\pow_int.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\psi.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\trig.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\zeta.c" />
