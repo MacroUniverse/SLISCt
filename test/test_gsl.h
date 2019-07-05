@@ -1,8 +1,10 @@
 #pragma once
 #include "../SLISC/global.h"
+#include <gsl/gsl_errno.h>
 #include <gsl/gsl_sf_coupling.h>
 #include <gsl/gsl_sf_gamma.h>
 #include <gsl/gsl_sf_legendre.h>
+#include <gsl/gsl_sf_coulomb.h>
 
 void test_gsl()
 {
@@ -46,5 +48,33 @@ void test_gsl()
 		cout << "Plm(x1) = " << gsl_sf_legendre_Plm(l, m, x1) << endl;
 		cout << "Plm(x2) = " << gsl_sf_legendre_Plm(l, m, x2) << endl;
 		cout << "Plm(x3) = " << gsl_sf_legendre_Plm(l, m, x3) << endl;
+	}
+	
+	// test hydrogen radial function (normalized)
+	// int |R|^2 r^2 dr = 1
+	{
+		if (abs(gsl_sf_hydrogenicR(3, 1, 1, 0.3) - 0.0311936367) > 1e-9)
+			SLS_ERR("failed!");
+	}
+
+	// test coulomb function
+	// scaled, asymptotic -> sin()
+	// tested with coulomb1_sym in MyMatlabLibrary (arbitrary precision)
+	{
+		VecDoub F(4), G(4);
+		Doub F_exponent;
+		Doub lmin = 0, kmax = 3, eta = 1, rho = 2.6;
+		// see also gsl_sf_coulomb_wave_FG_array
+		Int ret = gsl_sf_coulomb_wave_F_array(lmin, kmax, eta, rho, F.ptr(), &F_exponent);
+		if (ret == GSL_EOVRFLW)
+			SLS_ERR("failed!");
+		if (abs(F[0] - 0.938149544359976) > 1e-15)
+			SLS_ERR("failed!");
+		if (abs(F[1] - 0.623001859914959) > 1e-15)
+			SLS_ERR("failed!");
+		if (abs(F[2] - 0.292126432552811) > 1e-15)
+			SLS_ERR("failed!");
+		if (abs(F[3] - 0.103105785225698) > 1e-15)
+			SLS_ERR("failed!");
 	}
 }

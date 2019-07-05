@@ -156,10 +156,13 @@
     <ClCompile Include="SLISC\gsl\source\specfunc\bessel_Jn.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\bessel_olver.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\bessel_temme.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\coulomb.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\coulomb_bound.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\coupling.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\elementary.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\exp.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\gamma.c" />
+    <ClCompile Include="SLISC\gsl\source\specfunc\laguerre.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\legendre_P.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\legendre_poly.c" />
     <ClCompile Include="SLISC\gsl\source\specfunc\log.c" />

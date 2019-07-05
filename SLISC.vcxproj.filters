@@ -87,6 +87,15 @@
     <ClCompile Include="SLISC\gsl\source\specfunc\pow_int.c">
       <Filter>gsl</Filter>
     </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\laguerre.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\coulomb_bound.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
+    <ClCompile Include="SLISC\gsl\source\specfunc\coulomb.c">
+      <Filter>gsl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="gsl">
