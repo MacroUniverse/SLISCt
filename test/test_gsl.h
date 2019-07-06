@@ -27,27 +27,43 @@ void test_gsl()
 	two_jg = 0; two_jh = 6; two_ji = 4;
 
 	// should be 0
-	ret = gsl_sf_coupling_9j(two_ja, two_jb, two_jc, two_jd, two_je, two_jf, two_jg, two_jh, two_ji);
+	ret = gsl_sf_coupling_9j(two_ja, two_jb, two_jc, two_jd, two_je, two_jf,
+		two_jg, two_jh, two_ji);
 	if (abs(ret) > 1e-14)
 		SLS_ERR("failed!");
 
-	Comp in(1.5, 1.5), out;
+	// test associated legendre polynomial for multiple l
+	// (for every l < lmax, 0 < m < l)
+    //https://www.gnu.org/software/gsl/doc/html/specfunc.html#c.gsl_sf_legendre_array
+	// same as Wolfram Alpha
+	{
+		Int lmax = 3;
+		Int n = gsl_sf_legendre_array_n(lmax);
+		VecDoub legen_arr(n);
+		gsl_sf_legendre_array(GSL_SF_LEGENDRE_NONE, lmax, 0.6, legen_arr.ptr());
+		ret = legen_arr[gsl_sf_legendre_array_index(3, 2)];
+		if (abs(ret - 5.76) > 1e-14)
+			SLS_ERR("failed!");
+	}
 
-	Int lmax = 3;
-	Int n = gsl_sf_legendre_array_n(lmax);
-	VecDoub legen_arr(n);
-	gsl_sf_legendre_array(GSL_SF_LEGENDRE_NONE, lmax, 0.6, legen_arr.ptr());
-	ret = legen_arr[gsl_sf_legendre_array_index(3, 2)];
-	if (abs(ret - 5.76) > 1e-14)
-		SLS_ERR("failed!");
-
-	// test legendre
+	// test associated legendre polynomial single value
+	// https://www.gnu.org/software/gsl/doc/html/specfunc.html#c.gsl_sf_legendre_Plm
+	// same as Wolfram Alpha
 	{
 		Int l = 3, m = 2;
-		Doub x1 = 0.4, x2 = -0.2, x3 = 0.6;
-		cout << "Plm(x1) = " << gsl_sf_legendre_Plm(l, m, x1) << endl;
-		cout << "Plm(x2) = " << gsl_sf_legendre_Plm(l, m, x2) << endl;
-		cout << "Plm(x3) = " << gsl_sf_legendre_Plm(l, m, x3) << endl;
+		if (abs(gsl_sf_legendre_Plm(l, m, 0.4) - 5.04) > 1e-13)
+			SLS_ERR("failed!");
+		if (abs(gsl_sf_legendre_Plm(l, m, -0.2) + 2.88) > 1e-13)
+			SLS_ERR("failed!");
+		if (abs(gsl_sf_legendre_Plm(l, m, 0.6) - 5.76) > 1e-13)
+			SLS_ERR("failed!");
+		l = 5;  m = 3;
+		if (abs(gsl_sf_legendre_Plm(l, m, 0.4) + 17.7840597569846238) > 1e-13)
+			SLS_ERR("failed!");
+		if (abs(gsl_sf_legendre_Plm(l, m, -0.2) - 31.6042964572856770) > 1e-13)
+			SLS_ERR("failed!");
+		if (abs(gsl_sf_legendre_Plm(l, m, 0.6) + 60.2112) > 1e-13)
+			SLS_ERR("failed!");
 	}
 	
 	// test hydrogen radial function (normalized)
