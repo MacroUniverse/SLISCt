@@ -89,6 +89,7 @@ inline Long CmatObd<T>::find(Long_I i1, Long_I i2)
 			return m + step2 * N + step3 * iblk;
 	}
 	SLS_ERR("element out of block!");
+	return -1;
 }
 
 template <class T>

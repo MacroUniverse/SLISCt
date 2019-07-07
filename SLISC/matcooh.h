@@ -59,15 +59,16 @@ const T MatCooH<T>::operator()(Long_I i, Long_I j) const
 		else
 			return Base::operator()(j, i);
 	}		
-	else
-		return Base::operator()(i, j);
+	return Base::operator()(i, j);
 }
 
 template <class T>
 T &MatCooH<T>::ref(Long_I i, Long_I j)
 {
-	if (i > j)
+	if (i > j) {
 		SLS_ERR("lower triangle is empty!");
+		return Base::ref(j, i);
+	}
 	else
 		return Base::ref(i, j);
 }
