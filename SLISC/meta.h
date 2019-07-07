@@ -13,6 +13,9 @@
 
 namespace slisc {
 
+// declaration
+template <class T> constexpr Int ndims();
+
 // type traits
 
 // true_type::value is true, false_type::value is false
@@ -533,6 +536,8 @@ constexpr Bool is_same_major()
 	if (is_cmajor<T>() && is_cmajor<U>())
 		return true;
 	else if (is_rmajor<T>() && is_rmajor<U>())
+		return true;
+	else if (ndims<T>() == 1 && ndims<T>() == 1)
 		return true;
 	else
 		return false;

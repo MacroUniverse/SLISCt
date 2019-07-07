@@ -22,8 +22,14 @@ inline Doub coulombF(Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
 }
 
 // for vector/matrix and tensor
-inline void coulombF0(Vbase<Doub> &F, Int_I l, Doub_I k, const Vbase<Doub> &r, Doub_I Z = -1.)
+template <class Tv1, class Tv2, SLS_IF(is_dense<Tv1>() && is_dense<Tv2>())>
+inline void coulombF(Tv1 &F, Int_I l, Doub_I k, const Tv2 &r, Doub_I Z = -1.)
 {
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(F, r))
+		SLS_ERR("wrong shape!");
+#endif
+
 	Long i;
 	Comp F1, dF1;
 	Doub eta = Z / k;
@@ -36,15 +42,6 @@ inline void coulombF0(Vbase<Doub> &F, Int_I l, Doub_I k, const Vbase<Doub> &r, D
 		F(i) = real(F1);
 	}
 }
-
-inline void coulombF(VecDoub &F, Int_I l, Doub_I k, VecDoub_I r, Doub_I Z = -1.)
-{ F.resize(r); coulombF0(F, l, k, r, Z); }
-
-inline void coulombF(MatDoub &F, Int_I l, Doub_I k, MatDoub_I r, Doub_I Z = -1.)
-{ F.resize(r); coulombF0(F, l, k, r, Z); }
-
-inline void coulombF(Mat3Doub &F, Int_I l, Doub_I k, Mat3Doub_I r, Doub_I Z = -1.)
-{ F.resize(r); coulombF0(F, l, k, r, Z); }
 
 // === coulombDF() ===
 // accuracy not tested

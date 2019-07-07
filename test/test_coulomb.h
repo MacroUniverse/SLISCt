@@ -13,7 +13,7 @@ void test_coulomb()
 	Timer time;
 
 	Long N = 100;
-	VecDoub r(N), F(2); linspace(r, 0., 10.);
+	VecDoub r(N), F(N); linspace(r, 0., 10.);
 	//r(0) = 5.671342685370742;
 	//r(1) = 5.691382765531062;
 

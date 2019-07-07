@@ -14,7 +14,8 @@ namespace slisc {
 // === get vec/mat properties ===
 
 // check if vec/mat sizes are the same
-template <class T1, class T2, SLS_IF(is_contain<T1>() && is_contain<T2>())>
+template <class T1, class T2, SLS_IF(
+	is_contain<T1>() && is_contain<T2>())>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
 	if constexpr (ndims<T1>() == 1 && ndims<T2>() == 1) {
@@ -31,30 +32,19 @@ Bool shape_cmp(const T1 &v1, const T2 &v2)
 }
 
 // operator== for slisc containers
-
 template <class T1, class T2, SLS_IF(
-	(is_dense<T1>() || is_Dcmat<T1>()) && is_same_contain<T1,T2>())>
+	is_dense<T1>() && is_dense<T2>() &&
+	is_same_major<T1, T2>())>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
-	return shape_cmp(v1, v2) && equals_to_vv(v1.ptr(), v2.ptr(), v2.size());
+	return shape_cmp(v1, v2) &&
+		equals_to_vv(v1.ptr(), v2.ptr(), v2.size());
 }
 
+// for Mcoo and Mcooh matrices
 template <class T1, class T2, SLS_IF(
-	ndims<T1>() == 2 && ndims<T2>() == 2 && !is_same_contain<T1, T2>()
-)>
-Bool operator==(const T1 &v1, const T2 &v2)
-{
-	if (!shape_cmp(v1, v2))
-		return false;
-	for (Long i = 0; i < v1.n1(); ++i)
-		for (Long j = 0; j < v1.n2(); ++j)
-			if (v1(i, j) != v2(i, j))
-				return false;
-	return true;
-}
-
-template <class T1, class T2, SLS_IF(
-	is_sparse_mat<T1>() && is_sparse_mat<T2>())>
+	(is_MatCoo<T1>() || is_MatCooH<T1>()) &&
+	 is_same_contain<T1, T2>())>
 Bool operator==(const T1 &v1, const T2 &v2)
 {
 	Long Nnz = v1.nnz();
@@ -70,6 +60,25 @@ Bool operator==(const T1 &v1, const T2 &v2)
 			u1.col(i) != u2.col(i))
 			return false;
 	}
+	return true;
+}
+
+// for all other (2d) matrices not covered by the above definition
+// might not be efficient
+template <class T1, class T2, SLS_IF(
+	ndims<T1>() == 2 && ndims<T2>() == 2 &&
+	! (is_dense<T1>() && is_dense<T2>() &&
+		is_same_major<T1, T2>()) &&
+	! ((is_MatCoo<T1>() || is_MatCooH<T1>()) &&
+		is_same_contain<T1, T2>()))>
+Bool operator==(const T1 &v1, const T2 &v2)
+{
+	if (!shape_cmp(v1, v2))
+		return false;
+	for (Long i = 0; i < v1.n1(); ++i)
+		for (Long j = 0; j < v1.n2(); ++j)
+			if (v1(i, j) != v2(i, j))
+				return false;
 	return true;
 }
 
@@ -488,7 +497,8 @@ inline void operator*=(T &v, const T1 &v1)
 
 // v /= v
 
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void operator/=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -546,8 +556,8 @@ inline void rem(T &v, const Ts &s)
 // v = v % s
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T, T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void rem(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -559,8 +569,7 @@ inline void rem(T &v, const T1 &v1, const Ts &s)
 
 // mod(v, s)
 template <class T, class T1, SLS_IF(
-	is_dense<T>() && is_scalar<T1>()
-)>
+	is_dense<T>() && is_scalar<T1>())>
 inline void mod(T &v, const T1 &s)
 {
 	mod_vs(v.ptr(), s, v.size());
@@ -568,8 +577,7 @@ inline void mod(T &v, const T1 &s)
 
 // v = mod(v, s)
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T, T1>()
-)>
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void mod(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -585,7 +593,8 @@ inline void mod(T &v, const T1 &v1, const Ts &s)
 // v = v + s
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>()
 )>
 inline void Plus(T &v, const T1 &v1, const Ts &s)
 {
@@ -597,8 +606,8 @@ inline void Plus(T &v, const T1 &v1, const Ts &s)
 }
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Plus(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -611,7 +620,8 @@ inline void Plus(T &v, const Ts &s, const T1 &v1)
 // v = v + v
 
 template <class T, class T1, class T2, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_same_contain<T,T2>()
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_dense<T2>()
 )>
 inline void Plus(T &v, const T1 &v1, const T2 &v2)
 {
@@ -631,8 +641,7 @@ inline void Minus(T &v)
 // v = -v
 
 template <class T, class T1, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>()
-)>
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void Minus(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -645,8 +654,8 @@ inline void Minus(T &v, const T1 &v1)
 // v = s - v
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Minus(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -659,8 +668,8 @@ inline void Minus(T &v, const Ts &s, const T1 &v1)
 // v = v - s
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Minus(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -673,8 +682,8 @@ inline void Minus(T &v, const T1 &v1, const Ts &s)
 // v = v - v
 
 template <class T, class T1, class T2, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_same_contain<T,T2>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_dense<T2>())>
 inline void Minus(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -687,8 +696,8 @@ inline void Minus(T &v, const T1 &v1, const T2 &v2)
 // v = v * s
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Times(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -701,8 +710,8 @@ inline void Times(T &v, const T1 &v1, const Ts &s)
 // v = s * v
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Times(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -715,8 +724,8 @@ inline void Times(T &v, const Ts &s, const T1 &v1)
 // v = v * v
 
 template <class T, class T1, class T2, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_same_contain<T,T2>()
-)>
+	is_dense<T>() && is_dense<T1>() && is_dense<T2>() &&
+	is_same_major<T, T1>() && is_same_major<T, T2>())>
 inline void Times(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -728,8 +737,8 @@ inline void Times(T &v, const T1 &v1, const T2 &v2)
 // v = v / s
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Divide(T &v, const T1 &v1, const Ts &s)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -742,8 +751,8 @@ inline void Divide(T &v, const T1 &v1, const Ts &s)
 // v = s / v
 
 template <class T, class T1, class Ts, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_scalar<Ts>()
-)>
+	is_dense<T>() && is_dense<T1>() &&
+	is_same_major<T, T1>() && is_scalar<Ts>())>
 inline void Divide(T &v, const Ts &s, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -756,8 +765,8 @@ inline void Divide(T &v, const Ts &s, const T1 &v1)
 // v = v / v
 
 template <class T, class T1, class T2, SLS_IF(
-	is_dense<T>() && is_same_contain<T,T1>() && is_same_contain<T,T2>()
-)>
+	is_dense<T>() && is_dense<T1>() && is_dense<T2>() &&
+	is_same_major<T, T1>() && is_same_major<T, T2>())>
 inline void Divide(T &v, const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -778,7 +787,8 @@ inline void real(T &v)
 // v = real(v)
 
 template <class T, class T1,
-	SLS_IF(is_same_contain<T, T1>(), is_comp_dense<T1>())>
+	SLS_IF(is_dense<T>() && is_comp_dense<T1>() &&
+		is_same_major<T, T1>())>
 inline void real(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -797,7 +807,8 @@ inline void imag(T &v)
 
 // v = imag(v)
 template <class T, class T1,
-	SLS_IF(is_same_contain<T, T1>() && is_comp_dense<T1>())>
+	SLS_IF(is_dense<T>() && is_comp_dense<T1>() &&
+		is_same_major<T, T1>())>
 	inline void imag(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -815,7 +826,8 @@ inline void abs(T &v)
 }
 
 // v = abs(v)
-template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void abs(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -826,7 +838,8 @@ inline void abs(T &v, const T1 &v1)
 }
 
 // v = abs(v)^2
-template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void abs2(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -847,8 +860,7 @@ inline void conj(T &v)
 
 template <class T, class T1, SLS_IF(
 	is_comp_dense<T>() && is_comp_dense<T1>() &&
-	is_same_contain<T,T1>()
-)>
+	is_same_major<T, T1>())>
 inline void conj(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -874,8 +886,7 @@ inline auto dot(const T1 &v1, const T2 &v2)
 // outer product ( v(i,j) = conj(v1[i])*v2[j] )
 // outprod(v, v, v)
 template <class T, class T1, class T2, SLS_IF(
-	is_dense_mat<T>() && is_dense_vec<T1>() && is_dense_vec<T2>()
-)>
+	is_dense_mat<T>() && is_dense_vec<T1>() && is_dense_vec<T2>())>
 inline void outprod(T &v, const T1 &v1, const T2 &v2)
 {
 	SLS_ERR("TODO");
