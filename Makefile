@@ -50,7 +50,7 @@ MAKEFLAGS = -r # no default implicit rule
 	$(compiler) $(flags) -c $<
 
 # main file dependency (must include any used GSL function's object file)
-main.o: main.cpp coulomb.o SLISC/*.h test/*.h
+main.o: main.cpp SLISC/*.h test/*.h coulomb.o coupling.o coulomb_bound.o legendre_poly.o legendre_P.o
 
 # GSL source dependency (use Understand cluster graph to add)
 # the object files on the right are not needed to compile, but needed to link
