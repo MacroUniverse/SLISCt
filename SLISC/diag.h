@@ -15,8 +15,6 @@ public:
 	using Base::operator=;
 	Diag(Long_I N);
 	Diag(Long_I N, const T &s);
-	Diag(Long_I Nr, Long_I Nc);
-	Diag(Long_I Nr, Long_I Nc, const T &s);
 	Diag(const Vector<T> &v);
 	Long size() const;
 	Long nnz() const;
@@ -33,20 +31,6 @@ Diag<T>::Diag(Long_I N) : Base(N) {}
 
 template <class T>
 Diag<T>::Diag(Long_I N, const T &s) : Base(N, s) {}
-
-template <class T>
-Diag<T>::Diag(Long_I Nr, Long_I Nc) : Base(Nr)
-{
-#ifdef SLS_CHECK_SHAPE
-	if (Nr != Nc) SLS_ERR("must be a square matrix!");
-#endif
-}
-
-template <class T>
-Diag<T>::Diag(Long_I Nr, Long_I Nc, const T &s) : Diag(Nr, Nc)
-{
-	*this = s;
-}
 
 template <class T>
 Diag<T>::Diag(const Vector<T> &v) : Base(v.size())

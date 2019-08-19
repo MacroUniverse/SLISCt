@@ -37,6 +37,7 @@ public:
 	Long n0() const; // n0() = m_data.n1() = m_data.n2()
 	Long nblk() const; // m_data.n3()
 	const T operator()(Long_I i, Long_I j) const;
+	void resize(Long_I blk_size, Long_I Nblk);
 };
 
 template <class T>
@@ -45,7 +46,8 @@ CmatObd<T>::CmatObd(Long_I blk_size, Long_I Nblk)
 {
 	Long step = SQR(n0());
 	// set the first overlapped element to 0
-	vecset(m_data.ptr() + step - 1, 0, Nblk - 1, step);
+	if (m_data.size() > 0)
+		vecset(m_data.ptr() + step - 1, 0, Nblk - 1, step);
 }
 
 template<class T>
@@ -241,6 +243,16 @@ const T CmatObd<T>::operator()(Long_I i1, Long_I i2) const
 			return m_data(m, N, iblk);
 	}
 	return T(0);
+}
+
+template<class T>
+inline void CmatObd<T>::resize(Long_I blk_size, Long_I Nblk)
+{
+	m_data.resize(blk_size, blk_size, Nblk);
+	m_N1 = (blk_size - 1) * Nblk - 1;
+	Long step = SQR(n0());
+	// set the first overlapped element to 0
+	vecset(m_data.ptr() + step - 1, 0, Nblk - 1, step);
 }
 
 } // namespace slisc

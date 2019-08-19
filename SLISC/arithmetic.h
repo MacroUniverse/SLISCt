@@ -82,6 +82,23 @@ Bool operator==(const T1 &v1, const T2 &v2)
 	return true;
 }
 
+// all other 3d matrices
+template <class T1, class T2, SLS_IF(
+	ndims<T1>() == 3 && ndims<T2>() == 3 &&
+	!(is_dense<T1>() && is_dense<T2>() &&
+	is_same_major<T1, T2>()))>
+	Bool operator==(const T1 &v1, const T2 &v2)
+{
+	if (!shape_cmp(v1, v2))
+		return false;
+	for (Long k = 0; k < v1.n3(); ++k)
+		for (Long j = 0; j < v1.n2(); ++j)
+			for (Long i = 0; i < v1.n1(); ++i)
+				if (v1(i, j, k) != v2(i, j, k))
+					return false;
+	return true;
+}
+
 template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Tv &v, const Ts &s)
 {
@@ -227,6 +244,11 @@ template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
 inline const auto max_abs(const T &v)
 { return max_abs_v(v.ptr(), v.size()); }
 
+// return min(abs(a(:))
+template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
+inline const auto min_abs(const T &v)
+{ return min_abs_v(v.ptr(), v.size()); }
+
 template <class T, SLS_IF(is_dense<T>())>
 inline const auto max(Long_O ind, const T &v)
 {
@@ -244,10 +266,24 @@ inline const auto max(Long_O ind, const T &v)
 template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
 const auto norm2(const T &v)
 {
-	Long i, N{ v.size() };
+	Long N = v.size();
 	auto s2 = ABS2(v[0]);
-	for (i = 1; i < N; ++i)
+	for (Long i = 1; i < N; ++i)
 		s2 += ABS2(v[i]);
+	return s2;
+}
+
+template <class T, SLS_IF(is_Dcmat<T>())>
+const auto norm2(const T &a)
+{
+	auto p = a.ptr();
+	Long Nr = a.n1(), lda = a.lda();
+	rm_comp<contain_type<T>> s2 = 0;
+	for (Long j = 0; j < a.n2(); ++j) {
+		for (Long i = 0; i < Nr; ++i)
+			s2 += ABS2(p[i]);
+		p += lda;
+	}
 	return s2;
 }
 
@@ -292,7 +328,7 @@ void sqrt(T &v)
 	sqrt_v(v.ptr(), v.size());
 }
 
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T,T1>())>
+template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
 void sqrt(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -461,7 +497,7 @@ inline void her(T &v, const T1 &v1)
 
 // v += v
 
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
 inline void operator+=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -473,7 +509,8 @@ inline void operator+=(T &v, const T1 &v1)
 
 // v -= v
 
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void operator-=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -483,9 +520,25 @@ inline void operator-=(T &v, const T1 &v1)
 	minus_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
 
+template <class T, class T1, SLS_IF(
+is_contain<T>() && is_contain<T1>() &&
+(!is_dense<T>() || !is_dense<T1>()) &&
+is_same_major<T, T1>() &&
+is_promo<contain_type<T>, contain_type<T1>>())>
+void operator-=(T &v, const T1 &v1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		SLS_ERR("wrong shape!");
+#endif
+	for (Long i = 0; i < v.size(); ++i)
+		v[i] -= v1[i];
+}
+
 // v *= v
 
-template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
+template <class T, class T1, SLS_IF(
+	is_dense<T>() && is_dense<T1>() && is_same_major<T, T1>())>
 inline void operator*=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -873,7 +926,7 @@ inline void conj(T &v, const T1 &v1)
 // dot products ( sum conj(v1[i])*v2[i] )
 
 // s = dot(v, v)
-template <class T1, class T2, SLS_IF(is_dense_vec<T1>() && is_dense_vec<T2>())>
+template <class T1, class T2, SLS_IF(is_dense<T1>() && is_dense<T2>())>
 inline auto dot(const T1 &v1, const T2 &v2)
 {
 #ifdef SLS_CHECK_SHAPE
@@ -940,6 +993,128 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 	else { // col major
 		mul_v_cmat_v(y.ptr(), x.ptr(), a.ptr(), Nr, Nc);
 	}
+}
+
+// matrix-vector multiplication with symmetric Doub matrix and Com vectors (use MKL)
+template <class T, class T1, class T2, SLS_IF(
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
+	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
+	is_Comp<contain_type<T2>>()
+)>
+void mul_sym(T &y, const T1 &a, const T2 &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+		SLS_ERR("wrong shape!");
+#endif
+	// do real part
+	Long N = x.size();
+	cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
+		N, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
+	// do imag part
+	cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
+		N, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
+}
+
+template <class T, class T1, class T2, class Ts = contain_type<T>, SLS_IF(
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
+	(is_Doub<contain_type<T>>() && is_Doub<contain_type<T1>>() && is_Doub<contain_type<T2>>() ||
+		is_Comp<contain_type<T>>() && is_Comp<contain_type<T1>>() && is_Comp<contain_type<T2>>()))>
+void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+		SLS_ERR("wrong shape!");
+#endif
+	Long N = x.size();
+	if constexpr (is_Doub<contain_type<T>>()) {
+		cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+			N, x.ptr(), 1, 0, y.ptr(), 1);
+	}
+	else {
+		Comp alpha(1), beta(0);
+		cblas_zgemv(CblasColMajor, CblasNoTrans, N, N, &alpha, a.ptr(),
+			N, x.ptr(), 1, &beta, y.ptr(), 1);
+	}
+}
+
+// matrix-vector multiplication with generic Doub matrix and Com vectors (use MKL)
+template <class T, class T1, class T2, SLS_IF(
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
+	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
+	is_Comp<contain_type<T2>>()
+)>
+void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+		SLS_ERR("wrong shape!");
+#endif
+	// do real part
+	Long N = x.size();
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+		N, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
+	// do imag part
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+		N, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
+}
+
+template <class T, class T1, class T2, SLS_IF(
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_Dvector<T2>() &&
+	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
+	is_Comp<contain_type<T2>>()
+)>
+void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+		SLS_ERR("wrong shape!");
+#endif
+	// do real part
+	Long N = x.size();
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+		N, (Doub*)x.ptr(), 2*x.step(), 0, (Doub*)y.ptr(), 2);
+	// do imag part
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+		N, (Doub*)x.ptr() + 1, 2*x.step(), 0, (Doub*)y.ptr() + 1, 2);
+}
+
+template <class T, class T1, class T2, SLS_IF(
+	is_dense_vec<T>() && is_dense_mat<T1>() && is_Dvector<T2>() &&
+	is_Comp<contain_type<T>>() && is_Comp<contain_type<T1>>() &&
+	is_Comp<contain_type<T2>>()
+)>
+void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+		SLS_ERR("wrong shape!");
+#endif
+	// do real part
+	Long N = x.size();
+	Comp alpha(1), beta(0);
+	cblas_zgemv(CblasColMajor, CblasNoTrans, N, N, &alpha, a.ptr(),
+		N, x.ptr(), x.step(), &beta, y.ptr(), 1);
+}
+
+template <class T, class T1, class T2, SLS_IF(
+	is_Dvector<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
+	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
+	is_Comp<contain_type<T2>>()
+)>
+void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+		SLS_ERR("wrong shape!");
+#endif
+	// do real part
+	Long N = x.size();
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+		N, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2 * y.step());
+	// do imag part
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
+		N, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2 * y.step());
 }
 
 // parallel version

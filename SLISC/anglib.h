@@ -1,20 +1,13 @@
-#pragma once
-#include "slisc.h"
-
-namespace slisc {
-
-// translate from anglib.f90
+// partly translated from anglib.f90
 // as directly as possible! all vars values unchanged.
 
 // anglib.f90: angular momentum coupling coefficients in Fortran 90
 // Copyright (C) 1998  Paul Stevenson
 
-inline Doub factorial(Long_I n) {
-	if (n == 0 || n == 1)
-		return 1.;
-	else
-		return n * factorial(n - 1);
-}
+#pragma once
+#include "scalar_arith.h"
+
+namespace slisc {
 
 inline Doub binom(Long_I n, Long_I r) {
 	if (n == r || r == 0)
@@ -40,9 +33,10 @@ inline void cgTableDim(Long_O Ndim, Long_O m1_max, Long_I l1, Long_I l2, Long_I 
 		m1_max = l2 + M;
 }
 
-// clebsch gordan coefficient [j1/2,m1/2,j2/2,m2/2,j/2,m/2]
-inline Doub cleb(Long_I j1, Long_I m1, Long_I j2, Long_I m2, Long_I j, Long_I m) {
+// clebsch gordan coefficient [two_j1/2,two_m1/2,two_j2/2,two_m2/2,two_j/2,two_m/2]
+inline Doub cleb(Long_I two_j1, Long_I two_m1, Long_I two_j2, Long_I two_m2, Long_I two_j, Long_I two_m) {
 
+	Long_I j1 = two_j1, m1 = two_m1, j2 = two_j2, m2 = two_m2, j = two_j, m = two_m;
 	Doub cleb, factor, sum;
 	Long par, z, zmin, zmax;
 
@@ -156,6 +150,18 @@ inline Doub ninej(Long_I a, Long_I b, Long_I c, Long_I d, Long_I e, Long_I f, Lo
     }
 	ninej = sum;
 	return ninej;
+}
+
+// calculate <y_{l1,l2}^{L,M}|y_{l,l}^{0,0}|y_{l1_,l2_}^{L_,M_}>
+// implementation using 9j symbol
+inline Doub yyy(Long_I l1, Long_I l2, Long_I L, Long_I M, Long_I l,
+	Long_I l1_, Long_I l2_, Long_I L_, Long_I M_)
+{
+	Doub out = (2 * l + 1) / (4 * PI)*sqrt((2 * l1_ + 1)*(2 * l2_ + 1)*(2 * L_ + 1))*
+		cleb(l * 2, 0, l1_ * 2, 0, l1 * 2, 0) *
+		cleb(l * 2, 0, l2_ * 2, 0, l2 * 2, 0) *
+		ninej(l * 2, l1_ * 2, l1 * 2, l * 2, l2_ * 2, l2 * 2, 0, L_ * 2, L * 2);
+	return out;
 }
 
 } // namespace slisc

@@ -6,11 +6,13 @@ namespace slisc {
 template <class T>
 class Dvector
 {
-public:
-	typedef T value_type;
+private:
 	T *m_p;
 	Long m_N;
 	Long m_step;
+
+public:
+	typedef T value_type;
 	Dvector();
 	Dvector(const T *ptr, Long_I N, Long_I step);
 

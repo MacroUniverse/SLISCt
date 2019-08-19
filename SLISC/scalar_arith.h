@@ -114,18 +114,35 @@ inline const T to_num(const T &x) { return x; }
 
 // integer functions
 // check if an integer is odd
-inline Bool isodd(Int_I n) { return n & 1; }
-inline Bool isodd(Long_I n) { return n & 1; }
-inline Bool isodd(size_t n) { return n & 1; }
+template <class Tint, SLS_IF(is_integral<Tint>())>
+inline Bool isodd(const Tint &n)
+{
+	return n & 1;
+}
 
 // return true if n is power of 2 or 0
-inline Bool ispow2(Int_I n) { return (n&(n-1)) == 0; }
-inline Bool ispow2(Long_I n) { return (n&(n-1)) == 0; }
+template <class Tint, SLS_IF(is_integral<Tint>())>
+inline Bool ispow2(const Tint &n)
+{
+	return (n&(n-1)) == 0;
+}
 
 // return the positive modulus (use "%" when i >= 0)
 template <class T1, class T2, SLS_IF(
 	is_integral<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
-inline T1 mod(const T1 &i, const T2 &n) { return (i % n + n) % n; }
+inline T1 mod(const T1 &i, const T2 &n)
+{
+	return (i % n + n) % n;
+}
+
+// return the positive modulus (s = n * d + return)
+template <class T1, class T2, SLS_IF(
+	is_fpt<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
+	inline T1 mod(Long_O n, const T1 &s, const T2 &d)
+{
+	n = floor(s/d);
+	return s - n * d;
+}
 
 // matrix double index to single index conversion
 
@@ -150,4 +167,20 @@ inline Doub cot(Doub_I x) { return 1. / tan(x); }
 
 inline Float sinc(Float_I x) { return x == 0.f ? 1.f : sin(x) / x; }
 inline Doub sinc(Doub_I x) { return x == 0. ? 1. : sin(x) / x; }
+
+// factorial of a number
+
+inline Doub factorial_imp(Doub_I n) {
+	if (n == 0. || n == 1.)
+		return 1.;
+	else
+		return n * factorial_imp(n - 1.);
 }
+
+inline Doub factorial(Long_I n) {
+	if (n > 150)
+		SLS_ERR("n too large!");
+	return factorial_imp((Doub)n);
+}
+
+} // namespace slisc

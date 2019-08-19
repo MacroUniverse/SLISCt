@@ -419,23 +419,19 @@ inline void abs2_vv(T *v, const T1 *v1, Long_I N)
 
 // s = sum(v)
 
-template <class T, SLS_IF(
-	is_Llong<Long>() && is_integral<T>()
-)>
-inline Long sum_v(const T *v, Long_I N)
+template <class T, SLS_IF(is_integral<T>())>
+inline Llong sum_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (N <= 0) SLS_ERR("illegal length!");
 #endif
-	Long s = v[0];
-	for (Long i = 1; i < N; ++i)
+	Llong s = v[0];
+	for (Llong i = 1; i < N; ++i)
 		s += v[i];
 	return s;
 }
 
-template <class T, SLS_IF(
-	is_fpt<T>() || is_comp<T>()
-)>
+template <class T, SLS_IF(is_fpt<T>() || is_comp<T>())>
 inline T sum_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
@@ -447,16 +443,14 @@ inline T sum_v(const T *v, Long_I N)
 	return s;
 }
 
-template <class T, SLS_IF(
-	is_Llong<Long>() && is_integral<T>()
-)>
-inline Long sum_abs_v(const T *v, Long_I N)
+template <class T, SLS_IF(is_integral<T>())>
+inline Llong sum_abs_v(const T *v, Long_I N)
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (N <= 0) SLS_ERR("illegal length!");
 #endif
-	Long s = v[0];
-	for (Long i = 1; i < N; ++i)
+	Llong s = v[0];
+	for (Llong i = 1; i < N; ++i)
 		s += abs(v[i]);
 	return s;
 }
@@ -503,6 +497,23 @@ inline rm_comp<T> max_abs_v(const T *v, Long_I N)
 	for (Long i = 1; i < N; ++i) {
 		val = abs(v[i]);
 		if (s < val)
+			s = val;
+	}
+	return s;
+}
+
+// s = min_abs(v)
+
+template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
+inline rm_comp<T> min_abs_v(const T *v, Long_I N)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) SLS_ERR("illegal length!");
+#endif
+	rm_comp<T> s = abs(v[0]), val;
+	for (Long i = 1; i < N; ++i) {
+		val = abs(v[i]);
+		if (s > val)
 			s = val;
 	}
 	return s;

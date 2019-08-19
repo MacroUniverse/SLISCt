@@ -4,9 +4,22 @@
 #pragma once
 #include "slisc.h"
 #include "cwfcomp/cwfcomp.h"
+#include <gsl/gsl_sf_gamma.h>
+#include <gsl/gsl_errno.h>
 
 namespace slisc {
 using cwfcomp::Coulomb_wave_functions;
+
+// === coulomb phase shift ===
+Doub coulomb_sigma(Int_I l, Doub_I eta)
+{
+	if (eta > 0)
+		SLS_ERR("are you sure?");
+	gsl_sf_result lnr, arg;
+	if (gsl_sf_lngamma_complex_e(l + 1, eta, &lnr, &arg) == GSL_ELOSS)
+		SLS_ERR("arg has loss!");
+	return arg.val;
+}
 
 // === coulombF() ===
 // efficiency is about 1e-4s/evaluation
@@ -16,8 +29,9 @@ using cwfcomp::Coulomb_wave_functions;
 inline Doub coulombF(Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
 {
 	Comp F, dF;
-	cwfcomp::Coulomb_wave_functions f(true, l, Z/k);
-	f.F_dF(k*r, F, dF);
+	Doub eta = Z / k;
+	cwfcomp::Coulomb_wave_functions f(true, l, eta);
+	f.F_dF(k * r, F, dF);
 	return real(F);
 }
 
@@ -30,16 +44,15 @@ inline void coulombF(Tv1 &F, Int_I l, Doub_I k, const Tv2 &r, Doub_I Z = -1.)
 		SLS_ERR("wrong shape!");
 #endif
 
-	Long i;
 	Comp F1, dF1;
 	Doub eta = Z / k;
-	for (i = 0; i < r.size(); ++i) {
+	for (Long i = 0; i < r.size(); ++i) {
 		// must use a new "Coulomb_wave_functions" to keep accuracy
 		// if the same object is used, the ODE solver might solve next point based on the previous point
 		// constructor time is only 1/60 to 1/10 of the calculation time, so don't try to optimize this!
 		cwfcomp::Coulomb_wave_functions f(true, l, eta);
-		f.F_dF(k*r(i), F1, dF1);
-		F(i) = real(F1);
+		f.F_dF(k * r[i], F1, dF1);
+		F[i] = real(F1);
 	}
 }
 
@@ -51,33 +64,29 @@ inline void coulombF(Tv1 &F, Int_I l, Doub_I k, const Tv2 &r, Doub_I Z = -1.)
 inline Doub coulombDF(Int_I l, Doub_I k, Doub_I r, Doub_I Z = -1.)
 {
 	Comp F, dF;
-	cwfcomp::Coulomb_wave_functions f(true, l, Z / k);
-	f.F_dF(k*r, F, dF);
+	Doub eta = Z / k;
+	cwfcomp::Coulomb_wave_functions f(true, l, eta);
+	f.F_dF(k * r, F, dF);
 	return real(dF);
 }
 
 // for vector/matrix and tensor
-inline void coulombDF0(Vbase<Doub> &dF, Int_I l, Doub_I k, const Vbase<Doub> &r, Doub_I Z = -1.)
+template <class Tv1, class Tv2, SLS_IF(is_dense<Tv1>() && is_dense<Tv2>())>
+inline void coulombDF(Tv1 &dF, Int_I l, Doub_I k, const Tv2 &r, Doub_I Z = -1.)
 {
-	Long i;
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(dF, r))
+		SLS_ERR("wrong shape!");
+#endif
+
 	Comp F1, dF1;
 	Doub eta = Z / k;
-	for (i = 0; i < r.size(); ++i) {
+	for (Long i = 0; i < r.size(); ++i) {
 		cwfcomp::Coulomb_wave_functions f(true, l, eta);
-		f.F_dF(k*r(i), F1, dF1);
-		dF(i) = real(dF1);
+		f.F_dF(k * r[i], F1, dF1);
+		dF[i] = real(dF1);
 	}
 }
-
-// derivative with respect to "r", not "k*r"
-inline void coulombDF(VecDoub &dF, Int_I l, Doub_I k, VecDoub_I r, Doub_I Z = -1.)
-{ dF.resize(r); coulombDF0(dF, l, k, r, Z); }
-
-inline void coulombDF(MatDoub &dF, Int_I l, Doub_I k, MatDoub_I r, Doub_I Z = -1.)
-{ dF.resize(r); coulombDF0(dF, l, k, r, Z); }
-
-inline void coulombDF(Mat3Doub &dF, Int_I l, Doub_I k, Mat3Doub_I r, Doub_I Z = -1.)
-{ dF.resize(r); coulombDF0(dF, l, k, r, Z); }
 
 // === coulombFDF() ===
 // coulombF and derivative with no extra cost

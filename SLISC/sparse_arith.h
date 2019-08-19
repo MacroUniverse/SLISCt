@@ -1,6 +1,7 @@
 // arithmetics for sparse containers
 
 #pragma once
+#include "diag.h"
 #include "matcooh.h"
 #include "cmatobd.h"
 #include "ptr_arith.h"
@@ -272,9 +273,11 @@ void mul(Ty &y, const Ta &a, const Tx &x)
 
 // mul(Cmat, Cmat, Diag)
 template <class T, class T1, class T2, SLS_IF(
-	is_scalar<T>() && is_scalar<T1>() && is_scalar<T2>()
+	is_dense<T>() && is_cmajor<T>() &&
+	is_dense<T1>() && is_cmajor<T1>() &&
+	is_Diag<T2>()
 )>
-void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
+void mul(T &c, const T1 &a, const T2 &b)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.n2() != b.n1()) SLS_ERR("illegal shape!");
@@ -286,14 +289,15 @@ void mul(Cmat<T> &c, const Cmat<T1> &a, const Diag<T2> &b)
 
 // mul(Cmat, Diag, Cmat)
 template <class T, class T1, class T2, SLS_IF(
-	is_scalar<T>() && is_scalar<T1>() && is_scalar<T2>()
+	is_dense<T>() && is_cmajor<T>() &&
+	is_Diag<T1>() &&
+	is_dense<T2>() && is_cmajor<T2>()
 )>
-void mul(Cmat<T> &c, const Diag<T2> &a, const Cmat<T1> &b)
+void mul(T &c, const T1 &a, const T2 &b)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.n2() != b.n1()) SLS_ERR("illegal shape!");
 #endif
-	c.resize(b);
 	mul_cmat_diag_cmat(c.ptr(), a.ptr(), b.ptr(), b.n1(), b.n2());
 }
 

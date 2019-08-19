@@ -23,7 +23,7 @@ public:
 	const T* ptr() const;
 	Long size() const;
 	void resize(Long_I N);
-	// resize and copy old data, new elements are uninitialized
+	// resize and copy old data, new elements are set to 0
 	void resize_cpy(Long_I N);
 	T & operator[](Long_I i);
 	const T & operator[](Long_I i) const;
@@ -90,7 +90,7 @@ inline void Vbase<T>::resize(Long_I N)
 		if (m_N == 0) {
 			m_N = N; m_p = new T[N];
 		}
-		else {
+		else { // m_N != 0
 			delete[] m_p;
 			if (N == 0)
 				m_N = 0;
@@ -110,10 +110,15 @@ inline void Vbase<T>::resize_cpy(Long_I N)
 			resize(N);
 		}
 		else {
-			m_N = N;
 			T *old_p = m_p;
 			m_p = new T[N];
-			veccpy(m_p, old_p, N);
+			if (N > m_N) {
+				veccpy(m_p, old_p, m_N);
+				vecset(m_p + m_N, 0, N - m_N);
+			}
+			else // N < m_N
+				veccpy(m_p, old_p, N);
+			m_N = N;
 			delete[] old_p;
 		}
 	}

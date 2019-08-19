@@ -14,6 +14,7 @@ private:
 	Long m_N1, m_N2, m_N3;
 	Long m_step1, m_step2, m_step3; // a(i,j) = m_p + m_step1*i + m_step2*j + m_step*k
 public:
+	typedef T value_type;
 	Jcmat3d();
 	Jcmat3d(const T *ptr, Long_I N1, Long_I N2, Long_I N3, Long_I step1, Long_I step2, Long_I step3);
 	void set(const T *ptr, Long_I N1, Long_I N2, Long_I N3, Long_I step1, Long_I step2, Long_I step3);
@@ -40,6 +41,9 @@ public:
 	Long step2() const;
 	Long step3() const;
 	Long size() const;
+
+	const T *ptr() const;
+	T *ptr();
 };
 
 template <class T>
@@ -184,4 +188,17 @@ inline Long Jcmat3d<T>::size() const
 {
 	return m_N;
 }
+
+template<class T>
+inline const T * Jcmat3d<T>::ptr() const
+{
+	return m_p;
+}
+
+template<class T>
+inline T * Jcmat3d<T>::ptr()
+{
+	return m_p;
+}
+
 } // namespace slisc

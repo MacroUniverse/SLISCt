@@ -5,7 +5,7 @@
 // SLS_CHECK_BOUNDS
 // SLS_CHECK_SHAPE
 // SLS_RAND_SEED
-// SLS_USE_INT_AS_LONG
+// SLS_USE_INT_AS_LONG (this one must be defined for every translation unit, i.e. in "global.h" or in compiler option)
 // SLS_CHECK_COO_REPEAT
 // SLS_ALLOW_COPY_CONSTRUCTOR
 // SLS_CUSLISC
@@ -17,6 +17,7 @@
 // SLS_IF0
 // SLS_IF
 // SLS_TIME_H_ERR
+// SLS_MATT_REPLACE
 
 // basics
 #include "global.h"
@@ -66,6 +67,7 @@
 #include "interp1.h"
 #include "lin_eq.h"
 #include "eig.h"
+#include "ylm.h"
 #include "anglib.h"
 #include "coulomb.h"
 #include "mat_fun.h"

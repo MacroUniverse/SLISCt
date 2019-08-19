@@ -4,6 +4,8 @@
 #pragma once
 
 #include "meta.h"
+#include "dcmat.h"
+#include "jcmat3d.h"
 
 namespace slisc {
 //  === pointer interface ===
@@ -181,6 +183,23 @@ inline void copy(T &a, const T1 &a1)
 		SLS_ERR("wrong shape!");
 #endif
 	matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.n1(), a.n2());
+}
+
+// from Jcmat3<> to Jcmat3<>
+template <class T, class T1, SLS_IF(
+	is_promo<T, T1>())>
+inline void copy(Jcmat3d<T> &a, const Jcmat3d<T1> &a1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(a, a1))
+		SLS_ERR("wrong shape!");
+#endif
+
+	// slow
+	for (Long k = 0; k < a.n3(); ++k)
+		for (Long j = 0; j < a.n2(); ++j)
+			for (Long i = 0; i < a.n1(); ++i)
+				a(i, j, k) = a1(i, j, k);
 }
 
 // for sparse containers

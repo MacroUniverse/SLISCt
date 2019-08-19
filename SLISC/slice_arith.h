@@ -371,7 +371,7 @@ void slice(Jcmat3d<T> &sli, const Cmat3d<T> &a3,
 {
 #ifdef SLS_CHECK_BOUNDS
 	if (i < 0 || i + N1 > a3.n1() || j < 0 ||
-		j + N2 > a3.n2() || k < 0 || k + N2 > a3.n3())
+		j + N2 > a3.n2() || k < 0 || k + N3 > a3.n3())
 		SLS_ERR("out of bound!");
 #endif
 	sli.set(&a3(i, j, k), N1, N2, N3, 1, a3.n1(), a3.n1()*a3.n2());

@@ -14,6 +14,7 @@ private:
 	Long m_N1, m_N2;
 	Long m_step1, m_step2; // a(i,j) = m_p + m_step1*i + m_step2*j
 public:
+	typedef T value_type;
 	Jcmat();
 	Jcmat(const T *ptr, Long_I Nr, Long_I Nc, Long_I rstep, Long_I cstep);
 	void set(const T *ptr, Long_I Nr, Long_I Nc, Long_I rstep, Long_I cstep);
@@ -38,6 +39,9 @@ public:
 	Long step1() const;
 	Long step2() const;
 	Long size() const;
+
+	const T *ptr() const;
+	T *ptr();
 };
 
 template <class T>
@@ -166,4 +170,17 @@ inline Long Jcmat<T>::size() const
 {
 	return m_N;
 }
+
+template<class T>
+inline const T * Jcmat<T>::ptr() const
+{
+	return m_p;
+}
+
+template<class T>
+inline T * Jcmat<T>::ptr()
+{
+	return m_p;
+}
+
 } // namespace slisc

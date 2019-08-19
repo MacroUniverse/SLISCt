@@ -94,6 +94,13 @@ constexpr Bool is_Int()
 	return is_same<T, Int>();
 }
 
+// note that Long might ether be Int or Llong, depending on macro, see definition
+template<class T>
+constexpr Bool is_Long()
+{
+	return is_same<T, Llong>();
+}
+
 template<class T>
 constexpr Bool is_Llong()
 {
@@ -495,6 +502,8 @@ constexpr Int contain_num()
 	else if (is_Scmat<T>()) return 43;
 	else if (is_Dmat<T>()) return 44;
 	else if (is_Dcmat<T>()) return 45;
+	else if (is_Jcmat<T>()) return 46;
+	else if (is_Jcmat3d<T>()) return 47;
 
 	return -1;
 }

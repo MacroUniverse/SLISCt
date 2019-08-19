@@ -54,7 +54,7 @@ inline void test_sparse()
 		McoohComp b(3, 3, 5);
 		if (b.n1() != 3 || b.n2() != 3 || b.capacity() != 5 || b.nnz() != 0)
 			SLS_ERR("failed!");
-		DiagInt c(5, 5, 1);
+		DiagInt c(5, 1);
 		if (c.n1() != 5 || c.n2() != 5 || c.nnz() != 5)
 			SLS_ERR("failed!");
 		if ((VecInt&)c != 1)
