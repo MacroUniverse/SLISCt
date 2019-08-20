@@ -7,6 +7,8 @@ void test_mattsave()
 
 	// write to file
 	Matt matt;
+	if (file_exist("test.matt"))
+		remove("test.matt");
 	matt.open("test.matt", "w");
 
 	// scalars

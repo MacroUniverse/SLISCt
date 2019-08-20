@@ -18,19 +18,22 @@ class Matt;
 // Matt class for text mode
 class Matt {
 public:
+	Matt();
+	Matt(Str_I fname, Char_I *rw, Int_I precision = 17);
 	// delimiter between two numbers, can only be ' ' for now.
 	static const Char dlm = ' ';
-	char m_rw; // 'r' for read 'w' for write
+	Char m_rw; // 'r' for read 'w' for write
 	ifstream m_in; // read file
 	ofstream m_out; // write file
 	Int m_n; // variable numbers
+	Str fname; // name of the opened file
 	vector<Str> m_name; // variable names
 	vector<Int> m_type; // variable types
 	vector<vector<Long>> m_size; // variable dimensions
 	vector<Long> m_ind; // variable positions (line indices)
 
 	// open a file
-	void open(Str fname, Char_I *rw, Int_I precision = 17);
+	void open(Str_I fname, Char_I *rw, Int_I precision = 17);
 
 	// close a file, if not called, will be called in destructor
 	void close();	
@@ -67,7 +70,8 @@ Long scanInverse(ifstream &fin)
 	ind = fin.tellg();
 	for (i = 2; i < 100; ++i) {
 		fin.seekg(ind - i); c = fin.get();
-		if (c == Matt::dlm) break;
+		if (c == Matt::dlm)
+			break;
 	}
 	fin >> N;
 	fin.seekg(ind - i);
@@ -116,23 +120,46 @@ inline Int Matt::search(Str_I name)
 	for (Int i = 0; i < m_n; ++i)
 		if (name == m_name[i])
 			return i;
-	SLS_ERR("variable name not found!");
+	SLS_ERR("variable name not found: " + name + ", file : " + fname);
 	return -1;
 }
 
-void Matt::open(Str fname, Char_I *rw, Int_I precision)
+inline Matt::Matt() {}
+
+inline Matt::Matt(Str_I fname, Char_I * rw, Int_I precision)
+{ open(fname, rw, precision); }
+
+void Matt::open(Str_I fname, Char_I *rw, Int_I precision)
 {
+	this->fname = fname;
 	if (rw[0] == 'w') {
+
+#ifndef SLS_MATT_REPLACE
+		if (file_exist(fname)) {
+			while (true) {
+				pause(10);
+				if (file_exist(fname)) {
+					SLS_WARN("\n\nfile already exist! delete file to continue...\n"
+						"  (define SLS_MATT_REPLACE to replace file by default)\n\n");
+				}
+				else {
+					break;
+				}
+			}
+		}
+#endif
 		m_rw = 'w';
 		m_n = 0;
 		m_out = ofstream(fname);
+		if (!m_out.good())
+			SLS_ERR("error: file not created (directory does not exist ?): " + fname);
 		m_out.precision(precision);
 	}
 	else {
 		m_rw = 'r';
 		m_in = ifstream(fname);
-		if (!m_in)
-			SLS_ERR("error: file not found: ");
+		if (!m_in.good())
+			SLS_ERR("error: file not found: " + fname);
 		m_in.precision(17);
 		get_profile(); // get var names
 	}
@@ -140,11 +167,10 @@ void Matt::open(Str fname, Char_I *rw, Int_I precision)
 
 inline void Matt::close()
 {
-	Llong i;
 	if (m_rw == 'w') {
 		ofstream &fout = m_out;
 		// write position of variables
-		for (i = m_ind.size() - 1; i >= 0; --i)
+		for (Long i = m_ind.size() - 1; i >= 0; --i)
 			fout << m_ind[i] << dlm;
 		// write number of variables
 		fout << m_n;
@@ -153,6 +179,12 @@ inline void Matt::close()
 	else {
 		m_in.close();
 	}
+	m_rw = '\0';
+	m_n = 0;
+	m_name.clear();
+	m_type.clear();
+	m_size.clear();
+	m_ind.clear();
 }
 
 // send one scalar to ofstream
@@ -180,7 +212,7 @@ void Matt::read(T &s)
 	if constexpr (is_Char<T>()) {
 		Int temp; m_in >> temp; s = (T)temp;
 	}
-	else if constexpr (is_Int<T>() || is_Doub<T>())
+	else if constexpr (is_Int<T>() || is_Llong<T>() || is_Doub<T>())
 		m_in >> s;
 	else if constexpr (is_Comp<T>())
 		readComplex(s);
@@ -212,12 +244,13 @@ inline Matt::~Matt()
 }
 
 template <class T, SLS_IF(
-	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
-)>
+	is_Char<T>() || is_Int<T>() || is_Llong<T>() || is_Doub<T>() || is_Comp<T>())>
 void save(const T &s, Str_I varname, Matt_IO matt)
 {
 	Long i, n;
 	ofstream &fout = matt.m_out;
+	if (!fout.is_open())
+		SLS_ERR("matt file not open: " + matt.fname);
 	++matt.m_n; matt.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
@@ -233,13 +266,14 @@ void save(const T &s, Str_I varname, Matt_IO matt)
 	matt.write(s);
 }
 
-template <class T, SLS_IF(
-	is_Int<T>() || is_Char<T>() || is_Doub<T>() || is_Comp<T>()
-)>
-inline void save(const Vector<T> &v, Str_I varname, Matt_IO matt)
+template <class Tv, class T = contain_type<Tv>, SLS_IF(
+	ndims<Tv>() == 1 && is_scalar<T>())>
+inline void save(const Tv &v, Str_I varname, Matt_IO matt)
 {
 	Long i, n;
 	ofstream &fout = matt.m_out;
+	if (!fout.is_open())
+		SLS_ERR("matt file not open!");
 	++matt.m_n; matt.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
@@ -260,13 +294,15 @@ inline void save(const Vector<T> &v, Str_I varname, Matt_IO matt)
 
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
 	(is_Matrix<Tm>() || is_Cmat<Tm>()) &&
-	(is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>())
+	(is_Char<T>() || is_Int<T>() || is_Llong<T>() || is_Doub<T>() || is_Comp<T>())
 )>
 inline void save(const Tm &a, Str_I varname, Matt_IO matt,
 	Long_I step1 = 1, Long_I step2 = 1)
 {
 	Long i, j, m, n;
 	ofstream &fout = matt.m_out;
+	if (!fout.is_open())
+		SLS_ERR("matt file not open!");
 	++matt.m_n; matt.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
@@ -286,14 +322,15 @@ inline void save(const Tm &a, Str_I varname, Matt_IO matt,
 		}
 }
 
-template <class T, SLS_IF(
-	is_Doub<T>() || is_Comp<T>()
-)>
-inline void save(const Mat3d<T> &a, Str_I varname, Matt_IO matt,
+template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
+	is_dense<Tmat>() && ndims<Tmat>() == 3 && is_scalar<T>())>
+inline void save(const Tmat &a, Str_I varname, Matt_IO matt,
 	Long_I step1 = 1, Long_I step2 = 1, Long_I step3 = 1)
 {
 	Long i, j, k, m, n, q;
 	ofstream &fout = matt.m_out;
+	if (!fout.is_open())
+		SLS_ERR("matt file not open!");
 	++matt.m_n; matt.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
@@ -320,6 +357,8 @@ inline void save(Mat3Doub_I &a, Str_I varname, Matt_IO matt,
 {
 	Long i, j, k, m, n, ind, Nslice{ slice.size() };
 	ofstream &fout = matt.m_out;
+	if (!fout.is_open())
+		SLS_ERR("matt file not open!");
 	++matt.m_n; matt.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
@@ -374,6 +413,8 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 {
 	Long i, j, k, m, n, ind, Nslice{ slice.size() };
 	ofstream &fout = matt.m_out;
+	if (!fout.is_open())
+		SLS_ERR("matt file not open!");
 	++matt.m_n; matt.m_ind.push_back(fout.tellp());
 	// write variable name info
 	n = varname.size();
@@ -424,9 +465,28 @@ inline void save(Mat3Comp_I &a, Str_I varname, Matt_IO matt,
 		SLS_ERR("illegal value of xyz");
 }
 
+// save one var to one file (replace old file)
+template <class T>
+inline void save(T &s, Str_I varname, Str_I matt_file)
+{
+	Matt matt(matt_file, "w");
+	save(s, varname, matt);
+	matt.close();
+}
+
+// for string
+void save(Str_I str, Str_I varname, Matt_IO matt)
+{
+	SvecChar sli; sli.set(str.data(), str.size());
+	save(sli, varname, matt);
+}
+
+
+// ===== read matt files =====
+
 template <class T, SLS_IF(
-	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
-)>
+	is_Char<T>() || is_Int<T>() || is_Llong<T>() ||
+	is_Doub<T>() || is_Comp<T>())>
 inline void load(T &s, Str_I varname, Matt_IO matt)
 {
 	Int i;
@@ -443,8 +503,8 @@ inline void load(T &s, Str_I varname, Matt_IO matt)
 }
 
 template <class T, SLS_IF(
-	is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>()
-)>
+	is_Char<T>() || is_Int<T>() || is_Llong<T>() ||
+	is_Doub<T>() || is_Comp<T>())>
 inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
 {
 	Long i, n;
@@ -464,8 +524,8 @@ inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
 }
 
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
-	is_Matrix<Tm>() && (is_Char<T>() || is_Int<T>() || is_Doub<T>() || is_Comp<T>())
-)>
+	is_dense_mat<Tm>() && (is_Char<T>() || is_Int<T>() || is_Llong<T>() ||
+		is_Doub<T>() || is_Comp<T>()))>
 inline void load(Tm &a, Str_I varname, Matt_IO matt)
 {
 	Long i, j, m, n;
@@ -485,10 +545,9 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
 			matt.read(a(i, j));
 }
 
-template <class Tm, class T = contain_type<Tm>, SLS_IF(
-	is_Mat3d<Tm>() && (is_Doub<T>() || is_Comp<T>())
-)>
-inline void load(Tm &a, Str_I varname, Matt_IO matt)
+template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
+	is_dense<Tmat>() && ndims<Tmat>() == 3 && is_scalar<T>())>
+inline void load(Tmat &a, Str_I varname, Matt_IO matt)
 {
 	Long i, j, k, m, n, q;
 	ifstream &fin = matt.m_in;
@@ -507,6 +566,15 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
 		for (j = 0; j < n; ++j)
 			for (i = 0; i < m; ++i)
 				matt.read(a(i, j, k));
+}
+
+// read one var from one file
+template <class T>
+inline void load(T &s, Str_I varname, Str_I matt_file)
+{
+	Matt matt(matt_file, "r");
+	load(s, varname, matt);
+	matt.close();
 }
 
 } // namespace slisc

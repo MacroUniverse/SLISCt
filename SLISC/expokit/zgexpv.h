@@ -117,7 +117,7 @@ void ZGEXPV(Int_I n, Int_I m, Doub_I t, Comp *w, Doub tol, Doub_I anorm,
 			hj1j = cblas_dznrm2(n, wsp + j1v, 1);
 
 			if (hj1j <= break_tol) {
-				std::cout << "happy breakdown: mbrkdwn = " << j + 1 << "h = " << hj1j << std::endl;
+				// std::cout << "happy breakdown: mbrkdwn = " << j + 1 << "h = " << hj1j << std::endl;
 				k1 = 0;
 				ibrkflag = 1;
 				mbrkdwn = j + 1;

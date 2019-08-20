@@ -18,6 +18,7 @@
 // SLS_IF
 // SLS_TIME_H_ERR
 // SLS_MATT_REPLACE
+// SLS_HAS_FILESYSTEM (only define when <filesystem> works, don't define for linux)
 
 // basics
 #include "global.h"

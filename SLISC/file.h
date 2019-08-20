@@ -3,7 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <codecvt>
-#ifdef _MSC_VER
+#ifdef SLS_HAS_FILESYSTEM
 #include <filesystem>
 #endif
 
@@ -13,7 +13,7 @@ using std::stringstream;
 
 inline void file_list(vector_O<Str> names, Str_I path);
 
-#ifdef _MSC_VER
+#ifdef SLS_HAS_FILESYSTEM
 // check if a file exist on Windws (case sensitive)
 inline Bool file_exist_case(Str_I fname)
 {
@@ -38,7 +38,7 @@ inline Bool file_exist_case(Str_I fname)
 
 // check if a file exist, default is case sensitive
 inline Bool file_exist(Str_I fname, Bool_I case_sens = true) {
-#ifndef _MSC_VER
+#ifndef SLS_HAS_FILESYSTEM
 	ifstream f(fname.c_str());
 	return f.good();
 #else
@@ -98,12 +98,11 @@ inline void file_list(vector_O<Str> fnames, Str_I path)
 	// remove temporary file
 	std::remove(temp_fname.c_str());
 }
-#endif
-
+#else
+#ifdef SLS_HAS_FILESYSTEM
 // std::filesystem implementation of file_list()
 // works in Visual Studio, not gcc 8
 // directory example: "C:/Users/addis/Documents/GitHub/SLISC/"
-#ifdef _MSC_VER
 inline void file_list(vector_O<Str> names, Str_I path)
 {
 	for (const auto & entry : std::filesystem::directory_iterator(path)) {
@@ -118,6 +117,12 @@ inline void file_list(vector_O<Str> names, Str_I path)
 		names.push_back(str);
 	}
 }
+#else
+inline void file_list(vector_O<Str> fnames, Str_I path)
+{
+	SLS_ERR("not implemented");
+}
+#endif
 #endif
 
 // choose files with a given extension from a list of files
