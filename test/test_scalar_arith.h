@@ -35,6 +35,13 @@ void test_scalar_arith()
 		SLS_ERR("failed!");
 	if (mod(-5, 4) != 3 || mod(-6, 4) != 2 || mod(-7, 4) != 1 || mod(-8, 4) != 0)
 		SLS_ERR("failed!");
+	for (Doub s = -3; s <= 3; s += 0.1) {
+		Long n;
+		Doub d = 0.5;
+		Doub ret = mod(n, s, d);
+		if (ret < 0 || abs(ret + n * d - s) > 2e-15)
+			SLS_ERR("failed!");
+	}
 
 	// operator== involving floating point complex<>
 	if (Fcomp(3, 4) != Comp(3, 4)) SLS_ERR("failed!");
@@ -76,5 +83,15 @@ void test_scalar_arith()
 	if (!is_equiv(Fcomp(1.25, 3.75) - Comp(-0.75, 0.75), Comp(2, 3)))
 		SLS_ERR("failed!");
 	if (!is_equiv(Fcomp(1., 2.) / Comp(1., 2.), Comp(1, 0)))
+		SLS_ERR("failed!");
+
+	// test factorial()
+	if (factorial(5) != 120)
+		SLS_ERR("failed!");
+	if (factorial(17) != 355687428096000)
+		SLS_ERR("failed!");
+	if (abs(factorial(100) - 9.33262154439441526e157)/9.33262154439441526e157 > 1e-14)
+		SLS_ERR("failed!");
+	if (abs(factorial(150) - 5.71338395644585459e262) / 5.71338395644585459e262 > 1e-14)
 		SLS_ERR("failed!");
 }

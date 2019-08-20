@@ -60,16 +60,19 @@ void test_mattsave()
 
 	// 3d arrays
 	Mat3Doub A3(2, 2, 2);
-	Doub *pA3 = &A3(0, 0, 0);
 	for (Int i = 0; i < 8; ++i)
-		pA3[i] = 1. + (Doub)i;
+		A3[i] = 1. + (Doub)i;
 	save(A3, "A3", matt);
 
 	Mat3Comp C3(2, 2, 2);
-	Comp *pC3 = &C3(0, 0, 0);
 	for (Int i = 0; i < 8; ++i)
-		pC3[i] = Comp(1. + (Doub)i, (Doub)i);
+		C3[i] = Comp(1. + (Doub)i, (Doub)i);
 	save(C3, "C3", matt);
+
+	Cmat3Comp CC3(10, 12, 15);
+	for (Int i = 0; i < CC3.size(); ++i)
+		CC3[i] = Comp(randDoub(), randDoub());
+	save(CC3, "CC3", matt);
 
 	matt.close();
 
@@ -134,6 +137,11 @@ void test_mattsave()
 	load(r_C3, "C3", matt);
 	r_C3 -= C3;
 	if (norm(r_C3) > 1e-15) SLS_ERR("failed!");
+
+	Cmat3Comp r_CC3(0, 0, 0);
+	load(r_CC3, "CC3", matt);
+	r_CC3 -= CC3;
+	if (norm(r_CC3) > 1e-15) SLS_ERR("failed!");
 
 	matt.close();
 }

@@ -124,10 +124,10 @@ inline void test_arithmetic()
 	{
 		Long ind;
 		VecBool a(4); a[0] = 1; a[1] = 0; a[2] = 1; a[3] = 1;
-		if (!is_equiv(sum(a), Long(3))) SLS_ERR("failed!");
+		if (!is_equiv(sum(a), Llong(3))) SLS_ERR("failed!");
 
 		VecInt b(4); b[0] = 2; b[1] = 3; b[2] = -1; b[3] = 5;
-		if (!is_equiv(sum(b), Long(9))) SLS_ERR("failed!");
+		if (!is_equiv(sum(b), Llong(9))) SLS_ERR("failed!");
 		if (!is_equiv(max(b), 5)) SLS_ERR("failed!");
 		max(ind, b); if (ind != 3) SLS_ERR("failed!");
 		if (!is_equiv(max_abs(b), 5)) SLS_ERR("failed!");
@@ -143,6 +143,13 @@ inline void test_arithmetic()
 		if (!is_equiv(sum(d), Comp(45.,-45.))) SLS_ERR("failed!");
 		if (!is_equiv(max_abs(d), abs(Comp(9,9)))) SLS_ERR("failed!");
 		if (!is_equiv(norm2(d), 285.*2)) SLS_ERR("failed!");
+
+		CmatComp e(3, 3); linspace(e, Comp(1., -1.), Comp(9., -9.));
+		if (!is_equiv(sum(e), Comp(45., -45.))) SLS_ERR("failed!");
+		if (!is_equiv(max_abs(e), abs(Comp(9, 9)))) SLS_ERR("failed!");
+		if (!is_equiv(norm2(e), 285. * 2)) SLS_ERR("failed!");
+		if (!is_equiv(norm2(slice(e, 0, 2, 0, 2)), 46. * 2))
+			SLS_ERR("failed!");;
 	}
 	// sum_abs
 	{

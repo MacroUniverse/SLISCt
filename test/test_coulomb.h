@@ -22,4 +22,12 @@ void test_coulomb()
 	cout << "time/eval = " << time.toc()/N << endl;
 	//disp(r, 15);
 	//disp(F, 15);
+
+	// coulomb phase shift
+	Doub ret = coulomb_sigma(3, -2./5);
+	if (abs(ret + 0.503297642943251313) > 1e-15)
+		SLS_ERR("failed!");
+	ret = coulomb_sigma(4, -2. / 9);
+	if (abs(ret + 0.3347819876751476) > 1e-15)
+		SLS_ERR("failed!");
 }

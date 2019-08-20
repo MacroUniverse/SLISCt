@@ -1,6 +1,8 @@
 // test dense containers here
 #pragma once
 #include "../SLISC/arithmetic.h"
+#include "../SLISC/slice_arith.h"
+#include "../SLISC/random.h"
 
 void test_dense()
 {
@@ -93,11 +95,17 @@ void test_dense()
 	{
 		Vbase<Int> v(3);
 		v(0) = 100; v(1) = 101; v(2) = 102;
-		v.resize_cpy(4);
-		if (v(0) != 100 || v(1) != 101 || v(2) != 102)
+		v.resize_cpy(5);
+		if (v[0] != 100 || v[1] != 101 || v[2] != 102 || v[3] != 0 || v[4] != 0)
 			SLS_ERR("failed!");
 		v.resize_cpy(2);
 		if (v(0) != 100 || v(1) != 101)
+			SLS_ERR("failed!");
+
+		Cmat3Doub a3(2, 3, 4), b3(2, 3, 4);
+		rand(a3); b3 = a3;
+		b3.resize_cpy(3, 4, 5);
+		if (slice(b3, 0, 2, 0, 3, 0, 4) != a3)
 			SLS_ERR("failed!");
 	}
 

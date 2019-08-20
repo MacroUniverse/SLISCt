@@ -3,6 +3,7 @@
 #pragma once
 
 #include "test_meta.h"
+void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_I j, slisc::Long_I n2, slisc::Long_I k, slisc::Long_I n3);
 #include "test_scalar_arith.h"
 #include "test_imag.h"
 #include "test_dense.h"
@@ -21,6 +22,7 @@
 //#include "test_eigen_linsolve.h"
 //#include "test_eigen_fft.h"
 #include "test_time.h"
+#include "test_ylm.h"
 #include "test_coulomb.h"
 #include "test_input.h"
 #include "test_disp.h"
@@ -38,6 +40,7 @@
 #include "test_anglib.h"
 #include "test_gsl.h"
 #include "test_unicode.h"
+#include "test_omp.h"
 
 // #include "test/test_mparith.h"
 
@@ -88,6 +91,8 @@ inline void test_all()
 	test_lin_eq();
 	cout << "test_time()" << endl;
 	test_time();
+	cout << "test_ylm()" << endl;
+	test_ylm();
 	cout << "test_coulomb()" << endl;
 	test_coulomb();
 	cout << "test_mattsave()" << endl;
@@ -98,6 +103,8 @@ inline void test_all()
 	test_gsl();
 	cout << "test_unicode()" << endl;
 	test_unicode();
+	cout << "test_omp()" << endl;
+	test_omp();
 
 	// eigen
 	/*cout << "test_eigen_basics()" << endl;
