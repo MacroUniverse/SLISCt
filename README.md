@@ -32,7 +32,7 @@ int main()
 }
 ```
 
-SLISC has a modular design like the Standard Template Library. Just include any header file(s) in the `SLISC/` folder. All definitions has namespace `slisc`.
+SLISC has a modular design like the Standard Template Library. Just include any header file(s) in the `SLISC/` folder. All definitions have namespace `slisc`.
 
 ## Recommended Programming Style
 * All SLISC containers types (e.g. Matrix<>, Vector<>) should be returned by reference.
@@ -56,17 +56,17 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 Where `is_dense_vec<T>()` returns `true` if `T` is a dense vector (such as `Vector<>`, `FixVec<>`, `Svector<>`), `is_dense_mat<T>()` returns `true` if `T` is a dense matrix (such as `Matrix<>`, `Cmat<>`, `FixCmat<>`). These function templates are also defined in "meta.h".
 
 ## GSL (GNU Scientific Library)
-* gsl-2.5 has been included in SLISC (it's not header only), see `test/test_gsl.h` for an example.
+* gsl-2.5 has been included in SLISC (it's not header only), see `test/test_gsl.h` for examples.
 * Note that not all gsl source files are compiled in Visual Studio project and in Makefile currently
 * It takes some effor to figure out which gsl source files should be included in the project or makefile (unfortunately, some header files also has `.c` extension, if those are included, there will be an error).
 * The easiest way to add new source file to the project: `SLISC/gsl` already has all the source needed for gsl. To use a new function, just include the header and use it. If the linker says that function is not found, search it's definition, then add the `.c` file to the Visual Studio project and/or to the Makefile.
 
 ## Headers Introduction
 When using something in any header file, just including that header file will be enough. Header files can be included in any order. Here is some brief introduction for each header file:
-* `slisc.h` is a shorthand for some of the most frequently used header files.
-* `global.h` has all the container declaration and type definitions etc.
+* `slisc.h` includes all the header files in SLISC (except testing)
+* `global.h` has all the container declaration and typedef etc.
 * `meta.h` has all the meta-programming utilities.
-* `complex_arith.h` defines extra operators used by `std::complex<>`, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=`.
+* `complex_arith.h` defines extra operators used by `std::complex<>`, such as  `+, -, *, /, +=, -=, *=, /=, ==, !=` for mixed complex types.
 * `imag.h` defines a pure imaginary number type `Imag<>`, and related operators.
 * `scalar_arith.h` defines scalar utilities such as `MIN()`, `MAX()`, `SQR()`, `isodd()`, `mod()`.
 * `vector.h` defines the base type `Vbase<T>` and vector container `Vector<T>`.
@@ -337,22 +337,12 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * use `m_N` to determin if `delete[]` should be used, never set `m_p` to `nullptr`.
 
 ## TODO
-* consider define pure imaginary number as a spetial class, and implement more efficient "+", "-", "*", "/", etc.
 * consider replacing `error()` macro with `throw()`
-* `warning()` macro is already defined!
 * incorporate "arb" library for evaluation of some special functions, and for multi-precision arithmetic (does not work for windows yet)
-* use MKL to enhance performance (optionally), and time different implementations (mine, Eigen, MKL)
 * put all internal names into "slisc::internal" namespace
 * test `randInt()`
 * update from Go-Solver project
-* test "expokit.h"
-* test sparse arithmetic
 * ptr_arith.h functions must support N = 0
-* complete test of containers
-* complete test of "meta.h"
-* complete test of "ptr_arith.h"
-* complete test of "arithmetic.h"
-* check all compiler warnings
 * test "meta.h" for ImagNum<T> types
 * modify "meta.h" so that `Svector` could be used as function arguments without casting to `Vector` first.
 * change `ptr()` function to `data()` for containers, like `std::vector<>`
