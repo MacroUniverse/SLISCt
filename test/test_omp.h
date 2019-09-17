@@ -30,7 +30,7 @@ void test_omp()
 #pragma omp parallel for
 	for (Long j = 0; j < N; ++j) {
 		Int tid = omp_get_thread_num();
-		printf("j = %d thread = %d/%d\n", j, tid, omp_get_num_threads());
+		printf("j = %lld thread = %d/%d\n", j, tid, omp_get_num_threads());
 		for (Long i = 0; i < N; ++i) {
 			wsp(i, tid) = x1(i, j) + x2(i, j);
 		}
