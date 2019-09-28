@@ -8,7 +8,7 @@ Sdir = SLISC/gsl/source/
 
 # this project requires "MatFile_linux" github repository
 
-compiler = g++
+compiler = g++-8
 # (NOTE:  The  icpc command uses the same compiler options as the icc com-
 # mand. Invoking the compiler using icpc compiles .c and .i files as C++.
 # Invoking  the  compiler  using icc compiles .c and .i files as C. Using

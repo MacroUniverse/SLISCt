@@ -31,7 +31,7 @@ struct set_windows_console_utf8 {
     }
 };
 // in case of ODR error, put this in main function;
-// set_windows_console_utf8 yes_set_windows_console_utf8;
+set_windows_console_utf8 yes_set_windows_console_utf8;
 #endif
 
 // write Str to file
@@ -113,9 +113,8 @@ inline Bool file_exist(Str32_I fname) {
     return file_exist(utf32to8(fname));
 }
 
-// read a line from a string, convert to UTF-32
-// str[start] must be the firs character of the line
-// return the start of the next line
+// read a line from a string, from str[start] to 1 char before '\n'
+// return the start of the next line, return -1 if out of bound
 // if the file ends with `\n`, then the line.back() is not empty
 inline Long get_line(Str32_O line, Str32_I str, Long_I start)
 {
@@ -165,6 +164,7 @@ inline void write_file(Str32_I str32, Str32_I fname)
 
 // write a vector of strings to file
 // no `\n` allowed in each string
+// file will be ended by a return
 inline void write_vec_str(vector_I<Str32> vec_str, Str32_I fname)
 {
     Str32 str;
@@ -175,6 +175,7 @@ inline void write_vec_str(vector_I<Str32> vec_str, Str32_I fname)
 }
 
 // read the file written by `write_vec_str()`
+// file must be ended by a return
 inline void read_vec_str(vector_O<Str32> vec_str, Str32_I fname)
 {
     Str32 str;
@@ -198,6 +199,14 @@ inline void num2str(Str32_O str, const T &num)
     utf8to32(str, str0);
 }
 
+template <class T>
+inline Str32 num2str(const T &num)
+{
+    Str32 str;
+    num2str(str, num);
+    return str;
+}
+
  // same as str.insert(), but return one index after key after insertion
 inline Long insert(Str32_IO str, Str32_I key, Long start)
 {
@@ -219,13 +228,13 @@ inline Long CRLF_to_LF(Str32_IO str)
 // Find the next appearance of one of "key"
 // output the ikey of key[ikey] found
 // return the first index of key[ikey] found, return -1 if nothing found
-inline Long find(Long_O ikey, Str32_I str, vector_I<Str32> key, Long_I start)
+inline Long find(Long_O ikey, Str32_I str, vector_I<Str32> keys, Long_I start)
 {
     Long i{}, ind0{}, Nkey{}, imin;
-    Nkey = key.size();
+    Nkey = keys.size();
     imin = str.size();
     for (i = 0; i < Nkey; ++i) {
-         ind0 = str.find(key[i], start);
+         ind0 = str.find(keys[i], start);
          if (ind0 >= start && ind0 < imin) {
              imin = ind0; ikey = i;
          }
@@ -636,4 +645,24 @@ inline void file_list_ext(vector_O<Str32> fnames, Str32_I path, Str32_I ext, Boo
     for (Long i = 0; i < Size(fnames8); ++i)
         fnames.push_back(utf8to32(fnames8[i]));
 }
+
+inline void file_copy(Str32_I fname_out, Str32_I fname_in, Bool_I replace)
+{
+    file_copy(utf32to8(fname_out), utf32to8(fname_in), replace);
+}
+
+// check if is a chinese character
+// does not include punctuations
+// reference: https://stackoverflow.com/questions/1366068/whats-the-complete-range-for-chinese-characters-in-unicode
+inline Bool is_chinese(Char32_I c)
+{
+    if (c >= U'\u2E80' && c <= U'\u2FD5' ||
+        c >= U'\u3190' && c <= U'\u319f' ||
+        c >= U'\u3400' && c <= U'\u4DBF' ||
+        c >= U'\u4E00' && c <= U'\u9FCC' ||
+        c >= U'\uF900' && c <= U'\uFAAD')
+        return true;
+    return false;
+}
+
 } // namespace slisc

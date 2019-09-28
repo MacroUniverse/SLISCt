@@ -6,9 +6,9 @@ namespace slisc {
 // see if elm == vec[i], return i
 // return -1 if not found
 template <class T, class Tv>
-inline Long search(const T &elm, const Tv &vec)
+inline Long search(const T &elm, const Tv &vec, Long start = 0)
 {
-    for (Long i = 0; i < vec.size(); ++i) {
+    for (Long i = start; i < Size(vec); ++i) {
         if (elm == vec[i])
             return i;
     }
@@ -28,6 +28,21 @@ inline Long search_row(const Tv &v, const Tmat &a, Long_I start = 0)
     for (Long i = start; i < a.n1(); ++i) {
         if (v == slice2(a, i))
             return i;
+    }
+    return -1;
+}
+
+// check if v[i] == v[j] for any i and j
+// return the index of one of the repeated elements
+// return -1 if no reapeat
+template <class Tv>
+inline Long find_repeat(Tv v)
+{
+    for (Long i = 0; i < Size(v); ++i) {
+        for (Long j = i + 1; j < Size(v); ++j) {
+            if (v[i] == v[j])
+                return i;
+        }
     }
     return -1;
 }
