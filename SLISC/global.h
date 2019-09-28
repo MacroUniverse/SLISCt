@@ -5,8 +5,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-// #define SLS_USE_MKL // use Intel MKL when possible
-// #define SLS_USE_GSL // use GNU Scientific Library
+#define SLS_USE_MKL // use Intel MKL when possible
+#define SLS_USE_GSL // use GNU Scientific Library
 #define SLS_FP_EXCEPT // turn on floating point exception
 
 #ifndef NDEBUG

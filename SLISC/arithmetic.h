@@ -1324,7 +1324,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     }
     else
         SLS_ERR("TODO");
-#elseif
+#else
     mul(y, a, x);
 #endif
 }
