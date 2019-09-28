@@ -17,7 +17,9 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_fft.h"
 #include "test_random.h"
 #include "test_sort.h"
+#ifdef SLS_USE_MKL
 #include "test_lin_eq.h"
+#endif
 //#include "test_eigen_basics.h"
 //#include "test_eigen_linsolve.h"
 //#include "test_eigen_fft.h"
@@ -94,8 +96,10 @@ inline void test_all()
 	test_sort();
 	cout << "test_search()" << endl;
 	test_search();
+#ifdef SLS_USE_MKL
 	cout << "test_lin_eq()" << endl;
 	test_lin_eq();
+#endif
 	cout << "test_time()" << endl;
 	test_time();
 #ifdef SLS_USE_GSL
@@ -128,14 +132,14 @@ inline void test_all()
 	cout << "auto test successful!\n" << endl;
 	Input inp;
 
-	if (inp.Bool("run optional tests?")) {
-		if (inp.Bool("test_disp() ?")) {
+	if (inp.iBool("run optional tests?")) {
+		if (inp.iBool("test_disp() ?")) {
 			test_disp();
 		}
-		if (inp.Bool("test_print() ?")) {
+		if (inp.iBool("test_print() ?")) {
 			test_print();
 		}
-		if (inp.Bool("test_except() ?")) {
+		if (inp.iBool("test_except() ?")) {
 			test_except();
 		}
 	}

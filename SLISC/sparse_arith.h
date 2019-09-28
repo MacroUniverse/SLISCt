@@ -215,8 +215,7 @@ inline rm_comp<T> norm_inf(const MatCooH<T> &A)
 template <class T, SLS_IF(is_scalar<T>())>
 inline rm_comp<T> norm_inf(const CmatObd<T> &A)
 {
-	const Cmat3d<T> &a3 = A.cmat3();
-	Long N0 = A.n0(), step = N0 * N0, N1 = N0 - 1, Nblk = A.nblk();
+	Long N0 = A.n0(), N1 = N0 - 1, Nblk = A.nblk();
 	Vector<rm_comp<T>> abs_sum(A.n2(), 0.);
 	Long k = 0;
 	Svector_c<T> sli(A.ptr() + N0 + 1, N1);

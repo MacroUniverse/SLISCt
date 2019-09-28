@@ -1066,6 +1066,7 @@ inline void mul_sym(T &y, const T1 &a, const T2 &x)
 	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	// do real part
 	Long N = x.size();
 	cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
@@ -1073,6 +1074,9 @@ inline void mul_sym(T &y, const T1 &a, const T2 &x)
 	// do imag part
 	cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
 		N, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
+#else
+	mul(y, a, x);
+#endif
 }
 
 template <class T, class T1, class T2, class Ts = contain_type<T>, SLS_IF(
@@ -1086,6 +1090,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	if constexpr (is_Doub<contain_type<T>>()) {
 		cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 			N1, x.ptr(), 1, 0, y.ptr(), 1);
@@ -1095,6 +1100,9 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 		cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
 			N1, x.ptr(), 1, &beta, y.ptr(), 1);
 	}
+#else
+	mul(y, a, x);
+#endif
 }
 
 // matrix-vector multiplication with generic Doub matrix and Com vectors (use MKL)
@@ -1110,12 +1118,16 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	// do real part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
 	// do imag part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
+#else
+	mul(y, a, x);
+#endif
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1130,12 +1142,16 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	// do real part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr(), 2*x.step(), 0, (Doub*)y.ptr(), 2);
 	// do imag part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr() + 1, 2*x.step(), 0, (Doub*)y.ptr() + 1, 2);
+#else
+	mul(y, a, x);
+#endif
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1150,9 +1166,13 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	Comp alpha(1), beta(0);
 	cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
 		N2, x.ptr(), x.step(), &beta, y.ptr(), 1);
+#else
+	mul(y, a, x);
+#endif
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1167,12 +1187,16 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	// do real part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2 * y.step());
 	// do imag part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2 * y.step());
+#else
+	mul(y, a, x);
+#endif
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1187,12 +1211,16 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
+#ifdef SLS_USE_MKL
 	// do real part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr(), 2 * x.step(), 0, (Doub*)y.ptr(), 2 * y.step());
 	// do imag part
 	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
 		N1, (Doub*)x.ptr() + 1, 2 * x.step(), 0, (Doub*)y.ptr() + 1, 2 * y.step());
+#else
+	mul(y, a, x);
+#endif
 }
 
 // parallel version
@@ -1282,6 +1310,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	if (a.n2() != x.n1() || y.n1() != Nr_a || y.n2() != Nc_x)
 		SLS_ERR("illegal shape!");
 #endif
+#ifdef SLS_USE_GSL
 	if constexpr (is_Doub<contain_type<T>>())
 		cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, 1, a.ptr(), Nr_a, x.ptr(), Nc_a, 0, y.ptr(), Nr_a);
 	else if constexpr (is_Comp<contain_type<T>>()) {
@@ -1291,6 +1320,9 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
 	}
 	else
 		SLS_ERR("TODO");
+#elseif
+	mul(y, a, x);
+#endif
 }
 
 // === numerical integration ===

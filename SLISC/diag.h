@@ -42,6 +42,7 @@ template <class T>
 Long Diag<T>::size() const
 {
 	SLS_ERR("use nnz() instead!");
+	return 0;
 }
 
 template <class T>

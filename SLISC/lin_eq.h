@@ -4,6 +4,7 @@
 
 namespace slisc {
 
+#ifdef SLS_USE_MKL
 template<class Tmat, SLS_IF(
 	is_dense_mat<Tmat>() && is_Doub<contain_type<Tmat>>())>
 inline void inv_mat(Tmat &A)
@@ -17,5 +18,6 @@ inline void inv_mat(Tmat &A)
 	LAPACKE_dgetrf(LAPACK_COL_MAJOR, N, N, A.ptr(), N, ipiv.ptr());
 	LAPACKE_dgetri(LAPACK_COL_MAJOR, N, A.ptr(), N, ipiv.ptr());
 }
+#endif
 	
 } // namespace slisc

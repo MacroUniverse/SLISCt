@@ -615,11 +615,26 @@ inline auto mul_v_cmat_v(T1 *y, const T2 *x, const T *a, Long_I Nr, Long_I Nc)
 	}
 }
 
+#ifdef SLS_USE_MKL
 inline void mul_plus_v_cmat_v(Comp *y, const Comp *x, const Comp *a, Int_I Nr, Int_I Nc)
 {
 	Comp one(1.);
 	cblas_zgemv(CblasColMajor, CblasNoTrans, Nr, Nc, &one, a, Nr, x, 1, &one, y, 1);
 }
+#else
+template <class T1, class T2, class T,
+	SLS_IF(is_promo<T1, T>() && is_promo<T1, T2>())>
+inline auto mul_plus_v_cmat_v(T1 *y, const T2 *x, const T *a, Long_I Nr, Long_I Nc)
+{
+	for (Long j = 0; j < Nc; ++j) {
+		T2 s = x[j];
+		for (Long i = 0; i < Nr; ++i) {
+			y[i] += (*a) * s;
+			++a;
+		}
+	}
+}
+#endif
 
 // flip avector
 template <class T>

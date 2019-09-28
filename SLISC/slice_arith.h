@@ -409,7 +409,6 @@ void slice3(Dvector<T> &sli, const Tmat3 &a,
 	if (i < 0 || i >= a.n1() || j < 0 || j >= a.n2())
 		SLS_ERR("index out of bound!");
 #endif
-	Long N1N2 = a.n1()*a.n2();
 	sli.set(a.ptr() + i + a.n1()*j, a.n3(), a.n1()*a.n2());
 }
 

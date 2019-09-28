@@ -42,7 +42,6 @@ void test_cmatobd()
 	// qref() and find() for diagonal elements
 	// fix()
 	{
-		Long k = 0;
 		VecInt diag(7);
 		diag[0] = 5; diag[1] = 1; diag[2] = 5; diag[3] = 1;
 		diag[4] = 5; diag[5] = 1; diag[6] = 5;

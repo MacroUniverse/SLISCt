@@ -8,14 +8,16 @@ Sdir = SLISC/gsl/source/
 
 # this project requires "MatFile_linux" github repository
 
-compiler = icpc
+compiler = g++
 # (NOTE:  The  icpc command uses the same compiler options as the icc com-
 # mand. Invoking the compiler using icpc compiles .c and .i files as C++.
 # Invoking  the  compiler  using icc compiles .c and .i files as C. Using
 # icpc always links in  C++  libraries.  Using  icc  only  links  in  C++
 # libraries if C++ source is provided on the command line.)
 
-flags = -Wall -I $(eigenPath) -I SLISC/gsl/include -I SLISC/gsl/source -std=c++17 -g -mkl -fp-model precise -fp-model except -qopenmp
+no_warn = -Wno-reorder -Wno-parentheses -Wno-unused-but-set-variable -Wno-sign-compare -Wno-unused-variable
+
+flags = -Wall -I $(eigenPath) -I SLISC/gsl/include -I SLISC/gsl/source -std=c++17 -g -fopenmp $(no_warn) #-mkl -fp-model precise -fp-model except -qopenmp
 # -O3 # highest optimization
 # -qopenmp # run OpenMP in parallel mode
 # -qopenmp-stubs # run OpenMP in serial mode

@@ -243,7 +243,7 @@ void copy(MatCoo<T> &v, const CmatObd<T1> &v1)
 #endif
 	if (v1.nnz() == 0)
 		return;
-	Long Nnz = v1.nnz(), N0 = v1.n0(), N1 = N0 - 1;
+	Long N0 = v1.n0(), N1 = N0 - 1;
 	Long N = v1.n1();
 	Long k = 0;
 	for (Long blk = 0; blk < v1.nblk(); ++blk) {

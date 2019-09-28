@@ -114,7 +114,7 @@ public:
 
 	// input a bool
 	// " (y/n) " will be appended to prompt
-	Bool Bool(Str_I prompt) {
+	Bool iBool(Str_I prompt) {
 		slisc::Bool out;
 		if (m_status == Stat::NO_IO) {
 			// no IO
@@ -165,7 +165,6 @@ public:
 		using namespace std;
 		string str;
 		stringstream ss;
-		Int i;
 		getline(m_fin, str);
 		if (str.size() >= 3) {
 			ss.str(str);
