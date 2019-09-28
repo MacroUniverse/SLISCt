@@ -10,7 +10,7 @@ namespace slisc {
 template <class T, SLS_IF(is_scalar<T>())>
 inline Bool ISNAN(const T &s)
 {
-	return s != s;
+    return s != s;
 }
 
 template<class T>
@@ -20,13 +20,13 @@ constexpr const T &MIN(const T &a, const T &b)
 template<class T>
 constexpr const T &MAX(const T &a, const T &b)
 {
-	return a < b ? b : a;
+    return a < b ? b : a;
 }
 
 template<class T1, class T2, SLS_IF(!is_same<T1, T2>())>
 constexpr auto MAX(const T1 &a, const T2 &b)
 {
-	return a < b ? b : a;
+    return a < b ? b : a;
 }
 
 template<class T>
@@ -35,13 +35,13 @@ constexpr const T SQR(const T &a) { return a * a; }
 template<class T, SLS_IF(is_fpt<T>())>
 constexpr const T ABS2(const T &a)
 {
-	return a * a;
+    return a * a;
 }
 
 template<class T, SLS_IF(is_comp<T>())>
 constexpr const rm_comp<T> ABS2(const T &a)
 {
-	return SQR(real(a)) + SQR(imag(a));
+    return SQR(real(a)) + SQR(imag(a));
 }
 
 constexpr Float SIGN(Float_I s)
@@ -58,7 +58,7 @@ inline T SIGN(const T &a, const T &b)
 template <class T, SLS_IF(is_vector<T>() || is_basic_str<T>())>
 inline Long Size(const T &v)
 {
-	return (Long)v.size();
+    return (Long)v.size();
 }
 
 // for SWAP, use std::swap instead
@@ -88,10 +88,10 @@ inline Doub CONJ(Doub_I x)
 template <class T1, class T2>
 inline Bool is_in(const T1 &elm, const T2 &vec)
 {
-	for (Long i = 0; i < Size(vec); ++i)
-		if (elm == vec[i])
-			return true;
-	return false;
+    for (Long i = 0; i < Size(vec); ++i)
+        if (elm == vec[i])
+            return true;
+    return false;
 }
 
 // check if two scalars have the same types and values
@@ -99,10 +99,10 @@ inline Bool is_in(const T1 &elm, const T2 &vec)
 template <class T1, class T2>
 constexpr Bool is_equiv(const T1 &s1, const T2 &s2)
 {
-	if constexpr (is_same<T1, T2>()) {
-		return s1 == s2;
-	}
-	return false;
+    if constexpr (is_same<T1, T2>()) {
+        return s1 == s2;
+    }
+    return false;
 }
 
 // convert bool and character to Int, others unchanged
@@ -117,31 +117,31 @@ inline const T to_num(const T &x) { return x; }
 template <class Tint, SLS_IF(is_integral<Tint>())>
 inline Bool isodd(const Tint &n)
 {
-	return n & 1;
+    return n & 1;
 }
 
 // return true if n is power of 2 or 0
 template <class Tint, SLS_IF(is_integral<Tint>())>
 inline Bool ispow2(const Tint &n)
 {
-	return (n&(n-1)) == 0;
+    return (n&(n-1)) == 0;
 }
 
 // return the positive modulus (use "%" when i >= 0)
 template <class T1, class T2, SLS_IF(
-	is_integral<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
+    is_integral<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
 inline T1 mod(const T1 &i, const T2 &n)
 {
-	return (i % n + n) % n;
+    return (i % n + n) % n;
 }
 
 // return the positive modulus (s = n * d + return)
 template <class T1, class T2, SLS_IF(
-	is_fpt<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
-	inline T1 mod(Long_O n, const T1 &s, const T2 &d)
+    is_fpt<T1>() && is_scalar<T1>() && is_promo<T1, T2>())>
+    inline T1 mod(Long_O n, const T1 &s, const T2 &d)
 {
-	n = floor(s/d);
-	return s - n * d;
+    n = floor(s/d);
+    return s - n * d;
 }
 
 // matrix double index to single index conversion
@@ -171,16 +171,16 @@ inline Doub sinc(Doub_I x) { return x == 0. ? 1. : sin(x) / x; }
 // factorial of a number
 
 inline Doub factorial_imp(Doub_I n) {
-	if (n == 0. || n == 1.)
-		return 1.;
-	else
-		return n * factorial_imp(n - 1.);
+    if (n == 0. || n == 1.)
+        return 1.;
+    else
+        return n * factorial_imp(n - 1.);
 }
 
 inline Doub factorial(Long_I n) {
-	if (n > 150)
-		SLS_ERR("n too large!");
-	return factorial_imp((Doub)n);
+    if (n > 150)
+        SLS_ERR("n too large!");
+    return factorial_imp((Doub)n);
 }
 
 } // namespace slisc

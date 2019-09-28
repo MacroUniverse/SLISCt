@@ -13,7 +13,7 @@ const double C_PI = 3.14159265358979323846;
 
 template <typename T>
 inline T SIGN(T a) {
-	return a < 0 ? (-1) : 1;
+    return a < 0 ? (-1) : 1;
 }
 
 // Infinite norm of a complex number.
@@ -265,12 +265,12 @@ inline Comp log_Gamma (const Comp &z)
     const Comp z_p_0p5 = z + 0.5, z_p_5p5 = z + 5.5;
     const double sqrt_2Pi = 2.5066282746310005;
     const double c[7] = {1.000000000190015,
-			 7.618009172947146E+1,
-			-8.650532032941677E+1,
-			 2.401409824083091E+1,
-			-1.231739572450155,
-			 0.1208650973866179E-2,
-			-0.5395239384953000E-5};
+             7.618009172947146E+1,
+            -8.650532032941677E+1,
+             2.401409824083091E+1,
+            -1.231739572450155,
+             0.1208650973866179E-2,
+            -0.5395239384953000E-5};
       
     Comp sum = c[0];
     for (int i = 1 ; i < 7 ; i++) sum += c[i]/(z + i);

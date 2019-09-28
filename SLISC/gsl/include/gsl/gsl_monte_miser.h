@@ -87,10 +87,10 @@ typedef struct {
 } gsl_monte_miser_params;
 
 void gsl_monte_miser_params_get (const gsl_monte_miser_state * state,
-				 gsl_monte_miser_params * params);
+                 gsl_monte_miser_params * params);
 
 void gsl_monte_miser_params_set (gsl_monte_miser_state * state,
-				 const gsl_monte_miser_params * params);
+                 const gsl_monte_miser_params * params);
 
 __END_DECLS
 

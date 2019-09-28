@@ -309,9 +309,9 @@ gsl_integration_cquad_workspace_free (gsl_integration_cquad_workspace * w);
 
 int
 gsl_integration_cquad (const gsl_function * f, double a, double b,
-		                   double epsabs, double epsrel,
-		                   gsl_integration_cquad_workspace * ws,
-		                   double *result, double *abserr, size_t * nevals);
+                           double epsabs, double epsrel,
+                           gsl_integration_cquad_workspace * ws,
+                           double *result, double *abserr, size_t * nevals);
 
 /* Romberg integration workspace and routines */
 

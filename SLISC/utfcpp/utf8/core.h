@@ -222,7 +222,7 @@ namespace internal
     template <typename octet_iterator>
     utf_error validate_next(octet_iterator& it, octet_iterator end, uint32_t& code_point)
     {
-	if (it == end)
+    if (it == end)
             return NOT_ENOUGH_ROOM;
 
         // Save the original value of it so we can go back in case of failure
@@ -314,7 +314,7 @@ namespace internal
             ((it != end) && (utf8::internal::mask8(*it))   == bom[2])
            );
     }
-	
+    
     //Deprecated in release 2.3 
     template <typename octet_iterator>
     inline bool is_bom (octet_iterator it)

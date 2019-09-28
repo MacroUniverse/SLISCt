@@ -728,12 +728,12 @@ static const Doub NaN = std::numeric_limits<Doub>::quiet_NaN();
 #ifdef SLS_FP_EXCEPT
 #ifdef _MSC_VER
 struct turn_on_floating_exceptions {
-	turn_on_floating_exceptions() {
-		int cw = _controlfp(0, 0);
-		// also: EM_INEXACT, EM_UNDERFLOW
-		cw &= ~(EM_INVALID | EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL);
-		_controlfp(cw, MCW_EM);
-	}
+    turn_on_floating_exceptions() {
+        int cw = _controlfp(0, 0);
+        // also: EM_INEXACT, EM_UNDERFLOW
+        cw &= ~(EM_INVALID | EM_OVERFLOW | EM_ZERODIVIDE | EM_DENORMAL);
+        _controlfp(cw, MCW_EM);
+    }
 };
 // in case of ODR error, put this in main function;
 // turn_on_floating_exceptions yes_turn_on_floating_exceptions;turn_on_floating_exceptions yes_turn_on_floating_exceptions;

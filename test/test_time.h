@@ -11,15 +11,15 @@ void SLS_TIME_H_ERR(const std::string &str) {}
 void test_time()
 {
 #ifndef NDEBUG
-	std::cout << "test_time() : error not reported in debug mode!" << std::endl;
+    std::cout << "test_time() : error not reported in debug mode!" << std::endl;
 #endif
-	using namespace slisc;
-	Timer t; CPUTimer cput;
-	// cpu time
-	cput.tic(); pause(0.114);
-	if (abs(cput.toc() - 0.114) > 2e-4) SLS_TIME_H_ERR("failed!");
+    using namespace slisc;
+    Timer t; CPUTimer cput;
+    // cpu time
+    cput.tic(); pause(0.114);
+    if (abs(cput.toc() - 0.114) > 2e-4) SLS_TIME_H_ERR("failed!");
 
-	// natural time
-	t.tic(); pause(0.114);
-	if (abs(t.toc() - 0.114) > 1e-4) SLS_TIME_H_ERR("failed!");
+    // natural time
+    t.tic(); pause(0.114);
+    if (abs(t.toc() - 0.114) > 1e-4) SLS_TIME_H_ERR("failed!");
 }

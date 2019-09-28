@@ -18,32 +18,32 @@ class ODE_integration
 {
 public:
   ODE_integration (const Comp &l_1,
-		   const Comp &two_eta_1)
+           const Comp &two_eta_1)
     : l (l_1), ll_plus_one (l_1*(l_1+1.0)), two_eta (two_eta_1)
     {
       for (int n = 0 ; n < 8 ; n++)
-	for (int i = 0 ; i < n ; i++)
-	{
-	  interpolation_term_tab[n][i] = 1.0;
+    for (int i = 0 ; i < n ; i++)
+    {
+      interpolation_term_tab[n][i] = 1.0;
 
-	  for (int j = 0 ; j < n ; j++)
-	    if (i != j)
-	      interpolation_term_tab[n][i] *= (i+1.0)/(i-j);
-	}
+      for (int j = 0 ; j < n ; j++)
+        if (i != j)
+          interpolation_term_tab[n][i] *= (i+1.0)/(i-j);
+    }
 
       for (unsigned int k = 0 ; k < 8 ; k++) m_tab[k] = 2*(k+1);
       for (unsigned int k = 0 ; k < 8 ; k++) one_over_m_tab[k] = 1.0/static_cast<double> (m_tab[k]);
     }
 
   void operator() (const Comp &r0,const Comp &u0,const Comp &du0,
-		   const Comp &r,Comp &u,Comp &du) const;
+           const Comp &r,Comp &u,Comp &du) const;
 
   private:
   Comp extrapolation_in_zero (const unsigned int n,const Comp *f) const;
   Comp F_r_u (const Comp &r,const Comp &u) const;
   void integration_Henrici (const unsigned int m,const Comp &h,
-			    const Comp &r0,const Comp &u0,const Comp &du0,
-			    const Comp &r,Comp &u,Comp &du) const;
+                const Comp &r0,const Comp &u0,const Comp &du0,
+                const Comp &r,Comp &u,Comp &du) const;
   
   const Comp l,ll_plus_one;  // angular momentum,l(l+1).
   const Comp two_eta;        // 2.eta, with eta the Sommerfeld parameter.
@@ -117,8 +117,8 @@ inline Comp ODE_integration::F_r_u (const Comp &z,const Comp &u) const
 // delta : value used in the Henrici method.
 
 inline void ODE_integration::integration_Henrici (const unsigned int m,const Comp &h,
-					   const Comp &r0,const Comp &u0,const Comp &du0,
-					   const Comp &r,Comp &u,Comp &du) const
+                       const Comp &r0,const Comp &u0,const Comp &du0,
+                       const Comp &r,Comp &u,Comp &du) const
 {
   const Comp h_square = h*h,half_h = 0.5*h;
 
@@ -170,7 +170,7 @@ inline void ODE_integration::integration_Henrici (const unsigned int m,const Com
 //                             In this case, r_end must be put equal to r.
 
 inline void ODE_integration::operator() (const Comp &r0,const Comp &u0,const Comp &du0,
-				  const Comp &r,Comp &u,Comp &du) const
+                  const Comp &r,Comp &u,Comp &du) const
 {
   if (r == r0) {u = u0; du = du0; return;}
 
@@ -194,10 +194,10 @@ inline void ODE_integration::operator() (const Comp &r0,const Comp &u0,const Com
       unsigned int k = 2; 
       do
       {
-	integration_Henrici (m_tab[k],H_over_m_tab[k],r_debut,u_debut,du_debut,r_end,u_end[k],du_end[k]);
-	u_extrapolated_next = extrapolation_in_zero (++k,u_end);
-	test = inf_norm (u_extrapolated/u_extrapolated_next - 1.0);
-	u_extrapolated = u_extrapolated_next;
+    integration_Henrici (m_tab[k],H_over_m_tab[k],r_debut,u_debut,du_debut,r_end,u_end[k],du_end[k]);
+    u_extrapolated_next = extrapolation_in_zero (++k,u_end);
+    test = inf_norm (u_extrapolated/u_extrapolated_next - 1.0);
+    u_extrapolated = u_extrapolated_next;
       }
       while ((test > precision) && (k < 7));
 
@@ -250,9 +250,9 @@ public:
       is_it_normalized (is_it_normalized_c),
       eta (eta_c), 
       neg_int_omega_one ((rint (real (l_c + Comp (-imag (eta_c),real (eta_c)))) == l_c + Comp (-imag (eta_c),real (eta_c))) && 
-			 (rint (real (1 + l_c + Comp (-imag (eta_c),real (eta_c)))) <= 0.0)),
+             (rint (real (1 + l_c + Comp (-imag (eta_c),real (eta_c)))) <= 0.0)),
       neg_int_omega_minus_one ((rint (real (l_c - Comp (-imag (eta_c),real (eta_c)))) == l_c - Comp (-imag (eta_c),real (eta_c))) && 
-			       (rint (real (1 + l_c - Comp (-imag (eta_c),real (eta_c)))) <= 0.0)),
+                   (rint (real (1 + l_c - Comp (-imag (eta_c),real (eta_c)))) <= 0.0)),
       sigma_l (sigma_l_calc (l_c,eta_c)),
       log_Cl_eta (log_Cl_eta_calc (l_c,eta_c)),
       Cl_eta (exp (log_Cl_eta_calc (l_c,eta_c))),
@@ -327,7 +327,7 @@ private:
 
   void asymptotic_expansion_F_dF (const Comp &z,Comp &F,Comp &dF,bool &is_it_successful);
   void asymptotic_expansion_H_dH_scaled (const int omega,const Comp &one_over_z,
-					 Comp &H_scaled,Comp &dH_scaled,bool &is_it_successful);
+                     Comp &H_scaled,Comp &dH_scaled,bool &is_it_successful);
 
   void F_dF_direct_integration (const Comp &z,Comp &F,Comp &dF,bool &is_it_successful);
   void H_dH_direct_integration (const int omega,const Comp &z,Comp &H,Comp &dH);
