@@ -68,7 +68,7 @@ MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc)
 
 template <class T>
 MatCoo<T>::MatCoo(Long_I Nr, Long_I Nc, Long_I Ncap) :
-    Base(Ncap), m_row(Ncap), m_col(Ncap), m_Nr(Nr), m_Nc(Nc), m_Nnz(0) {}
+    Base(Ncap), m_Nr(Nr), m_Nc(Nc), m_Nnz(0), m_row(Ncap), m_col(Ncap) {}
 
 template <class T>
 MatCoo<T>::MatCoo(const MatCoo<T> &rhs)

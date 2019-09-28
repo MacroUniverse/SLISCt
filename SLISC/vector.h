@@ -43,7 +43,7 @@ template<class T>
 inline Vbase<T>::Vbase() {}
 
 template<class T>
-inline Vbase<T>::Vbase(Long_I N) : m_N(N), m_p(new T[N]) {}
+inline Vbase<T>::Vbase(Long_I N) : m_p(new T[N]), m_N(N) {}
 
 template <class T>
 Vbase<T>::Vbase(const Vector<T> &rhs)

@@ -15,7 +15,7 @@ compiler = g++-8
 # icpc always links in  C++  libraries.  Using  icc  only  links  in  C++
 # libraries if C++ source is provided on the command line.)
 
-no_warn = -Wno-reorder -Wno-parentheses -Wno-sign-compare -Wno-unused-variable
+no_warn = -Wno-reorder # supress warning about initializer list order
 
 flags = -Wall -I $(eigenPath) -I SLISC/gsl/include -I SLISC/gsl/source -std=c++17 -g -fopenmp $(no_warn) #-mkl -fp-model precise -fp-model except -qopenmp
 # -O3 # highest optimization

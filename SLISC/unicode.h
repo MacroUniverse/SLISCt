@@ -120,7 +120,7 @@ inline Long get_line(Str32_O line, Str32_I str, Long_I start)
 {
     Long ind = str.find(U'\n', start);
     line = str.substr(start, ind - start);
-    if (ind < 0 || ind == str.size() - 1)
+    if (ind < 0 || ind == Size(str) - 1)
         return -1;
     return ind + 1;
 }
@@ -131,7 +131,7 @@ inline Long get_line(Str32_O line, Str32_I str, Long_I start)
 inline Long skip_line(Str32_I &str, Long_I start)
 {
     Long ind = str.find(U'\n', start);
-    if (ind < 0 || ind == str.size() - 1)
+    if (ind < 0 || ind == Size(str) - 1)
         return -1;
     return ind + 1;
 }
@@ -239,7 +239,7 @@ inline Long find(Long_O ikey, Str32_I str, vector_I<Str32> keys, Long_I start)
              imin = ind0; ikey = i;
          }
     }
-    if (imin == str.size()) imin = -1;
+    if (imin == Size(str)) imin = -1;
     return imin;
 }
 
@@ -350,7 +350,7 @@ inline Long trim(Str32_IO str, Str32_I key = U" ")
 // check if a character is a letter (a-z, A-Z)
 inline Bool is_letter(Char32_I c)
 {
-    if (c >= U'a' && c <= U'z' || c >= U'A' && c <= U'Z')
+    if ((c >= U'a' && c <= U'z') || (c >= U'A' && c <= U'Z'))
         return true;
     return false;
 }
@@ -447,7 +447,6 @@ inline Long ExpectKeyReverse(Str32_I str, Str32_I key, Long start)
     if (start < 0)
         return -2;
     Long ind = start;
-    Long L = str.size();
     Long L0 = key.size();
     Long ind0 = L0 - 1;
     Char32 c0, c;
@@ -600,7 +599,6 @@ inline Long MatchBraces(vector_O<Long> ind_left, vector_O<Long> ind_right,
 {
     ind_left.resize(0); ind_right.resize(0); ind_RmatchL.resize(0);
     Char32 c, c_last = ' ';
-    Bool continuous{ false };
     Long Nleft = 0, Nright = 0;
     vector<Bool> Lmatched;
     Bool matched;
@@ -656,11 +654,11 @@ inline void file_copy(Str32_I fname_out, Str32_I fname_in, Bool_I replace)
 // reference: https://stackoverflow.com/questions/1366068/whats-the-complete-range-for-chinese-characters-in-unicode
 inline Bool is_chinese(Char32_I c)
 {
-    if (c >= U'\u2E80' && c <= U'\u2FD5' ||
-        c >= U'\u3190' && c <= U'\u319f' ||
-        c >= U'\u3400' && c <= U'\u4DBF' ||
-        c >= U'\u4E00' && c <= U'\u9FCC' ||
-        c >= U'\uF900' && c <= U'\uFAAD')
+    if ((c >= U'\u2E80' && c <= U'\u2FD5') ||
+        (c >= U'\u3190' && c <= U'\u319f') ||
+        (c >= U'\u3400' && c <= U'\u4DBF') ||
+        (c >= U'\u4E00' && c <= U'\u9FCC') ||
+        (c >= U'\uF900' && c <= U'\uFAAD'))
         return true;
     return false;
 }

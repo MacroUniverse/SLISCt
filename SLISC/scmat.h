@@ -49,7 +49,7 @@ inline Scmat<T>::Scmat() {}
 
 template <class T>
 inline Scmat<T>::Scmat(Long_I Nr, Long_I Nc)
-    : m_Nr(Nr), m_Nc(Nc), Base(Nr*Nc) {}
+    : Base(Nr*Nc), m_Nr(Nr), m_Nc(Nc) {}
 
 template <class T>
 inline Scmat<T>::Scmat(T *ptr, Long_I Nr, Long_I Nc)

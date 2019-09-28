@@ -251,7 +251,7 @@ void copy(MatCoo<T> &v, const CmatObd<T1> &v1)
             for (Long i = 0; i < N0; ++i) {
                 Long shift = blk * N1 - 1;
                 Long ii = shift + i, jj = shift + j;
-                if (!(i == N1 && j == N1 || ii < 0 || jj < 0 || ii == N || jj == N))
+                if (!((i == N1 && j == N1) || ii < 0 || jj < 0 || ii == N || jj == N))
                     v.push(v1(k), ii, jj);
                 ++k;
             }

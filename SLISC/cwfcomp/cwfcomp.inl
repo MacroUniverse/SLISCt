@@ -225,7 +225,7 @@ inline void Coulomb_wave_functions::asymptotic_expansion_H_dH_scaled (const int 
 
 inline void Coulomb_wave_functions::H_dH_direct_integration (const int omega,const Comp &z,Comp &H,Comp &dH)
 { 
-  const double x = real (z),y = imag (z),l_r = real (l),l_i = imag (l),eta_r = real (eta),eta_i = imag (eta);
+  const double x = real (z),y = imag (z),l_i = imag (l),eta_i = imag (eta);
 
   if (debut == 0.0) 
   {
@@ -1162,7 +1162,7 @@ inline void Coulomb_wave_functions::first_order_expansions (const bool is_it_reg
 
 inline void Coulomb_wave_functions::F_dF (const Comp &z,Comp &F,Comp &dF)
 {  
-  const double x = real (z),y = imag (z),l_r = real (l),l_i = imag (l),eta_r = real (eta),eta_i = imag (eta);
+  const double x = real (z),y = imag (z),l_i = imag (l),eta_i = imag (eta);
 
   if (((y != 0.0) || (eta_i != 0.0) || (l_i != 0.0)) 
       && (abs (y) < sqrt_precision*min (1.0,x)) && (abs (eta_i) < sqrt_precision) && (abs (l_i) < sqrt_precision)
@@ -1233,7 +1233,7 @@ inline void Coulomb_wave_functions::F_dF (const Comp &z,Comp &F,Comp &dF)
 
 inline void Coulomb_wave_functions::G_dG (const Comp &z,Comp &G,Comp &dG)
 {
-  const double x = real (z),y = imag (z),l_r = real (l),l_i = imag (l),eta_r = real (eta),eta_i = imag (eta);
+  const double x = real (z),y = imag (z),l_i = imag (l),eta_i = imag (eta);
 
   if (((y != 0.0) || (eta_i != 0.0) || (l_i != 0.0)) 
       && (abs (y) < sqrt_precision*min (1.0,x)) && (abs (eta_i) < sqrt_precision) && (abs (l_i) < sqrt_precision)
@@ -1320,7 +1320,7 @@ inline void Coulomb_wave_functions::H_dH (const int omega,const Comp &z,Comp &H,
   }
   else
   {
-    const double x = real (z),y = imag (z),l_r = real (l),l_i = imag (l),eta_r = real (eta),eta_i = imag (eta);
+    const double x = real (z),y = imag (z),l_i = imag (l),eta_i = imag (eta);
     
     if (((y != 0.0) || (eta_i != 0.0) || (l_i != 0.0)) 
 	&& (abs (y) < sqrt_precision*min (1.0,x)) && (abs (eta_i) < sqrt_precision) && (abs (l_i) < sqrt_precision)
@@ -1391,7 +1391,7 @@ inline void Coulomb_wave_functions::H_dH_scaled (const int omega,const Comp &z,C
   {
     Comp H,dH;
    
-    const double x = real (z),y = imag (z),l_r = real (l),l_i = imag (l),eta_r = real (eta),eta_i = imag (eta);
+    const double x = real (z),y = imag (z),l_i = imag (l),eta_i = imag (eta);
 
     if (((y != 0.0) || (eta_i != 0.0) || (l_i != 0.0)) 
 	&& (abs (y) < sqrt_precision*min (1.0,x)) && (abs (eta_i) < sqrt_precision) && (abs (l_i) < sqrt_precision)
