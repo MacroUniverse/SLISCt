@@ -25,7 +25,7 @@ flags = -Wall -I $(eigenPath) -std=c++17 -g -fopenmp $(no_warn) -mkl -fp-model p
 
 # goal
 goal: main.o
-	$(compiler) -o $(exe) $(flags) *.o
+	$(compiler) -o $(exe) $(flags) main.o
 
 main.o: main.cpp SLISC/*.h test/*.h
 	$(compiler) $(flags) -c main.cpp

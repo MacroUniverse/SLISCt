@@ -1,16 +1,25 @@
 # use g++ with MKL
+
 # reference: MKL link advisor https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
+mkl_dyn_link = -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl
+
+mkl_compile =  -m64 -I${MKLROOT}/include
+
+# use `sudo apt install libgsl-dev` to install GNU scientific library
+# use `dpkg -L dpkg -L libgsl-dev` to check the installation directory
+lib = -lgsl
 
 no_warn = -Wno-reorder # supress warning about initializer list order
-flag = -Wall $(no_warn)
+
+flag = -Wall $(no_warn) $(lib)
 
 # link (dynamic link to MKL)
 goal:main.o
-	g++ $(flag) -L$(MKLROOT)/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl -fopenmp -o main.x main.o
+	g++ $(mkl_dyn_link) $(flag) -fopenmp -o main.x main.o
 
 # compile
 main.o:main.cpp
-	g++ $(flag) -m64 -I$(MKLROOT)/include -std=c++17 -fopenmp -c main.cpp
+	g++ $(flag) $(mkl_compile) -std=c++17 -fopenmp -c main.cpp
 
 clean:
 	rm -f *.o *.x
