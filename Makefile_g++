@@ -1,6 +1,9 @@
 # use g++ with MKL
 
 # reference: MKL link advisor https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
+
+mkl_stat_link = -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
+
 mkl_dyn_link = -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl
 
 mkl_compile =  -m64 -I${MKLROOT}/include
@@ -11,11 +14,12 @@ lib = -lgsl
 
 no_warn = -Wno-reorder # supress warning about initializer list order
 
-flag = -Wall $(no_warn) $(lib)
+flag = -Wall $(no_warn)
 
-# link (dynamic link to MKL)
+# link
+# choose `$(mkl_dyn_link)` or `$(mkl_stat_link)`
 goal:main.o
-	g++ $(mkl_dyn_link) $(flag) -fopenmp -o main.x main.o
+	g++ $(flag) -fopenmp -o main.x main.o $(lib) $(mkl_stat_link)
 
 # compile
 main.o:main.cpp
