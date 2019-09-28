@@ -2,15 +2,18 @@
 // Note that F, dF could be calculated simultaneously with no extra cost
 // TODO : implement G, dG
 #pragma once
-#include "slisc.h"
+#include "global.h"
 #include "cwfcomp/cwfcomp.h"
+#ifdef SLS_USE_GSL
 #include <gsl/gsl_sf_gamma.h>
 #include <gsl/gsl_errno.h>
+#endif
 
 namespace slisc {
 using cwfcomp::Coulomb_wave_functions;
 
 // === coulomb phase shift ===
+#ifdef SLS_USE_GSL
 Doub coulomb_sigma(Int_I l, Doub_I eta)
 {
 	if (eta > 0)
@@ -20,6 +23,7 @@ Doub coulomb_sigma(Int_I l, Doub_I eta)
 		SLS_ERR("arg has loss!");
 	return arg.val;
 }
+#endif
 
 // === coulombF() ===
 // efficiency is about 1e-4s/evaluation

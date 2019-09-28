@@ -6,7 +6,7 @@
 //#define MATFILE_BINARY
 //#define MATFILE_DUAL
 
-#include "../SLISC/slisc.h"
+#include "file.h"
 
 namespace slisc {
 

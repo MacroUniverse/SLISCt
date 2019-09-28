@@ -10,6 +10,7 @@
 // SLS_ALLOW_COPY_CONSTRUCTOR
 // SLS_CUSLISC
 // SLS_USE_MKL
+// SLS_USE_GSL
 // SLS_FP_EXCEPT
 // SLS_USE_UTFCPP
 // SLS_ERR
@@ -68,7 +69,9 @@
 #include "interp1.h"
 #include "lin_eq.h"
 #include "eig.h"
+#ifdef SLS_USE_GSL
 #include "ylm.h"
+#endif
 #include "anglib.h"
 #include "coulomb.h"
 #include "mat_fun.h"

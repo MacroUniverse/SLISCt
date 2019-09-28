@@ -1,5 +1,5 @@
 #pragma once
-#include "slisc.h"
+#include "global.h"
 
 namespace slisc {
 

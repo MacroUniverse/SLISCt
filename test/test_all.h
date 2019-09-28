@@ -22,7 +22,9 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 //#include "test_eigen_linsolve.h"
 //#include "test_eigen_fft.h"
 #include "test_time.h"
+#ifdef SLS_USE_GSL
 #include "test_ylm.h"
+#endif
 #include "test_coulomb.h"
 #include "test_input.h"
 #include "test_disp.h"
@@ -38,7 +40,9 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_except.h"
 #include "test_mattsave.h"
 #include "test_anglib.h"
+#ifdef SLS_USE_GSL
 #include "test_gsl.h"
+#endif
 #include "test_unicode.h"
 #include "test_omp.h"
 #include "test_search.h"
@@ -94,16 +98,20 @@ inline void test_all()
 	test_lin_eq();
 	cout << "test_time()" << endl;
 	test_time();
+#ifdef SLS_USE_GSL
 	cout << "test_ylm()" << endl;
 	test_ylm();
+#endif
 	cout << "test_coulomb()" << endl;
 	test_coulomb();
 	cout << "test_mattsave()" << endl;
 	test_mattsave();
 	cout << "test_anglib()" << endl;
 	test_anglib();
+#ifdef SLS_USE_GSL
 	cout << "test_gsl()" << endl;
 	test_gsl();
+#endif
 	cout << "test_unicode()" << endl;
 	test_unicode();
 	cout << "test_omp()" << endl;
