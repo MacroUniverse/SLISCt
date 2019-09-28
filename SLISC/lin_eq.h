@@ -4,7 +4,9 @@
 
 namespace slisc {
 
-inline void inv_mat(CmatDoub_IO A)
+template<class Tmat, SLS_IF(
+	is_dense_mat<Tmat>() && is_Doub<contain_type<Tmat>>())>
+inline void inv_mat(Tmat &A)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (A.n1() != A.n2())

@@ -59,7 +59,7 @@ void test_slice()
 	}
 	// slice row from row major matrix
 	{
-		MatInt a(3, 4);
+		MatInt a(3, 4); linspace(a, 1, 12);
 		VecInt vr(4);
 		SvecInt svr;
 		for (Long i = 1; i < 3; ++i) {
@@ -93,6 +93,15 @@ void test_slice()
 					SLS_ERR("failed!");
 			}
 		}
+
+		linspace(a, 1, 12);
+		DvecInt sli;
+		slice2(sli, a, 0, 1, 3);
+		if (sli[0] != 4 || sli[1] != 7 || sli[2] != 10)
+			SLS_ERR("failed!");
+		slice2(sli, a, 1, 1, 3);
+		if (sli[0] != 5 || sli[1] != 8 || sli[2] != 11)
+			SLS_ERR("failed!");
 	}
 
 	// slice a3(i,j,:)

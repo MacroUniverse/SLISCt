@@ -485,6 +485,20 @@ inline T max_v(const T *v, Long_I N)
 	return s;
 }
 
+template <class T, SLS_IF(is_real<T>() && !is_Bool<T>())>
+inline T max_v(const T *v, Long_I N, Long_I step)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) SLS_ERR("illegal length!");
+#endif
+	T s = v[0];
+	for (Long i = step; i < N*step; i += step) {
+		if (s < v[i])
+			s = v[i];
+	}
+	return s;
+}
+
 // s = max_abs(v)
 
 template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
@@ -502,6 +516,21 @@ inline rm_comp<T> max_abs_v(const T *v, Long_I N)
 	return s;
 }
 
+template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
+inline rm_comp<T> max_abs_v(const T *v, Long_I N, Long_I step)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) SLS_ERR("illegal length!");
+#endif
+	rm_comp<T> s = abs(v[0]), val;
+	for (Long i = step; i < N*step; i += step) {
+		val = abs(v[i]);
+		if (s < val)
+			s = val;
+	}
+	return s;
+}
+
 // s = min_abs(v)
 
 template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
@@ -512,6 +541,21 @@ inline rm_comp<T> min_abs_v(const T *v, Long_I N)
 #endif
 	rm_comp<T> s = abs(v[0]), val;
 	for (Long i = 1; i < N; ++i) {
+		val = abs(v[i]);
+		if (s > val)
+			s = val;
+	}
+	return s;
+}
+
+template <class T, SLS_IF(is_scalar<T>() && !is_Bool<T>())>
+inline rm_comp<T> min_abs_v(const T *v, Long_I N, Long_I step)
+{
+#ifdef SLS_CHECK_BOUNDS
+	if (N <= 0) SLS_ERR("illegal length!");
+#endif
+	rm_comp<T> s = abs(v[0]), val;
+	for (Long i = step; i < N; i += step) {
 		val = abs(v[i]);
 		if (s > val)
 			s = val;

@@ -96,7 +96,7 @@ inline T & Jcmat<T>::operator[](Long_I i)
 	if (i < 0 || i >= m_N)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p[i % m_N2 + m_step2 * i/m_N2];
+	return m_p[m_step1 * (i % m_N1) + m_step2 * (i / m_N1)];
 }
 
 template <class T>
@@ -106,7 +106,7 @@ inline const T & Jcmat<T>::operator[](Long_I i) const
 	if (i < 0 || i >= m_N)
 		SLS_ERR("Matrix subscript out of bounds");
 #endif
-	return m_p[i % m_N2 + m_step2 * i / m_N2];
+	return m_p[m_step1 * (i % m_N1) + m_step2 * (i / m_N1)];
 }
 
 template <class T>

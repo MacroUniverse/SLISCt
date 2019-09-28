@@ -40,6 +40,7 @@ public:
 	void resize(Long_I Nr, Long_I Nc); // resize (contents not preserved)
 	template <class T1>
 	void resize(const Cmat<T1> &a);
+	void resize_cpy(Long_I N1, Long_I N2);
 };
 
 template <class T>
@@ -138,6 +139,35 @@ inline void Cmat<T>::resize(Long_I Nr, Long_I Nc)
 	if (Nr != m_Nr || Nc != m_Nc) {
 		Base::resize(Nr*Nc);
 		m_Nr = Nr; m_Nc = Nc;
+	}
+}
+
+template<class T>
+inline void Cmat<T>::resize_cpy(Long_I N1, Long_I N2)
+{
+	Long N = N1 * N2;
+	if (N1 != m_Nr || N2 != m_Nc) {
+		if (m_N == 0 || N == 0) {
+			resize(N1, N2);
+		}
+		else {
+			T *old_p = m_p;
+			m_p = new T[N];
+			if (N > m_N) {
+				for (Long j = 0; j < m_Nc; ++j) {
+					veccpy(m_p + N1*j, old_p + m_Nr*j, m_Nr);
+					vecset(m_p + N1*j + m_Nr, 0, N1 - m_Nr);
+				}
+				vecset(m_p + N1 * m_Nc, 0, N1 * (N2 - m_Nc));
+			}
+			else {// N < m_N
+				for (Long j = 0; j < N2; ++j) {
+					veccpy(m_p + N1 * j, old_p + m_Nr * j, N1);
+				}
+			}
+			m_Nr = N1; m_Nc = N2; m_N = N;
+			delete[] old_p;
+		}
 	}
 }
 

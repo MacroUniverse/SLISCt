@@ -137,14 +137,14 @@ void Matt::open(Str_I fname, Char_I *rw, Int_I precision)
 #ifndef SLS_MATT_REPLACE
 		if (file_exist(fname)) {
 			while (true) {
-				pause(10);
 				if (file_exist(fname)) {
-					SLS_WARN("\n\nfile already exist! delete file to continue...\n"
+					SLS_WARN("\n\nfile [" + fname + "] already exist! delete file to continue...\n"
 						"  (define SLS_MATT_REPLACE to replace file by default)\n\n");
 				}
 				else {
 					break;
 				}
+				pause(10);
 			}
 		}
 #endif
@@ -477,10 +477,9 @@ inline void save(T &s, Str_I varname, Str_I matt_file)
 // for string
 void save(Str_I str, Str_I varname, Matt_IO matt)
 {
-	SvecChar sli; sli.set(str.data(), str.size());
+	SvecChar_c sli; sli.set(str.data(), str.size());
 	save(sli, varname, matt);
 }
-
 
 // ===== read matt files =====
 

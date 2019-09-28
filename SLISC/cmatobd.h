@@ -99,6 +99,7 @@ template <class T1, SLS_IF0(is_promo<T, T1>())>
 CmatObd<T> &CmatObd<T>::operator=(const CmatObd<T1> &a)
 {
 	m_data = a.cmat3();
+	return *this;
 }
 
 // convert Mcoo matrix to MatOdb matrix

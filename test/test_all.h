@@ -41,6 +41,7 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_gsl.h"
 #include "test_unicode.h"
 #include "test_omp.h"
+#include "test_search.h"
 
 // #include "test/test_mparith.h"
 
@@ -87,6 +88,8 @@ inline void test_all()
 	test_random();
 	cout << "test_sort()" << endl;
 	test_sort();
+	cout << "test_search()" << endl;
+	test_search();
 	cout << "test_lin_eq()" << endl;
 	test_lin_eq();
 	cout << "test_time()" << endl;

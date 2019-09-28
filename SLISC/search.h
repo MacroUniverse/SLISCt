@@ -15,6 +15,23 @@ inline Long search(const T &elm, const Tv &vec)
 	return -1;
 }
 
+// search a row from a matrix
+// starting from the row `start`
+// return the row index, return -1 if not found
+template <class Tv, class Tmat>
+inline Long search_row(const Tv &v, const Tmat &a, Long_I start = 0)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (v.size() != a.n2())
+		SLS_ERR("wrong shape");
+#endif
+	for (Long i = start; i < a.n1(); ++i) {
+		if (v == slice2(a, i))
+			return i;
+	}
+	return -1;
+}
+
 // search ind so that v[ind] == s
 // same as lookupInt(), but Int operator-(v[i], s) must be implemented
 // operator-(v[i], s) only need to return the correct sign

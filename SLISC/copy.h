@@ -113,7 +113,8 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	veccpy(v.ptr(), v1.ptr(), v.size());
+	if (v1.size() != 0)
+		veccpy(v.ptr(), v1.ptr(), v.size());
 }
 
 // from Dvector<> to Dvector<>
@@ -126,7 +127,8 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	veccpy(v.ptr(), v.step(), v1.ptr(), v1.step(), v.size());
+	if (v1.size() != 0)
+		veccpy(v.ptr(), v.step(), v1.ptr(), v1.step(), v.size());
 }
 
 // from dense vector to Dvector<>
@@ -139,7 +141,8 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	veccpy(v.ptr(), v1.ptr(), v1.step(), v1.size());
+	if (v1.size() != 0)
+		veccpy(v.ptr(), v1.ptr(), v1.step(), v1.size());
 }
 
 // from Dvector<> to dense vector
@@ -152,7 +155,8 @@ inline void copy(T &v, const T1 &v1)
 	if (!shape_cmp(v, v1))
 		SLS_ERR("wrong shape!");
 #endif
-	veccpy(v.ptr(), v.step(), v1.ptr(), v1.size());
+	if (v1.size() != 0)
+		veccpy(v.ptr(), v.step(), v1.ptr(), v1.size());
 }
 
 // copy dense matrix with different major
@@ -165,6 +169,8 @@ inline void copy(T &a, const T1 &a1)
 	if (!shape_cmp(a, a1))
 		SLS_ERR("wrong shape!");
 #endif
+	if (a1.size() == 0)
+		return;
 	if constexpr (is_cmajor<T>())
 		matcpy_2_major(a.ptr(), a1.ptr(), a.n2(), a.n1());
 	else
@@ -182,7 +188,8 @@ inline void copy(T &a, const T1 &a1)
 	if (!shape_cmp(a, a1))
 		SLS_ERR("wrong shape!");
 #endif
-	matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.n1(), a.n2());
+	if (a1.size() != 0)
+		matcpy(a.ptr(), a.lda(), a1.ptr(), a1.lda(), a.n1(), a.n2());
 }
 
 // from Jcmat3<> to Jcmat3<>
@@ -194,8 +201,8 @@ inline void copy(Jcmat3d<T> &a, const Jcmat3d<T1> &a1)
 	if (!shape_cmp(a, a1))
 		SLS_ERR("wrong shape!");
 #endif
-
 	// slow
+	if (a1.size() != 0)
 	for (Long k = 0; k < a.n3(); ++k)
 		for (Long j = 0; j < a.n2(); ++j)
 			for (Long i = 0; i < a.n1(); ++i)
@@ -213,6 +220,8 @@ void copy(MatCoo<T> &v, const MatCoo<T1> &v1)
 	if (v.capacity() < v1.nnz())
 		SLS_ERR("not enough capacity!");
 #endif
+	if (v1.nnz() == 0)
+		return;
 	if constexpr (is_same<T,T1>())
 	if (v.ptr() == v1.ptr())
 		SLS_ERR("self assignment is forbidden!");
@@ -232,6 +241,8 @@ void copy(MatCoo<T> &v, const CmatObd<T1> &v1)
 	if (v.capacity() < v1.nnz())
 		SLS_ERR("not enough capacity!");
 #endif
+	if (v1.nnz() == 0)
+		return;
 	Long Nnz = v1.nnz(), N0 = v1.n0(), N1 = N0 - 1;
 	Long N = v1.n1();
 	Long k = 0;

@@ -39,13 +39,13 @@ inline Bool file_exist_case(Str_I fname)
 // check if a file exist, default is case sensitive
 inline Bool file_exist(Str_I fname, Bool_I case_sens = true) {
 #ifndef SLS_HAS_FILESYSTEM
-	ifstream f(fname.c_str());
+	ifstream f(fname);
 	return f.good();
 #else
 	if (case_sens)
 		return file_exist_case(fname);
 	else {
-		ifstream f(fname.c_str());
+		ifstream f(fname);
 		return f.good();
 	}
 #endif
@@ -152,5 +152,29 @@ inline void file_list_ext(vector_O<Str> fnames, Str_I path, Str_I ext, Bool_I ke
 	vector<Str> fnames0;
 	file_list(fnames0, path);
 	file_ext(fnames, fnames0, ext, keep_ext);
+}
+
+// copy a file (read then write)
+inline void file_copy(Str_I fname_out, Str_I fname_in, Bool_I replace = false)
+{
+	if (!file_exist(fname_in))
+		SLS_ERR("file not found!");
+	if (file_exist(fname_out) && !replace) {
+		while (true) {
+			if (file_exist(fname_out)) {
+				SLS_WARN("\n\nfile [" + fname_out + "] already exist! delete file to continue...\n"
+					"  (set argument `replace = false` to replace file by default)\n\n");
+			}
+			else {
+				break;
+			}
+			pause(10);
+		}
+	}
+	ifstream fin(fname_in, std::ios::binary);
+	ofstream fout(fname_out, std::ios::binary);
+	fout << fin.rdbuf();
+	fin.close();
+	fout.close();
 }
 } // namespace slisc

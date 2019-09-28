@@ -89,8 +89,9 @@ const T &Diag<T>::operator()(Long_I i, Long_I j) const
 }
 
 // convert vector to diagonal matrix
-template <class T>
-const Diag<T> &diag(const Vector<T> &v)
+template <class Tv, class T = contain_type<Tv>,
+	SLS_IF(is_dense_vec<Tv>())>
+const Diag<T> &diag(const Tv &v)
 {
 	return (Diag<T>&)v;
 }

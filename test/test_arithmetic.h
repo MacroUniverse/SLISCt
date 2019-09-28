@@ -529,4 +529,17 @@ inline void test_arithmetic()
 		if (v1[0] != 1 || v1[1] != 3 || v1[2] != 6 || v1[3] != 10)
 			SLS_ERR("failed!");
 	}
+
+	// uniq_rows()
+	{
+		CmatInt a(5, 2), a1(0, 0);
+		a[0] = 1; a[1] = 2; a[2] = 3; a[3] = 2; a[4] = 3;
+		a[5] = 2; a[6] = 3; a[7] = 4; a[8] = 3; a[9] = 4;
+		uniq_rows(a1, a);
+		CmatInt a2(3, 2);
+		a2[0] = 1; a2[1] = 2; a2[2] = 3;
+		a2[3] = 2; a2[4] = 3; a2[5] = 4;
+		if (a1 != a2)
+			SLS_ERR("failed!");
+	}
 }

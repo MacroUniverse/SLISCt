@@ -292,6 +292,14 @@ constexpr Bool is_Svector()
 	return is_Svector_imp<T>();
 }
 
+template <class T> struct is_Svector_c_imp : false_type {};
+template <class T> struct is_Svector_c_imp<Svector_c<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Svector_c()
+{
+	return is_Svector_c_imp<T>();
+}
+
 template <class T> struct is_Dvector_imp : false_type {};
 template <class T> struct is_Dvector_imp<Dvector<T>> : integral_constant<Bool, is_scalar<T>()> {};
 template<class T>
@@ -314,6 +322,14 @@ template<class T>
 constexpr Bool is_Scmat()
 {
 	return is_Scmat_imp<T>();
+}
+
+template <class T> struct is_Scmat_c_imp : false_type {};
+template <class T> struct is_Scmat_c_imp<Scmat_c<T>> : integral_constant<Bool, is_scalar<T>()> {};
+template<class T>
+constexpr Bool is_Scmat_c()
+{
+	return is_Scmat_c_imp<T>();
 }
 
 template <class T> struct is_Dmat_imp : false_type {};
@@ -349,7 +365,7 @@ constexpr Bool is_slice_vec()
 template <class T>
 constexpr Bool is_slice_mat()
 {
-	return is_Scmat<T>() || is_Dcmat<T>();
+	return is_Scmat<T>() || is_Scmat_c<T>() || is_Dcmat<T>();
 }
 
 template <class T> struct is_Scmat3d_imp : false_type {};
@@ -362,7 +378,7 @@ constexpr Bool is_Scmat3d()
 
 template <class T> constexpr Bool is_dense_vec()
 {
-	return is_Vector<T>() || is_FixVec<T>() || is_Svector<T>();
+	return is_Vector<T>() || is_FixVec<T>() || is_Svector<T>() || is_Svector_c<T>();
 }
 
 template <class T> struct is_FixCmat_imp : false_type {};
@@ -455,13 +471,18 @@ template <class T> constexpr Bool is_fixed()
 template <class T> constexpr Bool is_dense_mat()
 {
 	return is_Matrix<T>() || is_Cmat<T>() || is_FixCmat<T>()
-		|| is_Scmat<T>() || is_Smat<T>();
+		|| is_Scmat<T>() || is_Scmat_c<T>() || is_Smat<T>();
 }
 
 // check if is dense 3D array
 template <class T> constexpr Bool is_dense_mat3()
 {
 	return is_Mat3d<T>() || is_Cmat3d<T>() || is_Scmat3d<T>();
+}
+
+template <class T> constexpr Bool is_dense_mat4()
+{
+	return is_Cmat4d<T>() || is_Jcmat4d<T>();
 }
 
 // check if is dense container (including fixed-size)
@@ -504,6 +525,8 @@ constexpr Int contain_num()
 	else if (is_Dcmat<T>()) return 45;
 	else if (is_Jcmat<T>()) return 46;
 	else if (is_Jcmat3d<T>()) return 47;
+	else if (is_Svector_c<T>()) return 48;
+	else if (is_Scmat_c<T>()) return 49;
 
 	return -1;
 }
@@ -523,7 +546,7 @@ template <class T>
 constexpr Bool is_cmajor()
 {
 	if (is_Cmat<T>() || is_FixCmat<T>() || is_Cmat3d<T>() ||
-		is_Scmat<T>() || is_Dcmat<T>())
+		is_Scmat<T>() || is_Scmat_c<T>() || is_Dcmat<T>())
 		return true;
 	else
 		return false;
@@ -566,10 +589,11 @@ constexpr Bool is_diff_major()
 template <class T>
 constexpr Int ndims()
 {
-	if (is_dense_vec<T>() || is_FixVec<T>() || is_Svector<T>() || is_Dvector<T>())
+	if (is_dense_vec<T>() || is_FixVec<T>() || is_Svector<T>() ||
+		is_Svector_c<T>() || is_Dvector<T>())
 		return 1;
 	else if (is_dense_mat<T>() || is_sparse_mat<T>() || is_Scmat<T>() ||
-		is_Dcmat<T>() || is_Jcmat<T>() || is_CmatObd<T>())
+		is_Scmat_c<T>() || is_Dcmat<T>() || is_Jcmat<T>() || is_CmatObd<T>())
 		return 2;
 	else if (is_Mat3d<T>() || is_Cmat3d<T>() || is_Jcmat3d<T>())
 		return 3;

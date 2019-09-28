@@ -1,7 +1,6 @@
 #pragma once
 #include "global.h"
 #include "meta.h"
-#include "vector.h"
 #include "matrix.h"
 #include "cmat.h"
 #include "mat3d.h"
@@ -63,6 +62,19 @@ Bool operator==(const T1 &v1, const T2 &v2)
 	return true;
 }
 
+template <class T1, class T2, SLS_IF(
+	is_Dvector<T1>() && is_Dvector<T2>())>
+Bool operator==(const T1 &v1, const T2 &v2)
+{
+	if (!shape_cmp(v1, v2))
+		return false;
+	for (Long i = 0; i < v1.size(); ++i) {
+		if (v1[i] != v2[i])
+			return false;
+	}
+	return true;
+}
+
 // for all other (2d) matrices not covered by the above definition
 // might not be efficient
 template <class T1, class T2, SLS_IF(
@@ -99,7 +111,7 @@ template <class T1, class T2, SLS_IF(
 	return true;
 }
 
-template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && !is_contain<Ts>())>
+template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && is_scalar<Ts>())>
 Bool operator==(const Tv &v, const Ts &s)
 {
 	return equals_to_vs(v.ptr(), s, v.size());
@@ -108,6 +120,17 @@ Bool operator==(const Tv &v, const Ts &s)
 template <class Tv, class Ts, SLS_IF(is_dense<Tv>() && !is_contain<Ts>())>
 Bool operator==(const Ts &s, const Tv &v)
 { return v == s; }
+
+template <class Tv, class Ts, SLS_IF(
+	ndims<Tv>() == 1 && !is_dense<Tv>() && is_scalar<Ts>())>
+Bool operator==(const Tv &v, const Ts &s)
+{
+	for (Long i = 0; i < v.size(); ++i) {
+		if (v[i] != s)
+			return false;
+	}
+	return true;
+}
 
 // operator!= for slisc containers
 template <class T1, class T2, SLS_IF(
@@ -147,7 +170,7 @@ inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 // copy a dense vector to one row of dense matrix
 template <class Tvec, class Tmat,
 	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
-	inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
+inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
 {
 	Long Nr = a.n1(), Nc = a.n2();
 #ifdef SLS_CHECK_SHAPE
@@ -239,15 +262,37 @@ inline const auto max(const T &v)
 	return max_v(v.ptr(), v.size());
 }
 
+template <class T, SLS_IF(is_Dvector<T>())>
+inline const auto max(const T &v)
+{
+	return max_v(v.ptr(), v.size(), v.step());
+}
+
 // return max(abs(a(:))
-template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
+template <class T, SLS_IF(is_dense<T>())>
 inline const auto max_abs(const T &v)
-{ return max_abs_v(v.ptr(), v.size()); }
+{
+	return max_abs_v(v.ptr(), v.size());
+}
+
+template <class T, SLS_IF(is_Dvector<T>())>
+inline const auto max_abs(const T &v)
+{
+	return max_abs_v(v.ptr(), v.size(), v.step());
+}
 
 // return min(abs(a(:))
-template <class T, SLS_IF(is_dense<T>() || is_Dvector<T>())>
+template <class T, SLS_IF(is_dense<T>())>
 inline const auto min_abs(const T &v)
-{ return min_abs_v(v.ptr(), v.size()); }
+{
+	return min_abs_v(v.ptr(), v.size());
+}
+
+template <class T, SLS_IF(is_Dvector<T>())>
+inline const auto min_abs(const T &v)
+{
+	return min_abs_v(v.ptr(), v.size(), v.step());
+}
 
 template <class T, SLS_IF(is_dense<T>())>
 inline const auto max(Long_O ind, const T &v)
@@ -323,13 +368,13 @@ inline void reorder(Tv &v, VecLong_I order)
 // === vectorized math functions ===
 
 template <class T, SLS_IF(is_dense<T>())>
-void sqrt(T &v)
+inline void sqrt(T &v)
 {
 	sqrt_v(v.ptr(), v.size());
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_dense<T1>())>
-void sqrt(T &v, const T1 &v1)
+inline void sqrt(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -340,14 +385,14 @@ void sqrt(T &v, const T1 &v1)
 
 template <class T, class Ts, SLS_IF(
 	is_dense<T>() && is_scalar<Ts>())>
-void pow(T &v, const Ts &s)
+inline void pow(T &v, const Ts &s)
 {
 	pow_vs(v.ptr(), s, v.size());
 }
 
 template <class T, class T1, class T2, SLS_IF(
 	is_dense<T>() && is_same_contain<T, T1>() && is_scalar<T2>())>
-void pow(T &v, const T1 &v1, const T2 &s)
+inline void pow(T &v, const T1 &v1, const T2 &s)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -357,7 +402,7 @@ void pow(T &v, const T1 &v1, const T2 &s)
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void sin(T &v, const T1 &v1)
+inline void sin(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -367,7 +412,7 @@ void sin(T &v, const T1 &v1)
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void cos(T &v, const T1 &v1)
+inline void cos(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -377,13 +422,13 @@ void cos(T &v, const T1 &v1)
 }
 
 template <class T, SLS_IF(is_fpt_dense<T>())>
-void exp(T &v)
+inline void exp(T &v)
 {
 	exp_v(v.ptr(), v.size());
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void exp(T &v, const T1 &v1)
+inline void exp(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -393,7 +438,7 @@ void exp(T &v, const T1 &v1)
 }
 
 template <class T, class T1, SLS_IF(is_dense<T>() && is_same_contain<T, T1>())>
-void tan(T &v, const T1 &v1)
+inline void tan(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -523,9 +568,9 @@ inline void operator-=(T &v, const T1 &v1)
 template <class T, class T1, SLS_IF(
 is_contain<T>() && is_contain<T1>() &&
 (!is_dense<T>() || !is_dense<T1>()) &&
-is_same_major<T, T1>() &&
+ndims<T>() == 1 && ndims<T1>() == 1 &&
 is_promo<contain_type<T>, contain_type<T1>>())>
-void operator-=(T &v, const T1 &v1)
+inline void operator-=(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -547,6 +592,8 @@ inline void operator*=(T &v, const T1 &v1)
 #endif
 	times_equals_vv(v.ptr(), v1.ptr(), v1.size());
 }
+
+
 
 // v /= v
 
@@ -583,6 +630,18 @@ template <class T, class Ts, SLS_IF(is_dense<T>() && is_scalar<Ts>())>
 inline void operator*=(T &v, const Ts &s)
 {
 	times_equals_vs(v.ptr(), s, v.size());
+}
+
+template <class T, class T1, SLS_IF(
+	is_scalar<T>() && is_promo<T, T1>())>
+inline void operator*=(Dcmat<T> &v, Dcmat<T1> &v1)
+{
+#ifdef SLS_CHECK_SHAPE
+	if (!shape_cmp(v, v1))
+		SLS_ERR("wrong shape!");
+#endif
+	for (Long j = 0; j < v.n2(); ++j)
+		times_equals_vv(&v(0, j), &v1(0, j), v.n1());
 }
 
 // v /= s
@@ -862,7 +921,7 @@ inline void imag(T &v)
 template <class T, class T1,
 	SLS_IF(is_dense<T>() && is_comp_dense<T1>() &&
 		is_same_major<T, T1>())>
-	inline void imag(T &v, const T1 &v1)
+inline void imag(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
@@ -974,7 +1033,7 @@ inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 
 // matrix-vector multiplication
 template <class T, class T1, class T2, SLS_IF(
-	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>()
+	ndims<T>() == 1 && is_dense_mat<T1>() && ndims<T2>() == 1
 )>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
@@ -1001,7 +1060,7 @@ template <class T, class T1, class T2, SLS_IF(
 	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
 	is_Comp<contain_type<T2>>()
 )>
-void mul_sym(T &y, const T1 &a, const T2 &x)
+inline void mul_sym(T &y, const T1 &a, const T2 &x)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
@@ -1020,21 +1079,21 @@ template <class T, class T1, class T2, class Ts = contain_type<T>, SLS_IF(
 	is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
 	(is_Doub<contain_type<T>>() && is_Doub<contain_type<T1>>() && is_Doub<contain_type<T2>>() ||
 		is_Comp<contain_type<T>>() && is_Comp<contain_type<T1>>() && is_Comp<contain_type<T2>>()))>
-void mul_gen(T &y, const T1 &a, const T2 &x)
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
+	Long N1 = a.n1(), N2 = a.n2();
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
-	Long N = x.size();
 	if constexpr (is_Doub<contain_type<T>>()) {
-		cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-			N, x.ptr(), 1, 0, y.ptr(), 1);
+		cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+			N1, x.ptr(), 1, 0, y.ptr(), 1);
 	}
 	else {
 		Comp alpha(1), beta(0);
-		cblas_zgemv(CblasColMajor, CblasNoTrans, N, N, &alpha, a.ptr(),
-			N, x.ptr(), 1, &beta, y.ptr(), 1);
+		cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
+			N1, x.ptr(), 1, &beta, y.ptr(), 1);
 	}
 }
 
@@ -1044,19 +1103,19 @@ template <class T, class T1, class T2, SLS_IF(
 	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
 	is_Comp<contain_type<T2>>()
 )>
-void mul_gen(T &y, const T1 &a, const T2 &x)
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
+	Long N1 = a.n1(), N2 = a.n2();
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
 	// do real part
-	Long N = x.size();
-	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-		N, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
 	// do imag part
-	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-		N, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1064,19 +1123,19 @@ template <class T, class T1, class T2, SLS_IF(
 	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
 	is_Comp<contain_type<T2>>()
 )>
-void mul_gen(T &y, const T1 &a, const T2 &x)
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
+	Long N1 = a.n1(), N2 = a.n2();
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
 	// do real part
-	Long N = x.size();
-	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-		N, (Doub*)x.ptr(), 2*x.step(), 0, (Doub*)y.ptr(), 2);
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr(), 2*x.step(), 0, (Doub*)y.ptr(), 2);
 	// do imag part
-	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-		N, (Doub*)x.ptr() + 1, 2*x.step(), 0, (Doub*)y.ptr() + 1, 2);
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr() + 1, 2*x.step(), 0, (Doub*)y.ptr() + 1, 2);
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1084,17 +1143,16 @@ template <class T, class T1, class T2, SLS_IF(
 	is_Comp<contain_type<T>>() && is_Comp<contain_type<T1>>() &&
 	is_Comp<contain_type<T2>>()
 )>
-void mul_gen(T &y, const T1 &a, const T2 &x)
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
+	Long N1 = a.n1(), N2 = a.n2();
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
-	// do real part
-	Long N = x.size();
 	Comp alpha(1), beta(0);
-	cblas_zgemv(CblasColMajor, CblasNoTrans, N, N, &alpha, a.ptr(),
-		N, x.ptr(), x.step(), &beta, y.ptr(), 1);
+	cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
+		N2, x.ptr(), x.step(), &beta, y.ptr(), 1);
 }
 
 template <class T, class T1, class T2, SLS_IF(
@@ -1102,19 +1160,39 @@ template <class T, class T1, class T2, SLS_IF(
 	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
 	is_Comp<contain_type<T2>>()
 )>
-void mul_gen(T &y, const T1 &a, const T2 &x)
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
+	Long N1 = a.n1(), N2 = a.n2();
 #ifdef SLS_CHECK_SHAPE
-	if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
+	if (x.size() != N2 || y.size() != N1)
 		SLS_ERR("wrong shape!");
 #endif
 	// do real part
-	Long N = x.size();
-	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-		N, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2 * y.step());
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2 * y.step());
 	// do imag part
-	cblas_dgemv(CblasColMajor, CblasNoTrans, N, N, 1, a.ptr(),
-		N, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2 * y.step());
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2 * y.step());
+}
+
+template <class T, class T1, class T2, SLS_IF(
+	is_Dvector<T>() && is_dense_mat<T1>() && is_Dvector<T2>() &&
+	is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
+	is_Comp<contain_type<T2>>()
+)>
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+	Long N1 = a.n1(), N2 = a.n2();
+#ifdef SLS_CHECK_SHAPE
+	if (x.size() != N2 || y.size() != N1)
+		SLS_ERR("wrong shape!");
+#endif
+	// do real part
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr(), 2 * x.step(), 0, (Doub*)y.ptr(), 2 * y.step());
+	// do imag part
+	cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+		N1, (Doub*)x.ptr() + 1, 2 * x.step(), 0, (Doub*)y.ptr() + 1, 2 * y.step());
 }
 
 // parallel version
@@ -1194,18 +1272,69 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 	}
 }
 
+// using mkl
+template <class T, class T1, class T2, SLS_IF(
+	is_dense_mat<T>() && is_dense_mat<T1>() && is_dense_mat<T2>())>
+inline void mul_gen(T &y, const T1 &a, const T2 &x)
+{
+	Long Nr_a = a.n1(), Nc_a = a.n2(), Nc_x = x.n2();
+#ifdef SLS_CHECK_SHAPE
+	if (a.n2() != x.n1() || y.n1() != Nr_a || y.n2() != Nc_x)
+		SLS_ERR("illegal shape!");
+#endif
+	if constexpr (is_Doub<contain_type<T>>())
+		cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, 1, a.ptr(), Nr_a, x.ptr(), Nc_a, 0, y.ptr(), Nr_a);
+	else if constexpr (is_Comp<contain_type<T>>()) {
+		Comp alpha(1,0), beta(0,0);
+		// this might cause memory read violation, don't know why!
+		cblas_zgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, &alpha, a.ptr(), Nr_a, x.ptr(), Nc_a, &beta, y.ptr(), Nr_a);
+	}
+	else
+		SLS_ERR("TODO");
+}
+
 // === numerical integration ===
 
 // indefinite integral;
 // use cumsum(y)*dx instead
 template <class T, class T1, SLS_IF(is_dense_vec<T>() && is_dense_vec<T1>())>
-void cumsum(T &v, const T1 &v1)
+inline void cumsum(T &v, const T1 &v1)
 {
 #ifdef SLS_CHECK_SHAPE
 	if (!shape_cmp(v, v1))
 		SLS_ERR("illegal shape!");
 #endif
 		cumsum_vv(v.ptr(), v1.ptr(), v1.size());
+}
+
+// === others ===
+
+// get all unique rows from a matrix
+template <class Tmat, class Tmat1, class T = contain_type<Tmat>,
+	class T1 = contain_type<Tmat1>, SLS_IF(
+	ndims<Tmat>() == 2 && ndims<Tmat1>() ==2 &&
+	is_cmajor<Tmat>() && is_cmajor<Tmat1>() &&
+	is_promo<T, T1>())>
+void uniq_rows(Tmat &a, const Tmat1 &a1)
+{
+	Long k = 0;
+	Dvector<T1> sli1;
+	a.resize(a1.n1(), a1.n2());
+	for (Long i = 0; i < a1.n1(); ++i) {
+		// check repeat
+		Bool repeat = false;
+		slice2(sli1, a1, i);
+		for (Long j = 0; j < k; ++j) {
+			if (slice2(a, j) == sli1) {
+				repeat = true; break;
+			}
+		}
+		if (repeat)
+			continue;
+		slice2(a, k) = sli1;
+		++k;
+	}
+	a.resize_cpy(k, a1.n2());
 }
 
 } // namespace slisc

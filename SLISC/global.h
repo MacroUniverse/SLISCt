@@ -131,9 +131,11 @@ template <class T> class Mat3d;
 template <class T> class Cmat3d;
 template <class T> class Cmat4d;
 template <class T> class Svector;
+template <class T> class Svector_c;
 template <class T> class Dvector;
 template <class T> class Smat;
 template <class T> class Scmat;
+template <class T> class Scmat_c;
 template <class T> class Dmat;
 template <class T> class Dcmat;
 template <class T> class Jcmat;
@@ -377,8 +379,9 @@ typedef const Cmat4Comp &Cmat4Comp_I;
 typedef Cmat4Comp &Cmat4Comp_O, &Cmat4Comp_IO;
 
 typedef Svector<Char> SvecChar;
-typedef const SvecChar &SvecChar_I;
 typedef SvecChar &SvecChar_O, &SvecChar_IO;
+typedef Svector_c<Char> SvecChar_c;
+typedef const SvecChar_c &SvecChar_I;
 
 typedef Svector<Int> SvecInt;
 typedef const SvecInt &SvecInt_I;
@@ -393,12 +396,14 @@ typedef const SvecLlong &SvecLlong_I;
 typedef SvecLlong &SvecLlong_O, &SvecLlong_IO;
 
 typedef Svector<Doub> SvecDoub;
-typedef const SvecDoub &SvecDoub_I;
 typedef SvecDoub &SvecDoub_O, &SvecDoub_IO;
+typedef Svector_c<Doub> SvecDoub_c;
+typedef const SvecDoub_c &SvecDoub_I;
 
 typedef Svector<Comp> SvecComp;
-typedef const SvecComp &SvecComp_I;
 typedef SvecComp &SvecComp_O, &SvecComp_IO;
+typedef Svector_c<Comp> SvecComp_c;
+typedef const SvecComp_c &SvecComp_I;
 
 typedef Dvector<Int> DvecInt;
 typedef const DvecInt &DvecInt_I;
@@ -441,24 +446,29 @@ typedef const SmatComp &SmatComp_I;
 typedef SmatComp &SmatComp_O, &SmatComp_IO;
 
 typedef Scmat<Int> ScmatInt;
-typedef const ScmatInt &ScmatInt_I;
 typedef ScmatInt &ScmatInt_O, &ScmatInt_IO;
+typedef Scmat_c<Int> ScmatInt_c;
+typedef const ScmatInt_c &ScmatInt_I;
 
 typedef Scmat<Long> ScmatLong;
-typedef const ScmatLong &ScmatLong_I;
 typedef ScmatInt &ScmatLong_O, &ScmatLong_IO;
+typedef Scmat_c<Long> ScmatLong_c;
+typedef const ScmatLong_c &ScmatLong_I;
 
 typedef Scmat<Llong> ScmatLlong;
-typedef const ScmatLlong &ScmatLlong_I;
 typedef ScmatInt &ScmatLlong_O, &ScmatLlong_IO;
+typedef Scmat_c<Llong> ScmatLlong_c;
+typedef const ScmatLlong_c &ScmatLlong_I;
 
 typedef Scmat<Doub> ScmatDoub;
-typedef const ScmatDoub &ScmatDoub_I;
 typedef ScmatDoub &ScmatDoub_O, &ScmatDoub_IO;
+typedef Scmat_c<Doub> ScmatDoub_c;
+typedef const ScmatDoub_c &ScmatDoub_I;
 
 typedef Scmat<Comp> ScmatComp;
-typedef const ScmatComp &ScmatComp_I;
 typedef ScmatComp &ScmatComp_O, &ScmatComp_IO;
+typedef Scmat_c<Comp> ScmatComp_c;
+typedef const ScmatComp_c &ScmatComp_I;
 
 typedef Dmat<Int> DmatInt;
 typedef const DmatInt &DmatInt_I;

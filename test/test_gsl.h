@@ -69,8 +69,29 @@ void test_gsl()
 	// test hydrogen radial function (normalized)
 	// int |R|^2 r^2 dr = 1
 	{
-		if (abs(gsl_sf_hydrogenicR(3, 1, 1, 0.3) - 0.0311936367) > 1e-9)
-			SLS_ERR("failed!");
+		{
+			Int n = 1, l = 0; Doub Z = 1.37;
+			Long Nr = 50;
+			VecDoub r(Nr); linspace(r, 0.1, 10);
+			for (Long i = 0; i < Nr; ++i) {
+				Doub R0 = 2 * pow(Z, 1.5) * exp(-Z * r[i]);
+				Doub R = gsl_sf_hydrogenicR(n, l, Z, r[i]);
+				if (abs(R - R0) > 1e-9)
+					SLS_ERR("failed!");
+			}
+		}
+		
+		{
+			Int n = 3, l = 1; Doub Z = 1.37;
+			Long Nr = 50;
+			VecDoub r(Nr); linspace(r, 0.1, 10);
+			for (Long i = 0; i < Nr; ++i) {
+				Doub R0 = 8/(27 * sqrt(6)) * pow(Z, 1.5) * (1 - Z*r[i]/6) * Z * r[i] * exp(-Z * r[i]/3);
+				Doub R = gsl_sf_hydrogenicR(n, l, Z, r[i]);
+				if (abs(R - R0) > 1e-9)
+					SLS_ERR("failed!");
+			}
+		}
 	}
 
 	// test coulomb function

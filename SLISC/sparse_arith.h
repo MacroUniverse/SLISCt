@@ -219,7 +219,7 @@ inline rm_comp<T> norm_inf(const CmatObd<T> &A)
 	Long N0 = A.n0(), step = N0 * N0, N1 = N0 - 1, Nblk = A.nblk();
 	Vector<rm_comp<T>> abs_sum(A.n2(), 0.);
 	Long k = 0;
-	Svector<T> sli(A.ptr() + N0 + 1, N1);
+	Svector_c<T> sli(A.ptr() + N0 + 1, N1);
 	// first block
 	for (Long j = 1; j < N0; ++j) {
 		abs_sum[k] += sum_abs(sli);

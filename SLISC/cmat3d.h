@@ -1,6 +1,7 @@
 // column-major 3D container
 #pragma once
 #include "vector.h"
+#include "scalar_arith.h"
 
 namespace slisc {
 // 3D Matrix Class
@@ -96,6 +97,7 @@ inline void Cmat3d<T>::resize(const Cmat3d<T1> &a) { resize(a.n1(), a.n2(), a.n3
 template<class T>
 inline void Cmat3d<T>::resize_cpy(Long_I N1, Long_I N2, Long_I N3)
 {
+	// todo: not optimized
 	if (N1 != m_N1 || N2 != m_N2 || N3 != m_N3) {
 		Long min_N1 = min(m_N1, N1), min_N2 = min(m_N2, N2), min_N3 = min(m_N3, N3);
 		Cmat3d<T> new_mat(N1, N2, N3, 0);
