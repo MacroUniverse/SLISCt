@@ -17,4 +17,5 @@ void test_except()
 	x = sqrt(-1.); SLS_ERR("failed!"); // test invalid
 	// x = 1. / 0.; SLS_ERR("failed!"); // test division by 0
 	// i = 1 / 0; SLS_ERR("failed!"); // test integer division by 0
+	++x;
 }

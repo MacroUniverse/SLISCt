@@ -85,7 +85,6 @@ public:
 	Int Bool_fin(Bool_O out, Str_I prompt) {
 		using namespace std;
 		string str;
-		streampos old_pos = m_fin.tellg();
 		getline(m_fin, str);
 		if (str.size() == 1) {
 			if (str[0] == 'y') {

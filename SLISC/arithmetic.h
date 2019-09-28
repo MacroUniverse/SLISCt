@@ -147,7 +147,7 @@ template <class Tvec, class Tmat,
 	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
 inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 {
-	Long Nr = a.n1(), Nc = a.n2();
+	Long Nc = a.n2();
 #ifdef SLS_CHECK_SHAPE
 	if (v.size() != Nc) {
 		SLS_ERR("wrong shape!");
@@ -157,6 +157,7 @@ inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
 		veccpy(v.ptr(), a.ptr() + Nc*row, Nc);
 	}
 	else if constexpr (is_cmajor<Tmat>()) { // column major
+		Long Nr = a.n1();
 		auto p = a.ptr() + row;
 		for (Long i = 0; i < Nc; ++i) {
 			v[i] = *p;
@@ -172,7 +173,7 @@ template <class Tvec, class Tmat,
 	SLS_IF(is_dense_vec<Tvec>() && is_dense_mat<Tmat>())>
 inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
 {
-	Long Nr = a.n1(), Nc = a.n2();
+	Long Nc = a.n2();
 #ifdef SLS_CHECK_SHAPE
 	if (v.size() != Nc) {
 		SLS_ERR("wrong shape!");
@@ -182,6 +183,7 @@ inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
 		veccpy(a.ptr() + Nc * row, v.ptr(), Nc);
 	}
 	else if constexpr (is_cmajor<Tmat>()) { // column major
+		Long Nr = a.n1();
 		auto p = a.ptr() + row;
 		for (Long i = 0; i < Nc; ++i) {
 			*p = v[i];
@@ -202,11 +204,12 @@ inline void copy_col(Tvec &v, const Tmat &a, Long_I col)
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	Long Nr = a.n1(), Nc = a.n2();
+	Long Nr = a.n1();
 	if constexpr (is_cmajor<Tmat>()) { // column major
 		veccpy(v.ptr(), a.ptr() + Nr*col, Nr);
 	}
 	else if constexpr (is_rmajor<Tmat>()) { // row major
+		Long Nc = a.n2();
 		auto p = a.ptr() + col;
 		for (Long i = 0; i < Nr; ++i) {
 			v[i] = *p;
@@ -227,11 +230,12 @@ inline void copy_col(Tmat &a, const Tvec &v, Long_I col)
 		SLS_ERR("wrong shape!");
 	}
 #endif
-	Long Nr = a.n1(), Nc = a.n2();
+	Long Nr = a.n1();
 	if constexpr (is_cmajor<Tmat>()) { // column major
 		veccpy(a.ptr() + Nr * col, v.ptr(), Nr);
 	}
 	else if constexpr (is_rmajor<Tmat>()) { // row major
+		Long Nc = a.n2();
 		auto p = a.ptr() + col;
 		for (Long i = 0; i < Nr; ++i) {
 			*p = v[i];
