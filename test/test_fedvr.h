@@ -17,7 +17,7 @@ inline double test_fedvr_fun(const double x, const int n)
 inline void test_gauss()
 {
     using namespace slisc;
-    Int Ngs = 10, Nfe = 2;
+    Int Ngs = 10;
     VecDoub x0(Ngs), w0(Ngs);
 
     // test Gauss-Lobatto integration
@@ -39,7 +39,6 @@ inline void test_gauss()
 inline void test_D2_mat()
 {
     using namespace slisc;
-    Doub xmin = -1., xmax = 1.;
     Int Nfe = 2, Ngs = 10;
     Long Nx = Nfe * (Ngs - 1) - 1;
     VecDoub bounds(Nfe + 1); linspace(bounds, -1., 1.);

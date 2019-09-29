@@ -32,7 +32,6 @@ void test_eig()
             eigVec2.resize(eigVec);
             mul(eigVec2, eigVec, diag(eigVal));
             eigVec1 -= eigVec2;
-            auto err = max_abs(eigVec1);
             if (max_abs(eigVec1) > 5e-5) {
                 cout << max_abs(eigVec1) << endl;
                 SLS_ERR("failed!"); // TODO: why is Visual Studio more accurate?
@@ -64,7 +63,6 @@ void test_eig()
             eigVec2.resize(eigVec);
             mul(eigVec2, eigVec, diag(eigVal));
             eigVec1 -= eigVec2;
-            auto err = max_abs(eigVec1);
             if (max_abs(eigVec1) > 5e-5) {
                 cout << max_abs(eigVec1) << endl;
                 SLS_ERR("failed!"); // TODO: why is Visual Studio more accurate?

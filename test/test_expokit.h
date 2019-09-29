@@ -14,7 +14,6 @@ void test_expokit()
     Long N = 40; // matrix size
     Int Nbase = 20; // # of krylov basis
     Doub t = 1; // time
-    Doub tol = 0; // error tol
     // ======================
 
     Long i, k;
@@ -64,10 +63,10 @@ void test_expokit()
         expv<'H'>(y2, A, t, Nbase, norm_inf(A));
         
         y1 -= y0;
-        auto xerr = max_abs(y1);
-        if (max_abs(y1) > 5e-12) SLS_ERR("failed!");
+        if (max_abs(y1) > 5e-12)
+		    SLS_ERR("failed!");
         y2 -= y0;
-        xerr = max_abs(y1);
-        if (max_abs(y2) > 5e-12) SLS_ERR("failed!");
+        if (max_abs(y2) > 5e-12)
+            SLS_ERR("failed!");
     }
 }
