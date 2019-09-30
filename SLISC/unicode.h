@@ -200,7 +200,7 @@ inline void num2str(Str32_O str, const T &num)
 }
 
 template <class T>
-inline Str32 num2str(const T &num)
+inline Str32 num2str32(const T &num)
 {
     Str32 str;
     num2str(str, num);
