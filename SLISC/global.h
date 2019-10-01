@@ -7,26 +7,13 @@
 
 // #define SLS_USE_MKL
 #define SLS_USE_CBLAS
-// #define SLS_USE_LAPACKE
+#define SLS_USE_LAPACKE
 #define SLS_USE_GSL // use GNU Scientific Library
 #define SLS_FP_EXCEPT // turn on floating point exception
 
 #ifndef NDEBUG
 #define SLS_CHECK_BOUNDS
 #define SLS_CHECK_SHAPE
-#endif
-
-#ifdef SLS_USE_MKL
-	#include <mkl.h>
-	#define SLS_USE_CBLAS
-	#define SLS_USE_LAPACKE
-#else
-	#ifdef SLS_USE_CBLAS
-		#include <cblas.h>
-	#endif
-	#ifdef SLS_USE_LAPACKE
-		#include <lapacke.h>
-	#endif
 #endif
 
 #include <limits>
@@ -38,6 +25,22 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+
+#ifdef SLS_USE_MKL
+	#include <mkl.h>
+	#define SLS_USE_CBLAS
+	#define SLS_USE_LAPACKE
+#else
+	#ifdef SLS_USE_CBLAS
+		#include <cblas.h>
+	#endif
+	#ifdef SLS_USE_LAPACKE
+		#include <lapacke.h>
+		#ifdef I // I might be already defined in "/usr/include/complex.h"
+			#undef I
+		#endif
+	#endif
+#endif
 
 namespace slisc {
 
