@@ -122,7 +122,7 @@ inline void test_arithmetic()
 
     // sum, max, max_abs, norm2
     {
-        Long ind;
+        Long ind = 0;
         VecBool a(4); a[0] = 1; a[1] = 0; a[2] = 1; a[3] = 1;
         if (!is_equiv(sum(a), Llong(3))) SLS_ERR("failed!");
 

@@ -10,20 +10,20 @@ mkl_compile =  -m64 -I${MKLROOT}/include
 
 # use `sudo apt install libgsl-dev` to install GNU scientific library
 # use `dpkg -L dpkg -L libgsl-dev` to check the installation directory
-lib = -lgsl
+libs = -lgsl
 
 no_warn = -Wno-reorder # supress warning about initializer list order
 
-flag = -Wall $(no_warn)
+flags = -Wall $(no_warn) -O3 -fopenmp
 
 # link
 # choose `$(mkl_dyn_link)` or `$(mkl_stat_link)`
 goal:main.o
-	g++ $(flag) -fopenmp -o main.x main.o $(lib) $(mkl_stat_link)
+	g++ $(flags) -o main.x main.o $(libs) $(mkl_stat_link)
 
 # compile
 main.o:main.cpp
-	g++ $(flag) $(mkl_compile) -std=c++17 -fopenmp -c main.cpp
+	g++ $(flags) $(mkl_compile) -std=c++17 -c main.cpp
 
 clean:
 	rm -f *.o *.x

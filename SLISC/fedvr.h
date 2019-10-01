@@ -260,7 +260,7 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
         // block upper right corner
         coeff = -1. / (wFE(i + 1) * ::sqrt((wFE(i) + wFE(i + 1))*(wFE(i + 1) + wFE(i + 2))));
         mm = indFEDVR(i, Ngs-1, Ngs); nn = indFEDVR(i + 1, Ngs-1, Ngs);
-        s = coeff * block(0, n);
+        s = coeff * block(0, Ngs - 1);
         D2.push(s, mm, nn); D2.push(s, nn, mm);
     }
 
