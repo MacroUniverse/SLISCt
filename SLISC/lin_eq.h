@@ -4,7 +4,7 @@
 
 namespace slisc {
 
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_LAPACKE
 template<class Tmat, SLS_IF(
     is_dense_mat<Tmat>() && is_Doub<contain_type<Tmat>>())>
 inline void inv_mat(Tmat &A)

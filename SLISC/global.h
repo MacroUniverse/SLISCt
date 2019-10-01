@@ -5,7 +5,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#define SLS_USE_MKL // use Intel MKL when possible
+// #define SLS_USE_MKL
+#define SLS_USE_CBLAS
+// #define SLS_USE_LAPACKE
 #define SLS_USE_GSL // use GNU Scientific Library
 #define SLS_FP_EXCEPT // turn on floating point exception
 
@@ -15,8 +17,18 @@
 #endif
 
 #ifdef SLS_USE_MKL
-#include <mkl.h>
+	#include <mkl.h>
+	#define SLS_USE_CBLAS
+	#define SLS_USE_LAPACKE
+#else
+	#ifdef SLS_USE_CBLAS
+		#include <cblas.h>
+	#endif
+	#ifdef SLS_USE_LAPACKE
+		#include <lapacke.h>
+	#endif
 #endif
+
 #include <limits>
 #include <cmath>
 #include <algorithm>

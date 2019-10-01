@@ -17,7 +17,7 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_fft.h"
 #include "test_random.h"
 #include "test_sort.h"
-#ifdef SLS_USE_MKL
+#if defined(SLS_USE_MKL) || defined(SLS_USE_LAPACKE)
 #include "test_lin_eq.h"
 #endif
 //#include "test_eigen_basics.h"

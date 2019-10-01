@@ -1070,7 +1070,7 @@ inline void mul_sym(T &y, const T1 &a, const T2 &x)
     if (a.n1() != a.n2() || x.size() != y.size() || x.size() != a.n1())
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     // do real part
     Long N = x.size();
     cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
@@ -1094,7 +1094,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     if constexpr (is_Doub<contain_type<T>>()) {
         cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
             N1, x.ptr(), 1, 0, y.ptr(), 1);
@@ -1122,7 +1122,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     // do real part
     cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
         N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
@@ -1146,7 +1146,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     // do real part
     cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
         N1, (Doub*)x.ptr(), 2*x.step(), 0, (Doub*)y.ptr(), 2);
@@ -1170,7 +1170,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     Comp alpha(1), beta(0);
     cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
         N2, x.ptr(), x.step(), &beta, y.ptr(), 1);
@@ -1191,7 +1191,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     // do real part
     cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
         N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2 * y.step());
@@ -1215,7 +1215,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
     // do real part
     cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
         N1, (Doub*)x.ptr(), 2 * x.step(), 0, (Doub*)y.ptr(), 2 * y.step());

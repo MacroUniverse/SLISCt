@@ -615,7 +615,7 @@ inline auto mul_v_cmat_v(T1 *y, const T2 *x, const T *a, Long_I Nr, Long_I Nc)
     }
 }
 
-#ifdef SLS_USE_MKL
+#ifdef SLS_USE_CBLAS
 inline void mul_plus_v_cmat_v(Comp *y, const Comp *x, const Comp *a, Int_I Nr, Int_I Nc)
 {
     Comp one(1.);
