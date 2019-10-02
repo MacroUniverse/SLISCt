@@ -1,18 +1,25 @@
 # use g++ with libgsl-dev libblas-dev liblapacke-dev (all available from apt-get)
 
-# use `dpkg -L dpkg -L libgsl-dev` to check the installation directory
+# use `dpkg -L dpkg -L lib***` to check the installation directory
+
+# sudo apt install libgsl*
+# sudo apt install libblas*
+# sudo apt install liblapack*
+
 libs = -lgsl -llapacke -lblas
 
 flags = -Wall -Wno-reorder -fopenmp
 
+compiler = g++-9
+
 # link
 # choose `$(mkl_dyn_link)` or `$(mkl_stat_link)`
 goal:main.o
-	g++ $(flags) -o main.x main.o $(libs)
+	$(compiler) $(flags) -o main.x main.o $(libs)
 
 # compile
 main.o:main.cpp
-	g++ $(flags) -std=c++17 -c main.cpp
+	$(compiler) $(flags) -std=c++17 -c main.cpp
 
 clean:
 	rm -f *.o *.x
