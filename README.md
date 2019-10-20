@@ -315,12 +315,14 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 ## Matt File (.matt)
 * .matt is a text based format that I designed to immitate Matlab's .mat file.
 * can write many variables and matrices to a single file, with names.
-* can find and read any number of stored variables/matrices from a file by name without scanning through the whole file. Thus, reading a large file is fast.
+* can find and read any number of stored variables/matrices from a file by name without scanning through the whole file (the overhead is negligible). Thus, reading a large file is fast.
 * the read in value type T2 can be different from the written value type T1, if T1 can be losslessly converted to T2 (see `is_promo<T1,T2>()`).
 * there is a Matlab function `save()` that works similar to `load()` to read this file into Matlab workspace. This reading subroutine can be easily implemented for any other language.
 * Matrices are stored in column major order. Memory access speed is negaligible comparing to hard-drive.
 
-* TODO: `i` is not necessary, consider use `a+b` or `a-b` to represents complex numbers. However, `mattread()` might take longer time because Matlab cannot recognize this format directly.
+### implementation
+* every variable/matrix has several parts: length of name, every character of name in ascii, type number (defined in meta.h), dimension of matrix (i.e. number of idices), leng of each dimension, list of elements in column major
+* at the end of file, there is a list of position (character number) of the start of every variable, and finally, the number of variables
 
 ## Related Projects
 * See cuSLISC project for a GPU version of SLISC using CUDA.
@@ -348,3 +350,4 @@ void idft_par(MatComp_O &X, Doub xmin, Doub xmax, Long_I Nx, MatComp_I &Y, Doub 
 * change `ptr()` function to `data()` for containers, like `std::vector<>`
 * `container.resize(container)` should support every possible container
 * `operator=` for containers (and slice classes!) should work for any possible right hand side type
+* matfile: consider storing complex array using the format of real array.
