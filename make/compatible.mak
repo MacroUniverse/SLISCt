@@ -10,7 +10,7 @@ libs = -lgsl -llapacke -lblas
 
 flags = -Wall -Wno-reorder -fopenmp
 
-compiler = g++-9
+compiler = g++
 
 # link
 # choose `$(mkl_dyn_link)` or `$(mkl_stat_link)`
