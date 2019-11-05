@@ -48,6 +48,7 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_unicode.h"
 #include "test_omp.h"
 #include "test_search.h"
+#include "test_tree.h"
 
 // #include "test/test_mparith.h"
 
@@ -96,6 +97,9 @@ inline void test_all()
     test_sort();
     cout << "test_search()" << endl;
     test_search();
+    cout << "test_tree()" << endl;
+    test_tree();
+
 #ifdef SLS_USE_MKL
     cout << "test_lin_eq()" << endl;
     test_lin_eq();
