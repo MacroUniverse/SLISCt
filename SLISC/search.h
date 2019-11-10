@@ -47,14 +47,12 @@ inline Long find_repeat(Tv v)
     return -1;
 }
 
-// search ind so that v[ind] == s
-// same as lookupInt(), but Int operator-(v[i], s) must be implemented
-// operator-(v[i], s) only need to return the correct sign
-// return 0, output ind: if s is found
+// return 0, output ind: if v[ind] == s
 // return -1: if s is not found and s < v[0]
 // return 1: if s is not found and v[end] < s
 // return -2: if s is not found and v[0] < s < v[end], output ind so that v[ind] < s < v[ind+1]
 // return -3: if s is not found because v.size() == 0
+// operator-(v[i], s) must be implemented and only need to return the correct sign or 0
 template <class T, class T1>
 inline Int lookupInt(Long_O ind, const T1 &v, const T &s)
 {

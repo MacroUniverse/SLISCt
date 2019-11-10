@@ -16,8 +16,9 @@ void test_time()
     using namespace slisc;
     Timer t; CPUTimer cput;
     // cpu time
-    cput.tic(); pause(0.114);
-    if (abs(cput.toc() - 0.114) > 2e-4) SLS_TIME_H_ERR("failed!");
+    cput.tic();
+    if (cput.toc() > 0.1)
+        SLS_TIME_H_ERR("failed!");
 
     // natural time
     t.tic(); pause(0.114);

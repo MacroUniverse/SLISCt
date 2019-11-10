@@ -636,6 +636,12 @@ inline void operator*=(T &v, const Ts &s)
     times_equals_vs(v.ptr(), s, v.size());
 }
 
+template <class T, class Ts, SLS_IF(is_Dvector<T>() && is_scalar<Ts>())>
+inline void operator*=(T &v, const Ts &s)
+{
+    times_equals_vs(v.ptr(), s, v.size(), v.step());
+}
+
 template <class T, class T1, SLS_IF(
     is_scalar<T>() && is_promo<T, T1>())>
 inline void operator*=(Dcmat<T> &v, Dcmat<T1> &v1)
@@ -1037,8 +1043,8 @@ inline void outprod_par(T &v, const T1 &v1, const T2 &v2)
 
 // matrix-vector multiplication
 template <class T, class T1, class T2, SLS_IF(
-    ndims<T>() == 1 && is_dense_mat<T1>() && ndims<T2>() == 1
-)>
+    ndims<T>() == 1 && ndims<T2>() == 1 &&
+    (is_dense_mat<T1>() || is_Dcmat<T1>()))>
 inline void mul(T &y, const T1 &a, const T2 &x)
 {
     Long Nr = a.n1(), Nc = a.n2();
@@ -1046,19 +1052,14 @@ inline void mul(T &y, const T1 &a, const T2 &x)
     if (Nc != x.size() || y.size() != Nr)
         SLS_ERR("illegal shape!");
 #endif
-    if constexpr (is_rmajor<T1>()) { // row major
-        vecset(y.ptr(), contain_type<T>(), Nr);
-        for (Long i = 0; i < Nr; ++i) {
-            for (Long j = 0; j < Nc; ++j)
-                y[i] += a(i, j) * x[j];
-        }
-    }
-    else { // col major
-        mul_v_cmat_v(y.ptr(), x.ptr(), a.ptr(), Nr, Nc);
+    for (Long i = 0; i < Nr; ++i) {
+        y[i] = 0;
+        for (Long j = 0; j < Nc; ++j)
+            y[i] += a(i, j) * x[j];
     }
 }
 
-// matrix-vector multiplication with symmetric Doub matrix and Com vectors (use MKL)
+// matrix-vector multiplication with symmetric Doub matrix and Comp vectors (use MKL)
 template <class T, class T1, class T2, SLS_IF(
     is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
     is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
@@ -1083,145 +1084,75 @@ inline void mul_sym(T &y, const T1 &a, const T2 &x)
 #endif
 }
 
-template <class T, class T1, class T2, class Ts = contain_type<T>, SLS_IF(
-    is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
-    (is_Doub<contain_type<T>>() && is_Doub<contain_type<T1>>() && is_Doub<contain_type<T2>>() ||
-        is_Comp<contain_type<T>>() && is_Comp<contain_type<T1>>() && is_Comp<contain_type<T2>>()))>
+// matrix-vector multiplication with symmetric Dcmat and vectors of Doub and Comp (use MKL)
+template <class T, class T1, class T2, class Ts = contain_type<T>,
+    class Ts1 = contain_type<T1>, class Ts2 = contain_type<T2>, SLS_IF(
+    is_dense_vec<T>() && is_Dcmat<T1>() && is_dense_vec<T2>() &&
+    is_Doub<Ts>() && is_Doub<Ts1> && is_Doub<Ts1>
+)>
+inline void mul_sym(T &y, const T1 &a, const T2 &x)
+{
+    Long N = x.size();
+#ifdef SLS_CHECK_SHAPE
+    if (a.n1() != a.n2() || N != y.size() || N != a.n1())
+        SLS_ERR("wrong shape!");
+#endif
+#ifdef SLS_USE_CBLAS
+    if constexpr (is_Doub<Ts>()) {
+        cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
+            a.lda(), (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
+    }
+#else
+    mul(y, a, x);
+#endif
+}
+
+// matrix-vector multiplication using cBLAS
+template <class T, class T1, class T2,
+    class Ts = contain_type<T>, class Ts1 = contain_type<T1>,
+    class Ts2 = contain_type<T2>, SLS_IF(
+        (is_dense_vec<T>() || is_Dvector<T>()) &&
+        (is_dense_mat<T1>() || is_Dcmat<T1>()) &&
+        (is_dense_vec<T2>() || is_Dvector<T2>()) &&
+        ((is_Doub<Ts>() && is_Doub<Ts1>() && is_Doub<Ts2>()) ||
+         (is_Comp<Ts>() && is_Comp<Ts1>() && is_Comp<Ts2>()) ||
+         (is_Comp<Ts>() && is_Doub<Ts1>() && is_Comp<Ts>())))>
 inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
-    Long N1 = a.n1(), N2 = a.n2();
+    Long N1 = a.n1(), N2 = a.n2(), lda, incx, incy;
 #ifdef SLS_CHECK_SHAPE
     if (x.size() != N2 || y.size() != N1)
         SLS_ERR("wrong shape!");
 #endif
 #ifdef SLS_USE_CBLAS
-    if constexpr (is_Doub<contain_type<T>>()) {
+    if constexpr (is_dense_vec<T>())
+        incy = 1;
+    else
+        incy = y.step();
+    if constexpr (is_dense_mat<T1>())
+        lda = N1;
+    else
+        lda = a.lda();
+    if constexpr (is_dense_vec<T2>())
+        incx = 1;
+    else
+        incx = x.step();
+    if constexpr (is_Doub<Ts>() && is_Doub<Ts1>())
         cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-            N1, x.ptr(), 1, 0, y.ptr(), 1);
-    }
-    else {
+            lda, x.ptr(), incx, 0, y.ptr(), incy);
+    else if constexpr (is_Comp<Ts>() && is_Comp<Ts1>()) {
         Comp alpha(1), beta(0);
         cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
-            N1, x.ptr(), 1, &beta, y.ptr(), 1);
+            lda, x.ptr(), incx, &beta, y.ptr(), incy);
     }
-#else
-    mul(y, a, x);
-#endif
-}
-
-// matrix-vector multiplication with generic Doub matrix and Com vectors (use MKL)
-template <class T, class T1, class T2, SLS_IF(
-    is_dense_vec<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
-    is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
-    is_Comp<contain_type<T2>>()
-)>
-inline void mul_gen(T &y, const T1 &a, const T2 &x)
-{
-    Long N1 = a.n1(), N2 = a.n2();
-#ifdef SLS_CHECK_SHAPE
-    if (x.size() != N2 || y.size() != N1)
-        SLS_ERR("wrong shape!");
-#endif
-#ifdef SLS_USE_CBLAS
-    // do real part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
-    // do imag part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2);
-#else
-    mul(y, a, x);
-#endif
-}
-
-template <class T, class T1, class T2, SLS_IF(
-    is_dense_vec<T>() && is_dense_mat<T1>() && is_Dvector<T2>() &&
-    is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
-    is_Comp<contain_type<T2>>()
-)>
-inline void mul_gen(T &y, const T1 &a, const T2 &x)
-{
-    Long N1 = a.n1(), N2 = a.n2();
-#ifdef SLS_CHECK_SHAPE
-    if (x.size() != N2 || y.size() != N1)
-        SLS_ERR("wrong shape!");
-#endif
-#ifdef SLS_USE_CBLAS
-    // do real part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr(), 2*x.step(), 0, (Doub*)y.ptr(), 2);
-    // do imag part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr() + 1, 2*x.step(), 0, (Doub*)y.ptr() + 1, 2);
-#else
-    mul(y, a, x);
-#endif
-}
-
-template <class T, class T1, class T2, SLS_IF(
-    is_dense_vec<T>() && is_dense_mat<T1>() && is_Dvector<T2>() &&
-    is_Comp<contain_type<T>>() && is_Comp<contain_type<T1>>() &&
-    is_Comp<contain_type<T2>>()
-)>
-inline void mul_gen(T &y, const T1 &a, const T2 &x)
-{
-    Long N1 = a.n1(), N2 = a.n2();
-#ifdef SLS_CHECK_SHAPE
-    if (x.size() != N2 || y.size() != N1)
-        SLS_ERR("wrong shape!");
-#endif
-#ifdef SLS_USE_CBLAS
-    Comp alpha(1), beta(0);
-    cblas_zgemv(CblasColMajor, CblasNoTrans, N1, N2, &alpha, a.ptr(),
-        N2, x.ptr(), x.step(), &beta, y.ptr(), 1);
-#else
-    mul(y, a, x);
-#endif
-}
-
-template <class T, class T1, class T2, SLS_IF(
-    is_Dvector<T>() && is_dense_mat<T1>() && is_dense_vec<T2>() &&
-    is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
-    is_Comp<contain_type<T2>>()
-)>
-inline void mul_gen(T &y, const T1 &a, const T2 &x)
-{
-    Long N1 = a.n1(), N2 = a.n2();
-#ifdef SLS_CHECK_SHAPE
-    if (x.size() != N2 || y.size() != N1)
-        SLS_ERR("wrong shape!");
-#endif
-#ifdef SLS_USE_CBLAS
-    // do real part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2 * y.step());
-    // do imag part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr() + 1, 2, 0, (Doub*)y.ptr() + 1, 2 * y.step());
-#else
-    mul(y, a, x);
-#endif
-}
-
-template <class T, class T1, class T2, SLS_IF(
-    is_Dvector<T>() && is_dense_mat<T1>() && is_Dvector<T2>() &&
-    is_Comp<contain_type<T>>() && is_Doub<contain_type<T1>>() &&
-    is_Comp<contain_type<T2>>()
-)>
-inline void mul_gen(T &y, const T1 &a, const T2 &x)
-{
-    Long N1 = a.n1(), N2 = a.n2();
-#ifdef SLS_CHECK_SHAPE
-    if (x.size() != N2 || y.size() != N1)
-        SLS_ERR("wrong shape!");
-#endif
-#ifdef SLS_USE_CBLAS
-    // do real part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr(), 2 * x.step(), 0, (Doub*)y.ptr(), 2 * y.step());
-    // do imag part
-    cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
-        N1, (Doub*)x.ptr() + 1, 2 * x.step(), 0, (Doub*)y.ptr() + 1, 2 * y.step());
+    else if constexpr (is_Comp<Ts>() && is_Doub<Ts1>()) {
+        // do real part
+        cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+            lda, (Doub*)x.ptr(), 2*incx, 0, (Doub*)y.ptr(), 2*incy);
+        // do imag part
+        cblas_dgemv(CblasColMajor, CblasNoTrans, N1, N2, 1, a.ptr(),
+            lda, (Doub*)x.ptr() + 1, 2*incx, 0, (Doub*)y.ptr() + 1, 2*incy);
+    }
 #else
     mul(y, a, x);
 #endif

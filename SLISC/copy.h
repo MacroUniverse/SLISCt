@@ -4,8 +4,6 @@
 #pragma once
 
 #include "meta.h"
-#include "dcmat.h"
-#include "jcmat3d.h"
 
 namespace slisc {
 //  === pointer interface ===

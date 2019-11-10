@@ -4,7 +4,25 @@
 #include "global.h"
 #include "time.h"
 
+// read a variable from stdin and print to std::out
+#define SLS_INP(var) sls_inp_imp(#var, var);
+
 namespace slisc {
+
+// implementation for SLS_CIN
+template <class T>
+void sls_inp_imp(const Char * varname, T &var)
+{
+    cin >> var;
+    cout << varname << " = " << var << ";    ";
+}
+
+// jump to the next line
+inline void cin_line()
+{
+	cin.ignore(1000, '\n');
+    cout << endl;
+}
 
 class Input
 {
@@ -207,4 +225,4 @@ public:
     }
 };
 
-}
+} // namespace slisc

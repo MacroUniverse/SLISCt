@@ -499,6 +499,29 @@ inline void test_arithmetic()
             SLS_ERR("failed!");
     }
 
+    // matrix-vector multiplication using cblas
+    {
+        VecComp x(11), y(13), y1(13); rand(x); rand(y);
+        CmatDoub a(13, 11); rand(a);
+        mul(y, a, x);
+        mul_gen(y1, a, x);
+        y1 -= y;
+        if (max_abs(y1) > 1e-13)
+            SLS_ERR("failed!");
+
+        DvecComp sli_x, sli_y, sli_y1;
+        slice_vec(sli_x, x, 1, 5, 2);
+        slice_vec(sli_y, y, 1, 6, 2);
+        slice_vec(sli_y1, y1, 1, 6, 2);
+        DcmatDoub sli_a;
+        slice(sli_a, a, 2, 6, 2, 5);
+        mul(sli_y, sli_a, sli_x);
+        mul_gen(sli_y1, sli_a, sli_x);
+        sli_y1 -= sli_y;
+        if (max_abs(sli_y1) > 1e-13)
+            SLS_ERR("failed!");
+    }
+
     // vector-matrix multiplication
     {
         MatComp a(7,4); linspace(a, Comp(1, -1), Comp(28, -28));

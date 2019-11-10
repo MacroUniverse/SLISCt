@@ -21,6 +21,10 @@ template <class Tdens, class T = contain_type<Tdens>,
     SLS_IF(is_dense<Tdens>())>
 void slice_vec(Svector<T> &sli, Tdens &a, Long_I start, Long_I n)
 {
+#ifdef SLS_CHECKBOUNDS
+    if (start < 0 || start + n > a.size())
+        SLS_ERR("out of bound!");
+#endif
     sli.set(a.ptr() + start, n);
 }
 
@@ -35,14 +39,18 @@ Svector<T> slice_vec(Tdens &a, Long_I start, Long_I n)
 
 template <class Tdens, class T = contain_type<Tdens>,
     SLS_IF(is_dense<Tdens>())>
-void slice_vec(Svector_c<T> &sli, const Tdens &a, Long_I start, Long_I n)
+inline void slice_vec(Svector_c<T> &sli, const Tdens &a, Long_I start, Long_I n)
 {
+#ifdef SLS_CHECKBOUNDS
+    if (start < 0 || start + n > a.size())
+        SLS_ERR("out of bound!");
+#endif
     sli.set(a.ptr() + start, n);
 }
 
 template <class Tdens, class T = contain_type<Tdens>,
     SLS_IF(is_dense<Tdens>())>
-Svector_c<T> slice_vec(const Tdens &a, Long_I start, Long_I n)
+inline Svector_c<T> slice_vec(const Tdens &a, Long_I start, Long_I n)
 {
     Svector_c<T> sli;
     slice_vec(sli, a, start, n);
@@ -54,6 +62,10 @@ template <class Tdens, class T = contain_type<Tdens>,
     SLS_IF(is_dense<Tdens>())>
 void slice_vec(Dvector<T> &sli, const Tdens &a, Long_I start, Long_I n, Long_I step)
 {
+#ifdef SLS_CHECKBOUNDS
+    if (start < 0 || start + n * step > a.size())
+        SLS_ERR("out of bound!");
+#endif
     sli.set(a.ptr() + start, n, step);
 }
 
@@ -155,6 +167,29 @@ Dvector<T> slice2(const Tmat &a, Long_I row, Long_I k = 0)
 {
     Dvector<T> sli;
     slice2(sli, a, row, k);
+    return sli;
+}
+
+template <class Tmat, class T = contain_type<Tmat>,
+    SLS_IF(is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
+inline void slice2(Dvector<T> &sli, const Tmat &a, Long_I row,
+        Long_I col, Long_I N2, Long_I k = 0)
+{
+    Long Nr = a.n1(), Nc = a.n2();
+#ifdef SLS_CHECK_BOUNDS
+    if (row < 0 || row >= Nr || col < 0 || col + N2 > Nc || N2 < 0)
+        SLS_ERR("out of bound!");
+#endif
+    sli.set(&a(row, col, k), Nc, Nr);
+}
+
+template <class Tmat, class T = contain_type<Tmat>,
+    SLS_IF(is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
+inline Dvector<T> slice2(const Tmat &a, Long_I row,
+        Long_I col, Long_I N2, Long_I k = 0)
+{
+    Dvector<T> sli;
+    slice2(sli, a, row, col, N2, k);
     return sli;
 }
 
@@ -264,7 +299,7 @@ void slice1(Svector<T> &sli, Tmat &a, Long_I col, Long_I k = 0)
 
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
     is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
-Svector<T> slice1(Tmat &a, Long_I col, Long_I k)
+inline Svector<T> slice1(Tmat &a, Long_I col, Long_I k)
 {
     Svector<T> sli;
     slice1(sli, a, col, k);
@@ -292,10 +327,36 @@ inline Svector_c<T> slice1(const Tmat &a, Long_I col, Long_I k)
     return sli;
 }
 
+template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
+    is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
+inline void slice1(Svector<T> &sli, Tmat &a,
+    Long_I row, Long_I N1, Long_I col, Long_I k = 0)
+{
+#ifdef SLS_CHECK_BOUNDS
+    if (N1 < 0 || row < 0 || row + N1 > a.n1())
+        SLS_ERR("out of bound!");
+    if (col < 0 || col >= a.n2())
+        SLS_ERR("out of bound!");
+    if (k < 0 || k >= a.n3())
+        SLS_ERR("out of bound!");
+#endif
+    sli.set(&a(row, col, k), N1);
+}
+
+template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
+    is_dense_mat3<Tmat>() && is_cmajor<Tmat>())>
+inline Svector<T> slice1(Tmat &a,
+    Long_I row, Long_I N1, Long_I col, Long_I k = 0)
+{
+    Svector<T> sli;
+    slice1(sli, a, row, N1, col, k);
+    return sli;
+}
+
 // slice a col from a col-major 4d array
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
     is_dense_mat4<Tmat>() && is_cmajor<Tmat>())>
-    void slice1(Svector<T> &sli, Tmat &a, Long_I j, Long_I k = 0, Long_I l = 0)
+inline void slice1(Svector<T> &sli, Tmat &a, Long_I j, Long_I k = 0, Long_I l = 0)
 {
     Long N1 = a.n1(), N2 = a.n2(), N3 = a.n3(), N4 = a.n4();
 #ifdef SLS_CHECK_BOUNDS
@@ -308,7 +369,7 @@ template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
 
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
     is_dense_mat4<Tmat>() && is_cmajor<Tmat>())>
-    Svector<T> slice1(Tmat &a, Long_I j, Long_I k = 0, Long_I l = 0)
+inline Svector<T> slice1(Tmat &a, Long_I j, Long_I k = 0, Long_I l = 0)
 {
     Svector<T> sli;
     slice1(sli, a, j, k, l);
