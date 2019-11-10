@@ -23,16 +23,15 @@
 #include <cstring>
 
 #ifdef SLS_USE_MKL
+	#define MKL_Complex16 double _Complex
 	#include <mkl.h>
 	#define SLS_USE_CBLAS
 	#define SLS_USE_LAPACKE
-	typedef MKL_Complex16 SLS_LAPACKE_COMP;
 #else
 	#ifdef SLS_USE_CBLAS
 		#include <cblas.h>
 	#endif
 	#ifdef SLS_USE_LAPACKE
-	    typedef double _Complex SLS_LAPACKE_COMP;
 		#include <lapacke.h>
 		#ifdef I // I is already defined in "/usr/include/complex.h"
 			#undef I

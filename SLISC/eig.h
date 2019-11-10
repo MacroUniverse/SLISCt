@@ -40,7 +40,7 @@ void eig_her(VecDoub_O eigVal, CmatComp_O eigVec, CmatComp_I A)
     Int N = (Int)A.n2();
     eigVal.resize(N);
     Int ret = LAPACKE_zheev(LAPACK_COL_MAJOR, 'V', 'U', N,
-        (SLS_LAPACKE_COMP *)eigVec.ptr(), N, eigVal.ptr());
+        (double _Complex*)eigVec.ptr(), N, eigVal.ptr());
     if (ret != 0)
         SLS_ERR("failed!");
 }

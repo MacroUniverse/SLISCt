@@ -103,8 +103,8 @@ void ZGPADM(Int_I ideg, Int_I m, Doub_I t, const Comp *H, Int_I ldh, Comp *wsp, 
     }
     temp = -one;
     cblas_zaxpy(mm, &temp, wsp + ip, 1, wsp + iq, 1);
-    iflag = LAPACKE_zgesv(LAPACK_COL_MAJOR, m, m, (SLS_LAPACKE_COMP*)(wsp + iq), m, ipiv,
-        (SLS_LAPACKE_COMP*)(wsp + ip), m);
+    iflag = LAPACKE_zgesv(LAPACK_COL_MAJOR, m, m, (double _Complex*)(wsp + iq), m, ipiv,
+        (double _Complex*)(wsp + ip), m);
     if (iflag != 0)
         SLS_ERR("Problem in ZGESV (within ZGPADM)");
     cblas_zdscal(mm, 2., wsp + ip, 1);
