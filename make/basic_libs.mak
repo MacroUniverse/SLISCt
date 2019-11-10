@@ -1,14 +1,9 @@
 # use g++ with libgsl-dev libblas-dev liblapacke-dev (all available from apt-get)
-
 # use `dpkg -L dpkg -L lib***` to check the installation directory
-
-# sudo apt install libgsl*
-# sudo apt install libblas*
-# sudo apt install liblapack*
 
 libs = -lgsl -llapacke -lblas
 
-flags = -Wall -Wno-reorder -fopenmp -O3 -D NDEBUG
+flags = -Wall -Wno-reorder -fopenmp -O3 -D NDEBUG -D SLS_USE_CBLAS -D SLS_USE_LAPACKE -D SLS_USE_GSL
 
 compiler = g++
 

@@ -14,7 +14,7 @@ libs = -lgsl
 
 no_warn = -Wno-reorder # supress warning about initializer list order
 
-flags = -Wall $(no_warn) -O3 -fopenmp
+flags = -Wall $(no_warn) -fopenmp -O3 -D NDEBUG -D SLS_USE_GSL -D SLS_USE_MKL
 
 # link
 # choose `$(mkl_dyn_link)` or `$(mkl_stat_link)`

@@ -116,11 +116,11 @@ template <class Tmat, class T = contain_type<Tmat>,
     SLS_IF(is_dense_mat<Tmat>() && is_cmajor<Tmat>())>
 void slice2(Dvector<T> &sli, const Tmat &a, Long_I row, Long_I col, Long_I Ncol)
 {
-    Long Nr = a.n1(), Nc = a.n2();
+    Long Nr = a.n1();
 #ifdef SLS_CHECK_BOUNDS
     if (row < 0 || row >= Nr)
         SLS_ERR("out of bound!");
-    if (col + Ncol > Nc)
+    if (col + Ncol > a.n2())
         SLS_ERR("out of bound!");
 #endif
     sli.set(a.ptr() + row + Nr*col, Ncol, Nr);

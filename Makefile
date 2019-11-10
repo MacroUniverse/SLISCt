@@ -1,12 +1,13 @@
 # choose one of the following makefiles for different compilers and libraries
-# edit macros in global.h in correspondence
 
-# macros: SLS_USE_CBLAS SLS_USE_LAPACKE
-# known bug: LAPACKE is not working for now
+# the most compatible build, no libraries are required
 include make/compatible.mak
 
-# macros: SLS_USE_MKL 
+# blas lapacke gsl are required
+# include make/basic_libs.mak
+
+# MKL and gsl are required
 # include make/g++_and_mkl.mak
 
-# macros: SLS_USE_MKL
+# icpc compiler and MKL are required
 # include make/icpc_and_mkl.mak

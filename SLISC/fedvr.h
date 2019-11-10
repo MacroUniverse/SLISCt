@@ -194,8 +194,8 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
     Long i, j, k, m, n, mm, nn;
     Long Nfe = wFE.size();
     Long Ngs = w0.size();
-    Long Nx = Nfe * (Ngs - 1) - 1;
 #ifdef SLS_CHECK_SHAPE
+	Long Nx = Nfe * (Ngs - 1) - 1;
     if (D2.n1() != Nx || D2.n1() != Nx)
         SLS_ERR("wrong shape!");
 #endif
@@ -274,8 +274,8 @@ inline void D2_matrix(McooDoub_O D2, VecDoub_I w0, VecDoub_I wFE, CmatDoub_I df)
 void D2_matrix(McooDoub_O D2, VecDoub_O x, VecDoub_O w, VecDoub_O u, VecDoub_I bounds, Long_I Ngs)
 {
     Long Nfe = bounds.size() - 1; // number of finite elements
-    Long Nx = Nfe * (Ngs - 1) - 1;
 #ifdef SLS_CHECK_SHAPE
+	Long Nx = Nfe * (Ngs - 1) - 1;
     if (x.size() != Nx || w.size() != Nx || u.size() != Nx ||
         D2.n1() != Nx || D2.n1() != Nx)
         SLS_ERR("wrong shape!");

@@ -17,9 +17,6 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_fft.h"
 #include "test_random.h"
 #include "test_sort.h"
-#if defined(SLS_USE_MKL) || defined(SLS_USE_LAPACKE)
-#include "test_lin_eq.h"
-#endif
 //#include "test_eigen_basics.h"
 //#include "test_eigen_linsolve.h"
 //#include "test_eigen_fft.h"
@@ -32,7 +29,8 @@ void print(slisc::Cmat3Comp_I v, slisc::Long_I i, slisc::Long_I n1, slisc::Long_
 #include "test_disp.h"
 #include "test_print.h"
 
-#ifdef SLS_USE_MKL
+#if defined(SLS_USE_MKL) || defined(SLS_USE_LAPACKE) && defined(SLS_USE_CBLAS)
+#include "test_lin_eq.h"
 #include "test_eig.h"
 #include "test_mat_fun.h"
 #include "test_expokit.h"
@@ -77,7 +75,9 @@ inline void test_all()
     test_sparse();
     cout << "test_cmatobd()" << endl;
     test_cmatobd();
-#ifdef SLS_USE_MKL
+#if defined(SLS_USE_MKL) || defined(SLS_USE_LAPACKE) && defined(SLS_USE_CBLAS)
+	cout << "test_lin_eq()" << endl;
+    test_lin_eq();
     cout << "test_eig()" << endl;
     test_eig();
     cout << "test_mat_fun()" << endl;
@@ -99,11 +99,6 @@ inline void test_all()
     test_search();
     cout << "test_tree()" << endl;
     test_tree();
-
-#ifdef SLS_USE_MKL
-    cout << "test_lin_eq()" << endl;
-    test_lin_eq();
-#endif
     cout << "test_time()" << endl;
     test_time();
 #ifdef SLS_USE_GSL

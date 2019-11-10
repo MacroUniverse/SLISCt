@@ -5,10 +5,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-// #define SLS_USE_MKL
-#define SLS_USE_CBLAS
-#define SLS_USE_LAPACKE
-#define SLS_USE_GSL // use GNU Scientific Library
 #define SLS_FP_EXCEPT // turn on floating point exception
 
 #ifndef NDEBUG
@@ -30,13 +26,15 @@
 	#include <mkl.h>
 	#define SLS_USE_CBLAS
 	#define SLS_USE_LAPACKE
+	typedef MKL_Complex16 SLS_LAPACKE_COMP;
 #else
 	#ifdef SLS_USE_CBLAS
 		#include <cblas.h>
 	#endif
 	#ifdef SLS_USE_LAPACKE
+	    typedef double _Complex SLS_LAPACKE_COMP;
 		#include <lapacke.h>
-		#ifdef I // I might be already defined in "/usr/include/complex.h"
+		#ifdef I // I is already defined in "/usr/include/complex.h"
 			#undef I
 		#endif
 	#endif
