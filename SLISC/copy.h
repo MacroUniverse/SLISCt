@@ -169,7 +169,7 @@ inline void copy(T &a, const T1 &a1)
 #endif
     if (a1.size() == 0)
         return;
-    if constexpr (is_cmajor<T>())
+    if (is_cmajor<T>())
         matcpy_2_major(a.ptr(), a1.ptr(), a.n2(), a.n1());
     else
         matcpy_2_major(a.ptr(), a1.ptr(), a.n1(), a.n2());
@@ -220,9 +220,9 @@ void copy(MatCoo<T> &v, const MatCoo<T1> &v1)
 #endif
     if (v1.nnz() == 0)
         return;
-    if constexpr (is_same<T,T1>())
-    if (v.ptr() == v1.ptr())
-        SLS_ERR("self assignment is forbidden!");
+    if (is_same<T,T1>())
+		if (v.ptr() == v1.ptr())
+			SLS_ERR("self assignment is forbidden!");
     Long Nnz = v1.nnz();
     v.resize(Nnz);
     veccpy(v.ptr(), v1.ptr(), Nnz);

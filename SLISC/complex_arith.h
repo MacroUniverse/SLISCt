@@ -6,6 +6,7 @@
 namespace slisc {
 
 // operator ==
+#ifdef SLS_CPP17
 template <class T1, class T2, SLS_IF(
     is_scalar<T1>() && is_scalar<T2>() &&
     (is_comp<T1>() || is_comp<T2>()) &&
@@ -24,8 +25,16 @@ constexpr Bool operator==(const T1 &z1, const T2 &z2)
     }
     return false; // supress compiler warning
 }
+#else
+constexpr Bool operator==(Fcomp_I x, Comp_I y)
+{return real(x) == real(y) && imag(x) == imag(y);}
+constexpr Bool operator==(Comp_I x, Int_I y)
+{return real(x) == y && imag(x) == 0;}
+constexpr Bool operator==(Lcomp_I x, Comp_I y)
+{return real(x) == real(y) && imag(x) == imag(y);}
+#endif
 
-// operator ==
+// operator !=
 template <class T1, class T2, SLS_IF(
     is_scalar<T1>() && is_scalar<T2>() &&
     (is_comp<T1>() || is_comp<T2>()) &&
@@ -107,6 +116,7 @@ constexpr void operator/=(T &z, const Tr &x)
 
 // operator+-*/ between comp and real
 
+#ifdef SLS_CPP17
 template <class T1, class T2, SLS_IF(
     is_scalar<T1>() && is_scalar<T2>() &&
     (is_comp<T1>() || is_comp<T2>()) &&
@@ -128,7 +138,12 @@ constexpr const auto operator+(const T1 &z1, const T2 &z2)
     // c (small) + c (large)
     return (Tc)z1 + z2;
 }
+#else
+Comp operator+(Comp_I x, Int_I y) { return x + (Doub)y; }
+Comp operator+(Int_I x, Comp_I y) { return (Doub)x + y; }
+#endif
 
+#ifdef SLS_CPP17
 template <class T1, class T2, SLS_IF(
     is_scalar<T1>() && is_scalar<T2>() &&
     (is_comp<T1>() || is_comp<T2>()) &&
@@ -150,7 +165,14 @@ constexpr const auto operator-(const T1 &z1, const T2 &z2)
     // c (small) - c (large)
     return (Tc)z1 - z2;
 }
+#else
+Comp operator-(Comp_I x, Int_I y) { return x - (Doub)y; }
+Comp operator-(Int_I x, Comp_I y) { return (Doub)x - y; }
+Comp operator-(Fcomp_I x, Comp_I y) { return (Comp)x - y; }
+Comp operator-(Comp_I x, Fcomp_I y) { return x - (Comp)y; }
+#endif
 
+#ifdef SLS_CPP17
 template <class T1, class T2, SLS_IF(
     is_scalar<T1>() && is_scalar<T2>() &&
     (is_comp<T1>() || is_comp<T2>()) &&
@@ -172,7 +194,12 @@ constexpr const auto operator*(const T1 &z1, const T2 &z2)
     // c (small) * c (large)
     return (Tc)z1 * z2;
 }
+#else
+Comp operator*(Comp_I x, Int_I y) { return x * (Doub)y; }
+Comp operator*(Int_I x, Comp_I y) { return (Doub)x * y; }
+#endif
 
+#ifdef SLS_CPP17
 template <class T1, class T2, SLS_IF(
     is_scalar<T1>() && is_scalar<T2>() &&
     (is_comp<T1>() || is_comp<T2>()) &&
@@ -206,5 +233,13 @@ constexpr const auto operator/(const T1 &z1, const T2 &z2)
     // c (small) / c (large)
     return (complex<Tr>)z1 / z2;
 }
+#else
+Comp operator/(Comp_I x, Int_I y) { return x / (Doub)y; }
+Comp operator/(Int_I x, Comp_I y) { return (Doub)x / y; }
+Comp operator/(Fcomp_I x, Comp_I y) { return (Comp)x / y; }
+Comp operator/(Comp_I x, Fcomp_I y) { return x / (Comp)y; }
+Comp operator/(Doub_I x, Fcomp_I y) { return x / (Comp)y; }
+Comp operator/(Fcomp_I x, Doub_I y) { return (Comp)x / y; }
+#endif
 
 } // namespace slisc

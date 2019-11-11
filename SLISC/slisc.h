@@ -2,6 +2,7 @@
 #pragma once
 
 // === all macros ===
+// SLS_CPP_STD = 17
 // SLS_CHECK_BOUNDS
 // SLS_CHECK_SHAPE
 // SLS_RAND_SEED

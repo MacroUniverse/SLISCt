@@ -78,6 +78,16 @@ inline Imag operator+(Imag_I z1, Imag_I z2)
     return Imag(imag(z1) + imag(z2));
 }
 
+inline Comp operator+(Doub_I x, Imag_I y)
+{
+	return Comp(x, imag(y));
+}
+
+inline Comp operator+(Imag_I x, Doub_I y)
+{
+	return Comp(y, imag(x));
+}
+
 inline Comp operator+(Imag_I z1, Comp_I z2)
 {
     return Comp(real(z2), imag(z1)+imag(z2));

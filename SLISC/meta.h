@@ -606,7 +606,10 @@ constexpr Int ndims()
 }
 
 template <class T, SLS_IF(is_contain<T>())>
-constexpr auto contain_type_fun() { return typename T::value_type(); };
+constexpr auto contain_type_fun()
+{
+	return typename T::value_type();
+};
 
 template <class T> using contain_type = decltype(contain_type_fun<T>());
 

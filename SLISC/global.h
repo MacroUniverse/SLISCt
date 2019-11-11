@@ -22,6 +22,10 @@
 #include <fstream>
 #include <cstring>
 
+#if SLS_CPP_STD == 17
+    #define SLS_CPP17
+#endif
+
 #ifdef SLS_USE_MKL
 	#define MKL_Complex16 double _Complex
 	#include <mkl.h>

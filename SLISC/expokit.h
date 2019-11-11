@@ -45,12 +45,12 @@ inline void expv(Tvec &v, const Tmat &mat, Doub_I t, Int_I Nkrylov, Doub_I mat_n
     VecComp wsp(MAX(Long(10), SQR(mat.n1()*(Nkrylov + 2) + 5 * (Nkrylov + 2)) + 7));
     VecInt iwsp(MAX(Nkrylov + 2, 7));
 
-    if constexpr (Option == 'G' || (Option == 0 && is_MatCoo<Tmat>())) {
+    if (Option == 'G' || (Option == 0 && is_MatCoo<Tmat>())) {
         ZGEXPV((Int)v.size(), Nkrylov, t, v.ptr(),
             tol, mat_norm, wsp.ptr(), (Int)wsp.size(),
             iwsp.ptr(), (Int)iwsp.size(), mat, 0, iflag);
     }
-    else if constexpr (Option == 'H' || (Option == 0 && is_MatCooH<Tmat>())) {
+    else if (Option == 'H' || (Option == 0 && is_MatCooH<Tmat>())) {
         ZHEXPV((Int)v.size(), Nkrylov, t, v.ptr(),
             tol, mat_norm, wsp.ptr(), (Int)wsp.size(),
             iwsp.ptr(), (Int)iwsp.size(), mat, 0, iflag);

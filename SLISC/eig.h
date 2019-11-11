@@ -20,7 +20,7 @@ void eig_sym(Tv &eigVal, Tmat &eigVec, const Tmat2 &A)
     eigVec = A;
     Int N = (Int)A.n2();
     Int ret;
-    if constexpr (is_cmajor<Tmat>())
+    if (is_cmajor<Tmat>())
         ret = LAPACKE_dsyev(LAPACK_COL_MAJOR, 'V', 'U', N, eigVec.ptr(), N, eigVal.ptr());
     else
         ret = LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', N, eigVec.ptr(), N, eigVal.ptr());

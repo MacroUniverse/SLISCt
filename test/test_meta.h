@@ -71,11 +71,11 @@ inline void test_meta()
     if (is_signed<Comp>()) SLS_ERR("failed!");
 
     // typenum
-    if constexpr (type_num<Bool>() != 0) SLS_ERR("failed!");
-    if constexpr (type_num<Int>() != 2) SLS_ERR("failed!");
-    if constexpr (type_num<Doub>() != 21) SLS_ERR("failed!");
-    if constexpr (type_num<Comp>() != 41) SLS_ERR("failed!");
-    if constexpr (type_num<std::complex<Uchar>>() != -1) SLS_ERR("failed!");
+    if (type_num<Bool>() != 0) SLS_ERR("failed!");
+    if (type_num<Int>() != 2) SLS_ERR("failed!");
+    if (type_num<Doub>() != 21) SLS_ERR("failed!");
+    if (type_num<Comp>() != 41) SLS_ERR("failed!");
+    if (type_num<std::complex<Uchar>>() != -1) SLS_ERR("failed!");
 
     // is_comp
     if (!is_comp<Fcomp>()) SLS_ERR("failed!");
@@ -121,10 +121,10 @@ inline void test_meta()
     if (is_real_contain<vector<Long>>()) SLS_ERR("failed!");
 
     // is_same_contain
-    if constexpr (!is_same_contain<VecComp, VecDoub>()) SLS_ERR("failed!");
-    if constexpr (is_same_contain<Comp, VecDoub>()) SLS_ERR("failed!");
-    if constexpr (is_same_contain<VecDoub, Float>()) SLS_ERR("failed!");
-    if constexpr (is_same_contain<Doub, Float>()) SLS_ERR("failed!");
+    if (!is_same_contain<VecComp, VecDoub>()) SLS_ERR("failed!");
+    if (is_same_contain<Comp, VecDoub>()) SLS_ERR("failed!");
+    if (is_same_contain<VecDoub, Float>()) SLS_ERR("failed!");
+    if (is_same_contain<Doub, Float>()) SLS_ERR("failed!");
 
     // rm_comp
     if (!is_same<rm_comp<Bool>, Bool>()) SLS_ERR("failed!");

@@ -14,20 +14,36 @@ namespace slisc {
 
 // check if vec/mat sizes are the same
 template <class T1, class T2, SLS_IF(
-    is_contain<T1>() && is_contain<T2>())>
+    is_contain<T1>() && is_contain<T2>() &&
+	ndims<T1>() == 1 && ndims<T2>() == 1)>
 Bool shape_cmp(const T1 &v1, const T2 &v2)
 {
-    if constexpr (ndims<T1>() == 1 && ndims<T2>() == 1) {
-        return v1.size() == v2.size();
-    }
-    else if constexpr (ndims<T1>() == 2 && ndims<T2>() == 2) {
-        return v1.n1() == v2.n1() && v1.n2() == v2.n2();
-    }
-    else if constexpr (ndims<T1>() == 3 && ndims<T2>() == 3) {
+    return v1.size() == v2.size();
+}
+
+template <class T1, class T2, SLS_IF(
+    is_contain<T1>() && is_contain<T2>() &&
+	ndims<T1>() == 2 && ndims<T2>() == 2)>
+Bool shape_cmp(const T1 &v1, const T2 &v2)
+{
+    return v1.n1() == v2.n1() && v1.n2() == v2.n2();
+}
+
+template <class T1, class T2, SLS_IF(
+    is_contain<T1>() && is_contain<T2>() &&
+	ndims<T1>() == 3 && ndims<T2>() == 3)>
+Bool shape_cmp(const T1 &v1, const T2 &v2)
+{
         return v1.n1() == v2.n1() && v1.n2() == v2.n2()
             && v1.n3() == v2.n3();
-    }
-    return false;
+}
+
+template <class T1, class T2, SLS_IF(
+    is_contain<T1>() && is_contain<T2>() &&
+	ndims<T1>() != ndims<T2>())>
+Bool shape_cmp(const T1 &v1, const T2 &v2)
+{
+        return false;
 }
 
 // operator== for slisc containers
@@ -153,10 +169,10 @@ inline void copy_row(Tvec &v, const Tmat &a, Long_I row)
         SLS_ERR("wrong shape!");
     }
 #endif
-    if constexpr (is_rmajor<Tmat>()) { // row major
+    if (is_rmajor<Tmat>()) { // row major
         veccpy(v.ptr(), a.ptr() + Nc*row, Nc);
     }
-    else if constexpr (is_cmajor<Tmat>()) { // column major
+    else if (is_cmajor<Tmat>()) { // column major
         Long Nr = a.n1();
         auto p = a.ptr() + row;
         for (Long i = 0; i < Nc; ++i) {
@@ -179,10 +195,10 @@ inline void copy_row(Tmat &a, const Tvec &v, Long_I row)
         SLS_ERR("wrong shape!");
     }
 #endif
-    if constexpr (is_rmajor<Tmat>()) { // row major
+    if (is_rmajor<Tmat>()) { // row major
         veccpy(a.ptr() + Nc * row, v.ptr(), Nc);
     }
-    else if constexpr (is_cmajor<Tmat>()) { // column major
+    else if (is_cmajor<Tmat>()) { // column major
         Long Nr = a.n1();
         auto p = a.ptr() + row;
         for (Long i = 0; i < Nc; ++i) {
@@ -205,10 +221,10 @@ inline void copy_col(Tvec &v, const Tmat &a, Long_I col)
     }
 #endif
     Long Nr = a.n1();
-    if constexpr (is_cmajor<Tmat>()) { // column major
+    if (is_cmajor<Tmat>()) { // column major
         veccpy(v.ptr(), a.ptr() + Nr*col, Nr);
     }
-    else if constexpr (is_rmajor<Tmat>()) { // row major
+    else if (is_rmajor<Tmat>()) { // row major
         Long Nc = a.n2();
         auto p = a.ptr() + col;
         for (Long i = 0; i < Nr; ++i) {
@@ -231,10 +247,10 @@ inline void copy_col(Tmat &a, const Tvec &v, Long_I col)
     }
 #endif
     Long Nr = a.n1();
-    if constexpr (is_cmajor<Tmat>()) { // column major
+    if (is_cmajor<Tmat>()) { // column major
         veccpy(a.ptr() + Nr * col, v.ptr(), Nr);
     }
-    else if constexpr (is_rmajor<Tmat>()) { // row major
+    else if (is_rmajor<Tmat>()) { // row major
         Long Nc = a.n2();
         auto p = a.ptr() + col;
         for (Long i = 0; i < Nr; ++i) {
@@ -1098,10 +1114,12 @@ inline void mul_sym(T &y, const T1 &a, const T2 &x)
         SLS_ERR("wrong shape!");
 #endif
 #ifdef SLS_USE_CBLAS
-    if constexpr (is_Doub<Ts>()) {
+    if (is_Doub<Ts>()) {
         cblas_dsymv(CblasColMajor, CblasUpper, N, 1, a.ptr(),
             a.lda(), (Doub*)x.ptr(), 2, 0, (Doub*)y.ptr(), 2);
     }
+	else
+		SLS_ERR("not implemented");
 #else
     mul(y, a, x);
 #endif
@@ -1119,12 +1137,12 @@ template <class T, class T1, class T2,
          (is_Comp<Ts>() && is_Doub<Ts1>() && is_Comp<Ts>())))>
 inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
-    Long N1 = a.n1(), N2 = a.n2(), lda, incx, incy;
 #ifdef SLS_CHECK_SHAPE
-    if (x.size() != N2 || y.size() != N1)
+    if (x.size() != a.n2() || y.size() != a.n1())
         SLS_ERR("wrong shape!");
 #endif
-#ifdef SLS_USE_CBLAS
+#if defined(SLS_USE_CBLAS) && defined(SLS_CPP17)
+	Long N1 = a.n1(), N2 = a.n2(), lda, incx, incy;
     if constexpr (is_dense_vec<T>())
         incy = 1;
     else
@@ -1246,9 +1264,9 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
         SLS_ERR("illegal shape!");
 #endif
 #ifdef SLS_USE_GSL
-    if constexpr (is_Doub<contain_type<T>>())
+    if (is_Doub<contain_type<T>>())
         cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, 1, a.ptr(), Nr_a, x.ptr(), Nc_a, 0, y.ptr(), Nr_a);
-    else if constexpr (is_Comp<contain_type<T>>()) {
+    else if (is_Comp<contain_type<T>>()) {
         Comp alpha(1,0), beta(0,0);
         // this might cause memory read violation, don't know why!
         cblas_zgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, &alpha, a.ptr(), Nr_a, x.ptr(), Nc_a, &beta, y.ptr(), Nr_a);

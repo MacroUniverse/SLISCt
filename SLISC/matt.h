@@ -51,8 +51,15 @@ public:
     void readComplex(Comp &c);
 
     // read a scalar from m_in
-    template <class T, SLS_IF(is_scalar<T>())>
-    void read(T &s);
+    template <class T, SLS_IF(is_Char<T>())>
+	void read(T &s);
+
+	template <class T, SLS_IF(
+		is_Int<T>() || is_Llong<T>() || is_Doub<T>())>
+	void read(T &s);
+
+	template <class T, SLS_IF(is_Comp<T>())>
+	void read(T &s);
 
     // write a scalar to m_out
     template <class T, SLS_IF(is_scalar<T>())>
@@ -191,10 +198,10 @@ inline void Matt::close()
 template <class T, SLS_IF0(is_scalar<T>())>
 void Matt::write(const T &s)
 {
-    if constexpr (is_real<T>()) {
+    if (is_real<T>()) {
         m_out << to_num(s) << Matt::dlm;
     }
-    else if constexpr (is_comp<T>()) {
+    else if (is_comp<T>()) {
         if (imag(s) == 0)
             m_out << real(s) << Matt::dlm;
         else if (imag(s) < 0)
@@ -206,17 +213,23 @@ void Matt::write(const T &s)
         SLS_ERR("unhandled case!");
 }
 
-template <class T, SLS_IF0(is_scalar<T>())>
+template <class T, SLS_IF0(is_Char<T>())>
 void Matt::read(T &s)
 {
-    if constexpr (is_Char<T>()) {
-        Int temp; m_in >> temp; s = (T)temp;
-    }
-    else if constexpr (is_Int<T>() || is_Llong<T>() || is_Doub<T>())
-        m_in >> s;
-    else if constexpr (is_Comp<T>())
-        readComplex(s);
-    else SLS_ERR("unhandled!");
+    Int temp; m_in >> temp; s = (T)temp;
+}
+
+template <class T, SLS_IF0(
+	is_Int<T>() || is_Llong<T>() || is_Doub<T>())>
+void Matt::read(T &s)
+{
+    m_in >> s;
+}
+
+template <class T, SLS_IF0(is_Comp<T>())>
+void Matt::read(T &s)
+{
+    readComplex(s);
 }
 
 inline void Matt::readComplex(Comp &c)

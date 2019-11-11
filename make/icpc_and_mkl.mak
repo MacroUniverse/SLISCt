@@ -10,7 +10,7 @@ compiler = icpc
 # use `dpkg -L dpkg -L libgsl-dev` to check the installation directory
 lib = -lgsl
 
-flags = -Wall -I $(eigenPath) -std=c++17 -O3 -D NDEBUG -fopenmp $(no_warn) -mkl -fp-model precise -fp-model except -qopenmp $(lib)
+flags = -Wall -I $(eigenPath) -std=c++14 -O3 -D NDEBUG -fopenmp $(no_warn) -mkl -fp-model precise -fp-model except -qopenmp $(lib)
 # -g # debug
 # -qopenmp # run OpenMP in parallel mode
 # -qopenmp-stubs # run OpenMP in serial mode

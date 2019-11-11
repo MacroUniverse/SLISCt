@@ -99,7 +99,7 @@ inline Bool is_in(const T1 &elm, const T2 &vec)
 template <class T1, class T2>
 constexpr Bool is_equiv(const T1 &s1, const T2 &s2)
 {
-    if constexpr (is_same<T1, T2>()) {
+    if (is_same<T1, T2>()) {
         return s1 == s2;
     }
     return false;

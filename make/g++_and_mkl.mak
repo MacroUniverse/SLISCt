@@ -23,7 +23,7 @@ goal:main.o
 
 # compile
 main.o:main.cpp
-	g++ $(flags) $(mkl_compile) -std=c++17 -c main.cpp
+	g++ $(flags) $(mkl_compile) -std=c++14 -c main.cpp
 
 clean:
 	rm -f *.o *.x

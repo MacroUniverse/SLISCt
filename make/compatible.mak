@@ -19,7 +19,7 @@ goal:main.o
 
 # compile
 main.o:main.cpp
-	$(compiler) $(flags) -std=c++17 -c main.cpp
+	$(compiler) $(flags) -std=c++14 -c main.cpp
 
 clean:
 	rm -f *.o *.x

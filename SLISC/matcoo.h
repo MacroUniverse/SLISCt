@@ -14,7 +14,7 @@ private:
     using Base::m_N;
     Long m_Nr, m_Nc, m_Nnz;
     VecLong m_row, m_col;
-    static inline T m_zero = (T)0; // TODO: this could be static inline variable for c++17
+    T m_zero = (T)0; // TODO: this could be static inline variable for c++17
     MatCoo() {} // default constructor: uninitialized
 public:
     using Base::ptr;
