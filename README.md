@@ -153,6 +153,7 @@ TODO...
 * `operator()(i,j), (i,j,k)` : return a reference for an element.
 * `end()` : return a reference for the last element.
 * `operator<<` : transfer data to another container.
+* `step1(), step2(), etc` : step size for each dimension of vector/matrix, e.g. for dense vector, `step1()` is 1, for matrix, "leading dimension" is step2().
 * TODO...
 
 ### Vector Class Template
