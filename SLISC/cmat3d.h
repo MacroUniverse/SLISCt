@@ -32,6 +32,10 @@ public:
     Cmat3d & operator=(const Gmat3d<T> &rhs) // copy from GPU vector
     { rhs.get(*this); return *this; }
 #endif
+#ifdef _CUSLISC_
+    Cmat3d & operator=(const Gcmat3d<T> &rhs) // copy from GPU vector
+    { rhs.get(*this); return *this; }
+#endif
     void operator<<(Cmat3d &rhs); // move data and rhs.resize(0, 0, 0)
     void resize(Long_I N1, Long_I N2, Long_I N3);
     template <class T1>

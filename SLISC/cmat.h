@@ -32,6 +32,10 @@ public:
     Cmat & operator=(const MatCoo<T1> &rhs);
     template <class T1>
     Cmat & operator=(const MatCooH<T1> &rhs);
+#ifdef _CUSLISC_
+    Cmat & operator=(const Gcmat<T> &rhs) // copy from GPU vector
+    { rhs.get(*this); return *this; }
+#endif
     void operator<<(Cmat &rhs); // move data and rhs.resize(0, 0)
     T& operator()(Long_I i, Long_I j);    // double indexing
     const T& operator()(Long_I i, Long_I j) const;
