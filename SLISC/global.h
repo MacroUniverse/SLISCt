@@ -764,7 +764,7 @@ constexpr Doub E = 2.71828182845904524;
 // report error and pause execution
 void pause(Doub_I t);
 #ifndef SLS_ERR
-#define SLS_ERR(str) do{cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl; exit(EXIT_FAILURE);} while(0)
+#define SLS_ERR(str) do{cout << "error: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl; pause(20);} while(0)
 #endif
 
 #define SLS_WARN(str) do{cout << "warning: " << __FILE__ << ": line " << __LINE__ << ": " << str << endl;} while(0)
