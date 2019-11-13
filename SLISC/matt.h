@@ -32,34 +32,34 @@ public:
     vector<vector<Long>> m_size; // variable dimensions
     vector<Long> m_ind; // variable positions (line indices)
 
-    // open a file
-    void open(Str_I fname, Char_I *rw, Int_I precision = 17);
+    // open a file, return 0 if success
+    // return -2 if reading failed (e.g. file is not finished, wrong format)
+    Int open(Str_I fname, Char_I *rw, Int_I precision = 17);
 
     // close a file, if not called, will be called in destructor
-    void close();    
+    void close();
 
     // ===== internal functions =====
 
     // get var names and positions from the end of the file
     // after return, matt.m_ind[i] points to the first matrix element;
-    void get_profile();
+    // return 0 if successful, return -1 if failed
+    Int get_profile();
 
     // search a variable by name, return index to m_name[i]
+    // return -1 if not found
     Int search(Str_I name);
-
-    // read a complex number from m_in
-    void readComplex(Comp &c);
 
     // read a scalar from m_in
     template <class T, SLS_IF(is_Char<T>())>
-	void read(T &s);
+    void read(T &s);
 
-	template <class T, SLS_IF(
-		is_Int<T>() || is_Llong<T>() || is_Doub<T>())>
-	void read(T &s);
+    template <class T, SLS_IF(
+        is_Int<T>() || is_Llong<T>() || is_Doub<T>())>
+    void read(T &s);
 
-	template <class T, SLS_IF(is_Comp<T>())>
-	void read(T &s);
+    template <class T, SLS_IF(is_Comp<T>())>
+    void read(T &s);
 
     // write a scalar to m_out
     template <class T, SLS_IF(is_scalar<T>())>
@@ -85,7 +85,7 @@ Long scanInverse(ifstream &fin)
     return N;
 }
 
-inline void Matt::get_profile()
+inline Int Matt::get_profile()
 {
     Int i, j, n, temp;
     vector<Long> size;
@@ -94,9 +94,18 @@ inline void Matt::get_profile()
 
     // read number of variables and their positions
     fin.seekg(0, fin.end);
+    Long gmax = fin.tellg();
     m_n = (Int)scanInverse(fin);
-    for (i = 0; i < m_n; ++i)
-        m_ind.push_back(scanInverse(fin));
+    if (m_n < 1)
+        return -1;
+    m_ind.resize(m_n);
+    for (i = 0; i < m_n; ++i) {
+        m_ind[i] = scanInverse(fin);
+        if (m_ind[i] >= gmax || m_ind[i] < 0)
+            return -1;
+        if (i > 0 && m_ind[i] <= m_ind[i - 1])
+            return -1;
+    }
 
     // loop through each variable
     for (i = 0; i < m_n; ++i) {
@@ -105,20 +114,32 @@ inline void Matt::get_profile()
         fin >> n;
         name.resize(0);
         for (j = 0; j < n; ++j) {
-            fin >> temp; name.push_back((Char)temp);
+            fin >> temp;
+            if (temp <= 0 || temp > 127)
+                return -1;
+            name.push_back((Char)temp);
         }
         m_name.push_back(name);
         // read var type
-        fin >> temp; m_type.push_back(temp);
+        fin >> temp;
+        if (temp < 0 || temp > 100)
+            return -1;
+        m_type.push_back(temp);
         // read var dim
         fin >> n;
+        if (n < 0 || n > 10)
+            return -1;
         size.resize(0);
         for (j = 0; j < n; ++j) {
-            fin >> temp; size.push_back(temp);
+            fin >> temp;
+            if (temp < 0)
+                return -1;
+            size.push_back(temp);
         }
         m_size.push_back(size);
         m_ind[i] = fin.tellg();
     }
+	return 0;
 }
 
 // search variable in file by name
@@ -127,7 +148,7 @@ inline Int Matt::search(Str_I name)
     for (Int i = 0; i < m_n; ++i)
         if (name == m_name[i])
             return i;
-    SLS_ERR("variable name not found: " + name + ", file : " + fname);
+    SLS_WARN("variable name not found: " + name + ", file : " + fname);
     return -1;
 }
 
@@ -136,7 +157,7 @@ inline Matt::Matt() {}
 inline Matt::Matt(Str_I fname, Char_I * rw, Int_I precision)
 { open(fname, rw, precision); }
 
-void Matt::open(Str_I fname, Char_I *rw, Int_I precision)
+Int Matt::open(Str_I fname, Char_I *rw, Int_I precision)
 {
     this->fname = fname;
     if (rw[0] == 'w') {
@@ -168,8 +189,9 @@ void Matt::open(Str_I fname, Char_I *rw, Int_I precision)
         if (!m_in.good())
             SLS_ERR("error: file not found: " + fname);
         m_in.precision(17);
-        get_profile(); // get var names
+        return get_profile(); // get var names
     }
+    return 0;
 }
 
 inline void Matt::close()
@@ -220,19 +242,14 @@ void Matt::read(T &s)
 }
 
 template <class T, SLS_IF0(
-	is_Int<T>() || is_Llong<T>() || is_Doub<T>())>
+    is_Int<T>() || is_Llong<T>() || is_Doub<T>())>
 void Matt::read(T &s)
 {
     m_in >> s;
 }
 
 template <class T, SLS_IF0(is_Comp<T>())>
-void Matt::read(T &s)
-{
-    readComplex(s);
-}
-
-inline void Matt::readComplex(Comp &c)
+void Matt::read(T &c)
 {
     Doub cr = 0, ci = 0;
     Char ch;
@@ -255,6 +272,9 @@ inline Matt::~Matt()
     else if (m_in.is_open() && m_out.is_open())
         SLS_ERR("unknown!");
 }
+
+
+// save() functions
 
 template <class T, SLS_IF(
     is_Char<T>() || is_Int<T>() || is_Llong<T>() || is_Doub<T>() || is_Comp<T>())>
@@ -495,15 +515,18 @@ void save(Str_I str, Str_I varname, Matt_IO matt)
 }
 
 // ===== read matt files =====
+// return 0 if successful, -1 if variable not found
 
 template <class T, SLS_IF(
     is_Char<T>() || is_Int<T>() || is_Llong<T>() ||
     is_Doub<T>() || is_Comp<T>())>
-inline void load(T &s, Str_I varname, Matt_IO matt)
+inline Int load(T &s, Str_I varname, Matt_IO matt)
 {
     Int i;
     ifstream &fin = matt.m_in;
     i = matt.search(varname);
+    if (i < 0)
+        return -1;
     fin.seekg(matt.m_ind[i]);
 
     if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -512,16 +535,19 @@ inline void load(T &s, Str_I varname, Matt_IO matt)
         SLS_ERR("wrong dimension!");
 
     matt.read<T>(s);
+    return 0;
 }
 
 template <class T, SLS_IF(
     is_Char<T>() || is_Int<T>() || is_Llong<T>() ||
     is_Doub<T>() || is_Comp<T>())>
-inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
+inline Int load(Vector<T> &v, Str_I varname, Matt_IO matt)
 {
     Long i, n;
     ifstream &fin = matt.m_in;
     i = matt.search(varname);
+    if (i < 0)
+        return -1;
     fin.seekg(matt.m_ind[i]);
 
     if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -533,16 +559,19 @@ inline void load(Vector<T> &v, Str_I varname, Matt_IO matt)
     // read var data
     for (i = 0; i < n; ++i)
         matt.read(v[i]);
+    return 0;
 }
 
 template <class Tm, class T = contain_type<Tm>, SLS_IF(
     is_dense_mat<Tm>() && (is_Char<T>() || is_Int<T>() || is_Llong<T>() ||
         is_Doub<T>() || is_Comp<T>()))>
-inline void load(Tm &a, Str_I varname, Matt_IO matt)
+inline Int load(Tm &a, Str_I varname, Matt_IO matt)
 {
     Long i, j, m, n;
     ifstream &fin = matt.m_in;
     i = matt.search(varname);
+    if (i < 0)
+        return -1;
     fin.seekg(matt.m_ind[i]);
 
     if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -555,15 +584,18 @@ inline void load(Tm &a, Str_I varname, Matt_IO matt)
     for (j = 0; j < n; ++j)
         for (i = 0; i < m; ++i)
             matt.read(a(i, j));
+    return 0;
 }
 
 template <class Tmat, class T = contain_type<Tmat>, SLS_IF(
     is_dense<Tmat>() && ndims<Tmat>() == 3 && is_scalar<T>())>
-inline void load(Tmat &a, Str_I varname, Matt_IO matt)
+inline Int load(Tmat &a, Str_I varname, Matt_IO matt)
 {
     Long i, j, k, m, n, q;
     ifstream &fin = matt.m_in;
     i = matt.search(varname);
+    if (i < 0)
+        return -1;
     fin.seekg(matt.m_ind[i]);
 
     if (!is_promo(type_num<T>(), matt.m_type[i]))
@@ -578,6 +610,7 @@ inline void load(Tmat &a, Str_I varname, Matt_IO matt)
         for (j = 0; j < n; ++j)
             for (i = 0; i < m; ++i)
                 matt.read(a(i, j, k));
+    return 0;
 }
 
 // read one var from one file
