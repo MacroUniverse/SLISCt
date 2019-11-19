@@ -1168,7 +1168,7 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (x.size() != a.n2() || y.size() != a.n1())
         SLS_ERR("wrong shape!");
 #endif
-#if defined(SLS_USE_CBLAS)
+#ifdef SLS_USE_CBLAS
 	Long N1 = a.n1(), N2 = a.n2(), lda, incx, incy;
     incy =  step1(y);
 	lda = step2(a);
@@ -1273,7 +1273,9 @@ inline void mul(T &y, const T1 &a, const T2 &x)
 }
 
 // using mkl
-template <class T, class T1, class T2, SLS_IF(
+template <class T, class T1, class T2, 
+	class Ts = contain_type<T>, class Ts1 = contain_type<T1>,
+	class Ts2 = contain_type<T2>, SLS_IF(
     is_dense_mat<T>() && is_dense_mat<T1>() && is_dense_mat<T2>())>
 inline void mul_gen(T &y, const T1 &a, const T2 &x)
 {
@@ -1282,16 +1284,17 @@ inline void mul_gen(T &y, const T1 &a, const T2 &x)
     if (a.n2() != x.n1() || y.n1() != Nr_a || y.n2() != Nc_x)
         SLS_ERR("illegal shape!");
 #endif
-#ifdef SLS_USE_GSL
-    if (is_Doub<contain_type<T>>())
-        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, 1, a.ptr(), Nr_a, x.ptr(), Nc_a, 0, y.ptr(), Nr_a);
-    else if (is_Comp<contain_type<T>>()) {
+#ifdef SLS_USE_CBLAS
+    if (is_Doub<Ts>() && is_Doub<Ts1>() && is_Doub<Ts2>())
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, 1, (Doub*)a.ptr(), Nr_a, (Doub*)x.ptr(), Nc_a, 0, (Doub*)y.ptr(), Nr_a);
+    else if (is_Comp<Ts>() && is_Comp<Ts1>() && is_Comp<Ts2>()) {
         Comp alpha(1,0), beta(0,0);
         // this might cause memory read violation, don't know why!
         cblas_zgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, Nr_a, Nc_x, Nc_a, &alpha, a.ptr(), Nr_a, x.ptr(), Nc_a, &beta, y.ptr(), Nr_a);
     }
     else
-        SLS_ERR("TODO");
+        SLS_WARN("not implemented with cBLAS, using slow version");
+		mul(y, a, x);
 #else
     mul(y, a, x);
 #endif
