@@ -1,12 +1,25 @@
 #pragma once
-#include "cmat.h"
+#include "band.h"
 
 namespace slisc {
 
+template <class T, SLS_IF(is_scalar<T>())>
+void mat2band(Cmat<T> &b, const Cmat<T> &a, Long_I Nup, Long_I Nlow);
+
+template <class T, SLS_IF(is_scalar<T>())>
+void mat2band(Matrix<T> &b, const Matrix<T> &a, Long_I Nup, Long_I Nlow);
+
+template <class T, SLS_IF(is_scalar<T>())>
+void band2mat(Cmat<T> &a, const Cmat<T> &b, Long_I Nup, Long_I Nlow);
+
+template <class T, SLS_IF(is_scalar<T>())>
+void band2mat(Matrix<T> &a, const Matrix<T> &b, Long_I Nup, Long_I Nlow);
+
 // conversion between full matrix and band diagonal matrix
+// Nup and Nlow are the number of upper diagonals and lower diagonals
 // ref: cBLAS gbmv() routine
 // https://software.intel.com/en-us/node/834918#DAEC7CD0-620A-4696-9612-C295F8211646
-template <class T, SLS_IF(is_scalar<T>())>
+template <class T, SLS_IF0(is_scalar<T>())>
 void mat2band(Cmat<T> &b, const Cmat<T> &a, Long_I Nup, Long_I Nlow)
 {
     Long N1 = a.n1(), N2 = a.n2();
@@ -18,7 +31,7 @@ void mat2band(Cmat<T> &b, const Cmat<T> &a, Long_I Nup, Long_I Nlow)
     }
 }
 
-template <class T, SLS_IF(is_scalar<T>())>
+template <class T, SLS_IF0(is_scalar<T>())>
 void mat2band(Matrix<T> &b, const Matrix<T> &a, Long_I Nup, Long_I Nlow)
 {
     Long N1 = a.n1(), N2 = a.n2();
@@ -30,7 +43,7 @@ void mat2band(Matrix<T> &b, const Matrix<T> &a, Long_I Nup, Long_I Nlow)
     }
 }
 
-template <class T, SLS_IF(is_scalar<T>())>
+template <class T, SLS_IF0(is_scalar<T>())>
 void band2mat(Cmat<T> &a, const Cmat<T> &b, Long_I Nup, Long_I Nlow)
 {
     Long N1 = a.n1(), N2 = a.n2();
@@ -42,7 +55,7 @@ void band2mat(Cmat<T> &a, const Cmat<T> &b, Long_I Nup, Long_I Nlow)
     }
 }
 
-template <class T, SLS_IF(is_scalar<T>())>
+template <class T, SLS_IF0(is_scalar<T>())>
 void band2mat(Matrix<T> &a, const Matrix<T> &b, Long_I Nup, Long_I Nlow)
 {
     Long N1 = a.n1(), N2 = a.n2();
@@ -52,6 +65,17 @@ void band2mat(Matrix<T> &a, const Matrix<T> &b, Long_I Nup, Long_I Nlow)
             a(i, j) = b(i, k + j);
         }
     }
+}
+
+
+
+// matrix-vector multiplication for band matrix
+void mul_gb(VecComp_O y, Band<Comp> a, Long_I Nup, Long_I Nlow, VecComp_I x)
+{
+    Comp alpha(1, 0), beta(0, 0);
+    Long lda = a.nlow() + a.nup() + 1;
+    Long incx = 1, incy = 1;
+    cblas_zgbmv(CblasColMajor, CblasNoTrans, a.n1(), a.n2(), a.nlow(), a.nup(), &alpha, a.ptr(), lda, x.ptr(), incx, &beta, y.ptr(), incy);
 }
 
 } // namespace slisc
