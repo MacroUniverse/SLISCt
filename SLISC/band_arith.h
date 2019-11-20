@@ -3,18 +3,6 @@
 
 namespace slisc {
 
-template <class T, SLS_IF(is_scalar<T>())>
-void mat2band(Cmat<T> &b, const Cmat<T> &a, Long_I Nup, Long_I Nlow);
-
-template <class T, SLS_IF(is_scalar<T>())>
-void mat2band(Matrix<T> &b, const Matrix<T> &a, Long_I Nup, Long_I Nlow);
-
-template <class T, SLS_IF(is_scalar<T>())>
-void band2mat(Cmat<T> &a, const Cmat<T> &b, Long_I Nup, Long_I Nlow);
-
-template <class T, SLS_IF(is_scalar<T>())>
-void band2mat(Matrix<T> &a, const Matrix<T> &b, Long_I Nup, Long_I Nlow);
-
 // conversion between full matrix and band diagonal matrix
 // Nup and Nlow are the number of upper diagonals and lower diagonals
 // ref: cBLAS gbmv() routine
