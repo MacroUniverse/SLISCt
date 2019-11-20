@@ -3,6 +3,9 @@
 
 namespace slisc {
 
+// conversion between full matrix and band diagonal matrix
+// ref: cBLAS gbmv() routine
+// https://software.intel.com/en-us/node/834918#DAEC7CD0-620A-4696-9612-C295F8211646
 template <class T, SLS_IF(is_scalar<T>())>
 void mat2band(Cmat<T> &b, const Cmat<T> &a, Long_I Nup, Long_I Nlow)
 {
