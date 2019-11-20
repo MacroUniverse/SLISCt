@@ -67,15 +67,25 @@ void band2mat(Matrix<T> &a, const Matrix<T> &b, Long_I Nup, Long_I Nlow)
     }
 }
 
-
+// matrix-vector multiplication for band matrix
 
 // matrix-vector multiplication for band matrix
-void mul_gb(VecComp_O y, Band<Comp> a, Long_I Nup, Long_I Nlow, VecComp_I x)
+void mul_gb(VecDoub_O y, const Band<Doub> &a, VecDoub_I x)
+{
+    Doub alpha = 1, beta = 0;
+    Long lda = a.nlow() + a.nup() + 1;
+    Long incx = 1, incy = 1;
+    cblas_dgbmv(CblasColMajor, CblasNoTrans, a.n1(), a.n2(), a.nlow(), a.nup(),
+        alpha, a.ptr(), lda, x.ptr(), incx, beta, y.ptr(), incy);
+}
+
+void mul_gb(VecComp_O y, const Band<Comp> &a, VecComp_I x)
 {
     Comp alpha(1, 0), beta(0, 0);
     Long lda = a.nlow() + a.nup() + 1;
     Long incx = 1, incy = 1;
-    cblas_zgbmv(CblasColMajor, CblasNoTrans, a.n1(), a.n2(), a.nlow(), a.nup(), &alpha, a.ptr(), lda, x.ptr(), incx, &beta, y.ptr(), incy);
+    cblas_zgbmv(CblasColMajor, CblasNoTrans, a.n1(), a.n2(), a.nlow(), a.nup(),
+        &alpha, a.ptr(), lda, x.ptr(), incx, &beta, y.ptr(), incy);
 }
 
 } // namespace slisc

@@ -299,7 +299,7 @@ inline void test_sparse()
             SLS_ERR("failed!");
     }
 
-    // test band diagonal multiplication
+    // test band diagonal conversion
     {
         Long N1 = 5, N2 = 6, kl = 2, ku = 1;
         Long lda = kl + ku + 1;
@@ -322,5 +322,40 @@ inline void test_sparse()
         band2mat(matrix1, a, ku, kl);
         if (matrix != matrix1)
             SLS_ERR("failed!");
+    }
+
+    // test band matrix-vector multiplication
+    {
+        Long N1 = 5, N2 = 6, Nlow = 2, Nup = 1;
+        CmatDoub den(N1, N2);
+        rand(den);
+        Band<Doub> ban(den, Nup, Nlow);
+        den = 0;
+        band2mat(den, ban.m_a, Nup, Nlow);
+
+        VecDoub x(N2); rand(x);
+        VecDoub y(N1), y1(N1);
+        mul(y, den, x);
+        mul_gb(y1, ban, x);
+        y1 -= y;
+        if (max_abs(y1) > 1e-13)
+            SLS_ERR("failed");
+    }
+
+    {
+        Long N1 = 5, N2 = 6, Nlow = 2, Nup = 1;
+        CmatComp den(N1, N2);
+        rand(den);
+        Band<Comp> ban(den, Nup, Nlow);
+        den = 0;
+        band2mat(den, ban.m_a, Nup, Nlow);
+        
+        VecComp x(N2); rand(x);
+        VecComp y(N1), y1(N1);
+        mul(y, den, x);
+        mul_gb(y1, ban, x);
+        y1 -= y;
+        if (max_abs(y1) > 1e-13)
+            SLS_ERR("failed");
     }
 }

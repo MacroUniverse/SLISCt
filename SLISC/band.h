@@ -26,7 +26,7 @@ public:
     Cmat<T> m_a;
 
     Band(Long_I N1, Long_I N2, Long_I Nup, Long_I Nlow);
-    Band(CmatComp_I a, Long_I Nup, Long_I Nlow);
+    Band(const Cmat<T> &a, Long_I Nup, Long_I Nlow);
 
     T * ptr();
     const T * ptr() const;
@@ -38,7 +38,7 @@ public:
 
 template<class T>
 inline Band<T>::Band(Long_I N1, Long_I N2, Long_I Nup, Long_I Nlow):
-    m_N1(N1), m_N2(N2), m_Nup(Nup), m_Nlow(Nlow), m_a(N1, N2)
+    m_N1(N1), m_N2(N2), m_Nup(Nup), m_Nlow(Nlow), m_a(Nup+Nlow+1, N2)
 {}
 
 template<class T>
@@ -78,8 +78,8 @@ inline Long Band<T>::nlow() const
 }
 
 template<class T>
-inline Band<T>::Band(CmatComp_I a, Long_I Nup, Long_I Nlow):
-    m_N1(a.n1()), m_N2(a.n2()), m_Nup(Nup), m_Nlow(Nlow), m_a(a.n1(), a.n2())
+inline Band<T>::Band(const Cmat<T> &a, Long_I Nup, Long_I Nlow):
+    m_N1(a.n1()), m_N2(a.n2()), m_Nup(Nup), m_Nlow(Nlow), m_a(Nup+Nlow+1, a.n2())
 {
     mat2band(m_a, a, m_Nup, m_Nlow);
 }
