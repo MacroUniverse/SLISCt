@@ -3,6 +3,7 @@
 #include "../SLISC/sparse_arith.h"
 #include "../SLISC/cmatobd.h"
 #include "../SLISC/diag.h"
+#include "../SLISC/band_arith.h"
 #include "../SLISC/disp.h"
 
 inline void test_sparse()
@@ -295,6 +296,31 @@ inline void test_sparse()
         if (b[0] != 1 || b[1] != 4 || b[2] != 9
             || b[3] != 4 || b[4] != 10 || b[5] != 18 ||
             b[6] != 7 || b[7] != 16 || b[8] != 27)
+            SLS_ERR("failed!");
+    }
+
+    // test band diagonal multiplication
+    {
+        Long N1 = 5, N2 = 6, kl = 2, ku = 1;
+        Long lda = kl + ku + 1;
+        CmatDoub matrix(N1, N2), matrix1(N1, N2);
+        linspace(matrix, 1, N1*N2); linspace(matrix1, 1, N1*N2);
+        CmatDoub a(lda, N2); a = 0;
+        mat2band(a, matrix, ku, kl);
+        band2mat(matrix1, a, ku, kl);
+        if (matrix != matrix1)
+            SLS_ERR("failed!");
+    }
+
+    {
+        Long N1 = 5, N2 = 6, kl = 2, ku = 1;
+        Long lda = kl + ku + 1;
+        MatDoub matrix(N1, N2), matrix1(N1, N2);
+        linspace(matrix, 1, N1*N2); linspace(matrix1, 1, N1*N2);
+        MatDoub a(N1, lda); a = 0;
+        mat2band(a, matrix, ku, kl);
+        band2mat(matrix1, a, ku, kl);
+        if (matrix != matrix1)
             SLS_ERR("failed!");
     }
 }

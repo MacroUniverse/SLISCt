@@ -74,25 +74,33 @@ inline void matcpy(T *v, Long_I lda, const T1 *v1, Long_I lda1, Long_I Nr, Long_
     }
 }
 
-// copy matrix with different majors
-// N1 is the leading dimension of `v`
-// leading dimension is equal to the number of elements in major dimension
-
-// equivalent to the following code
-
-//for (j = 0; j < N1; ++j)
-//    for (i = 0; i < N2; ++i)
-//        v[j + N1 * i] = v1[j * N2 + i];
-
+// copy dense matrix with different majors
+// if a1 is row major and a2 is column major, N1 is number of columns, N2 is number of rows
+// if a1 is column major and a2 is row major, N1 is number of rows, N2 is number of columns
 template<class T, class T1, SLS_IF(is_promo<T, T1>())>
-inline void matcpy_2_major(T *a, const T1 *a1, Long_I N1, Long_I N2)
+inline void matcpy_2_major(T *a2, const T1 *a1, Long_I N2, Long_I N1)
 {
-    Long k1 = 0;
     for (Long i2 = 0; i2 < N2; ++i2) {
-        Long k = i2;
-        for (Long i1 = 0; i1 < N1; ++i1) {
-            a[k] = a1[k1];
-            k += N1; ++k1;
+        Long start = N1 * i2, k2 = i2;
+        for (Long k1 = start; k1 < start + N1; ++k1) {
+            a2[k2] = a1[k1];
+            k2 += N2;
+        }
+    }
+}
+
+// copy stride matrix with different majors
+// lda1 is leading dimension of a1, lda2 is leading dimension of a2
+// if a1 is row major and a2 is column major, N1 is number of columns, N2 is number of rows
+// if a1 is column major and a2 is row major, N1 is number of rows, N2 is number of columns
+template<class T, class T1, SLS_IF(is_promo<T, T1>())>
+inline void matcpy_2_major(T *a2, const T1 *a1, Long_I N2, Long_I lda2, Long_I N1, Long_I lda1)
+{
+    for (Long i2 = 0; i2 < N2; ++i2) {
+        Long start = lda1 * i2, k2 = i2;
+        for (Long k1 = start; k1 < start + N1; ++k1) {
+            a2[k2] = a1[k1];
+            k2 += lda2;
         }
     }
 }
@@ -170,9 +178,9 @@ inline void copy(T &a, const T1 &a1)
     if (a1.size() == 0)
         return;
     if (is_cmajor<T>())
-        matcpy_2_major(a.ptr(), a1.ptr(), a.n2(), a.n1());
-    else
         matcpy_2_major(a.ptr(), a1.ptr(), a.n1(), a.n2());
+    else
+        matcpy_2_major(a.ptr(), a1.ptr(), a.n2(), a.n1());
 }
 
 // from Dmat<> to Dmat<>

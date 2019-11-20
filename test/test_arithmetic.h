@@ -106,6 +106,21 @@ inline void test_arithmetic()
             vc += 10;
         }
     }
+
+    // copy between matrices of different major
+    {
+        Long N1 = 3, N2 = 4;
+        CmatDoub a1(N1, N2); rand(a1);
+        MatDoub a2(N1, N2);
+        a2 = a1;
+        if (a1 != a2)
+            SLS_ERR("failed!");
+
+        rand(a2);
+        a1 = a2;
+        if (a1 != a2)
+            SLS_ERR("failed!");
+    }
     
     // reorder
     {
