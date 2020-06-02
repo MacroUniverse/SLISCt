@@ -1,4 +1,4 @@
-Note: Development has been paused, another implementation is being developed, see [SLISC0](https://github.com/MacroUniverse/SLISC0), which is much "simpler" because it does not use `template` at all.
+Note: Development is continuing in [SLISC0](https://github.com/MacroUniverse/SLISC0), which is much "simpler" because it does not use c++ `template`.
 -------------------------------------------
 
 Scientific Library In Simple C++ (SLISC)
